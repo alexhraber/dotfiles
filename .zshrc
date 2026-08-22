@@ -86,9 +86,11 @@ eza_base() {
     --group-directories-first --no-quotes "$@"
 }
 
+alias virc='v ~/.zshrc'
+alias src='. ~/.zshrc'
 alias c='clear'
 alias ls='eza_base'
-alias l='eza_base'
+alias l='eza_base --all --long --header --git'
 alias ll='eza_base --long --header --git'
 alias la='eza_base --all --long --header --git'
 alias lt='eza_base --tree --level=2'
