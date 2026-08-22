@@ -1,0 +1,25 @@
+# Ghostty — Tokyo Night Storm, with a little breathing room.
+# Reload with Cmd+Shift+, after editing.
+
+theme = TokyoNight Storm
+font-family = JetBrainsMono Nerd Font
+font-size = 15
+font-thicken = true
+
+background-opacity = 0.94
+background-blur = 24
+macos-titlebar-style = transparent
+macos-option-as-alt = true
+window-padding-x = 18
+window-padding-y = 14
+window-padding-balance = true
+window-decoration = auto
+
+shell-integration = detect
+shell-integration-features = cursor,sudo,title,path
+scrollback-limit = 10000000
+confirm-close-surface = false
+quit-after-last-window-closed = false
+
+# Ghostty's macOS defaults are intentionally preserved: Cmd+number switches tabs,
+# Cmd+D splits, Cmd+Shift+P opens the command palette, and Cmd+Shift+Enter zooms.

@@ -1,0 +1,14 @@
+# Never commit machine state, credentials, or generated shell data.
+.DS_Store
+.zsh_history
+.zcompdump*
+.config/herdr/*.log
+.config/herdr/sessions/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.mobileprovision
+
