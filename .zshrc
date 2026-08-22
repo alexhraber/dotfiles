@@ -140,6 +140,11 @@ if (( $+commands[starship] )); then
   eval "$(starship init zsh)"
 fi
 
+# Show a small system summary when an interactive terminal starts.
+if (( $+commands[fastfetch] )) && [[ -t 1 && -z "${FASTFETCH_DISABLE:-}" ]]; then
+  fastfetch
+fi
+
 # Keep this last: syntax highlighting wraps the final line editor widgets.
 typeset -gA ZSH_HIGHLIGHT_STYLES
 ZSH_HIGHLIGHT_STYLES[command]='fg=#7aa2f7'

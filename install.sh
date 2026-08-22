@@ -31,5 +31,6 @@ link_file "$HOME/.aerospace.toml" ".aerospace.toml"
 link_file "$HOME/.config/starship.toml" ".config/starship.toml"
 link_file "$HOME/.config/ghostty/config" ".config/ghostty/config"
 link_file "$HOME/.config/herdr/config.toml" ".config/herdr/config.toml"
+link_file "$HOME/.config/fastfetch/config.jsonc" ".config/fastfetch/config.jsonc"
 
 printf '\nDotfiles linked from %s\n' "$repo_root"
