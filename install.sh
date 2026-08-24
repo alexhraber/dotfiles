@@ -27,10 +27,33 @@ link_file() {
 link_file "$HOME/.zprofile" ".zprofile"
 link_file "$HOME/.zshrc" ".zshrc"
 link_file "$HOME/.gitconfig" ".gitconfig"
-link_file "$HOME/.aerospace.toml" ".aerospace.toml"
+link_file "$HOME/.local/bin/dotfiles-startup" "startup.sh"
+link_file "$HOME/Library/LaunchAgents/com.ahr.dotfiles-startup.plist" "com.ahr.dotfiles-startup.plist"
 link_file "$HOME/.config/starship.toml" ".config/starship.toml"
 link_file "$HOME/.config/ghostty/config" ".config/ghostty/config"
 link_file "$HOME/.config/herdr/config.toml" ".config/herdr/config.toml"
 link_file "$HOME/.config/fastfetch/config.jsonc" ".config/fastfetch/config.jsonc"
+
+if [[ "$(uname -s)" == Darwin ]]; then
+  launch_agent_domain="gui/$(id -u)"
+  launch_agent_label="com.ahr.dotfiles-startup"
+  launch_agent_path="$HOME/Library/LaunchAgents/$launch_agent_label.plist"
+
+  launchctl bootout "$launch_agent_domain/$launch_agent_label" 2>/dev/null || true
+  launch_agent_loaded=0
+  for _ in 1 2 3 4 5; do
+    if launchctl bootstrap "$launch_agent_domain" "$launch_agent_path" 2>/dev/null; then
+      launch_agent_loaded=1
+      break
+    fi
+    sleep 1
+  done
+  if (( launch_agent_loaded != 1 )); then
+    printf 'Could not load %s\n' "$launch_agent_label" >&2
+    exit 1
+  fi
+  launchctl kickstart -k "$launch_agent_domain/$launch_agent_label"
+  printf 'Reloaded %s\n' "$launch_agent_label"
+fi
 
 printf '\nDotfiles linked from %s\n' "$repo_root"
