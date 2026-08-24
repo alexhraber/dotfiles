@@ -82,19 +82,6 @@ find_command() {
   return 1
 }
 
-start_ghostty() {
-  local open_bin
-  open_bin="$(find_command open)" || {
-    log "open command not found"
-    return 1
-  }
-
-  "$open_bin" -a Ghostty || {
-    log "could not launch Ghostty"
-    return 1
-  }
-}
-
 start_report_server() {
   local python_bin
   [[ -d "$TAILSCALE_DIR" ]] || {
@@ -142,11 +129,10 @@ service_is_alive() {
   [[ "$pid" =~ ^[0-9]+$ ]] && kill -0 "$pid" 2>/dev/null
 }
 
-start_ghostty
 start_report_server
 start_amp
 
-log "Ghostty launched; report server and amp --no-tui are running under caffeinate"
+log "report server and amp --no-tui are running under caffeinate"
 
 # macOS's system Bash does not have wait -n. Poll both children so a failed
 # service tears down the other one and lets launchd restart the job.

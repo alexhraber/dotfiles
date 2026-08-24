@@ -23,4 +23,4 @@ The installer creates symlinks and moves any existing conflicting file to a time
 
 Fastfetch runs when an interactive terminal starts. Set `FASTFETCH_DISABLE=1` for a session when you want to skip it.
 
-The LaunchAgent starts Ghostty once at macOS user login, then runs the local report server from `~/tailscale` on `127.0.0.1:8080` and `amp --no-tui` from `~/src` under a persistent `caffeinate -s` supervisor. Opening additional Ghostty terminals does not rerun the startup script. PID files and a launch lock prevent duplicate processes. Logs are written to `/tmp/snowflake-report.log` and `/tmp/amp-no-tui.log`.
+The LaunchAgent runs the local report server from `~/tailscale` on `127.0.0.1:8080` and `amp --no-tui` from `~/src` as background services under a persistent `caffeinate -s` supervisor. Ghostty can be opened separately when needed. PID files and a launch lock prevent duplicate processes. Logs are written to `/tmp/snowflake-report.log` and `/tmp/amp-no-tui.log`.
