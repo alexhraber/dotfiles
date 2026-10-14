@@ -5,7 +5,17 @@
 [delta]
 	navigate = true
 	side-by-side = true
+	line-numbers = true
+	syntax-theme = tokyonight_storm
 [merge]
 	conflictstyle = zdiff3
 [init]
 	defaultBranch = main
+[fetch]
+	prune = true
+[diff]
+	algorithm = histogram
+[push]
+	default = simple
+[include]
+	path = ~/.gitconfig.local

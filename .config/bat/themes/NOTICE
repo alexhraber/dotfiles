@@ -1,0 +1,7 @@
+tokyonight_storm.tmTheme is vendored from
+folke/tokyonight.nvim at commit cdc07ac78467a233fd62c493de29a17e0cf2b2b6:
+https://github.com/folke/tokyonight.nvim/blob/cdc07ac78467a233fd62c493de29a17e0cf2b2b6/extras/sublime/tokyonight_storm.tmTheme
+
+Author: Folke Lemaitre. The upstream license is reproduced in LICENSE.
+
+Only trailing blank lines have been normalized. Theme settings are unchanged.

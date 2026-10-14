@@ -2,8 +2,16 @@
 .DS_Store
 .zsh_history
 .zcompdump*
-.config/herdr/*.log
-.config/herdr/sessions/
+__pycache__/
+*.pyc
+.gitconfig.local
+.zshrc.local
+*.backup.*
+.codex/*
+!.codex/config.toml
+!.codex/quick.config.toml
+!.codex/deep-review.config.toml
+!.codex/AGENTS.md
 .env
 .env.*
 !.env.example
@@ -12,3 +20,14 @@
 *.p12
 *.mobileprovision
 
+.decapod/data
+.decapod/data/*
+.decapod/.stfolder
+.decapod/workspaces
+.decapod/managed/*
+!.decapod/data/
+!.decapod/managed/
+!.decapod/managed/Dockerfile.decapod
+!.decapod/managed/specs/
+!.decapod/managed/specs/*.md
+!.decapod/managed/specs/.manifest.json

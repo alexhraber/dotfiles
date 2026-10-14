@@ -1,20 +1,24 @@
 # ~/.zshrc — calm, fast, and useful.
 # The prompt is Starship; the rest is intentionally plain zsh so startup stays fast.
 
+[[ -n ${_DOTFILES_ZSH_LOADED:-} ]] && return
+[[ -r ${XDG_CONFIG_HOME:-$HOME/.config}/zsh/env.zsh ]] && source "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/env.zsh"
 [[ -o interactive ]] || return
+# Re-sourcing must not register hooks or wrap widgets twice. `src` starts fresh.
+typeset -g _DOTFILES_ZSH_LOADED=1
+typeset -g DOTFILES_ROOT="${${(%):-%N}:A:h}"
 
 # ── Environment ──────────────────────────────────────────────────────────────
-export EDITOR="${EDITOR:-nvim}"
+if (( $+commands[nvim] )); then
+  export EDITOR="${EDITOR:-nvim}"
+else
+  export EDITOR="${EDITOR:-vi}"
+fi
 export VISUAL="$EDITOR"
 export PAGER="less -FRX"
 export LESS="-R"
 export HOMEBREW_NO_ENV_HINTS=1
 export CLICOLOR=1
-
-# Prefer modern tools when they are installed, but keep every config portable.
-if [[ -d /opt/homebrew/share/zsh/site-functions ]]; then
-  fpath=(/opt/homebrew/share/zsh/site-functions $fpath)
-fi
 
 # ── History ──────────────────────────────────────────────────────────────────
 HISTFILE="$HOME/.zsh_history"
@@ -76,8 +80,8 @@ fi
 # Low-noise interactive feedback: suggestions from history and command highlighting.
 typeset -g ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#565f89'
 typeset -ga ZSH_AUTOSUGGEST_STRATEGY=(history completion)
-if [[ -r /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
-  source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+if [[ -r ${HOMEBREW_PREFIX:-}/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
+  source "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 fi
 
 # ── Aliases ──────────────────────────────────────────────────────────────────
@@ -87,26 +91,32 @@ eza_base() {
 }
 
 alias virc='v ~/.zshrc'
-alias src='. ~/.zshrc'
+alias src='exec zsh -l'
 alias c='clear'
-alias ls='eza_base'
-alias l='eza_base --all --long --header --git'
-alias ll='eza_base --long --header --git'
-alias la='eza_base --all --long --header --git'
-alias lt='eza_base --tree --level=2'
-alias cat='bat --paging=never --style=plain'
-alias grep='rg'
-alias top='btop'
-alias v='nvim'
-alias vi='nvim'
+if (( $+commands[eza] )); then
+  alias ls='eza_base'
+  alias l='eza_base --all --long --header --git'
+  alias ll='eza_base --long --header --git'
+  alias la='eza_base --all --long --header --git'
+  alias lt='eza_base --tree --level=2'
+else
+  alias l='ls -lah' ll='ls -lh' la='ls -lah'
+fi
+(( $+commands[bat] )) && alias cat='bat --paging=never --style=plain'
+# Keep grep's standard flags and semantics; use rg explicitly.
+(( $+commands[btop] )) && alias top='btop'
+if (( $+commands[nvim] )); then
+  alias v='nvim' vi='nvim'
+else
+  alias v='vi'
+fi
 alias g='git'
 alias gs='git status --short --branch'
 alias gd='git diff'
 alias gds='git diff --staged'
 alias gl='git log --oneline --decorate --graph -20'
-alias lg='lazygit'
-alias mux='herdr'
-alias h='herdr'
+(( $+commands[lazygit] )) && alias lg='lazygit'
+alias dotfiles='"${DOTFILES_ROOT:-$HOME/src/dotfiles}/scripts/dotfiles"'
 
 # Jump up without thinking about how many ../'s you need.
 alias ..='cd ..'
@@ -132,16 +142,18 @@ extract() {
   esac
 }
 
-# Start or reattach to the persistent Herdr workspace from the current folder.
-work() { herdr --session "${1:-main}" }
+[[ -r "$XDG_CONFIG_HOME/zsh/projects.zsh" ]] && source "$XDG_CONFIG_HOME/zsh/projects.zsh"
+[[ -r "$XDG_CONFIG_HOME/zsh/local-models.zsh" ]] && source "$XDG_CONFIG_HOME/zsh/local-models.zsh"
 
 # ── Starship ─────────────────────────────────────────────────────────────────
-if (( $+commands[starship] )); then
+# Machine-specific additions stay outside Git and before the widget wrappers.
+[[ -r "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
+if (( $+commands[starship] )) && [[ ${TERM:-dumb} != dumb ]]; then
   eval "$(starship init zsh)"
 fi
 
 # Show a small system summary when an interactive terminal starts.
-if (( $+commands[fastfetch] )) && [[ -t 1 && -z "${FASTFETCH_DISABLE:-}" ]]; then
+if (( $+commands[fastfetch] )) && [[ -o login && -t 1 && -z "${FASTFETCH_DISABLE:-}" ]]; then
   fastfetch
 fi
 
@@ -155,6 +167,6 @@ ZSH_HIGHLIGHT_STYLES[path]='fg=#9ece6a,underline'
 ZSH_HIGHLIGHT_STYLES[globbing]='fg=#e0af68'
 ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=#f7768e'
 ZSH_HIGHLIGHT_STYLES[redirection]='fg=#e0af68'
-if [[ -r /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
-  source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+if [[ -r ${HOMEBREW_PREFIX:-}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
+  source "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 fi

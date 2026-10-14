@@ -1,0 +1,65 @@
+schema_version = "1.0.0"
+
+[init]
+specs = true
+ci = false
+diagram_style = "ascii"
+entrypoints = [
+    "AGENTS.md",
+    "CLAUDE.md",
+    "GEMINI.md",
+    "CODEX.md",
+]
+
+[repo]
+product_name = "dotfiles"
+product_summary = "Reproducible macOS terminal, Neovim, Git, and Codex configuration with scoped installs and reversible backups."
+architecture_direction = "Python installer, portable zsh and Cargo environment, pinned native Neovim plugins, curated Brewfile, and Podman container workspaces."
+product_type = "service_or_library"
+done_criteria = "Scoped installation and safe restoration pass automated checks; local terminal and editor configuration work; changes are published to main."
+base_branch = "main"
+primary_languages = [
+    "Lua",
+    "Python",
+    "Zsh",
+    "python",
+    "shell",
+]
+detected_surfaces = [
+    "cli",
+    "python",
+    "shell",
+]
+external_tracker = false
+container_workspaces = true
+backend = "local"
+declared_capabilities = [
+    "external-integrations",
+    "persistent-state",
+]
+
+[governance]
+protected_paths = []
+approval_categories = ["destructive_operations"]
+
+[proof]
+validation_buildkite_preflights = false
+
+[[proof.commands]]
+name = "checks"
+command = "scripts/check"
+args = []
+description = "Guided init proof command 1"
+required = true
+
+[custody]
+isolation = "container"
+
+[tracker]
+provider = "decapod"
+
+[context]
+declared_sources = []
+
+[decision]
+provider = "none"

@@ -1,0 +1,14 @@
+gui:
+  nerdFontsVersion: "3"
+  theme:
+    activeBorderColor: ["#7aa2f7", bold]
+    inactiveBorderColor: ["#565f89"]
+    optionsTextColor: ["#7dcfff"]
+    selectedLineBgColor: ["#3b4261"]
+    searchingActiveBorderColor: ["#e0af68", bold]
+    defaultFgColor: ["#c0caf5"]
+    unstagedChangesColor: ["#f7768e"]
+git:
+  pagers:
+    - colorArg: always
+      pager: delta --dark --paging=never
