@@ -17,5 +17,10 @@
 	algorithm = histogram
 [push]
 	default = simple
+	autoSetupRemote = true
+[pull]
+	ff = only
+[rerere]
+	enabled = true
 [include]
 	path = ~/.gitconfig.local

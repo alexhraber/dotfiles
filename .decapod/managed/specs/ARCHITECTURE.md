@@ -20,7 +20,18 @@ shell and editor; Homebrew manages the curated tool dependencies.
   interactive shells. .zshrc registers hooks once and loads navigation and
   explicit local-model helpers.
 - .config/nvim/init.lua: native vim.pack with pinned Tokyo Night and mini.nvim;
-  Rust LSP uses the existing rust-analyzer executable.
+  Installed servers cover Rust, Python, JS/TS, Lua, Bash and TOML. Python uses
+  project virtual environments and Ruff formatting.
+- scripts/macos_preferences.py: reads typed defaults, snapshots changed keys,
+  applies with per-key readback and rolls back on error. Preferences and files
+  are separate transactions; restoration refuses later edits.
+- .config/zsh/workspaces.zsh: explicit project-only Podman invocation. It checks
+  a running engine but never creates or starts a VM. Host credentials and engine
+  sockets are not mounted; source remains writable and SELinux labels are
+  disabled for shared macOS filesystems. Live container checks remain unavailable
+  while the existing VM startup problem is deferred.
+- Brewfile: scoped direct dependencies including dev, infrastructure, local AI
+  and Chrome. Installed unmanaged Chrome remains externally managed.
 - .gitconfig: portable settings included by the existing user configuration;
   local identity and signing overrides remain in ~/.gitconfig.local.
 - .codex: allowlisted portable files copied into Codex home to keep app-written
@@ -68,7 +79,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `6fba237828fbded719d7d827b3c1a53e8a4cf4a6874d4d4993811e935e34eac4`
-- Significant implementation surfaces: `.github/` (1 files), `README.md/` (1 files), `scripts/` (1 files), `tests/` (1 files)
+- Repository signal fingerprint: `bd87ea8ea1effbcd9214006f360947918b918f94b45b80ee867599d5e1d77e51`
+- Significant implementation surfaces: `.github/` (1 files), `README.md/` (1 files), `scripts/` (3 files), `tests/` (3 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

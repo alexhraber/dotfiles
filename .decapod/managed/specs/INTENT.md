@@ -4,14 +4,17 @@
 
 Provide a repeatable macOS terminal and development environment for Alex:
 Ghostty with Tokyo Night Storm and Nerd Font, zsh navigation and feedback,
-Neovim editing, Git diff and signing, and portable Codex preferences. Existing
+polyglot Neovim editing, tmux, Git diff and signing, portable Codex preferences,
+development and infrastructure tools, and reversible macOS preferences. Existing
 Rust, Ollama and MLX installations are integrated without replacing their
 runtimes or automatically downloading models.
 
 ## Outcomes and boundaries
 
-A fresh checkout can preview and install selected terminal, Git, Codex and
-workspace groups. Existing configuration is backed up and can be restored
+A fresh checkout can preview and install terminal, Git, Codex, workspace, dev,
+infra, AI, apps and macOS groups. All authored configuration and automation live
+in ~/src/dotfiles; the target host is an Apple M1 Max MacBook Pro.
+Existing configuration is backed up and can be restored
 without overwriting later user edits. Dependencies are declared in Brewfile;
 configuration installation does not upgrade or remove unrelated packages.
 Git identity and SSH signing stay machine-local. Codex authentication,
@@ -32,8 +35,13 @@ upstream issue rather than expanded into this dotfiles change.
   services start only through explicit user commands.
 - The authorized publication target is alexhraber/dotfiles main.
 
-Excluded: Herdr, Tailscale/AMP services, macOS system preferences, secret
-migration, unsolicited model downloads, and modifying Decapod itself.
+The macOS group manages 14 explicit user preference keys with typed backups,
+readback verification and guarded restoration. Chrome is declared for fresh
+machines while existing unmanaged installations are preserved. No security
+controls or credentials are changed.
+
+Excluded: Herdr, Tailscale/AMP services, secret migration, unsolicited model
+downloads, account setup, VM startup troubleshooting and modifying Decapod itself.
 
 <!-- decapod:declared-capabilities:start -->
 
@@ -50,7 +58,7 @@ These declarations select authoring and proof obligations; they do not attest im
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `6fba237828fbded719d7d827b3c1a53e8a4cf4a6874d4d4993811e935e34eac4`
-- Significant implementation surfaces: `.github/` (1 files), `README.md/` (1 files), `scripts/` (1 files), `tests/` (1 files)
+- Repository signal fingerprint: `bd87ea8ea1effbcd9214006f360947918b918f94b45b80ee867599d5e1d77e51`
+- Significant implementation surfaces: `.github/` (1 files), `README.md/` (1 files), `scripts/` (3 files), `tests/` (3 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

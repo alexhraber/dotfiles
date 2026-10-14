@@ -1,8 +1,22 @@
 # alexhraber/dotfiles
 
-A reproducible macOS terminal and editor setup: Ghostty, Tokyo Night Storm,
-JetBrainsMono Nerd Font, Starship, zsh, Neovim, Git, and Codex. Decapod manages
-agent work in isolated Podman container workspaces.
+A reproducible engineering workstation: Ghostty, Tokyo Night Storm,
+JetBrainsMono Nerd Font, Starship, zsh, tmux, polyglot Neovim, Git, Codex,
+local AI, infrastructure tools, and reversible macOS preferences. Podman is
+the intended container runtime; Decapod is initialized for isolated workspaces.
+
+The target workstation is an Apple M1 Max MacBook Pro. All authored configuration
+and automation live in `~/src/dotfiles`; installed shell/editor configuration
+links to the main checkout. Mutable Codex preferences are copied deliberately.
+Homebrew installs native Apple-silicon tools. Credentials, model stores, VM disks,
+application state and private backup manifests stay outside Git.
+
+Treat changes as infrastructure as code: edit a declared dependency or config,
+inspect `just preview`, run `just check`, apply, then run `just doctor` and the
+relevant integration check. Repeated apply converges to the declared state;
+doctor detects configuration drift. Only `macos` changes user defaults, with
+per-key backups. Package versions are moving releases, so reproducibility here
+means declared tools and preferences, not byte-identical system images.
 
 ## Install
 
@@ -13,15 +27,40 @@ before applying a new checkout.
 ```sh
 ./install.sh --dry-run --deps       # Preview the default terminal group
 ./install.sh --deps                 # Install tools and terminal/editor config
-./install.sh --all --deps           # Include Git, Codex, and workspace tools
+./install.sh --all --deps           # Full workstation, including macOS preferences
 exec zsh -l
 ```
 
-Groups are `terminal`, `git`, `codex`, and `workspace`. Select any combination
-with `--groups terminal,git`. Dependency installation uses a curated Brewfile
+Select any combination with `--groups terminal,git`. The default stays
+`terminal`; `--all` explicitly selects every group:
+
+| Group | Managed setup |
+| --- | --- |
+| terminal | Ghostty, shell, tmux, editor, navigation and terminal tools |
+| git | Portable Git settings, delta, global OS/editor ignore file |
+| codex | Codex app, portable CLI preferences and instructions |
+| workspace | Podman and the explicit `cws` container helper |
+| dev | GitHub CLI, jq/yq, just, uv, Cargo binary installer, linters and language servers |
+| infra | kubectl, Helm, k9s, OpenTofu and grpcurl |
+| ai | Ollama and native MLX on Apple silicon |
+| apps | Google Chrome |
+| macos | Finder, keyboard, text input, Dock and screenshot preferences |
+
+Dependency installation uses a curated Brewfile
 and `--no-upgrade`; it does not remove unrelated packages. Podman is installed
 by the workspace group. Rust and Decapod remain managed by your existing rustup
-and Cargo installation.
+and Cargo installation. The Brewfile tracks direct tools, not their transitive
+libraries. An existing manually installed Chrome is retained; a missing Chrome
+is installed through its cask. Existing Homebrew-managed Chrome remains in the
+bundle. This avoids administrator-password requirements during app adoption;
+the installer never uses `--force` or deletes browser profiles. Node and TypeScript are
+Homebrew dependencies of language servers. Application runtime versions belong
+in projects using mise, uv or rustup.
+
+`just preview`, `just install`, `just doctor`, `just check`, and `just brew-check`
+expose routine workflows. `just outdated` reports updates without applying them.
+Homebrew packages are current releases, not version-pinned; Neovim plugins
+are pinned separately.
 
 The installer validates destinations before changing files, saves every
 conflicting file or symlink in a private backup directory, and writes a JSON
@@ -45,6 +84,28 @@ package installations, plugin downloads, or runtime caches. Existing directories
 are never replaced. `XDG_CONFIG_HOME`, `XDG_STATE_HOME`, and `CODEX_HOME` are
 respected when set.
 
+## macOS preferences
+
+`.config/macos/preferences.json` shows file extensions, Finder path/status bars
+and searches the current folder; enables fast key repeat; disables smart quotes,
+dashes, automatic periods and spelling correction; hides recent apps in the Dock;
+and stores PNG screenshots in `~/Pictures/Screenshots`.
+
+The macOS group backs up only changed keys, preserving types and absent keys,
+then applies and reads each key back. A failed application rolls back preference
+changes. Its separate private manifest uses the same `--restore` command and
+refuses to overwrite later edits. File installation and preferences are separate
+transactions. The screenshot directory and contents remain during restore.
+On Linux, the macOS group is skipped.
+
+Existing apps may need reopening or logout before consuming the preferences;
+the installer does not restart Finder or Dock. Apple documents
+[Finder settings](https://support.apple.com/guide/mac-help/change-finder-settings-on-mac-mchlp2803/mac)
+and [key repeat](https://support.apple.com/en-gb/guide/mac-help/mchl0311bdb4/mac).
+CLI keys are verified on the installed macOS version, not treated as a stable
+cross-version API. Security controls, cloud accounts, keychains, accessibility
+permissions and browser profiles remain locally managed.
+
 ## Shell and projects
 
 Login and non-login interactive zsh share `.config/zsh/env.zsh`. It detects the
@@ -59,6 +120,8 @@ settings go in `~/.zshrc.local` and remain outside Git.
 - `v`, `vi`: Neovim when installed, with a system-editor fallback.
 - `lg`: Lazygit; `gs`, `gd`, `gds`, `gl`: common Git views.
 - `dotfiles doctor --all`: inspect the installed configuration and dependencies.
+- `tm`: create or attach the `main` tmux session; Ctrl-b remains the prefix.
+- `cws <image> [command ...]`: run in the current project through Podman.
 
 Modern command aliases are enabled only when their tools exist. `grep` keeps its
 standard behavior; invoke `rg` directly. Fastfetch runs in interactive login
@@ -86,7 +149,16 @@ Use Space as the leader:
 | Space rn / ca / cf | Rename, code action, format with an attached server |
 
 Persistent undo, completion, surrounding pairs, Git diff signs, and a statusline
-are enabled. Rust LSP uses `rust-analyzer` from the existing Rust toolchain;
+are enabled. The dev group supplies Basedpyright/Ruff for Python, TypeScript
+7's native LSP for JS/TS/React, Bash language server, Lua language server and
+Taplo for TOML. Python prefers the project's `.venv`; Ruff owns formatting and
+import actions while Basedpyright supplies types and navigation. Space cd shows
+line diagnostics; Space cq sends diagnostics to quickfix. Servers are enabled
+only when their binaries are available. Projects with a local pre-7 TypeScript
+installation use the legacy language-server wrapper and their own tsserver.
+Deno projects are left to local configuration. Neovim supports project EditorConfig.
+
+Rust LSP uses `rust-analyzer` from the existing Rust toolchain;
 install that component with `rustup component add rust-analyzer`. Optional
 language-server configuration and local settings belong in
 `~/.config/nvim/local.lua` (or the equivalent XDG path).
@@ -100,6 +172,13 @@ licensed in `.config/bat/themes/NOTICE` and `LICENSE`.
 The Git group adds an include to your existing `~/.gitconfig`, preserving
 identity, credential helpers, and other settings. Portable behavior lives in
 `.gitconfig`; machine-specific overrides live in `~/.gitconfig.local`.
+
+Pulls require a fast-forward; new branch pushes set their upstream; rerere
+remembers conflict resolutions without automatically staging them. The global
+ignore uses Git's native XDG location and covers OS/editor debris; project build
+artifacts belong in project ignores. Existing custom `core.excludesFile` overrides
+remain local. GitHub CLI authentication requires an explicit `gh auth login` and
+stays outside the repository; SSH Git authentication and signing are independent.
 
 Configure an identity and SSH signing explicitly, using a **public** key:
 
@@ -147,6 +226,10 @@ without changing the shell's Python. Override its location with `MLX_ENV`.
 `mlxserve` binds to loopback unless explicitly overridden. These commands do
 not run during shell startup or automatically download models.
 
+The Brewfile includes native MLX, while Python MLX-LM stays in its existing
+virtual environment. The installer does not replace that environment; a new
+machine needs its own MLX-LM venv. Model stores remain local state.
+
 ## Podman and Decapod
 
 On macOS, Podman runs containers inside a Linux VM. The installer installs the
@@ -164,6 +247,15 @@ connections, sessions, and container state remain local. No login service is
 installed. Start the VM before using container workspaces. All VM starts must be headless;
 do not enable Podman debug logging on macOS, since it adds the vfkit GUI.
 
+`cws` checks an already-running engine and never starts a machine. Supply a
+fully qualified image, preferably pinned by digest, and an optional command.
+It shares only the current project at `/workspace`, uses `keep-id`, drops Linux
+capabilities, blocks privilege escalation, and allocates a TTY only interactively.
+Source is writable from the container. SELinux labeling is disabled for this
+invocation to support shared macOS filesystems. Host auth directories, SSH agents, engine
+sockets and home directories are not mounted. It refuses to mount home or `/`.
+It is a development helper, not a security boundary for untrusted project code.
+
 This repository is initialized with Decapod's local backend and container
 isolation. Follow `AGENTS.md` and `decapod docs ingest` for its session, task,
 workspace, and validation lifecycle. Podman is the intended local runtime.
@@ -180,10 +272,13 @@ troubleshooting is deferred; see [the upstream headless-startup issue](https://g
 ```sh
 scripts/check                  # ShellCheck, zsh syntax, and isolated tests
 scripts/dotfiles doctor --all   # Dependencies and installed configuration
+just editor-check              # Real installed language servers and formatting
 ```
 
 The tests exercise scoped installation, backups, rollback on failure, repeated
 installation, restoration, refusal to overwrite later edits, preservation of Git
-identity and Codex state, worktree paths with spaces, and shell hook behavior.
+identity and Codex state, worktree paths with spaces, shell hook behavior,
+typed preference backup/restore and failure rollback, and container arguments
+with a fake engine that proves no automatic VM startup occurs.
 GitHub Actions runs the same suite on Linux and macOS. Config and package checks
 on the actual Mac are separate from the portable test suite.

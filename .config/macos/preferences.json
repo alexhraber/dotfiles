@@ -1,0 +1,24 @@
+{
+  "NSGlobalDomain": {
+    "AppleShowAllExtensions": true,
+    "ApplePressAndHoldEnabled": false,
+    "KeyRepeat": 2,
+    "InitialKeyRepeat": 20,
+    "NSAutomaticQuoteSubstitutionEnabled": false,
+    "NSAutomaticDashSubstitutionEnabled": false,
+    "NSAutomaticPeriodSubstitutionEnabled": false,
+    "NSAutomaticSpellingCorrectionEnabled": false
+  },
+  "com.apple.finder": {
+    "ShowPathbar": true,
+    "ShowStatusBar": true,
+    "FXDefaultSearchScope": "SCcf"
+  },
+  "com.apple.dock": {
+    "show-recents": false
+  },
+  "com.apple.screencapture": {
+    "location": "~/Pictures/Screenshots",
+    "type": "png"
+  }
+}

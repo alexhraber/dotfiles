@@ -10,9 +10,10 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import macos_preferences
 
 REPO = Path(__file__).resolve().parents[1]
-GROUPS = ('terminal', 'git', 'codex', 'workspace')
+GROUPS = ('terminal', 'git', 'codex', 'workspace', 'dev', 'infra', 'ai', 'apps', 'macos')
 
 
 def homes():
@@ -33,7 +34,7 @@ def state(path):
 def select_groups(args):
     groups = list(GROUPS) if args.all else args.groups.split(',')
     if not groups or any(g not in GROUPS for g in groups):
-        raise ValueError('Groups must be a comma-separated subset of terminal,git,codex,workspace')
+        raise ValueError('Groups must be a comma-separated subset of ' + ','.join(GROUPS))
     return list(dict.fromkeys(groups))
 
 
@@ -62,7 +63,8 @@ def plan(groups, args):
     if 'terminal' in groups:
         for rel in ('.zprofile', '.zshrc'):
             ops.append(operation(home / rel, rel))
-        for rel in ('zsh/env.zsh', 'zsh/projects.zsh', 'zsh/local-models.zsh', 'ghostty/config', 'starship.toml', 'fastfetch/config.jsonc', 'bat/config', 'bat/themes/tokyonight_storm.tmTheme', 'lazygit/config.yml', 'nvim/init.lua'):
+        ops.append(operation(home / '.tmux.conf', '.config/tmux/tmux.conf'))
+        for rel in ('zsh/env.zsh', 'zsh/projects.zsh', 'zsh/local-models.zsh', 'ghostty/config', 'starship.toml', 'fastfetch/config.jsonc', 'bat/config', 'bat/themes/tokyonight_storm.tmTheme', 'lazygit/config.yml', 'nvim/init.lua', 'tmux/tmux.conf'):
             ops.append(operation(config / rel, '.config/' + rel))
         if sys.platform == 'darwin':
             ops.append(operation(home / 'Library/Application Support/com.mitchellh.ghostty/config.ghostty', '.config/ghostty/config'))
@@ -73,6 +75,7 @@ def plan(groups, args):
                 ops.append(operation(target, remove=True))
     if 'git' in groups:
         ops.append(operation(config / 'git/dotfiles.gitconfig', '.gitconfig'))
+        ops.append(operation(config / 'git/ignore', '.config/git/ignore'))
         target = home / '.gitconfig'
         include = str(config / 'git/dotfiles.gitconfig')
         with tempfile.TemporaryDirectory() as temp:
@@ -110,6 +113,8 @@ def plan(groups, args):
         for rel in ('config.toml', 'AGENTS.md', 'quick.config.toml', 'deep-review.config.toml'):
             # Copies keep app edits and account-specific settings out of Git.
             ops.append(operation(codex / rel, '.codex/' + rel, copy=True))
+    if 'workspace' in groups:
+        ops.append(operation(config / 'zsh/workspaces.zsh', '.config/zsh/workspaces.zsh'))
     return ops
 
 
@@ -192,6 +197,10 @@ def restore_item(item):
 def restore(path, dry_run):
     manifest = Path(path).expanduser().resolve()
     document = json.loads(manifest.read_text())
+    if document.get('kind') == 'macos-preferences':
+        if sys.platform != 'darwin':
+            raise ValueError('macOS preference restoration requires macOS')
+        return macos_preferences.restore(document, dry_run)
     if document.get('version') != 1:
         raise ValueError('Unsupported backup manifest')
     changes = document['changes']
@@ -236,7 +245,13 @@ def doctor(groups):
         if Path(item['target']) == codex / 'config.toml' and state(Path(item['target']))['type'] == 'file':
             continue  # Validate the portable keys below, retaining app metadata.
         check(item['target'], state(Path(item['target'])) == item['installed'])
-    expected = {'terminal': ['ghostty', 'starship', 'fastfetch', 'fzf', 'zoxide', 'direnv', 'mise', 'eza', 'bat', 'rg', 'fd', 'lazygit', 'nvim', 'btop'], 'git': ['git', 'delta'], 'codex': ['codex'], 'workspace': ['podman', 'decapod']}
+    expected = {
+        'terminal': ['ghostty', 'starship', 'fastfetch', 'fzf', 'zoxide', 'direnv', 'mise', 'eza', 'bat', 'rg', 'fd', 'lazygit', 'nvim', 'btop', 'tmux'],
+        'git': ['git', 'delta'], 'codex': ['codex'], 'workspace': ['podman', 'decapod'],
+        'dev': ['gh', 'jq', 'yq', 'just', 'uv', 'cargo-binstall', 'shellcheck', 'shfmt', 'actionlint', 'hadolint', 'ruff', 'basedpyright-langserver', 'tsc', 'typescript-language-server', 'bash-language-server', 'lua-language-server', 'taplo'],
+        'infra': ['kubectl', 'helm', 'k9s', 'tofu', 'grpcurl'],
+        'ai': ['ollama'], 'apps': [], 'macos': [],
+    }
     for tool in dict.fromkeys(t for group in groups for t in expected[group]):
         check('command: ' + tool, shutil.which(tool) is not None)
     if 'terminal' in groups:
@@ -277,6 +292,17 @@ def doctor(groups):
                     check('Codex TOML: ' + filename, False)
         except ImportError:
             check('Python 3.11+ for TOML validation (install Brewfile dependencies)', False)
+    if 'apps' in groups and sys.platform == 'darwin':
+        check('Google Chrome application', Path('/Applications/Google Chrome.app').is_dir())
+    if 'ai' in groups and sys.platform == 'darwin' and os.uname().machine == 'arm64':
+        # Native MLX has no CLI; Python MLX-LM remains in its separate venv.
+        result = subprocess.run(['brew', 'list', '--versions', 'mlx'], capture_output=True, text=True)
+        check('Native MLX formula', result.returncode == 0 and bool(result.stdout.strip()))
+    if 'macos' in groups and sys.platform == 'darwin':
+        pending = macos_preferences.plan(REPO / '.config/macos/preferences.json')
+        check('macOS developer preferences', not pending)
+        for item in pending:
+            print('INFO preference differs: ' + item['domain'] + '/' + item['key'])
     return 1 if failed else 0
 
 
@@ -308,11 +334,17 @@ def main():
     if args.command == 'doctor':
         return doctor(groups)
     ops = plan(groups, args)
+    preferences = macos_preferences.plan(REPO / '.config/macos/preferences.json') if 'macos' in groups and sys.platform == 'darwin' else []
     for item in ops:
         state(Path(item['target']))
     if args.deps:
         dependencies(groups, args.dry_run)
     apply(ops, args.dry_run)
+    if 'macos' in groups:
+        if sys.platform == 'darwin':
+            macos_preferences.apply(preferences, args.dry_run)
+        else:
+            print('INFO macOS preference group skipped on this platform.')
     if 'terminal' in groups and not args.dry_run and shutil.which('bat'):
         subprocess.run(['bat', 'cache', '--build'], check=True)
     return 0

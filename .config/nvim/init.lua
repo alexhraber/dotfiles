@@ -58,15 +58,80 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   callback = function() vim.hl.on_yank({ timeout = 150 }) end,
 })
 
--- Use project-installed language servers when available; never auto-install
--- another runtime or language server just because a file was opened.
-vim.lsp.config('rust_analyzer', {
-  cmd = { 'rust-analyzer' }, filetypes = { 'rust' },
-  root_markers = { 'Cargo.toml', 'rust-project.json', '.git' },
-})
-if vim.fn.executable('rust-analyzer') == 1 then
-  vim.lsp.enable('rust_analyzer')
+-- Use installed servers; opening a file never installs another runtime.
+-- Project settings and virtual environments take precedence over global tools.
+local function typescript_root(bufnr, on_dir, legacy)
+  local root = vim.fs.root(bufnr, {
+    { 'pnpm-lock.yaml', 'yarn.lock', 'package-lock.json', 'bun.lock', 'bun.lockb' },
+    { 'package.json', '.git' },
+  })
+  if not root then return end
+  local deno = vim.fs.root(bufnr, { 'deno.json', 'deno.jsonc', 'deno.lock' })
+  if deno and #deno >= #root then return end
+  local has_tsserver = vim.fn.filereadable(root .. '/node_modules/typescript/lib/tsserver.js') == 1
+  if has_tsserver == legacy then on_dir(root) end
 end
+local brew_tsc = vim.env.HOMEBREW_PREFIX and (vim.env.HOMEBREW_PREFIX .. '/bin/tsc')
+local native_tsc = brew_tsc and vim.fn.executable(brew_tsc) == 1 and brew_tsc or 'tsc'
+local servers = {
+  rust_analyzer = {
+    cmd = { 'rust-analyzer' }, filetypes = { 'rust' },
+    root_markers = { 'Cargo.toml', 'rust-project.json', '.git' },
+  },
+  basedpyright = {
+    cmd = { 'basedpyright-langserver', '--stdio' }, filetypes = { 'python' },
+    root_markers = { 'pyrightconfig.json', 'pyproject.toml', 'requirements.txt', '.git' },
+    settings = { basedpyright = { disableOrganizeImports = true, analysis = { diagnosticMode = 'openFilesOnly' } } },
+    before_init = function(_, config)
+      -- Prefer a local venv; never point all projects at the MLX environment.
+      local python = config.root_dir and (config.root_dir .. '/.venv/bin/python')
+      if python and vim.fn.executable(python) == 1 then
+        config.settings.python = { pythonPath = python }
+      end
+    end,
+  },
+  ruff = {
+    cmd = { 'ruff', 'server' }, filetypes = { 'python' },
+    root_markers = { 'pyproject.toml', 'ruff.toml', '.ruff.toml', '.git' },
+    on_attach = function(client) client.server_capabilities.hoverProvider = false end,
+  },
+  ts_ls = {
+    cmd = { 'typescript-language-server', '--stdio' },
+    filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' },
+    root_dir = function(bufnr, on_dir) typescript_root(bufnr, on_dir, true) end,
+    before_init = function(_, config)
+      config.init_options = { hostInfo = 'neovim', tsserver = {
+        path = config.root_dir .. '/node_modules/typescript/lib/tsserver.js',
+      } }
+    end,
+  },
+  tsc = {
+    -- TypeScript 7 exposes LSP natively; the old wrapper needs TS <7.
+    cmd = { native_tsc, '--lsp', '--stdio' },
+    filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' },
+    root_dir = function(bufnr, on_dir) typescript_root(bufnr, on_dir, false) end,
+  },
+  bashls = {
+    cmd = { 'bash-language-server', 'start' }, filetypes = { 'sh', 'bash' },
+    root_markers = { '.git' },
+    settings = { bashIde = { globPattern = '*@(.sh|.inc|.bash|.command)' } },
+  },
+  lua_ls = {
+    cmd = { 'lua-language-server' }, filetypes = { 'lua' },
+    root_markers = { '.luarc.json', '.luarc.jsonc', '.git' },
+  },
+  taplo = {
+    cmd = { 'taplo', 'lsp', 'stdio' }, filetypes = { 'toml' },
+    root_markers = { 'taplo.toml', '.taplo.toml', 'Cargo.toml', 'pyproject.toml', '.git' },
+  },
+}
+for name, config in pairs(servers) do
+  vim.lsp.config(name, config)
+  if vim.fn.executable(config.cmd[1]) == 1 then vim.lsp.enable(name) end
+end
+vim.diagnostic.config({ severity_sort = true, float = { border = 'rounded' }, virtual_text = false })
+map('n', '<leader>cd', vim.diagnostic.open_float, { desc = 'Line diagnostics' })
+map('n', '<leader>cq', vim.diagnostic.setqflist, { desc = 'Project diagnostics' })
 vim.api.nvim_create_autocmd('LspAttach', {
   group = vim.api.nvim_create_augroup('DotfilesLsp', { clear = true }),
   callback = function(event)
@@ -76,7 +141,11 @@ vim.api.nvim_create_autocmd('LspAttach', {
     map('n', 'K', vim.lsp.buf.hover, opts)
     map('n', '<leader>rn', vim.lsp.buf.rename, opts)
     map('n', '<leader>ca', vim.lsp.buf.code_action, opts)
-    map('n', '<leader>cf', function() vim.lsp.buf.format({ async = true }) end, opts)
+    map('n', '<leader>cf', function()
+      vim.lsp.buf.format({ async = true, filter = function(client)
+        return vim.bo[event.buf].filetype ~= 'python' or client.name == 'ruff'
+      end })
+    end, opts)
   end,
 })
 

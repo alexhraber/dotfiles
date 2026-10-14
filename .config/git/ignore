@@ -1,0 +1,7 @@
+# Machine/editor debris only; project build artifacts belong in project ignores.
+.DS_Store
+.AppleDouble
+.LSOverride
+*~
+*.swp
+*.swo

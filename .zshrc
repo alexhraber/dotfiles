@@ -116,6 +116,7 @@ alias gd='git diff'
 alias gds='git diff --staged'
 alias gl='git log --oneline --decorate --graph -20'
 (( $+commands[lazygit] )) && alias lg='lazygit'
+(( $+commands[tmux] )) && alias tm='tmux new-session -A -s main'
 alias dotfiles='"${DOTFILES_ROOT:-$HOME/src/dotfiles}/scripts/dotfiles"'
 
 # Jump up without thinking about how many ../'s you need.
@@ -144,6 +145,7 @@ extract() {
 
 [[ -r "$XDG_CONFIG_HOME/zsh/projects.zsh" ]] && source "$XDG_CONFIG_HOME/zsh/projects.zsh"
 [[ -r "$XDG_CONFIG_HOME/zsh/local-models.zsh" ]] && source "$XDG_CONFIG_HOME/zsh/local-models.zsh"
+[[ -r "$XDG_CONFIG_HOME/zsh/workspaces.zsh" ]] && source "$XDG_CONFIG_HOME/zsh/workspaces.zsh"
 
 # ── Starship ─────────────────────────────────────────────────────────────────
 # Machine-specific additions stay outside Git and before the widget wrappers.
