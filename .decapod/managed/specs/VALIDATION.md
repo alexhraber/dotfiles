@@ -9,13 +9,20 @@ The tests exercise scoped installation, dry-run, backup and restore, refusal
 to overwrite later edits, corruption detection, rollback after a simulated
 failure, repeat runs, preservation of Git identity and Codex state, shell
 re-sourcing, and worktree paths containing spaces.
+Typed macOS preference tests cover absent keys, later edits, idempotence and
+mid-application rollback. Container helper tests use a fake engine to verify
+argument boundaries, project-only mounts and no automatic VM startup.
 
 ## Local checks
 
 scripts/dotfiles doctor --all checks managed configuration, tool availability,
 Ghostty validation, shell syntax, Git configuration, and Codex TOML.
-Headless Neovim startup verifies plugin loading and theme selection. A temporary
-Rust project verifies rust-analyzer attachment. Font selection and interactive
+It also verifies Chrome, native MLX and stored macOS preference values.
+scripts/editor_check.py checks real language-server attachment for Python,
+TypeScript, Lua, Bash, TOML and available Rust, Python project venv selection,
+Ruff formatting and native TypeScript hover. Native file watchers on macOS
+require execution outside a sandbox that denies filesystem event streams.
+Font selection and interactive
 shell widgets are checked on the Mac; MLX GPU imports require host Metal access.
 VM image downloads and model inference are not part of portable unit tests.
 
