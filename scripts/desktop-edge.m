@@ -366,14 +366,13 @@ static BOOL setVisible(BOOL show) {
                                  @"cpu", @"gpu", @"memory", @"front_app"])
             [args addObjectsFromArray:@[@"--set", name, @"popup.drawing=off", @"background.drawing=off"]];
     }
-    BOOL motion = !NSWorkspace.sharedWorkspace.accessibilityDisplayShouldReduceMotion;
     if (show) {
-        [args addObjectsFromArray:@[@"--bar", motion ? @"y_offset=-48" : @"y_offset=6", @"hidden=off"]];
-        if (motion) [args addObjectsFromArray:@[@"--animate", @"tanh", @"10", @"--bar", @"y_offset=6"]];
+        // Keep anchors stationary: sliding the whole bar also moves its
+        // popups and races hover events while the pointer is already inside.
+        [args addObjectsFromArray:@[@"--bar", @"y_offset=4", @"hidden=off"]];
         [args addObjectsFromArray:@[@"--trigger", @"desktop_revealed"]];
     } else {
-        [args addObjectsFromArray:motion ? @[@"--animate", @"tanh", @"9", @"--bar", @"y_offset=-48"]
-                                        : @[@"--bar", @"hidden=on"]];
+        [args addObjectsFromArray:@[@"--bar", @"hidden=on"]];
     }
     dispatch_async(barQueue, ^{
         BOOL ok = bar(args) != nil;
@@ -381,11 +380,6 @@ static BOOL setVisible(BOOL show) {
             if (!ok && revision==barRevision) { healthy=NO; nativeMenu(NO); }
         });
     });
-    if (!show && motion) dispatch_after(dispatch_time(DISPATCH_TIME_NOW,180*NSEC_PER_MSEC),
-        dispatch_get_main_queue(), ^{
-            if (visible || revision!=barRevision) return;
-            dispatch_async(barQueue, ^{ bar(@[@"--bar",@"hidden=on"]); });
-        });
     return YES;
 }
 

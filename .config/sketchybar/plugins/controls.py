@@ -1,6 +1,8 @@
 """Hover controls for SketchyBar. Device names and samples stay in private state."""
 import calendar
+from contextlib import contextmanager
 from datetime import date
+import fcntl
 import json
 import os
 from pathlib import Path
@@ -47,6 +49,15 @@ def read(name, fallback=None):
         return json.loads((STATE / name).read_text())
     except (OSError, ValueError):
         return fallback
+
+
+@contextmanager
+def interaction():
+    """Serialize hover state and its IPC commit, never slow device reads/dwell."""
+    STATE.mkdir(parents=True, exist_ok=True, mode=0o700)
+    with (STATE / 'interaction.lock').open('a') as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        yield
 
 
 def wifi_device():
@@ -177,8 +188,10 @@ def panel_rows(name):
         return [('Waiting for hardware sample…', None)]
     if name == 'memory':
         memory = metrics['memory']
-        return [(f'{key.replace("_", " ").title()} · {memory[key]/2**30:.2f} GiB', None)
-                for key in ('ram_usage', 'ram_total', 'swap_usage', 'swap_total')]
+        return [('Memory', None)] + [
+            (f'{label} · {memory[key]/2**30:.2f} GiB', None)
+            for key, label in (('ram_usage', 'Used'), ('ram_total', 'Total'),
+                               ('swap_usage', 'Swap used'), ('swap_total', 'Swap capacity'))]
     return [
         (f'{name.upper()} · {metrics[name + "_scaled_ratio"] * 100:.0f}%', None),
         (f'Temperature · {fahrenheit(metrics["temp"][name + "_temp_avg"]):.1f}°F', None),
@@ -189,28 +202,59 @@ def panel_rows(name):
 
 def show(name):
     token = [time.time_ns(), name]
-    store('hover.json', token)
-    previous = read('active.json', {})
-    delay = 0.06 if time.time()-previous.get('time', 0)<1 else 0.16
-    time.sleep(delay)
-    if read('hover.json') != token:
-        return
-    close_panels()
-    bar('--animate', 'tanh', '6', '--set', name,
-        'background.drawing=on', 'background.color=' + appearance.color('highlight', '66'))
-    store('active.json', {'name': name, 'time': time.time()})
+    with interaction():
+        store('hover.json', token)
+        already_open = read('active.json', {}).get('name') == name
+    if not already_open:
+        time.sleep(0.12)
+    with interaction():
+        if read('hover.json') != token:
+            return
     cached = read(name + '.cache.json', {})
     if cached.get('rows'):
-        render_rows(name, cached['rows'])
+        if not render_rows(name, cached['rows'], token):
+            return
         ttl = 0 if name in ('cpu','gpu','memory','alerts','weather') else 2 if name in ('volume','brightness') else 15
         if time.time()-cached.get('time', 0)<ttl:
             return
     else:
-        render_rows(name, [(name.replace('_', ' ').title(), None), ('Loading…', None)])
+        if not render_rows(name, [(name.replace('_', ' ').title(), None), ('Loading…', None)], token):
+            return
     rows = fresh_rows(name)
-    if read('hover.json') != token:
-        return
-    render_rows(name, rows)
+    render_rows(name, rows, token)
+
+
+def keep(item):
+    name = item.split('.', 1)[0]
+    with interaction():
+        if read('active.json', {}).get('name') != name:
+            return
+        store('hover.json', [time.time_ns(), name])
+        actions = read(name + '.json', [])
+        parts = item.split('.')
+        actionable = len(parts)==3 and parts[1]=='row' and parts[2].isdigit() \
+            and int(parts[2])<len(actions) and actions[int(parts[2])]
+        if len(parts)==3:
+            bar('--set', item, 'background.drawing=' + ('on' if actionable else 'off'),
+                'background.color=' + appearance.color('highlight'))
+
+
+def leave(item):
+    name = item.split('.', 1)[0]
+    token = [time.time_ns(), None]
+    with interaction():
+        if '.row.' in item:
+            bar('--set', item, 'background.drawing=off')
+        current = read('hover.json', [None, None])
+        if current[1] != name:
+            return
+        # Cancel pending opens immediately; give the pointer time to bridge
+        # from the anchor into its popup (or between rows/slider/graph).
+        store('hover.json', token)
+    time.sleep(0.24)
+    with interaction():
+        if read('hover.json') == token:
+            close_panels()
 
 
 def fresh_rows(name):
@@ -222,10 +266,21 @@ def fresh_rows(name):
     return rows
 
 
-def render_rows(name, rows):
+def render_rows(name, rows, token=None):
+    with interaction():
+        if token is not None and read('hover.json') != token:
+            return False
+        _render_rows(name, rows)
+        return True
+
+
+def _render_rows(name, rows):
     rows = rows[:14]
     store(name + '.json', [action for _, action in rows])
+    previous = read('active.json', {}).get('name')
     args = []
+    if previous and previous != name:
+        args += ['--set', previous, 'popup.drawing=off', 'background.drawing=off']
     for i in range(14):
         label, action = rows[i] if i < len(rows) else ('', None)
         calendar_grid = name=='clock' and 0<i<8
@@ -234,10 +289,12 @@ def render_rows(name, rows):
                  'label=' + label, 'label.color=' + appearance.color('accent' if action else 'foreground'),
                  'label.font=' + font, 'label.align=' + ('center' if name=='clock' else 'left'),
                  'background.drawing=off',
-                 'script=' + (shlex.quote(str(HERE.parent/'status.sh')) if action else ''),
+                 'script=' + (shlex.quote(str(HERE.parent/'status.sh')) if i < len(rows) else ''),
                  'click_script=' + (script('action', name, i) if action else '')]
-    args += ['--set', name, 'popup.drawing=on']
+    args += ['--set', name, 'popup.drawing=on', 'background.drawing=on',
+             'background.color=' + appearance.color('highlight', '66')]
     bar(*args)
+    store('active.json', {'name': name, 'time': time.time()})
 
 
 def native_item(title):
@@ -272,6 +329,7 @@ def close_panels():
     for panel in PANELS:
         args += ['--set', panel, 'popup.drawing=off', 'background.drawing=off']
     bar(*args)
+    store('active.json', {})
 
 
 def action(args):
@@ -314,6 +372,10 @@ def main():
     kind, name, *extra = sys.argv[1:]
     if kind == 'hover' and name in PANELS:
         show(name)
+    elif kind == 'keep' and name.split('.', 1)[0] in PANELS:
+        keep(name)
+    elif kind == 'leave' and name.split('.', 1)[0] in PANELS:
+        leave(name)
     elif kind == 'access':
         if os.environ.get('SENDER')!='desktop_access_check':
             return
@@ -331,13 +393,8 @@ def main():
         with ThreadPoolExecutor(max_workers=3) as pool:
             list(pool.map(fresh_rows, targets))
     elif kind == 'cancel':
-        store('hover.json', [time.time_ns(), None])
-        close_panels()
-    elif kind == 'close':
-        token = [time.time_ns(), None]
-        store('hover.json', token)
-        time.sleep(0.25)
-        if read('hover.json') == token:
+        with interaction():
+            store('hover.json', [time.time_ns(), None])
             close_panels()
     elif kind == 'slider':
         if name in ('volume', 'brightness'):

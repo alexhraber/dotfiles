@@ -1,82 +1,78 @@
 {
   "schema_version": "1.0.0",
   "baseline": {
-    "accepted_commit": "7c4306450b209bd57054ff80707c2ee2c4b44b19"
+    "accepted_commit": "ee72ce2ce388fb992c11c63b457607186b2dd4f8"
   },
   "change": {
-    "id": "change_01M50DGDKAXS3VJN875HZ0W15P",
-    "base_commit": "7c4306450b209bd57054ff80707c2ee2c4b44b19",
+    "id": "change_01M50J0HE09ZV4RK65GWFMTBAT",
+    "base_commit": "ee72ce2ce388fb992c11c63b457607186b2dd4f8",
     "target_base": "origin/main"
   },
   "checkpoints": [
     {
-      "id": "icons-only-transparent-dock",
-      "summary": "Remove all non-icon chrome and shadow; retain autohide, magnification and explicit context actions, and pass blank regions through.56host checks and native alpha inspection passed; canonical proof pending.",
-      "input_digest": "sha256:29d806df00e6c559235dad482cd8213eea2084296101b6794cc05bba00148e3f",
-      "proof_refs": [
-        "/private/tmp/dotfiles-alpha-proof.swift",
-        "host:scripts-check:56-tests"
-      ]
+      "id": "polished-icon-bar",
+      "summary": "Compact hardware icons and stable readings, stationary reveal, opaque popups and serialized cancellable hover lifecycle;62 host tests, native checks, installed doctor and live queries pass.",
+      "input_digest": "sha256:9abad10e941df1569451b13aef9bb3f2a9025b35b6e220a247ad209dcc907165"
     },
     {
-      "id": "icons-bottom-hover-canonical",
-      "summary": "Fully transparent icons-only dock, bottom-aligned reveal footprint, unchanged resting size and 25 percent larger peak hover; host56 tests and native geometry pass, active healthy.",
-      "input_digest": "sha256:ced48ff1ff1ee98e31bd60199438b6991c89f7cfb15582e790dc256688066f47"
+      "id": "utilization-bar-final",
+      "summary": "Icon-based fixed-width CPU/GPU utilization and memory, Fahrenheit hover details, stationary reveal and cancellable serialized popups;62 host tests and native checks passed, live values verified.",
+      "input_digest": "sha256:9fab0ed59b40a662433e345dd7f05cb36733564365f38a426d3e4365d8ad80ba"
     }
   ],
   "intents": {
-    "intent:icons-bottom-hover-final": {
+    "intent:polished-utilization-bar": {
       "acceptance_criteria": [],
       "assumptions": [],
       "boundaries": [],
       "constraints": [],
       "created_sequence": 1,
-      "id": "intent:icons-bottom-hover-final",
+      "id": "intent:polished-utilization-bar",
       "out_of_scope": [],
       "proof_requirements": [],
-      "raw_intent": "Fully transparent icons-only dock; reveal where icons will appear or grow from screen bottom; retain resting size and enlarge current hover size 25 percent.",
-      "refined_intent": "Bottom-align icons, reveal from the 44-point future footprint, preserve resting40-point size, increase unconstrained peak62 to77.5points, retain transparency, autohide and click-through. Verify, merge and push main.",
+      "raw_intent": "Refine the janky top bar; replace CPU GPU RAM words with icons; display CPU/GPU utilization in the bar and other details on hover.",
+      "refined_intent": "Distinct icons, fixed-width utilization/memory readings, stationary reveal and robust cancellable hover panels; keep Fahrenheit in details, pinned weather, far-right notifications and rollback. Verify, apply, merge and push main.",
       "status": "refined",
       "updated_sequence": 3
     }
   },
   "epochs": {
-    "ve_6ecb407b244c0098": {
+    "ve_d568342e0e6e40e3": {
       "constitution_hash": "sha256:2a8f4611e9727b754c29e2d34ad0ad648c78c8e76c607fe3ef2c6fb0a48983e4",
       "constitution_version": "embedded-docs@0.115.0",
-      "epoch_id": "ve_6ecb407b244c0098",
+      "epoch_id": "ve_d568342e0e6e40e3",
       "evaluator_identity": "decapod-validate@0.115.0",
       "evaluator_set_hash": "sha256:9e6b438cfcc84ae873e2f38f0f78d9b58ddf784a880014255d8810f5d21e4cdb",
-      "generated_specs_fingerprint": "28f7bdc2fc429ce5202d147410f01c9dad1db7d7b5acadb11a1a45815e8db4d1",
-      "generated_specs_manifest_hash": "sha256:443c8d10f0fa4024424678e3ddeeab9668083eccf0ca9c07839843837315d28f",
+      "generated_specs_fingerprint": "3412d50e5e69a575f172f6b4b458f8614c825455ff14863d5e350e7270cc7cb1",
+      "generated_specs_manifest_hash": "sha256:27f3dd580b63064f972dfa375bb062d4ae7722829c64b1a3d60310ec6cb3c961",
       "material_hashes": {
         "constitution:core/DECAPOD": "sha256:2a8f4611e9727b754c29e2d34ad0ad648c78c8e76c607fe3ef2c6fb0a48983e4",
-        "generated_spec:.decapod/managed/specs/ARCHITECTURE.md": "sha256:0f314c81762da9782034d7df2f8aa7a326092f12a7a073d120a2c132a2924dbf",
-        "generated_spec:.decapod/managed/specs/INTENT.md": "sha256:93ca6d869f9ff0aaa1718bdb7b556d267bcac08b51f24293c883ff5c3d099a0d",
-        "generated_spec:.decapod/managed/specs/INTERFACES.md": "sha256:04f51d439f97d94df7620b629cc7ac53a8633ac01a707b037c2bc57431d2890d",
-        "generated_spec:.decapod/managed/specs/OPERATIONS.md": "sha256:bf8144d07ddce0c113f799b4ac13ff641f3add27671a217dd21f12747c4a15c2",
-        "generated_spec:.decapod/managed/specs/README.md": "sha256:642f9e4fb3b6af2ecb3e90ea0cb78d87b4ebd3bb03bb1addc38262e8fbcc727d",
-        "generated_spec:.decapod/managed/specs/SECURITY.md": "sha256:ef1dab3fb5427ad7135f26425c517d10e5731553e529fbd46b04b02f347885d0",
-        "generated_spec:.decapod/managed/specs/SEMANTICS.md": "sha256:4bcadc70d9bc57578856e793135af8892fff8c9c6e043f75bf5ce3242ee68196",
-        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:ffbb900b8e53c0cbfcefea6d845210e313bec0026d0b18ab2c3d2dcb5a17aad6",
-        "generated_specs_fingerprint": "28f7bdc2fc429ce5202d147410f01c9dad1db7d7b5acadb11a1a45815e8db4d1",
-        "generated_specs_manifest": "sha256:443c8d10f0fa4024424678e3ddeeab9668083eccf0ca9c07839843837315d28f",
-        "governance_context": "sha256:9d3398d2f38479d70a08ff022796624c248c316432a23ae0e1ac761124355955",
+        "generated_spec:.decapod/managed/specs/ARCHITECTURE.md": "sha256:aa65ee7b0f6e87bbb016c7c3493b47d006e12a0fea93e290b07e637b62ecd661",
+        "generated_spec:.decapod/managed/specs/INTENT.md": "sha256:969e90a417692c43dac1d47f2dd89285344b32150b7fc0d28330a9c89b62f966",
+        "generated_spec:.decapod/managed/specs/INTERFACES.md": "sha256:3e70b315a454bf3d5bfbc7daf085a329b48feded6152a3c32fa713da23aada8c",
+        "generated_spec:.decapod/managed/specs/OPERATIONS.md": "sha256:79ad567731b9aeca7e123460be73e6363cfcaa1a2fea38827b1dcc99aae4ada0",
+        "generated_spec:.decapod/managed/specs/README.md": "sha256:935b84d558168fbc3fe3a776f69abe21f3ea5e6ac8a3bf84cc522b773152d8ce",
+        "generated_spec:.decapod/managed/specs/SECURITY.md": "sha256:09dbd7a868544a1d63e2a401862c72f2eaaf26fded3949ef2338ce1ccf20db60",
+        "generated_spec:.decapod/managed/specs/SEMANTICS.md": "sha256:0428cf91c7a4848e8b03693bcb715bd71d3680f4d7f6203ec9d7be1c4da57dbc",
+        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:4991414497834c6070fe659d7806151e482b6bd009cc0a0bd26149f30b110de6",
+        "generated_specs_fingerprint": "3412d50e5e69a575f172f6b4b458f8614c825455ff14863d5e350e7270cc7cb1",
+        "generated_specs_manifest": "sha256:27f3dd580b63064f972dfa375bb062d4ae7722829c64b1a3d60310ec6cb3c961",
+        "governance_context": "sha256:258c64e804a3196b4927685a881486dbeb91c46bdbf4387f6d727d101417e2a7",
         "governance_material:.decapod/managed/Dockerfile.decapod": "sha256:1b0e312b4164c34cbfd351a406e465ceaefffbf7ae196f1e07f05b71ae7526b3",
         "governance_material:AGENTS.md": "sha256:66aea85a529f3d057ba054f4e8dec5d88d2914ee554397219398203117f6ad59",
         "governance_material:CLAUDE.md": "sha256:852c35dcb100d65725ede1d6ecf0ed9b6398993a55268ffda56a98ff634577ac",
         "governance_material:CODEX.md": "sha256:f3aa0b4f0f1deeec77c76d985d9c20013a8717271637013986606cf5d15a1bb0",
         "governance_material:GEMINI.md": "sha256:13d954c7e064d4c9283d09474765e1d25350ddb2d1084c4186f6dfa9698ee63a",
         "governance_section:claims": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
-        "governance_section:plan": "sha256:f018458a5ea790815ff70bfac21b795736837cab871e1a7894636692d41399a5",
-        "living_spec_material:.decapod/managed/specs/ARCHITECTURE.md": "sha256:7e3dc123f4f5af4c0d3fa2519fbe6921b63f8bf8db7f46ec7a6e506735e29b21",
-        "living_spec_material:.decapod/managed/specs/INTENT.md": "sha256:42ff552564d7b733043c7a9d9ab3cba5949065ce6149851f7a6a9657c9b7f967",
-        "living_spec_material:.decapod/managed/specs/INTERFACES.md": "sha256:30e1061b2e00a0811af771ba53ecf77d715f3926bac6eefe894e57e0c15a4acc",
+        "governance_section:plan": "sha256:57e3d3c5511bc5c3ea83a5a31605f1472f20da1d2ecd43ac8a28a832338d9763",
+        "living_spec_material:.decapod/managed/specs/ARCHITECTURE.md": "sha256:fbec64596fd60fd7cd118848a9b49dee3ac4b73ac034603bd64bffd7433a2b38",
+        "living_spec_material:.decapod/managed/specs/INTENT.md": "sha256:a74bbefa07e1fb17b49e398e37128d74855f31eda2b233c42488fcf5d9068192",
+        "living_spec_material:.decapod/managed/specs/INTERFACES.md": "sha256:a1591c56788c5eb176884ebd31cb0a0ec497c49c417d51d19e0b15fe9fbf2713",
         "living_spec_material:.decapod/managed/specs/OPERATIONS.md": "sha256:b43e9fa0eef9fb3e28d84cc5386c79f64f1f3cb9a37a1b8834bbb84e24dbea17",
         "living_spec_material:.decapod/managed/specs/README.md": "sha256:0988c85d6c05f02d52684c9aafae50e95fd5d5576739d3e9d995af682697fd99",
         "living_spec_material:.decapod/managed/specs/SECURITY.md": "sha256:5fc8a37235845fe072a5fb4ef5c678b4864c71fca1c15326c5563478bdb8e494",
         "living_spec_material:.decapod/managed/specs/SEMANTICS.md": "sha256:92bbe2607c6f8f94191a95ea977d9785f3472a0fae2835520dd86eae73130d5c",
-        "living_spec_material:.decapod/managed/specs/VALIDATION.md": "sha256:b344d931e64fbb31aebd659f35da172d122fdf921dfc78ab4535797caed9afa6",
+        "living_spec_material:.decapod/managed/specs/VALIDATION.md": "sha256:d4bea7f2b2e250db4e7f023c73ca4e24a133c062ae39ab1269be57d5bd69153f",
         "proof_rubric": "sha256:99e8ef25629da391e9b479db9fff52b82f340224f7a69d8a88d2992ae8e90466",
         "validation_profile": "sha256:37a8eec1ce19687d132fe29051dca629d164e2c4958ba141d5f4133a33f0688f"
       },
@@ -95,7 +91,7 @@
       },
       "deferred_questions": [],
       "human_questions": [],
-      "intent": "Make the native fullscreen dock entirely transparent with only grouped application icons. Remove chrome, labels, badges, active markers and shadow. User feedback adds bottom-aligned icons and reveal from the future icon footprint, preserving the resting size while increasing peak hover size by 25 percent. Retain autohide, magnification, explicit context actions and transparent-area click-through. Preserve bar/themes, pinned97750 weather, Fahrenheit, rollback and manual Ollama. Verify geometry and native rendering, apply, merge and push main.",
+      "intent": "Polish the single autohiding fullscreen bar: distinct CPU/GPU/memory icons, compact CPU/GPU utilization percentages and used memory at bar level, temperatures/power/fans/capacity/swap on hover, stable widths and quieter hierarchy. Fix canceled/stale hover popups, same-panel close/reopen flicker and popup transfer; stable-position reveal. Preserve controls, notifications far right, pinned97750 weather, Fahrenheit in details, existing themes and reversible lifecycle. Verify hover regressions, native checks, live state and full publication proof; apply, merge and push main.",
       "phases": [],
       "proof_hooks": [
         "decapod validate"
@@ -105,47 +101,51 @@
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/ARCHITECTURE.md",
-          "reason": "Reviewed the native-only source inventory change: bottom-aligned icon drawing/hit geometry, future-footprint reveal region and 25 percent larger peak. Same required check owner now tests these meaningful geometry invariants; CI and command closure unchanged.",
-          "reviewed_code_fingerprint": "28f7bdc2fc429ce5202d147410f01c9dad1db7d7b5acadb11a1a45815e8db4d1",
-          "spec_material_hash": "7e3dc123f4f5af4c0d3fa2519fbe6921b63f8bf8db7f46ec7a6e506735e29b21"
+          "reason": "Reviewed complete inventory with the user-requested metrics refinement: CPU/GPU labels show utilization percentages; heat warning thresholds and Fahrenheit details remain. Fixed-width icons, stationary reveal and serialized cancelable hover design remain tested.",
+          "reviewed_code_fingerprint": "3412d50e5e69a575f172f6b4b458f8614c825455ff14863d5e350e7270cc7cb1",
+          "spec_material_hash": "fbec64596fd60fd7cd118848a9b49dee3ac4b73ac034603bd64bffd7433a2b38"
         },
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/INTERFACES.md",
-          "reason": "Documented 44-point reveal footprint and bottom alignment, unchanged resting size and 77.5-point peak, icons-only transparency and retained context/autohide actions.",
-          "reviewed_code_fingerprint": "28f7bdc2fc429ce5202d147410f01c9dad1db7d7b5acadb11a1a45815e8db4d1",
-          "spec_material_hash": "30e1061b2e00a0811af771ba53ecf77d715f3926bac6eefe894e57e0c15a4acc"
+          "reason": "Updated the bar-level metric contract to CPU/GPU utilization percentages and used GiB with hardware temperatures, power and fans on hover, per latest explicit user preference.",
+          "reviewed_code_fingerprint": "3412d50e5e69a575f172f6b4b458f8614c825455ff14863d5e350e7270cc7cb1",
+          "spec_material_hash": "a1591c56788c5eb176884ebd31cb0a0ec497c49c417d51d19e0b15fe9fbf2713"
         },
         {
           "disposition": "unchanged_with_reason",
           "path": ".decapod/managed/specs/SECURITY.md",
-          "reason": "Pointer-region and icon geometry changes add no permissions, private APIs, network or credential surfaces. Empty transparent regions retain mouse click-through.",
-          "reviewed_code_fingerprint": "28f7bdc2fc429ce5202d147410f01c9dad1db7d7b5acadb11a1a45815e8db4d1",
+          "reason": "Reviewed metric-label refinement and preceding bar changes; no new permissions, credential, account, network or private API boundaries. Private state stays outside Git.",
+          "reviewed_code_fingerprint": "3412d50e5e69a575f172f6b4b458f8614c825455ff14863d5e350e7270cc7cb1",
           "spec_material_hash": "5fc8a37235845fe072a5fb4ef5c678b4864c71fca1c15326c5563478bdb8e494"
         }
       ],
       "state": "APPROVED",
       "stop_conditions": [],
-      "title": "Make the fullscreen dock fully transparent and icons only",
+      "title": "Polish the autohiding top bar interaction and visual design",
       "todo_ids": [
-        "docs_01m50deg60dyrxh3"
+        "arch_01m50hzwnw0mhyet"
       ],
       "unknowns": [],
       "unresolved_contradictions": [],
-      "updated_at": "1792091758Z"
+      "updated_at": "1792095973Z"
     },
     "trajectory": {
       "active_boundaries": [
-        "No changes to Spaces, shortcuts, accounts, models or existing CI obligations"
+        "Preserve fullscreen Spaces, transparent dock, native menu suppression, notifications far right, pinned97750 weather and manual models"
       ],
-      "artifact_hash": "sha256:ed7a3e6ea4e28232c8225713e677d057d2cad11882f66e7c7a6a09713f798ee3",
+      "artifact_hash": "sha256:db6c328dbfd06e9d37dba60ee37985787b8efa703eeaa01d93639818830f9f16",
       "checks": [
         {
           "name": "decapod validate",
           "status": "passed"
         },
         {
-          "name": "host-56-tests",
+          "name": "desktop-doctor",
+          "status": "passed"
+        },
+        {
+          "name": "host-62-tests",
           "status": "passed"
         },
         {
@@ -153,7 +153,7 @@
           "status": "passed"
         },
         {
-          "name": "native-geometry",
+          "name": "native-compile-geometry-swift",
           "status": "passed"
         }
       ],
@@ -162,27 +162,27 @@
         "events": [
           {
             "event_id": "event:2",
-            "intent_id": "intent:icons-bottom-hover-final",
+            "intent_id": "intent:polished-utilization-bar",
             "kind": "created",
             "sequence": 2
           },
           {
             "event_id": "event:3",
-            "intent_id": "intent:icons-bottom-hover-final",
+            "intent_id": "intent:polished-utilization-bar",
             "kind": "refined",
             "sequence": 3
           },
           {
-            "detail": "trajectory:icons-bottom-hover-final",
+            "detail": "trajectory:polished-utilization-bar",
             "event_id": "event:4",
-            "intent_id": "intent:icons-bottom-hover-final",
+            "intent_id": "intent:polished-utilization-bar",
             "kind": "trajectory_step_recorded",
             "sequence": 4
           },
           {
-            "detail": "trajectory:icons-bottom-hover-final",
+            "detail": "trajectory:polished-utilization-bar",
             "event_id": "event:5",
-            "intent_id": "intent:icons-bottom-hover-final",
+            "intent_id": "intent:polished-utilization-bar",
             "kind": "trajectory_step_recorded",
             "sequence": 5
           }
@@ -191,23 +191,29 @@
         "next_sequence": 5,
         "schema_version": "1.0.0",
         "trajectories": {
-          "icons-bottom-hover-final": {
+          "polished-utilization-bar": {
             "evidence_only": true,
-            "id": "icons-bottom-hover-final",
-            "intent_id": "intent:icons-bottom-hover-final",
+            "id": "polished-utilization-bar",
+            "intent_id": "intent:polished-utilization-bar",
             "steps": [
               {
                 "action": "validation",
                 "custody_event_id": "event:4",
                 "observations": [
+                  ".config/sketchybar/plugins/controls.py",
+                  ".config/sketchybar/plugins/metrics.py",
+                  ".config/sketchybar/sketchybarrc",
+                  ".config/sketchybar/plugins/controls.py",
+                  ".config/sketchybar/plugins/metrics.py",
                   "scripts/desktop-edge.m",
-                  "scripts/desktop-edge.m",
-                  "Shared macOS check owner passed all56 tests, warnings-as-errors native compile, Swift typecheck and geometry assertions for bottom alignment, reveal footprint, unchanged40pt resting size and exact77.5pt peak. Desktop apply healthy. Earlier own-view alpha proof established fully clear background; drawing remains icons-only. Reviewed complete source inventory: only native helper hash changed, CI/runtime closure unchanged."
+                  "tests/test_desktop.py",
+                  "Latest preference implemented: CPU/GPU utilization percentages with distinct icons and fixed widths; used memory beside RAM icon; Fahrenheit temperatures remain in hover.62 host tests and native Werror compile/geometry/Swift checks pass. Six regression cases cover cancel, transfer, bridge and stale hover behavior. Installed doctor and actual apply healthy. Complete inventory reviewed and declared: only intended bar/native helper changes, unchanged CI and proof execution closure. Native quick-panel OS approvals and whole-screen subjective visual verdict remain unverified. Two prior completed tasks had missing completion baselines; supported prune/recomplete recovery has reopened them for genuine proof, without claiming they passed."
                 ],
                 "proof_refs": [
-                  "host-56-tests",
-                  "native-geometry",
-                  "live-apply"
+                  "host-62-tests",
+                  "native-compile-geometry-swift",
+                  "live-apply",
+                  "desktop-doctor"
                 ],
                 "scope": [],
                 "sequence": 4,
@@ -220,12 +226,13 @@
                 "observations": [
                   ".decapod/governance.json",
                   ".decapod/governance.json",
-                  "validation epoch ve_6ecb407b244c0098 completed with zero failures"
+                  "validation epoch ve_d568342e0e6e40e3 completed with zero failures"
                 ],
                 "proof_refs": [
                   "decapod validate"
                 ],
                 "scope": [
+                  ".config/sketchybar",
                   "scripts/desktop-edge.m"
                 ],
                 "sequence": 5,
@@ -239,71 +246,33 @@
         "decapod validate"
       ],
       "evidence": [
-        "Shared macOS check owner passed all56 tests, warnings-as-errors native compile, Swift typecheck and geometry assertions for bottom alignment, reveal footprint, unchanged40pt resting size and exact77.5pt peak. Desktop apply healthy. Earlier own-view alpha proof established fully clear background; drawing remains icons-only. Reviewed complete source inventory: only native helper hash changed, CI/runtime closure unchanged.",
-        "validation epoch ve_6ecb407b244c0098 completed with zero failures"
-      ],
-      "execution_checkpoints": [
-        {
-          "binding": {
-            "governance_digest": "sha256:654e812c7fc96c1a363ddd7dd90fb5258af71ed47565c40eaa3e09ae7c5cfe06",
-            "head_revision": "5498d19039363f970b5a40d352bb2c0f866beefa",
-            "intent_id": "intent:icons-bottom-hover-final",
-            "material_digest": "sha256:a5c1f252389857a7980f2ac2d268a81409bb0d422477c28e9f131d67eab13073",
-            "plan_digest": "sha256:9148c22e2da0ed65d055f602c9ac017de475d14a40961959312da183d4bd055a",
-            "policy_digest": "sha256:f010e3035858274a6d9faae49b266b6099dd3b63ae1438e872e96648588c8135",
-            "required_approvals": [],
-            "run_id": "icons-bottom-hover-final",
-            "schema_version": "1.0.0",
-            "task_custody_digest": "sha256:fdccc2b670ed474fd2c3168222dd822b6bcd8991baa55823cb49e67bdd8d8d39",
-            "task_id": "docs_01m50deg60dyrxh3",
-            "trajectory_digest": "sha256:aa3706a4d40eab2d9438f3988fd42403a4ff57cdbc287bf3719f8ee4ccf4256a",
-            "validation_epoch_digest": "sha256:48eaa9fecaea9c6c363c2f09571b6eba5a305111573822d1e88900677651d698",
-            "work_branch": "agent/unknown/docs_01m50deg60dyrxh3"
-          },
-          "binding_digest": "sha256:5f24323bbf7287641e492a5d3c18a8b8e469990d6f01bd5e945a73aba8425c19",
-          "checkpoint_id": "icons-bottom-hover-publication",
-          "sequence": 1
-        },
-        {
-          "binding": {
-            "governance_digest": "sha256:1ac0b4e5eb51aa51a99f164f6b794b67d069a110700e63c409860ec8e748d8dc",
-            "head_revision": "7c4306450b209bd57054ff80707c2ee2c4b44b19",
-            "intent_id": "intent:icons-bottom-hover-final",
-            "material_digest": "sha256:a5c1f252389857a7980f2ac2d268a81409bb0d422477c28e9f131d67eab13073",
-            "plan_digest": "sha256:9148c22e2da0ed65d055f602c9ac017de475d14a40961959312da183d4bd055a",
-            "policy_digest": "sha256:f010e3035858274a6d9faae49b266b6099dd3b63ae1438e872e96648588c8135",
-            "required_approvals": [],
-            "run_id": "icons-bottom-hover-final",
-            "schema_version": "1.0.0",
-            "task_custody_digest": "sha256:fdccc2b670ed474fd2c3168222dd822b6bcd8991baa55823cb49e67bdd8d8d39",
-            "task_id": "docs_01m50deg60dyrxh3",
-            "trajectory_digest": "sha256:aa3706a4d40eab2d9438f3988fd42403a4ff57cdbc287bf3719f8ee4ccf4256a",
-            "validation_epoch_digest": "sha256:48eaa9fecaea9c6c363c2f09571b6eba5a305111573822d1e88900677651d698",
-            "work_branch": "agent/unknown/docs_01m50deg60dyrxh3"
-          },
-          "binding_digest": "sha256:516a2706fe8f527efba5fb47b3de9b6d4f6d5891d41f2314176119df2aa55051",
-          "checkpoint_id": "icons-bottom-hover-squashed",
-          "sequence": 2
-        }
+        "Latest preference implemented: CPU/GPU utilization percentages with distinct icons and fixed widths; used memory beside RAM icon; Fahrenheit temperatures remain in hover.62 host tests and native Werror compile/geometry/Swift checks pass. Six regression cases cover cancel, transfer, bridge and stale hover behavior. Installed doctor and actual apply healthy. Complete inventory reviewed and declared: only intended bar/native helper changes, unchanged CI and proof execution closure. Native quick-panel OS approvals and whole-screen subjective visual verdict remain unverified. Two prior completed tasks had missing completion baselines; supported prune/recomplete recovery has reopened them for genuine proof, without claiming they passed.",
+        "validation epoch ve_d568342e0e6e40e3 completed with zero failures"
       ],
       "inspected_files": [
-        "scripts/desktop-edge.m"
+        ".config/sketchybar/plugins/controls.py",
+        ".config/sketchybar/plugins/metrics.py",
+        ".config/sketchybar/sketchybarrc"
       ],
-      "intent_id": "intent:icons-bottom-hover-final",
+      "intent_id": "intent:polished-utilization-bar",
       "modified_files": [
+        ".config/sketchybar/plugins/controls.py",
+        ".config/sketchybar/plugins/metrics.py",
         ".decapod/governance.json",
-        "scripts/desktop-edge.m"
+        "scripts/desktop-edge.m",
+        "tests/test_desktop.py"
       ],
       "next_transitions": [
         "publish"
       ],
       "repo_scope": [
+        ".config/sketchybar",
         "scripts/desktop-edge.m"
       ],
-      "run_id": "icons-bottom-hover-final",
+      "run_id": "polished-utilization-bar",
       "schema_version": "1.1.0",
       "shortcut_risk_signals": [],
-      "task_id": "docs_01m50deg60dyrxh3",
+      "task_id": "arch_01m50hzwnw0mhyet",
       "tool_calls": [],
       "unresolved_assumptions": []
     },
@@ -318,53 +287,49 @@
       },
       "decapod_release": "0.115.0",
       "drift_findings": [],
-      "elapsed_ms": 1485,
-      "epoch_ref": "ve_6ecb407b244c0098",
+      "elapsed_ms": 1812,
+      "epoch_ref": "ve_d568342e0e6e40e3",
       "fail_count": 0,
       "failures": [],
       "gate_timings": [
         {
-          "elapsed_ms": 312,
-          "name": "validate_markdown_primitives_roundtrip_gate"
-        },
-        {
-          "elapsed_ms": 245,
+          "elapsed_ms": 518,
           "name": "validate_project_specs_docs"
         },
         {
-          "elapsed_ms": 190,
-          "name": "validate_machine_contract"
+          "elapsed_ms": 295,
+          "name": "validate_markdown_primitives_roundtrip_gate"
         },
         {
-          "elapsed_ms": 174,
+          "elapsed_ms": 233,
           "name": "validate_stale_workspaces"
         },
         {
-          "elapsed_ms": 98,
-          "name": "validate_obligations"
+          "elapsed_ms": 214,
+          "name": "validate_machine_contract"
         },
         {
-          "elapsed_ms": 91,
+          "elapsed_ms": 126,
           "name": "validate_git_workspace_context"
         },
         {
-          "elapsed_ms": 64,
+          "elapsed_ms": 92,
+          "name": "validate_obligations"
+        },
+        {
+          "elapsed_ms": 66,
           "name": "validate_legacy_jsonl_retired"
         },
         {
-          "elapsed_ms": 55,
-          "name": "validate_gatekeeper_gate"
-        },
-        {
-          "elapsed_ms": 35,
+          "elapsed_ms": 32,
           "name": "validate_archive_integrity"
         },
         {
-          "elapsed_ms": 17,
+          "elapsed_ms": 18,
           "name": "validate_repomap_determinism"
         },
         {
-          "elapsed_ms": 15,
+          "elapsed_ms": 16,
           "name": "validate_schema_determinism"
         },
         {
@@ -372,7 +337,7 @@
           "name": "validate_control_plane_contract"
         },
         {
-          "elapsed_ms": 12,
+          "elapsed_ms": 11,
           "name": "validate_git_push_pr_gate"
         },
         {
@@ -380,15 +345,19 @@
           "name": "validate_git_protected_branch"
         },
         {
-          "elapsed_ms": 11,
-          "name": "validate_no_legacy_namespaces"
-        },
-        {
-          "elapsed_ms": 9,
+          "elapsed_ms": 10,
           "name": "validate_federation_gates"
         },
         {
-          "elapsed_ms": 5,
+          "elapsed_ms": 10,
+          "name": "validate_no_legacy_namespaces"
+        },
+        {
+          "elapsed_ms": 6,
+          "name": "validate_gatekeeper_gate"
+        },
+        {
+          "elapsed_ms": 6,
           "name": "validate_lineage_hard_gate"
         },
         {
@@ -397,27 +366,15 @@
         },
         {
           "elapsed_ms": 3,
-          "name": "validate_watcher_audit"
-        },
-        {
-          "elapsed_ms": 3,
           "name": "validate_lcm_immutability"
         },
         {
           "elapsed_ms": 3,
+          "name": "validate_watcher_audit"
+        },
+        {
+          "elapsed_ms": 2,
           "name": "validate_knowledge_promotions_if_present"
-        },
-        {
-          "elapsed_ms": 3,
-          "name": "validate_lcm_rebuild_gate"
-        },
-        {
-          "elapsed_ms": 2,
-          "name": "validate_entrypoint_invariants"
-        },
-        {
-          "elapsed_ms": 2,
-          "name": "validate_plan_governed_execution_gate"
         },
         {
           "elapsed_ms": 2,
@@ -425,11 +382,19 @@
         },
         {
           "elapsed_ms": 2,
-          "name": "validate_jev_history_if_present"
+          "name": "validate_plan_governed_execution_gate"
+        },
+        {
+          "elapsed_ms": 2,
+          "name": "validate_lcm_rebuild_gate"
         },
         {
           "elapsed_ms": 2,
           "name": "validate_knowledge_integrity"
+        },
+        {
+          "elapsed_ms": 2,
+          "name": "validate_jev_history_if_present"
         },
         {
           "elapsed_ms": 2,
@@ -441,15 +406,11 @@
         },
         {
           "elapsed_ms": 2,
-          "name": "validate_health_purity"
-        },
-        {
-          "elapsed_ms": 1,
           "name": "validate_recursive_improvement_passes_if_present"
         },
         {
-          "elapsed_ms": 1,
-          "name": "validate_override_authority"
+          "elapsed_ms": 2,
+          "name": "validate_entrypoint_invariants"
         },
         {
           "elapsed_ms": 1,
@@ -457,10 +418,18 @@
         },
         {
           "elapsed_ms": 1,
+          "name": "validate_health_purity"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_override_authority"
+        },
+        {
+          "elapsed_ms": 1,
           "name": "validate_policy_integrity"
         },
         {
-          "elapsed_ms": 0,
+          "elapsed_ms": 1,
           "name": "validate_health_cache_integrity"
         },
         {
@@ -470,10 +439,6 @@
         {
           "elapsed_ms": 0,
           "name": "validate_project_config_toml"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_project_scoped_state"
         },
         {
           "elapsed_ms": 0,
@@ -493,11 +458,15 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_docs_templates_bucket"
+          "name": "validate_project_scoped_state"
         },
         {
           "elapsed_ms": 0,
           "name": "validate_heartbeat_invocation_gate"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_docs_templates_bucket"
         },
         {
           "elapsed_ms": 0,
@@ -509,23 +478,11 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_internalization_artifacts_if_present"
-        },
-        {
-          "elapsed_ms": 0,
           "name": "validate_context_capsules_if_present"
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_embedded_self_contained"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_interface_contract_bootstrap"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_state_commit_gate"
+          "name": "validate_internalization_artifacts_if_present"
         },
         {
           "elapsed_ms": 0,
@@ -533,11 +490,19 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_eval_gate_if_required"
+          "name": "validate_embedded_self_contained"
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_risk_map"
+          "name": "validate_state_commit_gate"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_interface_contract_bootstrap"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_eval_gate_if_required"
         },
         {
           "elapsed_ms": 0,
@@ -545,27 +510,31 @@
         },
         {
           "elapsed_ms": 0,
+          "name": "validate_risk_map"
+        },
+        {
+          "elapsed_ms": 0,
           "name": "validate_tooling_gate"
         }
       ],
-      "git_revision": "7c4306450b209bd57054ff80707c2ee2c4b44b19",
+      "git_revision": "3cd38b97f35f70ca569dc7392e140212e8465130",
       "kind": "validation_receipt",
       "parallelism": 1,
-      "pass_count": 185,
+      "pass_count": 188,
       "prediction_uses_warnings": true,
-      "receipt_hash": "sha256:0970613a4fc2772e12841807d15cdf976a96738f4d00c5be219df25fe9ef737a",
-      "repo_signal_fingerprint": "28f7bdc2fc429ce5202d147410f01c9dad1db7d7b5acadb11a1a45815e8db4d1",
+      "receipt_hash": "sha256:06bd3aef103c8891efe83e1cc99654d478d0f8196acd3a515a922d8e164c69da",
+      "repo_signal_fingerprint": "3412d50e5e69a575f172f6b4b458f8614c825455ff14863d5e350e7270cc7cb1",
       "schema_version": "1.0.0",
       "status": "ok",
       "temporary_artifacts_cleaned": 0,
-      "trajectory_artifact_hash": "sha256:ed7a3e6ea4e28232c8225713e677d057d2cad11882f66e7c7a6a09713f798ee3",
-      "trajectory_run_id": "icons-bottom-hover-final",
+      "trajectory_artifact_hash": "sha256:db6c328dbfd06e9d37dba60ee37985787b8efa703eeaa01d93639818830f9f16",
+      "trajectory_run_id": "polished-utilization-bar",
       "warn_count": 4,
       "warnings": [
         "Risk map missing (run `decapod riskmap init`)",
-        "Stale workspaces preserved for explicit review: <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (current_workspace: workspace contains the current process; rerun prune from the host checkout after leaving this workspace so Git can release the branch)",
+        "Stale workspaces preserved for explicit review: <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (current_workspace: workspace contains the current process; rerun prune from the host checkout after leaving this workspace so Git can release the branch), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.)",
         "Watcher audit trail missing (run `decapod govern watcher run`)",
-        "Workspace branch 'agent/unknown/docs_01m50deg60dyrxh3' has unpushed commits or does not exist on origin. Branch pushes and iteration are allowed before preflight; hold PR creation until intent is converged, the branch is mergeable, and full `decapod validate` succeeds against the exact current candidate and accepted target."
+        "Workspace branch 'agent/unknown/todo-01m50h-arch_01m50hzwnw0mhyet-1792093994' has unpushed commits or does not exist on origin. Branch pushes and iteration are allowed before preflight; hold PR creation until intent is converged, the branch is mergeable, and full `decapod validate` succeeds against the exact current candidate and accepted target."
       ]
     }
   }

@@ -69,6 +69,14 @@ downloads, account setup, VM startup troubleshooting and modifying Decapod itsel
 
 ## Fullscreen desktop and on-demand inference
 
+The top bar should feel restrained and predictable. CPU/GPU/memory use icons
+instead of words; concise fixed-width CPU/GPU utilization and used memory leave
+temperatures and other details in hover panels.
+Pointer movement must not leave delayed panels behind, close panels during a
+short crossing into them, or shift targets through reveal animations or samples.
+Existing controls, imperial units, pinned weather and far-right notifications
+remain part of the single autohiding fullscreen surface.
+
 The dock is icons only: its background is fully transparent, with no glass,
 shelf, border, shadow, label, badge or active marker. Autohide, magnification,
 application grouping and right-click actions remain. Bar themes and pinned
@@ -112,7 +120,7 @@ These declarations select authoring and proof obligations; they do not attest im
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `28f7bdc2fc429ce5202d147410f01c9dad1db7d7b5acadb11a1a45815e8db4d1`
+- Repository signal fingerprint: `3412d50e5e69a575f172f6b4b458f8614c825455ff14863d5e350e7270cc7cb1`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

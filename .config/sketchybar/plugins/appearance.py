@@ -38,7 +38,7 @@ def color(key, alpha='ff'):
 def shell(palette):
     values = {'UI_' + key.upper(): '0xff' + palette[key] for key in TOKENS}
     values['UI_GLASS'] = '0xeb' + palette['surface']
-    values['UI_POPUP_GLASS'] = '0xf7' + palette['popup']
+    values['UI_POPUP_GLASS'] = '0xff' + palette['popup']
     values['UI_HOVER'] = '0x66' + palette['highlight']
     values['UI_LAYOUT'] = palette['layout']
     return '\n'.join(key + '=' + shlex.quote(value) for key, value in values.items()) + '\n'
@@ -65,8 +65,8 @@ def apply():
         args += ['--set', group, 'background.drawing=' + ('on' if active else 'off'),
                  'background.color=' + c('surface', 'eb'), 'background.border_color=' + c('border')]
     for panel in PANELS:
-        args += ['--set', panel, 'icon.color=' + c('accent'), 'label.color=' + c('foreground'),
-                 'popup.background.color=' + c('popup', 'f7'), 'popup.background.border_color=' + c('border')]
+        args += ['--set', panel, 'icon.color=' + c('muted'), 'label.color=' + c('foreground'),
+                 'popup.background.color=' + c('popup'), 'popup.background.border_color=' + c('border')]
         try:
             actions = json.loads((STATE / 'bar' / (panel + '.json')).read_text())
         except (OSError, ValueError):
@@ -80,9 +80,10 @@ def apply():
     for panel in ('volume', 'brightness'):
         args += ['--set', panel + '.slider', 'slider.highlight_color=' + c('accent'),
                  'slider.background.color=' + c('border')]
-    args += ['--set', 'clock', 'label.color=' + c('secondary'),
-             '--set', 'weather', 'label.color=' + c('secondary'),
-             '--set', 'battery', 'label.color=' + c('success')]
+    args += ['--set', 'clock', 'label.color=' + c('foreground'),
+             '--set', 'weather', 'label.color=' + c('foreground'),
+             '--set', 'battery', 'label.color=' + c('foreground'),
+             '--set', 'alerts', 'icon.color=' + c('accent')]
     subprocess.run(args, check=True, timeout=5)
 
 

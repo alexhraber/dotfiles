@@ -78,6 +78,12 @@ custom surfaces. Built-in brightness uses dynamically resolved DisplayServices.
 No injection, event tap, SIP change or cursor warping is required.
 
 .config/sketchybar contains rounded control groups and Python hover plugins.
+The bar stays at y_offset=4 and toggles visibility without sliding its anchors
+or popups. Hardware icon labels use fixed widths: CPU/GPU show utilization
+percentages and memory shows used GiB; Fahrenheit temperatures, power,
+capacity and swap remain in the panels.
+Chrome is tighter and neutral with an accent reserved for notifications and
+actions. Popups use opaque, blur-free surfaces.
 themes.json and plugins/appearance.py own three validated palettes and the
 ribbon/islands layout. A single live IPC update restyles existing items and
 toggles bracket backgrounds, preserving visibility and popovers. The native
@@ -95,8 +101,14 @@ The hidden reveal region follows the resting icon footprint, 44 points tall,
 instead of requiring a trip to a three-pixel edge beneath floating icons.
 Resting size remains 40 points; unconstrained peak grows from 62 to 77.5 points.
 Geometry tests cover this ratio, bottom alignment and reveal on offset displays.
-Cached content renders before fresh device reads; request tokens reject stale
-hover responses. Read-only warmup runs on reveal. macmon samples are shared
+controls.py serializes hover state plus IPC commits under a short advisory
+file lock. Dwell and device reads happen outside the lock. Exiting an anchor
+cancels pending opens immediately; a 240ms bridge allows entering information
+rows, actionable rows, sliders or graphs before closing. Panel transfers close
+the previous panel and render the new one in one IPC; repeated hover does not
+close the active panel. Token checks reject stale fresh-data responses.
+All visible rows receive keep/leave events; only actionable rows highlight.
+Cached content renders before fresh device reads. Read-only warmup runs on reveal. macmon samples are shared
 through private state and displayed in Fahrenheit, with load graphs and alerts.
 Device operations use argv arrays. Native Wi-Fi/notification/Focus panels need
 local Accessibility/Automation. scripts/set-wallpaper.swift captures/restores
@@ -194,7 +206,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `28f7bdc2fc429ce5202d147410f01c9dad1db7d7b5acadb11a1a45815e8db4d1`
+- Repository signal fingerprint: `3412d50e5e69a575f172f6b4b458f8614c825455ff14863d5e350e7270cc7cb1`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
