@@ -261,6 +261,18 @@ specific to each project. Approval and sandbox boundaries are preserved.
 
 ## Existing local models
 
+Ollama stays off until explicitly started. Run `aiup` in a terminal, use
+Ollama clients in another terminal, then press Ctrl-C in the server terminal
+when finished. The helper runs `ollama serve` in the foreground, preloads no
+model, and defaults to unloading models after each response with
+`OLLAMA_KEEP_ALIVE=0`. It also enables Flash Attention and the `q8_0` KV cache.
+Clients can override the unload default with an explicit `keep_alive` request.
+See the [Ollama memory settings](https://docs.ollama.com/faq#how-do-i-keep-a-model-loaded-in-memory-or-make-it-unload-immediately).
+
+For an existing Homebrew service, `brew services stop ollama` stops it and
+unregisters login startup. Avoid `brew services start ollama` for this manual
+workflow, since it registers login startup. The installer never enables it.
+
 `cxlocal` starts Codex explicitly with Ollama and the already-installed
 `qwen3-coder:30b` model. Set `CODEX_LOCAL_MODEL` to choose another local model.
 It preserves approval and sandbox settings; ordinary `codex` keeps the cloud

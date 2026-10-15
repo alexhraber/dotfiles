@@ -34,6 +34,11 @@ proj chooses directories under PROJECTS_DIR (default ~/src). wt selects
 worktrees; wtnew takes a new branch and explicit directory. Paths with spaces
 are supported. mlx/mlxchat/mlxserve use MLX_ENV or ~/.venvs/mlx; cxlocal uses
 CODEX_LOCAL_MODEL or the installed qwen3-coder:30b model through Ollama.
+aiup explicitly starts Ollama in the foreground with no model preload and a
+zero keep-alive default, Flash Attention enabled, and q8_0 KV cache. Ctrl-C in
+that terminal stops the server. No helper registers a login service; clients
+may override keep_alive per request. Existing background services must be
+stopped separately with brew services stop ollama.
 cws takes an explicit container image and optional command, mounts only the
 current project, and requires an already-running Podman engine. It never starts
 a VM. tm attaches or creates the main tmux session with the standard prefix.
@@ -76,7 +81,7 @@ can leave partial state; the backup manifest remains the recovery input.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `60748b35822094592834a86196c34c2bfa40d4d9855ae3240bf34f0c4016250a`
+- Repository signal fingerprint: `9a7da8d053d167c923de250f90f469856dcbb11aa390179091a488611dc58b74`
 - Significant implementation surfaces: `.github/` (1 files), `README.md/` (1 files), `scripts/` (4 files), `tests/` (3 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
