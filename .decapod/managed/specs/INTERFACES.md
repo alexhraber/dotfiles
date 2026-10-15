@@ -50,9 +50,10 @@ toggles previews. Tmux retains Ctrl-b: h/j/k/l select panes, Shift-h/j/k/l resiz
 Tab switches to the previous window. Neovim Space ss opens the workbench;
 [b and ]b switch buffers. The default theme is Tokyo Night Storm throughout.
 
-The root justfile exposes preview, install, check, doctor, editor-check,
-brew-check and outdated. scripts/editor_check.py validates installed language
-servers in disposable fixtures rather than changing project files.
+Routine workflows invoke install.sh, scripts/check, scripts/dotfiles doctor,
+scripts/editor_check.py and Homebrew directly. No Just task runner or wrapper
+is required. scripts/editor_check.py validates installed language servers in
+disposable fixtures rather than changing project files.
 
 The dev group copies .config/mise/config.toml; mise install explicitly installs
 the declared Node/npm defaults. The reverse group copies zsh/reverse.zsh and
@@ -81,7 +82,7 @@ can leave partial state; the backup manifest remains the recovery input.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `9a7da8d053d167c923de250f90f469856dcbb11aa390179091a488611dc58b74`
+- Repository signal fingerprint: `565a71c979f06f17c41ba3d6b7655fe0f259bb145c4a7d039d23c4ea656feca1`
 - Significant implementation surfaces: `.github/` (1 files), `README.md/` (1 files), `scripts/` (4 files), `tests/` (3 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

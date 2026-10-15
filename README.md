@@ -12,7 +12,8 @@ Homebrew installs native Apple-silicon tools. Credentials, model stores, VM disk
 application state and private backup manifests stay outside Git.
 
 Treat changes as infrastructure as code: edit a declared dependency or config,
-inspect `just preview`, run `just check`, apply, then run `just doctor` and the
+inspect `./install.sh --all --deps --dry-run`, run `scripts/check`, apply,
+then run `scripts/dotfiles doctor --all` and the
 relevant integration check. Repeated apply converges to the declared state;
 doctor detects configuration drift. Only `macos` changes user defaults, with
 per-key backups. Package versions are moving releases, so reproducibility here
@@ -40,7 +41,7 @@ Select any combination with `--groups terminal,git`. The default stays
 | git | Portable Git settings, delta, global OS/editor ignore file |
 | codex | Codex app, portable CLI preferences and instructions |
 | workspace | Podman and the explicit `cws` container helper |
-| dev | GitHub CLI, jq/yq, just, uv, Cargo binary installer, linters, language servers, CMake/Ninja/pkg-config and FFmpeg |
+| dev | GitHub CLI, jq/yq, uv, Cargo binary installer, linters, language servers, CMake/Ninja/pkg-config and FFmpeg |
 | reverse | Ghidra and its Homebrew-managed JDK for REA native analysis |
 | apple | Mac App Store CLI for the explicit, interactive Xcode setup script |
 | infra | kubectl, Helm, k9s, OpenTofu and grpcurl |
@@ -89,8 +90,11 @@ must ask which team to use when signing is needed, then populate only local
 project settings or command-line overrides. Do not commit team names, Team IDs,
 Xcode account preferences, private signing projects or provisioning assets.
 
-`just preview`, `just install`, `just doctor`, `just check`, and `just brew-check`
-expose routine workflows. `just outdated` reports updates without applying them.
+Use the scripts directly; no task runner is required. Preview with
+`./install.sh --all --deps --dry-run`, apply with `./install.sh --all --deps`,
+check with `scripts/check`, and inspect the installation with
+`scripts/dotfiles doctor --all`. `brew bundle check --no-upgrade --file=Brewfile`
+checks declared packages; `brew outdated` reports updates without applying them.
 Homebrew packages are current releases, not version-pinned; Neovim plugins
 are pinned separately.
 
@@ -344,7 +348,7 @@ All VM startup must remain headless; see [the upstream startup issue](https://gi
 ```sh
 scripts/check                  # ShellCheck, zsh syntax, and isolated tests
 scripts/dotfiles doctor --all   # Dependencies and installed configuration
-just editor-check              # Real installed language servers and formatting
+python3.14 scripts/editor_check.py  # Real installed language servers and formatting
 ```
 
 The tests exercise scoped installation, backups, rollback on failure, repeated

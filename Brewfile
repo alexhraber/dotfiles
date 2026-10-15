@@ -16,7 +16,7 @@ brew "podman" if groups.include?("workspace")
 
 if groups.include?("dev")
   # Project runtimes stay under mise/rustup/uv; these are workstation tools.
-  %w[gh jq yq just uv cargo-binstall shellcheck shfmt actionlint hadolint
+  %w[gh jq yq uv cargo-binstall shellcheck shfmt actionlint hadolint
      ruff basedpyright typescript typescript-language-server bash-language-server
      lua-language-server taplo cmake ninja pkgconf ffmpeg].each { |name| brew name }
 end

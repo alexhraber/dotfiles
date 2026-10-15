@@ -258,7 +258,7 @@ def doctor(groups):
     expected = {
         'terminal': ['ghostty', 'starship', 'fastfetch', 'fzf', 'zoxide', 'direnv', 'mise', 'eza', 'bat', 'rg', 'fd', 'lazygit', 'nvim', 'btop', 'tmux'],
         'git': ['git', 'delta'], 'codex': ['codex'], 'workspace': ['podman', 'decapod'],
-        'dev': ['gh', 'jq', 'yq', 'just', 'uv', 'cargo-binstall', 'shellcheck', 'shfmt', 'actionlint', 'hadolint', 'ruff', 'basedpyright-langserver', 'tsc', 'typescript-language-server', 'bash-language-server', 'lua-language-server', 'taplo', 'cmake', 'ninja', 'pkg-config', 'ffmpeg'],
+        'dev': ['gh', 'jq', 'yq', 'uv', 'cargo-binstall', 'shellcheck', 'shfmt', 'actionlint', 'hadolint', 'ruff', 'basedpyright-langserver', 'tsc', 'typescript-language-server', 'bash-language-server', 'lua-language-server', 'taplo', 'cmake', 'ninja', 'pkg-config', 'ffmpeg'],
         'reverse': ['ghidraRun'],
         'apple': ['mas'] if sys.platform == 'darwin' else [],
         'infra': ['kubectl', 'helm', 'k9s', 'tofu', 'grpcurl'],

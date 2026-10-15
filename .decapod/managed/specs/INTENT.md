@@ -52,6 +52,10 @@ controls or credentials are changed.
 
 ## Constraints
 
+Routine operations use the existing installer, check, doctor and editor scripts
+directly. The owner does not use Just; its convenience wrapper and dependency
+are removed without removing any underlying operation or required check.
+
 The workstation rice keeps Tokyo Night Storm consistent across Ghostty, fzf,
 Starship, tmux, Neovim and Git tools. It adds a quieter local prompt, a steady
 cursor, file/directory previews, a top tmux bar with pane navigation, a Neovim
@@ -78,7 +82,7 @@ These declarations select authoring and proof obligations; they do not attest im
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `9a7da8d053d167c923de250f90f469856dcbb11aa390179091a488611dc58b74`
+- Repository signal fingerprint: `565a71c979f06f17c41ba3d6b7655fe0f259bb145c4a7d039d23c4ea656feca1`
 - Significant implementation surfaces: `.github/` (1 files), `README.md/` (1 files), `scripts/` (4 files), `tests/` (3 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
