@@ -10,14 +10,12 @@ fi
 case "${SENDER:-}" in
   mouse.entered)
     if [[ $NAME == *.* ]]; then
-      sketchybar --animate tanh 5 --set "$NAME" background.drawing=on "background.color=${UI_HOVER:-0x66294956}"
-      exit 0
+      exec python3 -B "$plugin_dir/controls.py" keep "$NAME"
     fi
     exec python3 -B "$plugin_dir/controls.py" hover "$NAME"
     ;;
   mouse.exited)
-    sketchybar --animate tanh 5 --set "$NAME" background.color=0x00000000
-    exit 0
+    exec python3 -B "$plugin_dir/controls.py" leave "$NAME"
     ;;
   mouse.clicked)
     if [[ $NAME == *.slider ]]; then
@@ -50,7 +48,7 @@ case "${NAME:-}" in
       icon.background.image="app.${INFO:-Finder}"
     ;;
   clock)
-    sketchybar --set "$NAME" label="$(date '+%a · %-I:%M %p')"
+    sketchybar --set "$NAME" label="$(date '+%-I:%M %p')"
     ;;
   battery)
     charge="$(pmset -g batt | sed -nE 's/.*[[:space:]]([0-9]+%);.*/\1/p')"

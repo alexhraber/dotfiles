@@ -5,14 +5,14 @@ config_dir="${CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/sketchybar}"
 plugin="$config_dir/plugins/status.sh"
 eval "$(python3 -B "$config_dir/plugins/appearance.py" shell)"
 
-sketchybar --bar position=top height=36 notch_display_height=40 margin=14 y_offset=6 \
+sketchybar --bar position=top height=34 notch_display_height=40 margin=12 y_offset=4 \
   corner_radius=0 border_width=0 \
   color=0x00000000 blur_radius=0 padding_left=6 padding_right=6 \
   topmost=on shadow=off show_in_fullscreen=on hidden=on
-sketchybar --default icon.font='JetBrainsMono Nerd Font:Bold:12.0' \
+sketchybar --default icon.font='JetBrainsMono Nerd Font:Regular:15.0' icon.width=18 icon.align=center \
   label.font='SF Pro:Medium:11.5' \
   icon.color="$UI_MUTED" label.color="$UI_FOREGROUND" \
-  padding_left=7 padding_right=7 label.padding_left=4 label.padding_right=4 \
+  padding_left=6 padding_right=6 label.padding_left=3 label.padding_right=3 \
   background.corner_radius=8 background.height=26
 
 sketchybar --add event desktop_revealed
@@ -21,16 +21,16 @@ sketchybar --add event desktop_access_check
 sketchybar --add item spaces left --set spaces icon='󰍹' label.drawing=off \
   icon.color="$UI_ACCENT" click_script='open -a "Mission Control"'
 sketchybar --add item front_app left --set front_app icon='' icon.width=22 \
-  icon.background.image.scale=0.3 label='Workstation' label.max_chars=22 label.font='SF Pro:Semibold:12.0' script="\"$plugin\"" \
+  icon.background.image.scale=0.3 label='Workstation' label.max_chars=18 label.font='SF Pro:Semibold:12.0' script="\"$plugin\"" \
   --subscribe front_app front_app_switched
-sketchybar --add item clock right --set clock icon.drawing=off update_freq=30 \
+sketchybar --add item clock right --set clock icon.drawing=off label.width=74 label.align=center update_freq=30 \
   label.color="$UI_SECONDARY" script="\"$plugin\""
-sketchybar --add item weather right --set weather icon='󰖙' label='—' script="\"$plugin\"" \
+sketchybar --add item weather right --set weather icon='󰖙' label='—' label.width=43 label.align=right script="\"$plugin\"" \
   update_freq=900 updates=when_shown --subscribe weather desktop_revealed system_woke
-sketchybar --add item battery right --set battery icon='󰁹' update_freq=60 \
+sketchybar --add item battery right --set battery icon='󰁹' label.width=34 label.align=right update_freq=60 \
   label.color="$UI_SUCCESS" script="\"$plugin\"" \
   --subscribe battery power_source_change system_woke desktop_revealed
-sketchybar --add item volume right --set volume icon='󰕾' script="\"$plugin\"" \
+sketchybar --add item volume right --set volume icon='󰕾' label.drawing=off script="\"$plugin\"" \
   --subscribe volume volume_change desktop_revealed
 sketchybar --add item brightness right --set brightness icon='󰃠' label.drawing=off script="\"$plugin\""
 sketchybar --add item wifi right --set wifi icon='󰖩' label='' script="\"$plugin\"" \
@@ -39,20 +39,26 @@ sketchybar --add item bluetooth right --set bluetooth icon='󰂯' label='' scrip
   update_freq=60 --subscribe bluetooth desktop_revealed system_woke
 sketchybar --add item alerts right --set alerts icon='󰂚' label='' script="\"$plugin\""
 for sensor in memory gpu cpu; do
-  sketchybar --add item "$sensor" right --set "$sensor" icon.drawing=off \
-    label.color="$UI_MUTED" label.font='SF Pro:Medium:11.0' label='…' script="\"$plugin\""
+  case "$sensor" in
+    cpu) glyph='󰻠' ;;
+    gpu) glyph='󰢮' ;;
+    memory) glyph='󰍛' ;;
+  esac
+  sketchybar --add item "$sensor" right --set "$sensor" icon="$glyph" \
+    label.color="$UI_MUTED" label.font='SF Pro:Medium:11.5' label.width=44 label.align=right \
+    label='—' script="\"$plugin\""
 done
 sketchybar --set cpu update_freq=5 \
   updates=when_shown --subscribe cpu desktop_revealed system_woke
 for parent in clock weather volume brightness wifi bluetooth alerts battery cpu gpu memory front_app; do
-  sketchybar --set "$parent" popup.align=right popup.height=30 popup.blur_radius=30 \
+  sketchybar --set "$parent" popup.align=right popup.height=30 popup.y_offset=2 popup.blur_radius=0 \
     popup.background.color="$UI_POPUP_GLASS" popup.background.border_color="$UI_BORDER" \
-    popup.background.border_width=1 popup.background.corner_radius=16 \
-    --subscribe "$parent" mouse.entered mouse.clicked
+    popup.background.border_width=1 popup.background.corner_radius=12 \
+    --subscribe "$parent" mouse.entered mouse.exited mouse.clicked
   popup_args=()
   for row in {0..13}; do
     popup_args+=(--add item "$parent.row.$row" "popup.$parent"
-      --set "$parent.row.$row" icon.drawing=off drawing=off label.width=272
+      --set "$parent.row.$row" icon.drawing=off drawing=off label.width=260
       label.font='SF Pro:Regular:12.0' label.max_chars=40
       background.height=26 background.corner_radius=7
       script="\"$plugin\"" --subscribe "$parent.row.$row" mouse.entered mouse.exited)
@@ -61,17 +67,17 @@ for parent in clock weather volume brightness wifi bluetooth alerts battery cpu 
 done
 for sensor in cpu gpu memory; do
   sketchybar --add graph "$sensor.graph" "popup.$sensor" 260 \
-    --set "$sensor.graph" icon.drawing=off label.drawing=off \
+    --set "$sensor.graph" icon.drawing=off label.drawing=off script="\"$plugin\"" \
     graph.color="$UI_ACCENT" graph.fill_color="0x33${UI_ACCENT#0xff}" graph.line_width=1.5 \
     background.height=36 background.drawing=on background.color=0x0011151d \
-    padding_left=12 padding_right=12
+    padding_left=12 padding_right=12 --subscribe "$sensor.graph" mouse.entered mouse.exited
 done
 for control in volume brightness; do
   sketchybar --add slider "$control.slider" "popup.$control" 260 \
     --set "$control.slider" icon.drawing=off label.drawing=off slider.knob='●' \
     slider.highlight_color="$UI_ACCENT" slider.background.height=5 \
     slider.background.color="$UI_BORDER" script="\"$plugin\"" \
-    --subscribe "$control.slider" mouse.clicked
+    --subscribe "$control.slider" mouse.clicked mouse.entered mouse.exited
   sketchybar --move "$control.slider" before "$control.row.1"
   sketchybar --subscribe "$control" mouse.scrolled
 done
@@ -88,15 +94,15 @@ sketchybar --add bracket ribbon cpu gpu memory bluetooth wifi brightness volume 
     --add bracket session battery weather clock \
     --add bracket notifications alerts
 for group in context ribbon hardware connections session notifications; do
-  sketchybar --set "$group" background.drawing=on background.height=34 \
-    background.corner_radius=17 background.color="$UI_GLASS" \
+  sketchybar --set "$group" background.drawing=on background.height=30 \
+    background.corner_radius=10 background.color="$UI_GLASS" \
     background.border_color="$UI_BORDER" background.border_width=1 \
     background.padding_left=-4 background.padding_right=-4
 done
-sketchybar --set cpu padding_left=14 --set memory padding_right=14 \
-  --set alerts padding_left=12 padding_right=14 icon.color="$UI_ACCENT" \
-  --set bluetooth padding_left=12 --set volume padding_right=12 \
-  --set battery padding_left=12 --set clock padding_right=12 \
+sketchybar --set cpu padding_left=12 --set memory padding_right=12 \
+  --set alerts padding_left=10 padding_right=12 icon.color="$UI_ACCENT" \
+  --set bluetooth padding_left=10 --set volume padding_right=10 \
+  --set battery padding_left=10 --set clock padding_right=10 \
   --set spaces padding_left=12 --set front_app padding_right=12
 python3 -B "$config_dir/plugins/appearance.py" apply
 sketchybar --update

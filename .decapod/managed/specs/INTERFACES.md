@@ -95,6 +95,15 @@ are furthest right; hardware warnings are not an unread notification count.
 Native quick panels need local OS permissions. No desktop-navigation keyboard
 substitute or automatic Space destruction is installed.
 
+The main bar represents CPU, GPU and memory with distinct Nerd Font icons,
+not text names. Fixed-width labels show CPU/GPU utilization percentages and used
+memory in GiB (`G`); temperatures in °F, total capacity, swap, power and fans
+remain available on hover.
+Sound and brightness are icons alone. Heat and swap warning colors remain.
+The bar reveals in place at y_offset=4. A 120ms hover dwell is canceled by exit;
+240ms grace supports crossing into popups. Reentering an open panel does not
+close/reopen it. Information rows keep the popup alive without action styling.
+
 The dock renders only app icons over fully transparent pixels. It has no shelf,
 blur, border, shadow, text, badges or active markers. Autohide, magnification,
 one icon per application and right-click Show windows/Hide/Quit are retained;
@@ -130,7 +139,7 @@ can leave partial state; the backup manifest remains the recovery input.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `28f7bdc2fc429ce5202d147410f01c9dad1db7d7b5acadb11a1a45815e8db4d1`
+- Repository signal fingerprint: `3412d50e5e69a575f172f6b4b458f8614c825455ff14863d5e350e7270cc7cb1`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

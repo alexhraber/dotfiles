@@ -71,6 +71,78 @@ class DesktopTests(unittest.TestCase):
             self.assertIn('click_script=', row)
             self.assertIn('script=', row)
 
+    def test_leaving_before_hover_dwell_cancels_pending_popup(self):
+        def during_dwell(seconds):
+            if seconds == 0.12:
+                controls.leave('cpu')
+        with tempfile.TemporaryDirectory() as temp, patch.object(controls, 'STATE', Path(temp)), \
+             patch.object(controls, 'bar') as bar, \
+             patch.object(controls.time, 'sleep', side_effect=during_dwell), \
+             patch.object(controls, 'panel_rows', side_effect=AssertionError('cancelled hover fetched data')):
+            controls.show('cpu')
+            self.assertFalse(any('popup.drawing=on' in call.args for call in bar.call_args_list))
+
+    def test_repeated_hover_does_not_close_and_reopen_current_panel(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(controls, 'STATE', Path(temp)), \
+             patch.object(controls, 'bar') as bar, patch.object(controls.time, 'sleep') as sleep:
+            controls.render_rows('volume', [('Sound', None)])
+            controls.store('volume.cache.json', {'time': time.time(), 'rows': [['Sound', None]]})
+            bar.reset_mock()
+            controls.show('volume')
+            sleep.assert_not_called()
+            bar.assert_called_once()
+            self.assertNotIn('popup.drawing=off', bar.call_args.args)
+
+    def test_panel_switch_commits_close_and_open_in_one_ipc(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(controls, 'STATE', Path(temp)), \
+             patch.object(controls, 'bar') as bar:
+            controls.render_rows('cpu', [('CPU', None)])
+            bar.reset_mock()
+            controls.render_rows('gpu', [('GPU', None)])
+            bar.assert_called_once()
+            args = bar.call_args.args
+            self.assertEqual(args[:4], ('--set', 'cpu', 'popup.drawing=off', 'background.drawing=off'))
+            self.assertIn('popup.drawing=on', args)
+            self.assertEqual(controls.read('active.json')['name'], 'gpu')
+
+    def test_anchor_to_information_row_keeps_popup_without_action_highlight(self):
+        def cross_into_popup(seconds):
+            if seconds == 0.24:
+                controls.keep('cpu.row.0')
+        with tempfile.TemporaryDirectory() as temp, patch.object(controls, 'STATE', Path(temp)), \
+             patch.object(controls, 'bar') as bar, \
+             patch.object(controls.time, 'sleep', side_effect=cross_into_popup):
+            controls.render_rows('cpu', [('CPU', None)])
+            controls.store('hover.json', [1, 'cpu'])
+            bar.reset_mock()
+            controls.leave('cpu')
+            self.assertEqual(controls.read('active.json')['name'], 'cpu')
+            self.assertFalse(any('popup.drawing=off' in call.args for call in bar.call_args_list))
+            self.assertIn('background.drawing=off', bar.call_args.args)
+            # Information rows need events too, so crossing them cancels close.
+            controls.render_rows('cpu', [('CPU', None)])
+            self.assertTrue(any(arg.startswith('script=') and arg != 'script=' for arg in bar.call_args.args))
+
+    def test_old_row_exit_cannot_cancel_new_panel_hover(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(controls, 'STATE', Path(temp)), \
+             patch.object(controls, 'bar'), patch.object(controls.time, 'sleep') as sleep:
+            controls.store('hover.json', [2, 'gpu'])
+            controls.leave('cpu.row.0')
+            self.assertEqual(controls.read('hover.json'), [2, 'gpu'])
+            sleep.assert_not_called()
+
+    def test_slow_refresh_cannot_replace_newer_hover_panel(self):
+        def newer_hover(name):
+            controls.store('hover.json', [2, 'gpu'])
+            controls.render_rows('gpu', [('GPU', None)])
+            return [('CPU slow response', None)]
+        with tempfile.TemporaryDirectory() as temp, patch.object(controls, 'STATE', Path(temp)), \
+             patch.object(controls, 'bar') as bar, patch.object(controls.time, 'sleep'), \
+             patch.object(controls, 'fresh_rows', side_effect=newer_hover):
+            controls.show('cpu')
+            self.assertEqual(controls.read('active.json')['name'], 'gpu')
+            self.assertNotIn('label=CPU slow response', bar.call_args.args)
+
     def test_agent_reapply_keeps_stable_launch_path_and_restarts_new_build(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
@@ -159,14 +231,16 @@ class DesktopTests(unittest.TestCase):
                   'temp': {'cpu_temp_avg': 96, 'gpu_temp_avg': 64},
                   'memory': {'ram_usage': 40 * 2**30, 'ram_total': 64 * 2**30, 'swap_usage': 2**29}}
         result = metrics.labels(sample)
-        self.assertEqual(result['cpu'], ('CPU 98% 205°F', '0xffff6b81'))
-        self.assertEqual(result['gpu'][0], 'GPU 25% 147°F')
-        self.assertEqual(result['memory'], ('RAM 40/64G · swap 0.5G', '0xffffd166'))
+        self.assertEqual(result['cpu'], ('98%', '0xffff6b81'))
+        self.assertEqual(result['gpu'][0], '25%')
+        self.assertEqual(result['memory'], ('40G', '0xffffd166'))
 
-    def test_zero_swap_is_quiet_and_temperatures_stay_visible(self):
+    def test_zero_swap_is_quiet_and_hardware_hover_keeps_fahrenheit(self):
         sample = {'cpu_scaled_ratio': 0, 'gpu_scaled_ratio': 0,
                   'temp': {'cpu_temp_avg': 45, 'gpu_temp_avg': 40},
                   'memory': {'ram_usage': 10 * 2**30, 'ram_total': 64 * 2**30, 'swap_usage': 0}}
         result = metrics.labels(sample)
-        self.assertEqual(result['memory'][0], 'RAM 10/64G')
-        self.assertIn('113°F', result['cpu'][0])
+        self.assertEqual(result['memory'][0], '10G')
+        self.assertEqual(result['cpu'][0], '0%')
+        with patch.object(controls, 'sample', return_value=sample):
+            self.assertIn(('Temperature · 113.0°F', None), controls.panel_rows('cpu'))

@@ -178,11 +178,18 @@ wallpaper keeps most of the screen quiet.
 The default ribbon brings hardware, connections and session information into
 one quiet capsule, with application context at the left. The islands layout
 separates those groups. Notifications sit furthest right in both layouts.
-Hover reveals immediate cached controls, then refreshes their data. The dock
+Hardware uses distinct processor, graphics and memory icons, with compact
+CPU/GPU utilization percentages and used memory beside them. Temperatures in
+Fahrenheit, power, capacity and swap details stay in the hover panels. Fixed value widths prevent sampling from
+shifting neighboring controls. Sound and display use icons alone.
+Hover reveals cached controls after a short intentional dwell, then refreshes their data. The dock
 shows one icon per open application on a fully transparent background. Its
 fisheye layout moves neighboring icons so magnification stays usable.
-Short eased transitions and exit hysteresis prevent accidental dismissals.
-Reduce Motion is respected. Bar IPC runs away from the animation thread, and
+The bar reveals at a fixed position, so controls do not slide away from the
+pointer. Hover requests cancel on exit, panel switches commit together, and
+repeated hover keeps the current popup open. A short bridge grace period lets
+the pointer reach popup rows, graphs and sliders. Reduce Motion is respected
+for dock animation. Bar IPC runs away from the animation thread, and
 dock animation stops while hidden.
 
 The same restraint applies below the UI. Native development tools and sccache
@@ -225,6 +232,11 @@ strip, extra native menu row, or dock divider.
 | Battery | Charge, charging state, time estimate, temperature and cycles |
 | Notifications | Furthest right; Notification Center, Focus and hardware alerts |
 | Current app | App Exposé, Mission Control, theme and layout switching |
+
+The hardware icons replace CPU / GPU / RAM words in the main bar; panel headings
+retain descriptive names. `G` beside the memory icon means used GiB; full capacity
+and swap stay in the panel, with swap warnings retained. Panel surfaces are opaque
+and blur-free for predictable rendering and readability.
 
 Common controls work in the popovers instead of launching Settings. Native
 Wi-Fi, notification and Focus quick panels and App Exposé require local

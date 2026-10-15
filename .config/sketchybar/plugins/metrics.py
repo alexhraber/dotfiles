@@ -13,9 +13,9 @@ def labels(sample, palette=None):
         temperature = float(temperatures[name + '_temp_avg'])
         load = float(sample[name + '_scaled_ratio']) * 100
         color = palette['danger'] if temperature >= 95 else palette['warning'] if temperature >= 85 else palette['muted']
-        result[name] = (f'{name.upper()} {load:.0f}% {controls.fahrenheit(temperature):.0f}°F', color)
+        result[name] = (f'{load:.0f}%', color)
     used, total, swap = (memory[key] / 2**30 for key in ('ram_usage', 'ram_total', 'swap_usage'))
-    result['memory'] = (f'RAM {used:.0f}/{total:.0f}G' + (f' · swap {swap:.1f}G' if swap else ''),
+    result['memory'] = (f'{used:.0f}G',
                         palette['warning'] if swap else palette['muted'])
     return result
 
@@ -30,7 +30,7 @@ def main():
         messages = controls.alerts(data, controls.command('pmset', '-g', 'batt'))
         values['alerts'] = ('', controls.appearance.color('warning' if messages else 'accent'))
     except (subprocess.SubprocessError, OSError, ValueError, KeyError, TypeError):
-        values = {name: ('Unavailable', '0xff94a3b8') for name in ('cpu', 'gpu', 'memory')}
+        values = {name: ('—', controls.appearance.color('muted')) for name in ('cpu', 'gpu', 'memory')}
     args = ['sketchybar']
     for name, (label, color) in values.items():
         args += ['--set', name, 'label=' + label, 'label.color=' + color]

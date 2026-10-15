@@ -83,6 +83,19 @@ fresh exact-candidate validation and hosted CI before merge; the earlier
 
 ## Promotion Gates
 
+The top-bar refinement passes 62 host tests, native warnings-as-errors
+compilation, geometry checks and Swift typechecking. Six new hover regressions
+cover canceled dwell, same-panel stability, atomic panel switching, the bridge
+into information rows, stale row exits and late device responses. Telemetry
+checks use utilization percentages at bar level while retaining Fahrenheit
+in hardware hover details and preserving heat/swap warning colors.
+Live queries verified three distinct drawn hardware icons, 44-point value
+widths and opaque blur-free popups. The earlier temperature labels are
+superseded by the user's utilization preference. Host desktop apply
+reached fresh healthy state. These checks establish configured behavior;
+whole-screen appearance and subjective pointer feel require user observation.
+Fresh exact-candidate proof and hosted Linux/macOS jobs remain required.
+
 The icons-only refinement supersedes the earlier dock chrome and palette
 rendering. Host checks still pass 56 tests, native warnings-as-errors compilation,
 geometry and Swift typechecking. An actual native DockView preview was inspected;
@@ -136,7 +149,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `28f7bdc2fc429ce5202d147410f01c9dad1db7d7b5acadb11a1a45815e8db4d1`
+- Repository signal fingerprint: `3412d50e5e69a575f172f6b4b458f8614c825455ff14863d5e350e7270cc7cb1`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
