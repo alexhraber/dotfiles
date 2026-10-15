@@ -43,65 +43,75 @@
       "id": "finalized-proof-context-20261015",
       "summary": "Bind final reviewed inventory, refreshed generated manifest, canonical spec reviews and current manual Ollama operations to the committed material.",
       "input_digest": "sha256:312a850f86be0704dc6cfc11d38d82fa6d1575e3fbe5143db9c68a5491b4ad08"
+    },
+    {
+      "id": "latest-decapod-1143-20261015",
+      "summary": "Upgrade host and governed container to crates.io latest stable Decapod 0.114.3, refresh release-bound entrypoints and manifest, and record successful portable diagnostic checks separately from pending full readiness.",
+      "input_digest": "sha256:12638955293b47e7a0a37b295fa35c0f19464d717bd336eaf4863290effbaa01"
+    },
+    {
+      "id": "latest-1143-proof-bundle-20261015",
+      "summary": "Bind the preserved new-release trajectory, verified host/container versions, diagnostic check evidence and current generated prerequisite receipt.",
+      "input_digest": "sha256:b5bdcaa0b1ae179894822a66b49e14018685a206c9501d7b8ac8e81fee629af3"
     }
   ],
   "intents": {
-    "intent:workstation_manual_ollama_20261015": {
+    "intent:workstation_1143_20261015": {
       "acceptance_criteria": [],
       "assumptions": [],
       "boundaries": [
-        "Only dotfiles authored changes; no unrelated repositories; preserve prior evidence; no model preload or startup services."
+        "Only dotfiles authored changes; preserve prior proof in Git; no startup model or daemon."
       ],
       "constraints": [
         "root"
       ],
       "created_sequence": 1,
-      "id": "intent:workstation_manual_ollama_20261015",
+      "id": "intent:workstation_1143_20261015",
       "out_of_scope": [],
       "proof_requirements": [],
-      "raw_intent": "Equip the M1 Max development workstation and publish portable dotfiles.",
-      "refined_intent": "Preserve the completed workstation setup and keep Ollama off until explicitly started with aiup, then Ctrl-C shutdown. Exclude all Apple team identity and machine state from Git.",
+      "raw_intent": "Equip the workstation, update portable dotfiles and use the latest Decapod.",
+      "refined_intent": "Validate current portable workstation changes with Decapod 0.114.3 on host and in its owned headless container. Keep Ollama off until manual aiup and Ctrl-C shutdown. Keep signing identity private.",
       "status": "refined",
       "updated_sequence": 3
     }
   },
   "epochs": {
-    "ve_1976b3b902de577c": {
-      "constitution_hash": "sha256:65c0bcebba71b34387bedca5260c5e860aeefcc164effa724d846d23fc8f3ff5",
-      "constitution_version": "embedded-docs@0.114.2",
-      "epoch_id": "ve_1976b3b902de577c",
-      "evaluator_identity": "decapod-validate@0.114.2",
-      "evaluator_set_hash": "sha256:5e69ddb5f0ac67ab28dc174c2c28783b15ffd4ba2c705942d8ead9eccc330b07",
+    "ve_b405e51757780d5a": {
+      "constitution_hash": "sha256:8f824769ebf3e891166d303217f64dc37fafb0c7c91c0a241e1bcf4b52a49fb4",
+      "constitution_version": "embedded-docs@0.114.3",
+      "epoch_id": "ve_b405e51757780d5a",
+      "evaluator_identity": "decapod-validate@0.114.3",
+      "evaluator_set_hash": "sha256:b5b08d7730ebac55f9a8cc52239419bd7dfdf8fc9034a7a08b2f7a5fefffd5c3",
       "generated_specs_fingerprint": "9a7da8d053d167c923de250f90f469856dcbb11aa390179091a488611dc58b74",
-      "generated_specs_manifest_hash": "sha256:766f5f9cd8b08cc6a5836f1c077baceb5f23c2f90bba467e1974af0de3232dc0",
+      "generated_specs_manifest_hash": "sha256:e907322fe61fe6a304a9d67608277e1269201a63bd6a551edb138f184908cc11",
       "material_hashes": {
-        "constitution:core/DECAPOD": "sha256:65c0bcebba71b34387bedca5260c5e860aeefcc164effa724d846d23fc8f3ff5",
+        "constitution:core/DECAPOD": "sha256:8f824769ebf3e891166d303217f64dc37fafb0c7c91c0a241e1bcf4b52a49fb4",
         "generated_spec:.decapod/managed/specs/ARCHITECTURE.md": "sha256:ee00f61f1634a6cbedb555cff7f7c3fd53003210c2d81c0cd326b55dd3751d66",
         "generated_spec:.decapod/managed/specs/INTENT.md": "sha256:8374ac71ab0591f25232499f79b0b443f254ad9e3f19312e73ab9a8390237507",
         "generated_spec:.decapod/managed/specs/INTERFACES.md": "sha256:ba17afd01df11e9c5832fb9f1b8307af0490cc575b0f54422a2db451e801c1d5",
-        "generated_spec:.decapod/managed/specs/OPERATIONS.md": "sha256:0a94d1480cbbff242bc2c6333ba61968db4b68601b6d6066cd824747262ed67d",
+        "generated_spec:.decapod/managed/specs/OPERATIONS.md": "sha256:b507991cc035ca8ab23179a7e8fa9fc49c711428d979bb5899f81a7b16573413",
         "generated_spec:.decapod/managed/specs/README.md": "sha256:6c2bbdaab486ac0cb384a2a968db069d138075ff632a3e542f97743002a8063b",
         "generated_spec:.decapod/managed/specs/SECURITY.md": "sha256:bb9a5571c060f9c46fb3ad05c0c667dffc604ba12d9097c25daae5400bcd73e2",
         "generated_spec:.decapod/managed/specs/SEMANTICS.md": "sha256:a5847038daad8e5fca176b341186bb2a4e90e5932c8af0485aaa698337f0c5c3",
-        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:e4cc2e10c381e33c8208b610042b34b6c535b298d8046fc7389e1a6056685f42",
+        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:1ccbb30004ad63c47c366e87c2db0ed2b1d052f8058a6e45dd49a9a39ddfd9c0",
         "generated_specs_fingerprint": "9a7da8d053d167c923de250f90f469856dcbb11aa390179091a488611dc58b74",
-        "generated_specs_manifest": "sha256:766f5f9cd8b08cc6a5836f1c077baceb5f23c2f90bba467e1974af0de3232dc0",
+        "generated_specs_manifest": "sha256:e907322fe61fe6a304a9d67608277e1269201a63bd6a551edb138f184908cc11",
         "governance_context": "sha256:bb60e504bbdb2a87dca738847b4b6ee10a10f2a101280c3f660b4d0c486ef823",
-        "governance_material:.decapod/managed/Dockerfile.decapod": "sha256:cea1d31b9ccb103dc45bb46da17f42c01f9a830c6559093ffe00e7b249cbfcab",
-        "governance_material:AGENTS.md": "sha256:0e6e59d391c44bb66c955fabee6d83908e47de35b67cafe45b607a0831d5ff7a",
-        "governance_material:CLAUDE.md": "sha256:617aa73c9e5a9a67843c129e73608d8bda5ff5e91dfe57c014a9fb00bce08a4e",
-        "governance_material:CODEX.md": "sha256:b2cacc09d64e524a4da73cdaf0c2ca4d425f94f14c898e46dab47dccc003496f",
-        "governance_material:GEMINI.md": "sha256:d46e93a0299a78f5037186e6cf4fed528059652fe9b8bd6978e39e07a2543f31",
+        "governance_material:.decapod/managed/Dockerfile.decapod": "sha256:bda20d95029f9cf431f039756779b9f2f42fc0f80d3efc03b3e3d83074f59f0f",
+        "governance_material:AGENTS.md": "sha256:88f4b8ac034a1fce0fd20fbcf1d2cac06f95cfb4bf0090855f537498bf99c173",
+        "governance_material:CLAUDE.md": "sha256:88cf7fb92434cb2356badcc36a331e83048ef6b266e3a76a13956de0332a5e67",
+        "governance_material:CODEX.md": "sha256:897ecf133d286e9986e4bfe75582b1944924606336cf6441dd388a63b1bafb0f",
+        "governance_material:GEMINI.md": "sha256:a47466982926fabe832727dbd8d98d37e4532f8bdfb5bfa06e1b4d4775a94ca1",
         "governance_section:claims": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
-        "governance_section:plan": "sha256:a0e0142b5e917dda5fbdb391e7104c78f7193297102544f40706804354af1bbf",
+        "governance_section:plan": "sha256:a3e84dc08283c2713f0c0d6deca0d85dc66f09edf4127b9e329b376c4df7752e",
         "living_spec_material:.decapod/managed/specs/ARCHITECTURE.md": "sha256:3490a1394731807c4794df08f358f17833468c2a6a19471f319afa15b042ed58",
         "living_spec_material:.decapod/managed/specs/INTENT.md": "sha256:d7e8d99feaceb34608a44ccd2b461816ea555f30d9f0951db18e9557b955c2c6",
         "living_spec_material:.decapod/managed/specs/INTERFACES.md": "sha256:20a9b7f2657e0c37c52690966e722b9c94bc81c15d414335aef9ae4c34407bac",
-        "living_spec_material:.decapod/managed/specs/OPERATIONS.md": "sha256:a5e7058c29dd425793f1ac50dc2077c0861df228b9827416dc46c7b8bab02583",
+        "living_spec_material:.decapod/managed/specs/OPERATIONS.md": "sha256:53078b3021cee121e8e3e5024504e32fcc2aedb4492f69346cd277e98ab0a284",
         "living_spec_material:.decapod/managed/specs/README.md": "sha256:0988c85d6c05f02d52684c9aafae50e95fd5d5576739d3e9d995af682697fd99",
         "living_spec_material:.decapod/managed/specs/SECURITY.md": "sha256:359298a342c2b1da230c69017557958b8a417795beab060228b159f36c684fec",
         "living_spec_material:.decapod/managed/specs/SEMANTICS.md": "sha256:92bbe2607c6f8f94191a95ea977d9785f3472a0fae2835520dd86eae73130d5c",
-        "living_spec_material:.decapod/managed/specs/VALIDATION.md": "sha256:da1d2e20f6ab6107d545e280b8348794ddecbc73efa9cacaa01ec13c87e9ba2e",
+        "living_spec_material:.decapod/managed/specs/VALIDATION.md": "sha256:203ee84cde26af5fe6fe9f091e41bbab49df9c668925fd2d886fce7336e54d43",
         "proof_rubric": "sha256:99e8ef25629da391e9b479db9fff52b82f340224f7a69d8a88d2992ae8e90466",
         "validation_profile": "sha256:37a8eec1ce19687d132fe29051dca629d164e2c4958ba141d5f4133a33f0688f"
       },
@@ -161,16 +171,24 @@
     },
     "trajectory": {
       "active_boundaries": [
-        "Only dotfiles authored changes; no unrelated repositories; preserve prior evidence; no model preload or startup services."
+        "Only dotfiles authored changes; preserve prior proof in Git; no startup model or daemon."
       ],
-      "artifact_hash": "sha256:1740e6dbe3d0bfe4f2c6b402914db639ebdb8c2dfb1912c280e855eaf3dee165",
+      "artifact_hash": "sha256:05970794d570570eb911bfdbef7723987e5173103ebf007dd4f3856d0bd43f54",
       "checks": [
         {
           "name": "aiup-contract",
           "status": "passed"
         },
         {
+          "name": "container-checks",
+          "status": "passed"
+        },
+        {
           "name": "decapod validate",
+          "status": "passed"
+        },
+        {
+          "name": "latest-decapod",
           "status": "passed"
         },
         {
@@ -183,27 +201,27 @@
         "events": [
           {
             "event_id": "event:2",
-            "intent_id": "intent:workstation_manual_ollama_20261015",
+            "intent_id": "intent:workstation_1143_20261015",
             "kind": "created",
             "sequence": 2
           },
           {
             "event_id": "event:3",
-            "intent_id": "intent:workstation_manual_ollama_20261015",
+            "intent_id": "intent:workstation_1143_20261015",
             "kind": "refined",
             "sequence": 3
           },
           {
-            "detail": "trajectory:workstation_manual_ollama_20261015",
+            "detail": "trajectory:workstation_1143_20261015",
             "event_id": "event:4",
-            "intent_id": "intent:workstation_manual_ollama_20261015",
+            "intent_id": "intent:workstation_1143_20261015",
             "kind": "trajectory_step_recorded",
             "sequence": 4
           },
           {
-            "detail": "trajectory:workstation_manual_ollama_20261015",
+            "detail": "trajectory:workstation_1143_20261015",
             "event_id": "event:5",
-            "intent_id": "intent:workstation_manual_ollama_20261015",
+            "intent_id": "intent:workstation_1143_20261015",
             "kind": "trajectory_step_recorded",
             "sequence": 5
           }
@@ -212,21 +230,22 @@
         "next_sequence": 5,
         "schema_version": "1.0.0",
         "trajectories": {
-          "workstation_manual_ollama_20261015": {
+          "workstation_1143_20261015": {
             "evidence_only": true,
-            "id": "workstation_manual_ollama_20261015",
-            "intent_id": "intent:workstation_manual_ollama_20261015",
+            "id": "workstation_1143_20261015",
+            "intent_id": "intent:workstation_1143_20261015",
             "steps": [
               {
                 "action": "trajectory.record",
                 "command": "decapod validate",
                 "custody_event_id": "event:4",
                 "observations": [
-                  ".config/zsh/local-models.zsh",
                   "scripts/check.py",
-                  "Ollama has no process or listener, launchd service absent, login plist archived privately. New-shell aiup function available; external stub verified serve argument and KEEP_ALIVE=0, FLASH_ATTENTION=1, KV_CACHE_TYPE=q8_0. Earlier workstation checks and historical trajectory retained in Git. Publication readiness still unproven."
+                  "Direct crates.io API reports 0.114.3; locked cargo install and both system version commands confirm 0.114.3. Image rebuilt with workspace ensure. Diagnostic shared check owner passed ShellCheck, all zsh parsers and 30 tests with the declared PATH. Ollama remains stopped and login-unregistered; helper verified using a stub. Publication readiness remains unproven; prior 0.114.2 failed with missing bound input Justfile."
                 ],
                 "proof_refs": [
+                  "container-checks",
+                  "latest-decapod",
                   "ollama-off",
                   "aiup-contract"
                 ],
@@ -243,7 +262,7 @@
                 "observations": [
                   ".decapod/governance.json",
                   ".decapod/governance.json",
-                  "validation epoch ve_1976b3b902de577c completed with zero failures"
+                  "validation epoch ve_b405e51757780d5a completed with zero failures"
                 ],
                 "proof_refs": [
                   "decapod validate"
@@ -262,14 +281,13 @@
         "decapod validate"
       ],
       "evidence": [
-        "Ollama has no process or listener, launchd service absent, login plist archived privately. New-shell aiup function available; external stub verified serve argument and KEEP_ALIVE=0, FLASH_ATTENTION=1, KV_CACHE_TYPE=q8_0. Earlier workstation checks and historical trajectory retained in Git. Publication readiness still unproven.",
-        "validation epoch ve_1976b3b902de577c completed with zero failures"
+        "Direct crates.io API reports 0.114.3; locked cargo install and both system version commands confirm 0.114.3. Image rebuilt with workspace ensure. Diagnostic shared check owner passed ShellCheck, all zsh parsers and 30 tests with the declared PATH. Ollama remains stopped and login-unregistered; helper verified using a stub. Publication readiness remains unproven; prior 0.114.2 failed with missing bound input Justfile.",
+        "validation epoch ve_b405e51757780d5a completed with zero failures"
       ],
       "inspected_files": [
-        ".config/zsh/local-models.zsh",
         "scripts/check.py"
       ],
-      "intent_id": "intent:workstation_manual_ollama_20261015",
+      "intent_id": "intent:workstation_1143_20261015",
       "modified_files": [
         ".decapod/governance.json"
       ],
@@ -279,7 +297,7 @@
       "repo_scope": [
         "root"
       ],
-      "run_id": "workstation_manual_ollama_20261015",
+      "run_id": "workstation_1143_20261015",
       "schema_version": "1.1.0",
       "shortcut_risk_signals": [],
       "task_id": "fend_01m4z1drb0ngbkk6",
@@ -295,15 +313,15 @@
         ],
         "result": "review"
       },
-      "decapod_release": "0.114.2",
+      "decapod_release": "0.114.3",
       "drift_findings": [],
-      "elapsed_ms": 1771,
-      "epoch_ref": "ve_1976b3b902de577c",
+      "elapsed_ms": 1981,
+      "epoch_ref": "ve_b405e51757780d5a",
       "fail_count": 0,
       "failures": [],
       "gate_timings": [
         {
-          "elapsed_ms": 768,
+          "elapsed_ms": 971,
           "name": "validate_project_specs_docs"
         },
         {
@@ -311,7 +329,7 @@
           "name": "validate_markdown_primitives_roundtrip_gate"
         },
         {
-          "elapsed_ms": 163,
+          "elapsed_ms": 154,
           "name": "validate_machine_contract"
         },
         {
@@ -319,19 +337,19 @@
           "name": "validate_stale_workspaces"
         },
         {
-          "elapsed_ms": 97,
+          "elapsed_ms": 96,
           "name": "validate_obligations"
         },
         {
-          "elapsed_ms": 71,
+          "elapsed_ms": 78,
           "name": "validate_git_workspace_context"
         },
         {
-          "elapsed_ms": 63,
+          "elapsed_ms": 61,
           "name": "validate_legacy_jsonl_retired"
         },
         {
-          "elapsed_ms": 34,
+          "elapsed_ms": 33,
           "name": "validate_archive_integrity"
         },
         {
@@ -343,16 +361,16 @@
           "name": "validate_schema_determinism"
         },
         {
-          "elapsed_ms": 14,
+          "elapsed_ms": 13,
           "name": "validate_control_plane_contract"
         },
         {
           "elapsed_ms": 11,
-          "name": "validate_git_protected_branch"
+          "name": "validate_git_push_pr_gate"
         },
         {
           "elapsed_ms": 10,
-          "name": "validate_git_push_pr_gate"
+          "name": "validate_git_protected_branch"
         },
         {
           "elapsed_ms": 8,
@@ -367,7 +385,7 @@
           "name": "validate_gatekeeper_gate"
         },
         {
-          "elapsed_ms": 5,
+          "elapsed_ms": 4,
           "name": "validate_lineage_hard_gate"
         },
         {
@@ -376,23 +394,27 @@
         },
         {
           "elapsed_ms": 3,
-          "name": "validate_lcm_immutability"
+          "name": "validate_watcher_audit"
         },
         {
           "elapsed_ms": 3,
-          "name": "validate_watcher_audit"
+          "name": "validate_plan_governed_execution_gate"
+        },
+        {
+          "elapsed_ms": 3,
+          "name": "validate_lcm_immutability"
         },
         {
           "elapsed_ms": 3,
           "name": "validate_knowledge_promotions_if_present"
         },
         {
-          "elapsed_ms": 2,
-          "name": "validate_plan_governed_execution_gate"
+          "elapsed_ms": 3,
+          "name": "validate_lcm_rebuild_gate"
         },
         {
           "elapsed_ms": 2,
-          "name": "validate_lcm_rebuild_gate"
+          "name": "validate_trajectory_artifacts_if_present"
         },
         {
           "elapsed_ms": 2,
@@ -404,7 +426,7 @@
         },
         {
           "elapsed_ms": 1,
-          "name": "validate_trajectory_artifacts_if_present"
+          "name": "validate_jev_history_if_present"
         },
         {
           "elapsed_ms": 1,
@@ -416,14 +438,6 @@
         },
         {
           "elapsed_ms": 1,
-          "name": "validate_database_schema_versions"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_jev_history_if_present"
-        },
-        {
-          "elapsed_ms": 1,
           "name": "validate_validation_receipt_if_present"
         },
         {
@@ -432,10 +446,14 @@
         },
         {
           "elapsed_ms": 1,
-          "name": "validate_recursive_improvement_passes_if_present"
+          "name": "validate_database_schema_versions"
         },
         {
           "elapsed_ms": 1,
+          "name": "validate_recursive_improvement_passes_if_present"
+        },
+        {
+          "elapsed_ms": 0,
           "name": "validate_health_cache_integrity"
         },
         {
@@ -452,19 +470,19 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_context_capsule_policy_contract"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_heartbeat_invocation_gate"
-        },
-        {
-          "elapsed_ms": 0,
           "name": "validate_project_scoped_state"
         },
         {
           "elapsed_ms": 0,
+          "name": "validate_context_capsule_policy_contract"
+        },
+        {
+          "elapsed_ms": 0,
           "name": "validate_docs_templates_bucket"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_heartbeat_invocation_gate"
         },
         {
           "elapsed_ms": 0,
@@ -476,11 +494,11 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_repo_map"
+          "name": "validate_risk_map_violations"
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_internalization_artifacts_if_present"
+          "name": "validate_repo_map"
         },
         {
           "elapsed_ms": 0,
@@ -488,23 +506,11 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_risk_map_violations"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_state_commit_gate"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_context_capsules_if_present"
-        },
-        {
-          "elapsed_ms": 0,
           "name": "validate_embedded_self_contained"
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_interface_contract_bootstrap"
+          "name": "validate_internalization_artifacts_if_present"
         },
         {
           "elapsed_ms": 0,
@@ -512,11 +518,19 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_eval_gate_if_required"
+          "name": "validate_context_capsules_if_present"
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_coplayer_policy_tightening"
+          "name": "validate_state_commit_gate"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_interface_contract_bootstrap"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_eval_gate_if_required"
         },
         {
           "elapsed_ms": 0,
@@ -524,21 +538,25 @@
         },
         {
           "elapsed_ms": 0,
+          "name": "validate_coplayer_policy_tightening"
+        },
+        {
+          "elapsed_ms": 0,
           "name": "validate_tooling_gate"
         }
       ],
-      "git_revision": "6b5fb118874c8c100fc596c59fa5a00a7e8f5d5c",
+      "git_revision": "69ac1a3e7312581422b65193bfd280353a297883",
       "kind": "validation_receipt",
       "parallelism": 1,
       "pass_count": 188,
       "prediction_uses_warnings": true,
-      "receipt_hash": "sha256:bfa6373bfecbdbe02151e693435635bf03da9cb8c802e4c72d8101641f12ada4",
+      "receipt_hash": "sha256:d8239434bfd5e3958bba11749d0f1bd0f4776efcf98acd797a2caedee9839386",
       "repo_signal_fingerprint": "9a7da8d053d167c923de250f90f469856dcbb11aa390179091a488611dc58b74",
       "schema_version": "1.0.0",
       "status": "ok",
       "temporary_artifacts_cleaned": 0,
-      "trajectory_artifact_hash": "sha256:1740e6dbe3d0bfe4f2c6b402914db639ebdb8c2dfb1912c280e855eaf3dee165",
-      "trajectory_run_id": "workstation_manual_ollama_20261015",
+      "trajectory_artifact_hash": "sha256:05970794d570570eb911bfdbef7723987e5173103ebf007dd4f3856d0bd43f54",
+      "trajectory_run_id": "workstation_1143_20261015",
       "warn_count": 4,
       "warnings": [
         "Risk map missing (run `decapod riskmap init`)",

@@ -28,6 +28,12 @@ VM image downloads and model inference are not part of portable unit tests.
 
 ## Evidence Artifacts
 
+The current host and owned verification image use Decapod 0.114.3, verified
+against crates.io rather than relying on the CLI's cached latest-version flag.
+The shared check owner ran in that image with its declared PATH: ShellCheck,
+all zsh parsers and all 30 tests passed. This diagnostic execution is separate
+from the required Decapod publication verdict.
+
 The current local check suite passes 30 tests, including backup/restoration of
 fractional Dock values and copied mise/reverse-shell settings. Installed doctor,
 Ghostty validation, real editor LSP attachment, an isolated tmux server and the
