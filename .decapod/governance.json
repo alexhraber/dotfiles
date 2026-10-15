@@ -18,6 +18,11 @@
       "id": "rice-applied",
       "summary": "Applied cohesive Tokyo Night terminal/editor/tmux/fzf rice; 30 tests and installed doctor passed; backups private; Scripture work handed off",
       "input_digest": "sha256:474cfe757d7e132c075371afe4f4cf259e325db2094bce106f8353406386a7f3"
+    },
+    {
+      "id": "portable-readiness-20261015",
+      "summary": "Keep Apple team selection local; share the existing complete check owner with supported repository proof; declare the container tool closure and reconcile canonical project specs",
+      "input_digest": "sha256:ed90b5869100c763d993fc89f5be2c585f462689955604b503ae456784c1e68a"
     }
   ],
   "intents": {
@@ -48,7 +53,7 @@
       },
       "deferred_questions": [],
       "human_questions": [],
-      "intent": "Rice the M1 Max workstation through dotfiles: cohesive Tokyo Night terminal, prompt, tmux, fuzzy finding and Neovim; keep installed Node/Rust/native build/Ghidra/MLX tooling. Stop all Scripture work and provide a separate signing handoff prompt. Apply and verify backed-up configuration locally without push or publication.",
+      "intent": "Prepare and publish the existing dotfiles workstation changes after required verification. Exclude all personal Apple team names, Team IDs, certificates, provisioning data and signing projects. Future agents must ask the user to populate local signing settings. Preserve all other repositories and ongoing work.",
       "phases": [],
       "proof_hooks": [
         "dotfiles checks and installed runtime smoke checks"
@@ -62,7 +67,7 @@
       ],
       "unknowns": [],
       "unresolved_contradictions": [],
-      "updated_at": "1792050021Z"
+      "updated_at": "1792051594Z"
     },
     "trajectory": {
       "active_boundaries": [

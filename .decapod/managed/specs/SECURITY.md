@@ -1,5 +1,7 @@
 # Security and state boundaries
 
+## Data Classification
+
 The repository tracks portable configuration, source, tests, and authored
 specifications. It never tracks SSH private keys, Codex auth.json, session logs,
 SQLite databases, model weights, Podman disks, cloud tokens, or runtime caches.
@@ -12,6 +14,8 @@ Backup directories are private (0700). Copied Codex and local Git files are
 Git identity/signing settings and allowed signers are machine-local. Installation
 preserves existing Git identity and credential helpers by adding an include.
 
+## Threat Model
+
 Subprocess arguments are passed as arrays. Shell helpers quote paths; tests
 cover worktree destinations with spaces. Restore rejects later edits and corrupt
 backups. The installer is local-user tooling, not a security boundary against a
@@ -23,11 +27,25 @@ mlxserve binds to loopback by default. No network service is started at login.
 All container workspaces must be headless, and access to the host's credentials
 is never implied merely by creating a container.
 
+## Authentication
+
+Git, GitHub, Apple and model-provider authentication belongs to their external
+clients and local credential stores. The installer never creates accounts or
+copies authentication state into tracked configuration. Future agents must ask
+the user to select an Apple team when needed; no team identity is stored here.
+
+## Authorization
+
+Explicit install groups constrain mutation. Restore checks all targets before
+writing and refuses later edits. Publication needs task authorization and current
+proof. Container helpers mount only the chosen project and drop capabilities;
+they do not grant access to host credentials or start machines at login.
+
 <!-- decapod:codebase-attestation:start -->
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `681733e819829878e8dbed2ae67484cffa93d4ff253089704c83b593581d4ab0`
-- Significant implementation surfaces: `.github/` (1 files), `README.md/` (1 files), `scripts/` (3 files), `tests/` (3 files)
+- Repository signal fingerprint: `60748b35822094592834a86196c34c2bfa40d4d9855ae3240bf34f0c4016250a`
+- Significant implementation surfaces: `.github/` (1 files), `README.md/` (1 files), `scripts/` (4 files), `tests/` (3 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

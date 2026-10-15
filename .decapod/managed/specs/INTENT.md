@@ -1,6 +1,6 @@
 # Intent
 
-## Project purpose
+## Product Outcome
 
 Provide a repeatable macOS terminal and development environment for Alex:
 Ghostty with Tokyo Night Storm and Nerd Font, zsh navigation and feedback,
@@ -11,7 +11,7 @@ or automatically downloading models. MLX-LM has a pinned Python 3.12 requirement
 set for an explicitly prepared environment; runtime replacement requires a
 private backup and verification before changing the stable environment link.
 
-## Outcomes and boundaries
+## Scope
 
 A fresh checkout can preview and install terminal, Git, Codex, workspace, dev,
 reverse engineering, Apple development, infra, AI, apps and macOS groups. All authored configuration and automation live
@@ -27,7 +27,7 @@ The repository preserves the local Decapod configuration and authored specs;
 its runtime state stays local. VM startup troubleshooting is deferred to the
 upstream issue rather than expanded into this dotfiles change.
 
-## Acceptance and scope
+## Acceptance Criteria
 
 - Scoped install, repeated install, restore and failure rollback are exercised
   by tests/test_install.py in isolated temporary home directories.
@@ -50,13 +50,15 @@ readback verification and guarded restoration. Chrome is declared for fresh
 machines while existing unmanaged installations are preserved. No security
 controls or credentials are changed.
 
+## Constraints
+
 The workstation rice keeps Tokyo Night Storm consistent across Ghostty, fzf,
 Starship, tmux, Neovim and Git tools. It adds a quieter local prompt, a steady
 cursor, file/directory previews, a top tmux bar with pane navigation, a Neovim
 workbench/tabline/static indent guide, a shorter hardware summary, Finder list
 view and a compact Dock. Configuration is applied through the backed-up installer
-from the retained isolated worktree; no application delivery or Scripture signing
-is part of this task after the user's scope correction.
+from a retained checkout. Application delivery and project signing are separate
+tasks; future agents must ask the user to select any Apple development team.
 
 Excluded: Herdr, Tailscale/AMP services, secret migration, unsolicited model
 downloads, account setup, VM startup troubleshooting and modifying Decapod itself.
@@ -76,7 +78,7 @@ These declarations select authoring and proof obligations; they do not attest im
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `681733e819829878e8dbed2ae67484cffa93d4ff253089704c83b593581d4ab0`
-- Significant implementation surfaces: `.github/` (1 files), `README.md/` (1 files), `scripts/` (3 files), `tests/` (3 files)
+- Repository signal fingerprint: `60748b35822094592834a86196c34c2bfa40d4d9855ae3240bf34f0c4016250a`
+- Significant implementation surfaces: `.github/` (1 files), `README.md/` (1 files), `scripts/` (4 files), `tests/` (3 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

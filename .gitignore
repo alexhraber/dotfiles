@@ -19,6 +19,12 @@ __pycache__/
 *.key
 *.p12
 *.mobileprovision
+*.developerprofile
+*.p8
+*.xcuserstate
+xcuserdata/
+Signing.local.xcconfig
+/target/
 
 .decapod/data
 .decapod/data/*

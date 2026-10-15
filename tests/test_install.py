@@ -232,10 +232,16 @@ source ~/.zshrc
             data = tomllib.loads(path.read_text())
             self.assertNotIn('profiles', data)
             self.assertNotIn('profile', data)
-        result = subprocess.run(['git', 'check-ignore', '--no-index', '.codex/auth.json', '.codex/sessions/example.jsonl', '.codex/config.toml'], cwd=ROOT, text=True, capture_output=True)
+        repo = self.home / 'ignore-check'
+        repo.mkdir()
+        shutil.copy2(ROOT / '.gitignore', repo / '.gitignore')
+        subprocess.run(['git', 'init', '-q', str(repo)], check=True)
+        result = subprocess.run(['git', 'check-ignore', '--no-index', '.codex/auth.json', '.codex/sessions/example.jsonl', '.codex/config.toml', 'Signing.local.xcconfig', 'local.developerprofile', 'AuthKey.p8'], cwd=repo, text=True, capture_output=True)
         self.assertIn('.codex/auth.json', result.stdout)
         self.assertIn('.codex/sessions/example.jsonl', result.stdout)
         self.assertNotIn('.codex/config.toml', result.stdout)
+        for private in ('Signing.local.xcconfig', 'local.developerprofile', 'AuthKey.p8'):
+            self.assertIn(private, result.stdout)
 
     def test_codex_preferences_allow_app_metadata_but_detect_drift(self):
         expected = {'model': 'chosen-model', 'sandbox_workspace_write': {'network_access': True}}

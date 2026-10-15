@@ -84,6 +84,11 @@ Xcode Settings > Accounts for Personal Team development signing. Certificates,
 provisioning profiles, Team IDs and signing keys remain outside Git. Command
 Line Tools alone provide Swift and macOS compilation, without iOS builds.
 
+Apple development team selection is deliberately not saved here. A future agent
+must ask which team to use when signing is needed, then populate only local
+project settings or command-line overrides. Do not commit team names, Team IDs,
+Xcode account preferences, private signing projects or provisioning assets.
+
 `just preview`, `just install`, `just doctor`, `just check`, and `just brew-check`
 expose routine workflows. `just outdated` reports updates without applying them.
 Homebrew packages are current releases, not version-pinned; Neovim plugins
@@ -314,11 +319,13 @@ isolation. Follow `AGENTS.md` and `decapod docs ingest` for its session, task,
 workspace, and validation lifecycle. Podman is the intended local runtime.
 The authored specifications under `.decapod/managed/specs/` describe this
 repository; runtime state is ignored. Decapod initialization by itself does not
-prove that repository checks or publication readiness passed. Decapod 0.111.1
-currently has a full-readiness adapter specific to its own Rust repository;
-this dotfiles CI contract is unsupported. Keep that limitation separate from
-the actual scripts/check and local configuration results. VM startup
-troubleshooting is deferred; see [the upstream headless-startup issue](https://github.com/DecapodLabs/decapod/issues/1417).
+prove that repository checks or publication readiness passed. The supported
+`repo.pr-readiness.v1` profile runs the same portable checks through
+`scripts/check.py` in the verification image, using reviewed source/command
+digests and an explicitly declared tool directory. The Bash entrypoint and CI
+delegate to that same check owner. This proves repository-local execution;
+GitHub's Linux/macOS jobs and host editor/model checks remain separate evidence.
+All VM startup must remain headless; see [the upstream startup issue](https://github.com/DecapodLabs/decapod/issues/1417).
 
 ## Verification
 

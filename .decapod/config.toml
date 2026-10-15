@@ -45,11 +45,41 @@ approval_categories = ["destructive_operations"]
 [proof]
 validation_buildkite_preflights = false
 
+[proof.required_profile]
+id = "repo.pr-readiness.v1"
+reviewed_sources_digest = "sha256:dc96f8bfd8dd33d5f645b975d6053c7180380fcb05e1368c3881c4428c275211"
+
+[proof.repository_contract]
+reviewed_commands_digest = "sha256:acd8fe8534bb79464e6564ce832860acb1de5acb3de926ff9f6f7b92a32e89fa"
+source_coverage = [
+    { source = ".github/workflows/check.yml", commands = ["checks"] },
+]
+
+[proof.repository_contract.executions.checks]
+program = "/usr/local/libexec/dotfiles-proof/python3"
+directory = "."
+timeout_seconds = 180
+
+[proof.repository_contract.executions.checks.toolchain_files]
+python3 = "/usr/local/libexec/dotfiles-proof/python3"
+bash = "/usr/local/libexec/dotfiles-proof/bash"
+zsh = "/usr/local/libexec/dotfiles-proof/zsh"
+shellcheck = "/usr/local/libexec/dotfiles-proof/shellcheck"
+git = "/usr/local/libexec/dotfiles-proof/git"
+env = "/usr/local/libexec/dotfiles-proof/env"
+dirname = "/usr/local/libexec/dotfiles-proof/dirname"
+sh = "/usr/local/libexec/dotfiles-proof/sh"
+
+[proof.repository_contract.executions.checks.environment]
+PATH = "/usr/local/libexec/dotfiles-proof"
+PYTHONDONTWRITEBYTECODE = "1"
+LC_ALL = "C.UTF-8"
+
 [[proof.commands]]
 name = "checks"
-command = "scripts/check"
-args = []
-description = "Guided init proof command 1"
+command = "python3"
+args = ["scripts/check.py"]
+description = "ShellCheck, all zsh parsers, and portable installer/restore tests"
 required = true
 
 [custody]

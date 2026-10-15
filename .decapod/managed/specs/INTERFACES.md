@@ -1,6 +1,6 @@
 # Interfaces
 
-## CLI
+## Inbound Contracts
 
 install.sh accepts --groups with any comma-separated subset of terminal, git,
 codex, workspace, dev, reverse, apple, infra, ai, apps and macos, plus --all, --deps and
@@ -13,7 +13,7 @@ pointing to an existing public SSH key. No private key is copied. Invalid
 arguments, directory conflicts, failed subprocesses and failed filesystem
 operations return nonzero with diagnostics.
 
-## Backup manifest
+## Data Ownership
 
 Version 1 contains repository and changes. Each operation records target,
 original state, installed state and a backup path when the original existed.
@@ -57,18 +57,26 @@ visible local terminal and installs Xcode, selects it, presents Apple's license,
 runs first-launch setup and downloads iOS. Signing uses local Xcode account
 assets and command-line build overrides; no team or signing identity is tracked.
 
-## External dependencies
+## Outbound Dependencies
 
 Homebrew, GitHub Git transport, rustup/Cargo, Ollama, MLX and Podman remain
 independently managed. Native Neovim package installation fetches pinned plugin
 commits on first startup. No service, REST API or event protocol is authored by
 this repository.
 
+## Failure Semantics
+
+Invalid arguments, unsupported preference types, directory conflicts and failed
+subprocesses return nonzero. File application restores completed replacements on
+a caught failure; preferences have a separate rollback. Restore rejects changed
+backups or later user edits before mutating any destination. Process interruption
+can leave partial state; the backup manifest remains the recovery input.
+
 <!-- decapod:codebase-attestation:start -->
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `681733e819829878e8dbed2ae67484cffa93d4ff253089704c83b593581d4ab0`
-- Significant implementation surfaces: `.github/` (1 files), `README.md/` (1 files), `scripts/` (3 files), `tests/` (3 files)
+- Repository signal fingerprint: `60748b35822094592834a86196c34c2bfa40d4d9855ae3240bf34f0c4016250a`
+- Significant implementation surfaces: `.github/` (1 files), `README.md/` (1 files), `scripts/` (4 files), `tests/` (3 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

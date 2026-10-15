@@ -1,5 +1,14 @@
 # Operations
 
+## Service Level Objectives
+
+This is local configuration tooling without a hosted availability objective.
+Installation must preserve unrelated configuration, produce private recovery
+manifests and converge on repeated apply. Dependency/network installation time
+depends on independently managed services; no fixed latency is promised.
+
+## Monitoring
+
 Preview installation with install.sh --dry-run. Use --deps for the selected
 Brewfile dependencies, --all for all configuration groups, and exec zsh -l to
 load a fresh shell. Backups and restore commands are described in README.md.
@@ -21,9 +30,16 @@ failed first-boot attempts for diagnosis; this change does not claim that
 container execution succeeded. The upstream GUI issue has the detailed context.
 
 Follow Decapod's task/workspace lifecycle for agent coordination. Its generated
-state is managed through CLI/RPC. This project's generic readiness adapter is
-not available in Decapod 0.111.1; record that result honestly and retain actual
-repository-check evidence separately.
+state is managed through CLI/RPC. Repository-local proof and hosted CI remain
+separate evidence; inspect actual validation results before publication.
+
+## Incident Response
+
+Use the printed private backup manifest with install.sh --restore --dry-run,
+then restore after inspection. Later edits or corrupt backups block the operation;
+preserve both versions and reconcile them explicitly. Package/model stores and
+VM disks are external state, not configuration rollback. Never delete unknown
+container resources or signing assets to make diagnostics pass.
 
 <!-- decapod:capability-overlay:persistent-state:start -->
 
@@ -48,7 +64,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `681733e819829878e8dbed2ae67484cffa93d4ff253089704c83b593581d4ab0`
-- Significant implementation surfaces: `.github/` (1 files), `README.md/` (1 files), `scripts/` (3 files), `tests/` (3 files)
+- Repository signal fingerprint: `60748b35822094592834a86196c34c2bfa40d4d9855ae3240bf34f0c4016250a`
+- Significant implementation surfaces: `.github/` (1 files), `README.md/` (1 files), `scripts/` (4 files), `tests/` (3 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

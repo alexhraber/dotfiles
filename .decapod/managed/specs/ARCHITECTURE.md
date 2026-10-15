@@ -1,12 +1,12 @@
 # Architecture
 
-## System boundary
+## Direction
 
 This is a configuration repository, not a service. Bash entrypoints dispatch
 to the Python standard-library installer. zsh and Lua configure the user's
 shell and editor; Homebrew manages the curated tool dependencies.
 
-## Components and data flow
+## Current Facts
 
 - install.sh -> scripts/dotfiles -> scripts/manage.py: parse group selection,
   construct operations, preflight destinations, snapshot original files,
@@ -33,8 +33,8 @@ shell and editor; Homebrew manages the curated tool dependencies.
 - .config/zsh/workspaces.zsh: explicit project-only Podman invocation. It checks
   a running engine but never creates or starts a VM. Host credentials and engine
   sockets are not mounted; source remains writable and SELinux labels are
-  disabled for shared macOS filesystems. Live container checks remain unavailable
-  while the existing VM startup problem is deferred.
+  disabled for shared macOS filesystems. Live container integration is checked
+  separately from the portable fake-engine argument tests.
 - Brewfile: scoped direct dependencies including dev, infrastructure, local AI
   and Chrome. Installed unmanaged Chrome remains externally managed.
 - Homebrew Bundle receives group selection through HOMEBREW_DOTFILES_GROUPS;
@@ -54,7 +54,7 @@ shell and editor; Homebrew manages the curated tool dependencies.
 - .codex: allowlisted portable files copied into Codex home to keep app-written
   account and runtime settings outside Git.
 
-## State and failures
+## Data and Contracts
 
 Configuration backups use private local state directories and JSON manifests.
 Neovim plugin checkouts, bat caches, shell history, Codex state and Podman VM
@@ -63,12 +63,50 @@ plugin downloads and repository updates are outside configuration restoration.
 The installer assumes a single writer; it detects destination changes during
 installation but does not coordinate simultaneous independent installers.
 
-## Isolation
+## Concurrency and Runtime Model
 
 Decapod uses a claimed task and isolated workspace. Container policy is
 configured with Podman as the intended runtime; all VM starts must be headless.
-The installed Decapod full-readiness adapter currently targets Decapod's own
-source/CI contract, so generic dotfiles readiness remains unsupported.
+Repository proof uses Decapod's supported repository-local profile with reviewed
+commands and toolchain declarations. Hosted CI execution is a separate result.
+
+## Topology
+
+```text
+Brewfile -> Homebrew tools
+install.sh -> scripts/dotfiles -> scripts/manage.py -> installed config
+                                      |                  |
+                                      v                  v
+                                private backups    shell/editor/apps
+scripts/check -> scripts/check.py -> ShellCheck + zsh parser + unittest
+```
+
+## Execution Path
+
+The installer selects groups, validates all targets and snapshots changes before
+atomic per-file replacement. macOS preferences use a separate typed transaction.
+Restoration preflights every target and backup before replacing any destination.
+
+## Deployment Topology
+
+The product installs into a local user account. Portable configuration is linked
+or copied from a retained checkout; packages and mutable runtime stores are
+external. The verification image installs Python, zsh and ShellCheck without
+starting a graphical VM interface or mounting host credentials.
+
+## Delivery Plan
+
+Review changes against the accepted base, checkpoint the candidate, run configured
+repository proof and inspect platform-specific host checks. Publish only with
+task authorization and passing readiness; GitHub's platform matrix remains
+separate execution evidence. Reapply a reviewed retained checkout to switch links.
+
+## Risks and Mitigations
+
+Symlinks depend on retaining their source checkout; private backups preserve old
+links and resolved content. Package/model installation is not rolled back with
+configuration. Concurrent installers are unsupported; destination readback catches
+some races. Explicit invocations keep expensive models and VMs out of shell login.
 
 <!-- decapod:capability-overlay:persistent-state:start -->
 
@@ -96,7 +134,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `681733e819829878e8dbed2ae67484cffa93d4ff253089704c83b593581d4ab0`
-- Significant implementation surfaces: `.github/` (1 files), `README.md/` (1 files), `scripts/` (3 files), `tests/` (3 files)
+- Repository signal fingerprint: `60748b35822094592834a86196c34c2bfa40d4d9855ae3240bf34f0c4016250a`
+- Significant implementation surfaces: `.github/` (1 files), `README.md/` (1 files), `scripts/` (4 files), `tests/` (3 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
