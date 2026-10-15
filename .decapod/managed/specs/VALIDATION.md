@@ -83,6 +83,21 @@ fresh exact-candidate validation and hosted CI before merge; the earlier
 
 ## Promotion Gates
 
+The icons-only refinement supersedes the earlier dock chrome and palette
+rendering. Host checks still pass 56 tests, native warnings-as-errors compilation,
+geometry and Swift typechecking. An actual native DockView preview was inspected;
+pixel alpha verification found zero nontransparent pixels in the upper/lower
+background bands and 31,437 icon pixels. The panel has no shadow or visual-effect
+view. These own-view checks do not require screen recording. Fresh exact-candidate
+proof and hosted CI are required for this refinement before publication.
+
+The subsequent reveal refinement passed the same 56 tests and native checks.
+Pure geometry now asserts bottom-aligned icon rectangles, unchanged 40-point
+resting size, a 77.5-point peak (62 times 1.25), and reveal coverage of future
+resting icons on positive and negative display origins. Host apply reached
+healthy service state with the bottom-aligned build. Pointer feel remains a
+human interaction judgment; geometry and activation are verified separately.
+
 Decapod's repo.pr-readiness.v1 profile executes the same portable check owner
 through its Python entrypoint with an explicitly reviewed runtime closure inside
 the configured container workspace. Proof is bound to the exact source candidate
@@ -121,7 +136,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `c55e37c9730ea2f3cd8d6824221a63811dead18e1216de1c705a501150254036`
+- Repository signal fingerprint: `28f7bdc2fc429ce5202d147410f01c9dad1db7d7b5acadb11a1a45815e8db4d1`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

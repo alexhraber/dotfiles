@@ -1,185 +1,82 @@
 {
   "schema_version": "1.0.0",
   "baseline": {
-    "accepted_commit": "f1728ae6d6f0894d3c7348e00075c85f2e25d0d8"
+    "accepted_commit": "7c4306450b209bd57054ff80707c2ee2c4b44b19"
   },
   "change": {
-    "id": "change_01M4Z1EG4P7THVM2RR4XMS4CK2",
-    "base_commit": "f1728ae6d6f0894d3c7348e00075c85f2e25d0d8",
+    "id": "change_01M50DGDKAXS3VJN875HZ0W15P",
+    "base_commit": "7c4306450b209bd57054ff80707c2ee2c4b44b19",
     "target_base": "origin/main"
   },
   "checkpoints": [
     {
-      "id": "workstation-setup",
-      "summary": "Project-aware Node/npm; native build/media and Ghidra tools; safe copied runtime config; pinned MLX requirements; interactive Xcode setup; configuration backup/restore tests",
-      "input_digest": "sha256:a58a79f4efbe312ed72713c0a65ffcb986b6f2e7d0fa252043a6243a1fca92c8"
-    },
-    {
-      "id": "rice-applied",
-      "summary": "Applied cohesive Tokyo Night terminal/editor/tmux/fzf rice; 30 tests and installed doctor passed; backups private; Scripture work handed off",
-      "input_digest": "sha256:474cfe757d7e132c075371afe4f4cf259e325db2094bce106f8353406386a7f3"
-    },
-    {
-      "id": "portable-readiness-20261015",
-      "summary": "Keep Apple team selection local; share the existing complete check owner with supported repository proof; declare the container tool closure and reconcile canonical project specs",
-      "input_digest": "sha256:ed90b5869100c763d993fc89f5be2c585f462689955604b503ae456784c1e68a"
-    },
-    {
-      "id": "ollama-manual-20261015",
-      "summary": "Keep local Ollama off by default; add explicit foreground aiup with Ctrl-C shutdown and no model preload. Record actual service-off and stub verification without machine identity.",
-      "input_digest": "sha256:f3d18ebad1e1a29d4a9ec5bc024b15f8d45b63a749ef7c586afd3e9a912009b4"
-    },
-    {
-      "id": "proof-context-20261015",
-      "summary": "Reconcile current headless container observations and manual Ollama operations; retain separate full-readiness requirement and content-bound canonical spec reviews.",
-      "input_digest": "sha256:88c96a711c09a40ed4aa9d816e0fa7c7a3bdde94d8663281956f68f31f74c87f"
-    },
-    {
-      "id": "ollama-proof-contract-20261015",
-      "summary": "Review full source inventory after aiup addition and update its exact digest; portable check owner, CI coverage and runtime closure are unchanged.",
-      "input_digest": "sha256:50da7fba1ca8cd1d3da27f7d09ea3f0a02841db906e63d6757b84d5c66836ae0"
-    },
-    {
-      "id": "finalized-proof-context-20261015",
-      "summary": "Bind final reviewed inventory, refreshed generated manifest, canonical spec reviews and current manual Ollama operations to the committed material.",
-      "input_digest": "sha256:312a850f86be0704dc6cfc11d38d82fa6d1575e3fbe5143db9c68a5491b4ad08"
-    },
-    {
-      "id": "latest-decapod-1143-20261015",
-      "summary": "Upgrade host and governed container to crates.io latest stable Decapod 0.114.3, refresh release-bound entrypoints and manifest, and record successful portable diagnostic checks separately from pending full readiness.",
-      "input_digest": "sha256:12638955293b47e7a0a37b295fa35c0f19464d717bd336eaf4863290effbaa01"
-    },
-    {
-      "id": "latest-1143-proof-bundle-20261015",
-      "summary": "Bind the preserved new-release trajectory, verified host/container versions, diagnostic check evidence and current generated prerequisite receipt.",
-      "input_digest": "sha256:b5bdcaa0b1ae179894822a66b49e14018685a206c9501d7b8ac8e81fee629af3"
-    },
-    {
-      "id": "remove-unused-just-20261015",
-      "summary": "Remove unused Just task runner at owner direction, preserve and document every direct workflow and required check, reconcile full source inventory, and report upstream case-alias defect as Decapod issue 1444.",
-      "input_digest": "sha256:df612b77607364e68b1c90f30e92831a8cff543490c633d511135130b6949f38"
-    },
-    {
-      "id": "direct-workflow-proof-20261015",
-      "summary": "Bind the publication trajectory and fresh prerequisite receipt to the reviewed direct-script candidate; retain all required checks.",
-      "input_digest": "sha256:091934e4ccb82276ff3d3e396bc2515fcd28de93e3adae0040768519846e5e06"
-    },
-    {
-      "id": "polished-fullscreen-workstation-1150",
-      "summary": "Implement reproducible fullscreen desktop with coordinated Tidal/Ember/Iris palettes and ribbon/islands layouts, native open-app dock, hover system controls/Fahrenheit telemetry, guarded rollback, sccache and pinned manual MLX lifecycle. Host 51 checks, native compile/geometry/Swift, doctor and real palette switching passed; private approval gaps documented.",
-      "input_digest": "sha256:3cd30cd1546f771770bdd804a927682e64c8ae762baa2fb3c25db9f43cdd83d0",
+      "id": "icons-only-transparent-dock",
+      "summary": "Remove all non-icon chrome and shadow; retain autohide, magnification and explicit context actions, and pass blank regions through.56host checks and native alpha inspection passed; canonical proof pending.",
+      "input_digest": "sha256:29d806df00e6c559235dad482cd8213eea2084296101b6794cc05bba00148e3f",
       "proof_refs": [
-        "host:doctor-all-and-live-theme-queries",
-        "scripts/check:51-host-tests-and-native-checks"
-      ]
-    },
-    {
-      "id": "fullscreen-proof-run-1150",
-      "summary": "Preserve prior work journal in Git and bind the new exact-candidate desktop validation trajectory with actual host evidence; canonical proof remains pending.",
-      "input_digest": "sha256:a6d9a291b14f2ac6ce980b8b125be9dab6e5bf8cf4c67c697c4cae38fab5c0bc",
-      "proof_refs": [
-        "git:1b6e84f"
-      ]
-    },
-    {
-      "id": "desktop-trajectory-task-binding-1150",
-      "summary": "Bind the new validation trajectory to the already claimed workstation task after the explicit validation diagnostic; preserve the failed attempt and rerun exact proof.",
-      "input_digest": "sha256:7dd4abd415db7b0a80e268953fe17f43da339b2eeb79a79c5401b58824d90ef0",
-      "proof_refs": [
-        "/private/tmp/dotfiles-validation-1150.json"
-      ]
-    },
-    {
-      "id": "desktop-current-prerequisite-receipt-1150",
-      "summary": "Bind the genuine current-version container prerequisite receipt and resolved task binding; full readiness remains pending.",
-      "input_digest": "sha256:022ad8f1ca941ca3c3e9f02a512ea4bec3862264b5ff05d50e721144589de0e0",
-      "proof_refs": [
-        "container:decapod-govern-project-check:188-pass-0-fail"
-      ]
-    },
-    {
-      "id": "desktop-receipt-final-binding-1150",
-      "summary": "Keep the genuine prerequisite receipt bound to the exact current trajectory without subsequent journal mutation; full readiness remains the next independent gate.",
-      "input_digest": "sha256:022ad8f1ca941ca3c3e9f02a512ea4bec3862264b5ff05d50e721144589de0e0",
-      "proof_refs": [
-        "container:current-project-check"
-      ]
-    },
-    {
-      "id": "weather-97750-imperial-1150",
-      "summary": "Add NWS forecast pinned to ZIP97750 with Fahrenheit/mph, cached immediate hover, bounded background refresh, stale/offline handling and five behavioral regressions. Actual host weather fetch and56checks passed; canonical readiness remains pending.",
-      "input_digest": "sha256:14b896652a891aa467b89d7d2887b419e3bf2bd173bd4965cb00913a1434398d",
-      "proof_refs": [
-        "host:live-weather-97750",
+        "/private/tmp/dotfiles-alpha-proof.swift",
         "host:scripts-check:56-tests"
       ]
     },
     {
-      "id": "weather-current-proof-receipt-1150",
-      "summary": "Bind weather source to the new task-bound trajectory and genuine current-epoch prerequisite receipt; retain all previous checkpoints. Full exact-candidate readiness is next.",
-      "input_digest": "sha256:870ed7554e51e459cdd15d48ecbc288fb3a714fa3ba225d343dfa5192d484723",
-      "proof_refs": [
-        "container:weather-project-check:188-pass-0-fail"
-      ]
+      "id": "icons-bottom-hover-canonical",
+      "summary": "Fully transparent icons-only dock, bottom-aligned reveal footprint, unchanged resting size and 25 percent larger peak hover; host56 tests and native geometry pass, active healthy.",
+      "input_digest": "sha256:ced48ff1ff1ee98e31bd60199438b6991c89f7cfb15582e790dc256688066f47"
     }
   ],
   "intents": {
-    "intent:weather_97750_20261015": {
+    "intent:icons-bottom-hover-final": {
       "acceptance_criteria": [],
       "assumptions": [],
-      "boundaries": [
-        "Dotfiles and its authorized host setup only; no machine location, credentials, model startup or Scripture source changes."
-      ],
-      "constraints": [
-        "root"
-      ],
+      "boundaries": [],
+      "constraints": [],
       "created_sequence": 1,
-      "id": "intent:weather_97750_20261015",
+      "id": "intent:icons-bottom-hover-final",
       "out_of_scope": [],
       "proof_requirements": [],
-      "raw_intent": "Add weather pinned to ZIP97750 to the polished M1 Max bar, then complete the existing authorized main merge and push.",
-      "refined_intent": "Use the official NWS ZIP forecast point with Fahrenheit/mph and cached immediate hover forecasts; preserve themes, native fullscreen, notifications furthest right and private rollback. Validate the updated exact candidate and current PR before merging.",
+      "raw_intent": "Fully transparent icons-only dock; reveal where icons will appear or grow from screen bottom; retain resting size and enlarge current hover size 25 percent.",
+      "refined_intent": "Bottom-align icons, reveal from the 44-point future footprint, preserve resting40-point size, increase unconstrained peak62 to77.5points, retain transparency, autohide and click-through. Verify, merge and push main.",
       "status": "refined",
       "updated_sequence": 3
     }
   },
   "epochs": {
-    "ve_c48f9bc66c5d4601": {
+    "ve_6ecb407b244c0098": {
       "constitution_hash": "sha256:2a8f4611e9727b754c29e2d34ad0ad648c78c8e76c607fe3ef2c6fb0a48983e4",
       "constitution_version": "embedded-docs@0.115.0",
-      "epoch_id": "ve_c48f9bc66c5d4601",
+      "epoch_id": "ve_6ecb407b244c0098",
       "evaluator_identity": "decapod-validate@0.115.0",
       "evaluator_set_hash": "sha256:9e6b438cfcc84ae873e2f38f0f78d9b58ddf784a880014255d8810f5d21e4cdb",
-      "generated_specs_fingerprint": "c55e37c9730ea2f3cd8d6824221a63811dead18e1216de1c705a501150254036",
-      "generated_specs_manifest_hash": "sha256:4ee1042a99d38aee9be4dbd06e0e0ca459702dd27880a728fc543084add16500",
+      "generated_specs_fingerprint": "28f7bdc2fc429ce5202d147410f01c9dad1db7d7b5acadb11a1a45815e8db4d1",
+      "generated_specs_manifest_hash": "sha256:443c8d10f0fa4024424678e3ddeeab9668083eccf0ca9c07839843837315d28f",
       "material_hashes": {
         "constitution:core/DECAPOD": "sha256:2a8f4611e9727b754c29e2d34ad0ad648c78c8e76c607fe3ef2c6fb0a48983e4",
-        "generated_spec:.decapod/managed/specs/ARCHITECTURE.md": "sha256:092c4f717962e81dfc57227f186ffe4a4608ae67333746b7820f53c90e9bfab7",
-        "generated_spec:.decapod/managed/specs/INTENT.md": "sha256:9c9d19651e6b8959ab2fdd3cddc62efbc216d16951ede63605f8a9e332d7dec3",
-        "generated_spec:.decapod/managed/specs/INTERFACES.md": "sha256:812611fe5f43a31982256da031a545190f80c7e9af12dbbffe6838ab5efb884a",
-        "generated_spec:.decapod/managed/specs/OPERATIONS.md": "sha256:bc84cf964ec23b7fe14ee99d881ef556d58c580fc6042544920ace2264c86bed",
-        "generated_spec:.decapod/managed/specs/README.md": "sha256:005ce0c8686a3cb33a9cffe1e532978c5206ecf7e964869057cb83402416e6fe",
-        "generated_spec:.decapod/managed/specs/SECURITY.md": "sha256:9458b9875d0042151b564f132f4a23a20c57371c1d884582fe0b7b9cc7c51da4",
-        "generated_spec:.decapod/managed/specs/SEMANTICS.md": "sha256:26dbf28a4bb13de7814c45a86a51cab4641a06cd374cfe6840a57b7bb5772a2a",
-        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:72cab6f50394dcd9c888fac227e4ae695bc856058e4b3fdeb657113801549a06",
-        "generated_specs_fingerprint": "c55e37c9730ea2f3cd8d6824221a63811dead18e1216de1c705a501150254036",
-        "generated_specs_manifest": "sha256:4ee1042a99d38aee9be4dbd06e0e0ca459702dd27880a728fc543084add16500",
-        "governance_context": "sha256:bb60e504bbdb2a87dca738847b4b6ee10a10f2a101280c3f660b4d0c486ef823",
+        "generated_spec:.decapod/managed/specs/ARCHITECTURE.md": "sha256:0f314c81762da9782034d7df2f8aa7a326092f12a7a073d120a2c132a2924dbf",
+        "generated_spec:.decapod/managed/specs/INTENT.md": "sha256:93ca6d869f9ff0aaa1718bdb7b556d267bcac08b51f24293c883ff5c3d099a0d",
+        "generated_spec:.decapod/managed/specs/INTERFACES.md": "sha256:04f51d439f97d94df7620b629cc7ac53a8633ac01a707b037c2bc57431d2890d",
+        "generated_spec:.decapod/managed/specs/OPERATIONS.md": "sha256:bf8144d07ddce0c113f799b4ac13ff641f3add27671a217dd21f12747c4a15c2",
+        "generated_spec:.decapod/managed/specs/README.md": "sha256:642f9e4fb3b6af2ecb3e90ea0cb78d87b4ebd3bb03bb1addc38262e8fbcc727d",
+        "generated_spec:.decapod/managed/specs/SECURITY.md": "sha256:ef1dab3fb5427ad7135f26425c517d10e5731553e529fbd46b04b02f347885d0",
+        "generated_spec:.decapod/managed/specs/SEMANTICS.md": "sha256:4bcadc70d9bc57578856e793135af8892fff8c9c6e043f75bf5ce3242ee68196",
+        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:ffbb900b8e53c0cbfcefea6d845210e313bec0026d0b18ab2c3d2dcb5a17aad6",
+        "generated_specs_fingerprint": "28f7bdc2fc429ce5202d147410f01c9dad1db7d7b5acadb11a1a45815e8db4d1",
+        "generated_specs_manifest": "sha256:443c8d10f0fa4024424678e3ddeeab9668083eccf0ca9c07839843837315d28f",
+        "governance_context": "sha256:9d3398d2f38479d70a08ff022796624c248c316432a23ae0e1ac761124355955",
         "governance_material:.decapod/managed/Dockerfile.decapod": "sha256:1b0e312b4164c34cbfd351a406e465ceaefffbf7ae196f1e07f05b71ae7526b3",
         "governance_material:AGENTS.md": "sha256:66aea85a529f3d057ba054f4e8dec5d88d2914ee554397219398203117f6ad59",
         "governance_material:CLAUDE.md": "sha256:852c35dcb100d65725ede1d6ecf0ed9b6398993a55268ffda56a98ff634577ac",
         "governance_material:CODEX.md": "sha256:f3aa0b4f0f1deeec77c76d985d9c20013a8717271637013986606cf5d15a1bb0",
         "governance_material:GEMINI.md": "sha256:13d954c7e064d4c9283d09474765e1d25350ddb2d1084c4186f6dfa9698ee63a",
         "governance_section:claims": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
-        "governance_section:plan": "sha256:677b675a6356a3f4f2310ae4842fe5aca649babbeea5e0b8bc52ee10413de00e",
-        "living_spec_material:.decapod/managed/specs/ARCHITECTURE.md": "sha256:d9e09145ce1f92969a5f564111272c768a43915f979c33b5fe88c9ab07490d7f",
-        "living_spec_material:.decapod/managed/specs/INTENT.md": "sha256:9555943d3fd8e565a34e6f8c0867d89a2f997df72d53abfb25c1b786872fe69a",
-        "living_spec_material:.decapod/managed/specs/INTERFACES.md": "sha256:36ca03125df62f4d14667696f769e8355f352dc511fd7a2837c068e404942af1",
+        "governance_section:plan": "sha256:f018458a5ea790815ff70bfac21b795736837cab871e1a7894636692d41399a5",
+        "living_spec_material:.decapod/managed/specs/ARCHITECTURE.md": "sha256:7e3dc123f4f5af4c0d3fa2519fbe6921b63f8bf8db7f46ec7a6e506735e29b21",
+        "living_spec_material:.decapod/managed/specs/INTENT.md": "sha256:42ff552564d7b733043c7a9d9ab3cba5949065ce6149851f7a6a9657c9b7f967",
+        "living_spec_material:.decapod/managed/specs/INTERFACES.md": "sha256:30e1061b2e00a0811af771ba53ecf77d715f3926bac6eefe894e57e0c15a4acc",
         "living_spec_material:.decapod/managed/specs/OPERATIONS.md": "sha256:b43e9fa0eef9fb3e28d84cc5386c79f64f1f3cb9a37a1b8834bbb84e24dbea17",
         "living_spec_material:.decapod/managed/specs/README.md": "sha256:0988c85d6c05f02d52684c9aafae50e95fd5d5576739d3e9d995af682697fd99",
         "living_spec_material:.decapod/managed/specs/SECURITY.md": "sha256:5fc8a37235845fe072a5fb4ef5c678b4864c71fca1c15326c5563478bdb8e494",
         "living_spec_material:.decapod/managed/specs/SEMANTICS.md": "sha256:92bbe2607c6f8f94191a95ea977d9785f3472a0fae2835520dd86eae73130d5c",
-        "living_spec_material:.decapod/managed/specs/VALIDATION.md": "sha256:ba1792f4e643f8d8e3e4fbc445232e8daf8e539e9257e38d3dd90a9c6cf0098f",
+        "living_spec_material:.decapod/managed/specs/VALIDATION.md": "sha256:b344d931e64fbb31aebd659f35da172d122fdf921dfc78ab4535797caed9afa6",
         "proof_rubric": "sha256:99e8ef25629da391e9b479db9fff52b82f340224f7a69d8a88d2992ae8e90466",
         "validation_profile": "sha256:37a8eec1ce19687d132fe29051dca629d164e2c4958ba141d5f4133a33f0688f"
       },
@@ -198,61 +95,65 @@
       },
       "deferred_questions": [],
       "human_questions": [],
-      "intent": "Complete the reproducible M1 Max workstation and redesigned native fullscreen desktop, including shared Tidal/Ember/Iris themes and ribbon/islands layouts. Add weather pinned to ZIP97750 using the official NWS ZIP forecast point, cached hourly/extended forecast hover, Fahrenheit and mph, bounded network refresh and explicit stale/offline states. Preserve one autohiding bar, far-right notifications, grouped open-app dock, private guarded undo, manual Ollama and untouched Scripture. Verify updated source and existing PR, then merge and push main.",
+      "intent": "Make the native fullscreen dock entirely transparent with only grouped application icons. Remove chrome, labels, badges, active markers and shadow. User feedback adds bottom-aligned icons and reveal from the future icon footprint, preserving the resting size while increasing peak hover size by 25 percent. Retain autohide, magnification, explicit context actions and transparent-area click-through. Preserve bar/themes, pinned97750 weather, Fahrenheit, rollback and manual Ollama. Verify geometry and native rendering, apply, merge and push main.",
       "phases": [],
       "proof_hooks": [
-        "dotfiles checks and installed runtime smoke checks"
+        "decapod validate"
       ],
       "schema_version": "1.1.0",
       "spec_reviews": [
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/ARCHITECTURE.md",
-          "reason": "Reviewed the added fixed ZIP97750 NWS point, bounded cached forecast worker, imperial units and nonblocking hover integration. The installer declares its two files; tests cover unit conversion, stale/offline data, refresh backoff, hover capacity and endpoint host checks. No geolocation, credential or new daemon is introduced.",
-          "reviewed_code_fingerprint": "c55e37c9730ea2f3cd8d6824221a63811dead18e1216de1c705a501150254036",
-          "spec_material_hash": "d9e09145ce1f92969a5f564111272c768a43915f979c33b5fe88c9ab07490d7f"
+          "reason": "Reviewed the native-only source inventory change: bottom-aligned icon drawing/hit geometry, future-footprint reveal region and 25 percent larger peak. Same required check owner now tests these meaningful geometry invariants; CI and command closure unchanged.",
+          "reviewed_code_fingerprint": "28f7bdc2fc429ce5202d147410f01c9dad1db7d7b5acadb11a1a45815e8db4d1",
+          "spec_material_hash": "7e3dc123f4f5af4c0d3fa2519fbe6921b63f8bf8db7f46ec7a6e506735e29b21"
         },
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/INTERFACES.md",
-          "reason": "Reviewed the added fixed ZIP97750 NWS point, bounded cached forecast worker, imperial units and nonblocking hover integration. The installer declares its two files; tests cover unit conversion, stale/offline data, refresh backoff, hover capacity and endpoint host checks. No geolocation, credential or new daemon is introduced.",
-          "reviewed_code_fingerprint": "c55e37c9730ea2f3cd8d6824221a63811dead18e1216de1c705a501150254036",
-          "spec_material_hash": "36ca03125df62f4d14667696f769e8355f352dc511fd7a2837c068e404942af1"
+          "reason": "Documented 44-point reveal footprint and bottom alignment, unchanged resting size and 77.5-point peak, icons-only transparency and retained context/autohide actions.",
+          "reviewed_code_fingerprint": "28f7bdc2fc429ce5202d147410f01c9dad1db7d7b5acadb11a1a45815e8db4d1",
+          "spec_material_hash": "30e1061b2e00a0811af771ba53ecf77d715f3926bac6eefe894e57e0c15a4acc"
         },
         {
-          "disposition": "updated",
+          "disposition": "unchanged_with_reason",
           "path": ".decapod/managed/specs/SECURITY.md",
-          "reason": "Reviewed the added fixed ZIP97750 NWS point, bounded cached forecast worker, imperial units and nonblocking hover integration. The installer declares its two files; tests cover unit conversion, stale/offline data, refresh backoff, hover capacity and endpoint host checks. No geolocation, credential or new daemon is introduced.",
-          "reviewed_code_fingerprint": "c55e37c9730ea2f3cd8d6824221a63811dead18e1216de1c705a501150254036",
+          "reason": "Pointer-region and icon geometry changes add no permissions, private APIs, network or credential surfaces. Empty transparent regions retain mouse click-through.",
+          "reviewed_code_fingerprint": "28f7bdc2fc429ce5202d147410f01c9dad1db7d7b5acadb11a1a45815e8db4d1",
           "spec_material_hash": "5fc8a37235845fe072a5fb4ef5c678b4864c71fca1c15326c5563478bdb8e494"
         }
       ],
       "state": "APPROVED",
       "stop_conditions": [],
-      "title": "Equip M1 Max workstation for the existing Rust, web, Swift, reverse engineering and local AI projects",
+      "title": "Make the fullscreen dock fully transparent and icons only",
       "todo_ids": [
-        "fend_01m4z1drb0ngbkk6"
+        "docs_01m50deg60dyrxh3"
       ],
       "unknowns": [],
       "unresolved_contradictions": [],
-      "updated_at": "1792088338Z"
+      "updated_at": "1792091758Z"
     },
     "trajectory": {
       "active_boundaries": [
-        "Dotfiles and its authorized host setup only; no machine location, credentials, model startup or Scripture source changes."
+        "No changes to Spaces, shortcuts, accounts, models or existing CI obligations"
       ],
-      "artifact_hash": "sha256:f011cd4cc9ac92741f8b035833002e7061467299947b674976f8125b50f92cf6",
+      "artifact_hash": "sha256:ed7a3e6ea4e28232c8225713e677d057d2cad11882f66e7c7a6a09713f798ee3",
       "checks": [
-        {
-          "name": "actual_nws_fetch",
-          "status": "passed"
-        },
         {
           "name": "decapod validate",
           "status": "passed"
         },
         {
-          "name": "host_checks_56",
+          "name": "host-56-tests",
+          "status": "passed"
+        },
+        {
+          "name": "live-apply",
+          "status": "passed"
+        },
+        {
+          "name": "native-geometry",
           "status": "passed"
         }
       ],
@@ -261,27 +162,27 @@
         "events": [
           {
             "event_id": "event:2",
-            "intent_id": "intent:weather_97750_20261015",
+            "intent_id": "intent:icons-bottom-hover-final",
             "kind": "created",
             "sequence": 2
           },
           {
             "event_id": "event:3",
-            "intent_id": "intent:weather_97750_20261015",
+            "intent_id": "intent:icons-bottom-hover-final",
             "kind": "refined",
             "sequence": 3
           },
           {
-            "detail": "trajectory:weather_97750_20261015",
+            "detail": "trajectory:icons-bottom-hover-final",
             "event_id": "event:4",
-            "intent_id": "intent:weather_97750_20261015",
+            "intent_id": "intent:icons-bottom-hover-final",
             "kind": "trajectory_step_recorded",
             "sequence": 4
           },
           {
-            "detail": "trajectory:weather_97750_20261015",
+            "detail": "trajectory:icons-bottom-hover-final",
             "event_id": "event:5",
-            "intent_id": "intent:weather_97750_20261015",
+            "intent_id": "intent:icons-bottom-hover-final",
             "kind": "trajectory_step_recorded",
             "sequence": 5
           }
@@ -290,26 +191,25 @@
         "next_sequence": 5,
         "schema_version": "1.0.0",
         "trajectories": {
-          "weather_97750_20261015": {
+          "icons-bottom-hover-final": {
             "evidence_only": true,
-            "id": "weather_97750_20261015",
-            "intent_id": "intent:weather_97750_20261015",
+            "id": "icons-bottom-hover-final",
+            "intent_id": "intent:icons-bottom-hover-final",
             "steps": [
               {
-                "action": "trajectory.record",
+                "action": "validation",
                 "custody_event_id": "event:4",
                 "observations": [
-                  ".config/sketchybar/plugins/weather.py",
-                  ".config/sketchybar/weather.json",
-                  "Shared host checks passed56tests plus native Werror/geometry/Swift checks. Official NWS ZIP lookup resolves97750 to44.662,-119.788; actual API fetch returned24hourly periods and the live item showed49°F/Sunny. Cached hover provides14rows including refresh without network access on the hover path. Earlier51-test canonical/hosted results are historical; updated weather source requires fresh exact-candidate proof."
+                  "scripts/desktop-edge.m",
+                  "scripts/desktop-edge.m",
+                  "Shared macOS check owner passed all56 tests, warnings-as-errors native compile, Swift typecheck and geometry assertions for bottom alignment, reveal footprint, unchanged40pt resting size and exact77.5pt peak. Desktop apply healthy. Earlier own-view alpha proof established fully clear background; drawing remains icons-only. Reviewed complete source inventory: only native helper hash changed, CI/runtime closure unchanged."
                 ],
                 "proof_refs": [
-                  "host_checks_56",
-                  "actual_nws_fetch"
+                  "host-56-tests",
+                  "native-geometry",
+                  "live-apply"
                 ],
-                "scope": [
-                  "root"
-                ],
+                "scope": [],
                 "sequence": 4,
                 "validation_findings": []
               },
@@ -320,13 +220,13 @@
                 "observations": [
                   ".decapod/governance.json",
                   ".decapod/governance.json",
-                  "validation epoch ve_c48f9bc66c5d4601 completed with zero failures"
+                  "validation epoch ve_6ecb407b244c0098 completed with zero failures"
                 ],
                 "proof_refs": [
                   "decapod validate"
                 ],
                 "scope": [
-                  "root"
+                  "scripts/desktop-edge.m"
                 ],
                 "sequence": 5,
                 "validation_findings": []
@@ -339,27 +239,71 @@
         "decapod validate"
       ],
       "evidence": [
-        "Shared host checks passed56tests plus native Werror/geometry/Swift checks. Official NWS ZIP lookup resolves97750 to44.662,-119.788; actual API fetch returned24hourly periods and the live item showed49°F/Sunny. Cached hover provides14rows including refresh without network access on the hover path. Earlier51-test canonical/hosted results are historical; updated weather source requires fresh exact-candidate proof.",
-        "validation epoch ve_c48f9bc66c5d4601 completed with zero failures"
+        "Shared macOS check owner passed all56 tests, warnings-as-errors native compile, Swift typecheck and geometry assertions for bottom alignment, reveal footprint, unchanged40pt resting size and exact77.5pt peak. Desktop apply healthy. Earlier own-view alpha proof established fully clear background; drawing remains icons-only. Reviewed complete source inventory: only native helper hash changed, CI/runtime closure unchanged.",
+        "validation epoch ve_6ecb407b244c0098 completed with zero failures"
+      ],
+      "execution_checkpoints": [
+        {
+          "binding": {
+            "governance_digest": "sha256:654e812c7fc96c1a363ddd7dd90fb5258af71ed47565c40eaa3e09ae7c5cfe06",
+            "head_revision": "5498d19039363f970b5a40d352bb2c0f866beefa",
+            "intent_id": "intent:icons-bottom-hover-final",
+            "material_digest": "sha256:a5c1f252389857a7980f2ac2d268a81409bb0d422477c28e9f131d67eab13073",
+            "plan_digest": "sha256:9148c22e2da0ed65d055f602c9ac017de475d14a40961959312da183d4bd055a",
+            "policy_digest": "sha256:f010e3035858274a6d9faae49b266b6099dd3b63ae1438e872e96648588c8135",
+            "required_approvals": [],
+            "run_id": "icons-bottom-hover-final",
+            "schema_version": "1.0.0",
+            "task_custody_digest": "sha256:fdccc2b670ed474fd2c3168222dd822b6bcd8991baa55823cb49e67bdd8d8d39",
+            "task_id": "docs_01m50deg60dyrxh3",
+            "trajectory_digest": "sha256:aa3706a4d40eab2d9438f3988fd42403a4ff57cdbc287bf3719f8ee4ccf4256a",
+            "validation_epoch_digest": "sha256:48eaa9fecaea9c6c363c2f09571b6eba5a305111573822d1e88900677651d698",
+            "work_branch": "agent/unknown/docs_01m50deg60dyrxh3"
+          },
+          "binding_digest": "sha256:5f24323bbf7287641e492a5d3c18a8b8e469990d6f01bd5e945a73aba8425c19",
+          "checkpoint_id": "icons-bottom-hover-publication",
+          "sequence": 1
+        },
+        {
+          "binding": {
+            "governance_digest": "sha256:1ac0b4e5eb51aa51a99f164f6b794b67d069a110700e63c409860ec8e748d8dc",
+            "head_revision": "7c4306450b209bd57054ff80707c2ee2c4b44b19",
+            "intent_id": "intent:icons-bottom-hover-final",
+            "material_digest": "sha256:a5c1f252389857a7980f2ac2d268a81409bb0d422477c28e9f131d67eab13073",
+            "plan_digest": "sha256:9148c22e2da0ed65d055f602c9ac017de475d14a40961959312da183d4bd055a",
+            "policy_digest": "sha256:f010e3035858274a6d9faae49b266b6099dd3b63ae1438e872e96648588c8135",
+            "required_approvals": [],
+            "run_id": "icons-bottom-hover-final",
+            "schema_version": "1.0.0",
+            "task_custody_digest": "sha256:fdccc2b670ed474fd2c3168222dd822b6bcd8991baa55823cb49e67bdd8d8d39",
+            "task_id": "docs_01m50deg60dyrxh3",
+            "trajectory_digest": "sha256:aa3706a4d40eab2d9438f3988fd42403a4ff57cdbc287bf3719f8ee4ccf4256a",
+            "validation_epoch_digest": "sha256:48eaa9fecaea9c6c363c2f09571b6eba5a305111573822d1e88900677651d698",
+            "work_branch": "agent/unknown/docs_01m50deg60dyrxh3"
+          },
+          "binding_digest": "sha256:516a2706fe8f527efba5fb47b3de9b6d4f6d5891d41f2314176119df2aa55051",
+          "checkpoint_id": "icons-bottom-hover-squashed",
+          "sequence": 2
+        }
       ],
       "inspected_files": [
-        ".config/sketchybar/plugins/weather.py"
+        "scripts/desktop-edge.m"
       ],
-      "intent_id": "intent:weather_97750_20261015",
+      "intent_id": "intent:icons-bottom-hover-final",
       "modified_files": [
-        ".config/sketchybar/weather.json",
-        ".decapod/governance.json"
+        ".decapod/governance.json",
+        "scripts/desktop-edge.m"
       ],
       "next_transitions": [
         "publish"
       ],
       "repo_scope": [
-        "root"
+        "scripts/desktop-edge.m"
       ],
-      "run_id": "weather_97750_20261015",
+      "run_id": "icons-bottom-hover-final",
       "schema_version": "1.1.0",
       "shortcut_risk_signals": [],
-      "task_id": "fend_01m4z1drb0ngbkk6",
+      "task_id": "docs_01m50deg60dyrxh3",
       "tool_calls": [],
       "unresolved_assumptions": []
     },
@@ -374,49 +318,49 @@
       },
       "decapod_release": "0.115.0",
       "drift_findings": [],
-      "elapsed_ms": 2546,
-      "epoch_ref": "ve_c48f9bc66c5d4601",
+      "elapsed_ms": 1485,
+      "epoch_ref": "ve_6ecb407b244c0098",
       "fail_count": 0,
       "failures": [],
       "gate_timings": [
         {
-          "elapsed_ms": 1388,
-          "name": "validate_project_specs_docs"
-        },
-        {
-          "elapsed_ms": 292,
+          "elapsed_ms": 312,
           "name": "validate_markdown_primitives_roundtrip_gate"
         },
         {
-          "elapsed_ms": 215,
+          "elapsed_ms": 245,
+          "name": "validate_project_specs_docs"
+        },
+        {
+          "elapsed_ms": 190,
           "name": "validate_machine_contract"
         },
         {
-          "elapsed_ms": 127,
-          "name": "validate_git_workspace_context"
-        },
-        {
-          "elapsed_ms": 111,
+          "elapsed_ms": 174,
           "name": "validate_stale_workspaces"
         },
         {
-          "elapsed_ms": 97,
+          "elapsed_ms": 98,
           "name": "validate_obligations"
         },
         {
-          "elapsed_ms": 66,
+          "elapsed_ms": 91,
+          "name": "validate_git_workspace_context"
+        },
+        {
+          "elapsed_ms": 64,
           "name": "validate_legacy_jsonl_retired"
         },
         {
-          "elapsed_ms": 33,
+          "elapsed_ms": 55,
+          "name": "validate_gatekeeper_gate"
+        },
+        {
+          "elapsed_ms": 35,
           "name": "validate_archive_integrity"
         },
         {
-          "elapsed_ms": 23,
-          "name": "validate_git_protected_branch"
-        },
-        {
-          "elapsed_ms": 18,
+          "elapsed_ms": 17,
           "name": "validate_repomap_determinism"
         },
         {
@@ -424,7 +368,7 @@
           "name": "validate_schema_determinism"
         },
         {
-          "elapsed_ms": 14,
+          "elapsed_ms": 13,
           "name": "validate_control_plane_contract"
         },
         {
@@ -432,16 +376,16 @@
           "name": "validate_git_push_pr_gate"
         },
         {
-          "elapsed_ms": 9,
+          "elapsed_ms": 11,
+          "name": "validate_git_protected_branch"
+        },
+        {
+          "elapsed_ms": 11,
           "name": "validate_no_legacy_namespaces"
         },
         {
-          "elapsed_ms": 8,
+          "elapsed_ms": 9,
           "name": "validate_federation_gates"
-        },
-        {
-          "elapsed_ms": 6,
-          "name": "validate_gatekeeper_gate"
         },
         {
           "elapsed_ms": 5,
@@ -449,7 +393,7 @@
         },
         {
           "elapsed_ms": 3,
-          "name": "validate_lcm_immutability"
+          "name": "validate_generated_artifact_whitelist"
         },
         {
           "elapsed_ms": 3,
@@ -457,19 +401,19 @@
         },
         {
           "elapsed_ms": 3,
-          "name": "validate_generated_artifact_whitelist"
+          "name": "validate_lcm_immutability"
         },
         {
-          "elapsed_ms": 2,
+          "elapsed_ms": 3,
+          "name": "validate_knowledge_promotions_if_present"
+        },
+        {
+          "elapsed_ms": 3,
           "name": "validate_lcm_rebuild_gate"
         },
         {
           "elapsed_ms": 2,
-          "name": "validate_trajectory_artifacts_if_present"
-        },
-        {
-          "elapsed_ms": 2,
-          "name": "validate_knowledge_promotions_if_present"
+          "name": "validate_entrypoint_invariants"
         },
         {
           "elapsed_ms": 2,
@@ -477,15 +421,11 @@
         },
         {
           "elapsed_ms": 2,
+          "name": "validate_trajectory_artifacts_if_present"
+        },
+        {
+          "elapsed_ms": 2,
           "name": "validate_jev_history_if_present"
-        },
-        {
-          "elapsed_ms": 2,
-          "name": "validate_research_claims_if_present"
-        },
-        {
-          "elapsed_ms": 2,
-          "name": "validate_entrypoint_invariants"
         },
         {
           "elapsed_ms": 2,
@@ -496,12 +436,16 @@
           "name": "validate_validation_receipt_if_present"
         },
         {
-          "elapsed_ms": 1,
-          "name": "validate_recursive_improvement_passes_if_present"
+          "elapsed_ms": 2,
+          "name": "validate_research_claims_if_present"
+        },
+        {
+          "elapsed_ms": 2,
+          "name": "validate_health_purity"
         },
         {
           "elapsed_ms": 1,
-          "name": "validate_database_schema_versions"
+          "name": "validate_recursive_improvement_passes_if_present"
         },
         {
           "elapsed_ms": 1,
@@ -509,19 +453,19 @@
         },
         {
           "elapsed_ms": 1,
-          "name": "validate_health_purity"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_spec_drift"
+          "name": "validate_database_schema_versions"
         },
         {
           "elapsed_ms": 1,
           "name": "validate_policy_integrity"
         },
         {
-          "elapsed_ms": 1,
+          "elapsed_ms": 0,
           "name": "validate_health_cache_integrity"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_spec_drift"
         },
         {
           "elapsed_ms": 0,
@@ -529,7 +473,7 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_context_capsule_policy_contract"
+          "name": "validate_project_scoped_state"
         },
         {
           "elapsed_ms": 0,
@@ -537,11 +481,11 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_project_scoped_state"
+          "name": "validate_watcher_purity"
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_watcher_purity"
+          "name": "validate_context_capsule_policy_contract"
         },
         {
           "elapsed_ms": 0,
@@ -549,19 +493,19 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_heartbeat_invocation_gate"
-        },
-        {
-          "elapsed_ms": 0,
           "name": "validate_docs_templates_bucket"
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_repo_map"
+          "name": "validate_heartbeat_invocation_gate"
         },
         {
           "elapsed_ms": 0,
           "name": "validate_workunit_manifests_if_present"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_repo_map"
         },
         {
           "elapsed_ms": 0,
@@ -604,24 +548,24 @@
           "name": "validate_tooling_gate"
         }
       ],
-      "git_revision": "13a6e98aea7e812f2024edab9dcd633925e4231d",
+      "git_revision": "7c4306450b209bd57054ff80707c2ee2c4b44b19",
       "kind": "validation_receipt",
       "parallelism": 1,
-      "pass_count": 188,
+      "pass_count": 185,
       "prediction_uses_warnings": true,
-      "receipt_hash": "sha256:de9e494a9a72e8da9fc6b28910d7e90f4dcf161ea10ade03844fedfbb0aeed20",
-      "repo_signal_fingerprint": "c55e37c9730ea2f3cd8d6824221a63811dead18e1216de1c705a501150254036",
+      "receipt_hash": "sha256:0970613a4fc2772e12841807d15cdf976a96738f4d00c5be219df25fe9ef737a",
+      "repo_signal_fingerprint": "28f7bdc2fc429ce5202d147410f01c9dad1db7d7b5acadb11a1a45815e8db4d1",
       "schema_version": "1.0.0",
       "status": "ok",
       "temporary_artifacts_cleaned": 0,
-      "trajectory_artifact_hash": "sha256:f011cd4cc9ac92741f8b035833002e7061467299947b674976f8125b50f92cf6",
-      "trajectory_run_id": "weather_97750_20261015",
+      "trajectory_artifact_hash": "sha256:ed7a3e6ea4e28232c8225713e677d057d2cad11882f66e7c7a6a09713f798ee3",
+      "trajectory_run_id": "icons-bottom-hover-final",
       "warn_count": 4,
       "warnings": [
         "Risk map missing (run `decapod riskmap init`)",
-        "Stale workspaces preserved for explicit review: <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (active_claim: workspace belongs to an active task claim; release or complete the claim before pruning), <external-path> (current_workspace: workspace contains the current process; rerun prune from the host checkout after leaving this workspace so Git can release the branch)",
+        "Stale workspaces preserved for explicit review: <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (current_workspace: workspace contains the current process; rerun prune from the host checkout after leaving this workspace so Git can release the branch)",
         "Watcher audit trail missing (run `decapod govern watcher run`)",
-        "Workspace branch 'agent/unknown/fend_01m4z1drb0ngbkk6' has unpushed commits or does not exist on origin. Branch pushes and iteration are allowed before preflight; hold PR creation until intent is converged, the branch is mergeable, and full `decapod validate` succeeds against the exact current candidate and accepted target."
+        "Workspace branch 'agent/unknown/docs_01m50deg60dyrxh3' has unpushed commits or does not exist on origin. Branch pushes and iteration are allowed before preflight; hold PR creation until intent is converged, the branch is mergeable, and full `decapod validate` succeeds against the exact current candidate and accepted target."
       ]
     }
   }

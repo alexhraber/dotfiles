@@ -84,13 +84,21 @@ Accessibility from SketchyBar's context and opens local macOS approval settings
 if unavailable. undo restores the native menu first, then guarded preferences,
 wallpaper and prior service state. It retains configuration and packages.
 
-The top three pixels reveal the bar; the bottom-center three pixels reveal
-the open-app dock after an 80 ms dwell. Exit hysteresis is 320 ms. Hover controls
+The top three pixels reveal the bar; the bottom-center resting icon footprint
+(44 points tall) reveals the dock after an 80 ms dwell. Icons grow upward from
+the screen bottom, with no 26-point gap to chase. Resting size stays 40 points;
+unconstrained peak hover size is 77.5 points, 25% above the previous 62 points.
+Crowded layouts scale to fit. Exit hysteresis is 320 ms. Hover controls
 include calendar, sound/output/mute, built-in brightness, Wi-Fi power/details,
 paired Bluetooth devices, battery and Fahrenheit CPU/GPU telemetry. Notifications
 are furthest right; hardware warnings are not an unread notification count.
 Native quick panels need local OS permissions. No desktop-navigation keyboard
 substitute or automatic Space destruction is installed.
+
+The dock renders only app icons over fully transparent pixels. It has no shelf,
+blur, border, shadow, text, badges or active markers. Autohide, magnification,
+one icon per application and right-click Show windows/Hide/Quit are retained;
+blank transparent space passes clicks through.
 
 desktop theme --theme tidal|ember|iris --layout ribbon|islands restyles existing
 bar items without reloading, changing wallpaper or restarting the helper.
@@ -122,7 +130,7 @@ can leave partial state; the backup manifest remains the recovery input.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `c55e37c9730ea2f3cd8d6824221a63811dead18e1216de1c705a501150254036`
+- Repository signal fingerprint: `28f7bdc2fc429ce5202d147410f01c9dad1db7d7b5acadb11a1a45815e8db4d1`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
