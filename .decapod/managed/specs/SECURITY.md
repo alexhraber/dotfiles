@@ -58,6 +58,12 @@ quick panels require local Accessibility/Automation; dotfiles cannot approve
 them. LuLu is installed but its extension/filter needs separate local approval;
 installation is not evidence of an active firewall.
 
+Weather sends only the explicitly configured forecast point to the official
+HTTPS NWS API with a public application User-Agent. Advertised forecast links
+are checked against the NWS host. No GPS, user account or API key is accessed.
+Forecast caches and refresh locks stay in private runtime state; network reads
+are bounded and never performed synchronously by hover rendering.
+
 MLX preparation verifies the new environment before activation, preserves the
 old directory/link, and refuses later pointer edits. Environment/model stores
 and manifests stay outside Git. Neither this operation nor shell initialization
@@ -67,7 +73,7 @@ loads a model. Ollama remains manually started and is not enabled at login.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `0229f36eed59a21f78229356fd3e926ab6826ee2829f8997aff2adce917fbf19`
-- Significant implementation surfaces: `.config/` (3 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (5 files)
+- Repository signal fingerprint: `c55e37c9730ea2f3cd8d6824221a63811dead18e1216de1c705a501150254036`
+- Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

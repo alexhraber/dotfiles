@@ -30,6 +30,9 @@ case "${SENDER:-}" in
     ;;
 esac
 case "${NAME:-}" in
+  weather)
+    exec python3 -B "$plugin_dir/weather.py"
+    ;;
   hover_guard)
     if [[ ${SENDER:-} == desktop_concealed ]]; then
       exec python3 -B "$plugin_dir/controls.py" cancel all

@@ -35,7 +35,7 @@ The shared check owner ran in that image with its declared PATH: ShellCheck,
 all zsh parsers and the earlier 30-test suite passed. This diagnostic execution is separate
 from the required Decapod publication verdict.
 
-The current local check suite passes 51 tests, including backup/restoration of
+The current local check suite passes 56 tests, including backup/restoration of
 fractional Dock values and copied mise/reverse-shell settings. Installed doctor,
 Ghostty validation, real editor LSP attachment, an isolated tmux server and the
 Neovim workbench startup are separate host checks. MLX and Ollama inference and
@@ -72,6 +72,14 @@ Ember/Islands, Iris/Ribbon and Tidal/Ribbon with the same healthy native PID.
 Live SketchyBar color and bracket queries agree with Tidal; the three dock
 palettes were inspected using the native view renderer. Full-screen capture
 permission was unavailable, so this is narrower than a whole-screen visual audit.
+
+Five weather regressions cover Fahrenheit/quantitative conversion, missing
+values, stale labeling, offline retention/backoff, network-free hover with
+14-row capacity and advertised API host checks. Actual ZIP97750 network fetch
+returned24hourly periods, and the live item displayed49°F with its condition
+glyph. This is forecast data, not an observation claim. The56-test source needs
+fresh exact-candidate validation and hosted CI before merge; the earlier
+51-test candidate passed both platforms and canonical local readiness.
 
 ## Promotion Gates
 
@@ -113,7 +121,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `0229f36eed59a21f78229356fd3e926ab6826ee2829f8997aff2adce917fbf19`
-- Significant implementation surfaces: `.config/` (3 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (5 files)
+- Repository signal fingerprint: `c55e37c9730ea2f3cd8d6824221a63811dead18e1216de1c705a501150254036`
+- Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

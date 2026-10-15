@@ -97,6 +97,12 @@ bar items without reloading, changing wallpaper or restarting the helper.
 The current-app hover panel offers the same choices. themes.json declares
 the reproducible default; private state retains local selections across apply.
 
+Weather is next to the clock and leaves notifications furthest right. The
+declared ZIP97750 NWS lookup point is44.662,-119.788; no location tracking or
+API credential is used. The bar shows hourly forecast temperature; hover adds
+wind in mph, precipitation chance, upcoming hours and extended periods. Refresh
+is explicit or on reveal when due, with private cache and stale/offline labels.
+
 scripts/dotfiles ai prepare validates the Apple Silicon platform, retains a
 matching MLX environment or prepares the declared Python/package pins before
 switching ~/.venvs/mlx with private recovery state. status verifies it without
@@ -116,7 +122,7 @@ can leave partial state; the backup manifest remains the recovery input.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `0229f36eed59a21f78229356fd3e926ab6826ee2829f8997aff2adce917fbf19`
-- Significant implementation surfaces: `.config/` (3 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (5 files)
+- Repository signal fingerprint: `c55e37c9730ea2f3cd8d6824221a63811dead18e1216de1c705a501150254036`
+- Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

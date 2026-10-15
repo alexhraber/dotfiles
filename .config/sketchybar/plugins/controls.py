@@ -11,6 +11,7 @@ import subprocess
 import sys
 import time
 import appearance
+import weather
 
 PANELS = appearance.PANELS
 HERE = Path(__file__).resolve()
@@ -81,6 +82,8 @@ def alerts(metrics, battery=''):
 
 def panel_rows(name):
     """Each row is text plus an optional argv action, never interpolated shell."""
+    if name == 'weather':
+        return weather.rows()
     if name == 'clock':
         offset = read('calendar.json', 0)
         today = date.today()
@@ -199,7 +202,7 @@ def show(name):
     cached = read(name + '.cache.json', {})
     if cached.get('rows'):
         render_rows(name, cached['rows'])
-        ttl = 0 if name in ('cpu','gpu','memory','alerts') else 2 if name in ('volume','brightness') else 15
+        ttl = 0 if name in ('cpu','gpu','memory','alerts','weather') else 2 if name in ('volume','brightness') else 15
         if time.time()-cached.get('time', 0)<ttl:
             return
     else:
@@ -300,6 +303,9 @@ def action(args):
         command('osascript', '-e', 'tell application "System Events" to key code 125 using control down')
     elif kind == 'appearance':
         command(str(HERE.parents[3] / 'scripts/dotfiles'), 'desktop', 'theme', *values, timeout=10)
+    elif kind == 'weather-refresh':
+        subprocess.Popen([sys.executable,'-B',str(HERE.parent/'weather.py'),'--refresh'],
+                         stdin=subprocess.DEVNULL,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
     else:
         raise ValueError('Unknown control')
 

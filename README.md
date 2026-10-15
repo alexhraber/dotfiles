@@ -214,6 +214,7 @@ strip, extra native menu row, or dock divider.
 | Control | Hover / interaction |
 | --- | --- |
 | Clock | Calendar, previous/next month and today |
+| Weather | ZIP 97750 forecast, wind in mph, precipitation chance, upcoming hours and extended outlook |
 | Sound | Volume slider, mute, output selection; scroll the bar item for volume |
 | Display | Built-in brightness slider; scroll the bar item to adjust |
 | Wi-Fi | Power toggle and connection details; native quick panel for network selection |
@@ -240,6 +241,17 @@ restarting. Text/control contrast is checked against the declared surfaces.
 `themes.json` declares the fresh-machine default; local selections stay in
 private state and survive apply. `desktop theme` changes only appearance,
 without resetting wallpaper or desktop preferences.
+
+Weather is fixed to ZIP **97750**, using the point returned by the
+[NWS ZIP lookup](https://forecast.weather.gov/zipcity.php?inputstring=97750)
+(44.662, -119.788 in the Mitchell area). `.config/sketchybar/weather.json`
+declares this location; it never follows the machine or requests Location access.
+The bar temperature is the current hourly forecast in °F. Hover shows wind in
+mph, precipitation chances and the extended forecast from the
+[National Weather Service API](https://www.weather.gov/documentation/services-web-api).
+Refresh is bounded, cached for 15 minutes and backed off after failures. Hover
+reads local cache immediately; an old forecast is marked cached rather than
+presented as fresh. Runtime data stays outside Git. No API key is needed.
 
 The dock is a small AppKit panel compiled from `scripts/desktop-edge.m`: open
 apps only, stable ordering, hover magnification, grouped window counts and

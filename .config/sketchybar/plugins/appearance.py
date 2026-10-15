@@ -12,7 +12,7 @@ STATE = Path(os.environ.get('XDG_STATE_HOME', Path.home() / '.local/state')) / '
 LAYOUTS = ('ribbon', 'islands')
 TOKENS = ('surface', 'popup', 'border', 'foreground', 'muted', 'accent',
           'secondary', 'highlight', 'success', 'warning', 'danger')
-PANELS = ('clock', 'volume', 'brightness', 'wifi', 'bluetooth', 'alerts', 'battery', 'cpu', 'gpu', 'memory', 'front_app')
+PANELS = ('clock', 'weather', 'volume', 'brightness', 'wifi', 'bluetooth', 'alerts', 'battery', 'cpu', 'gpu', 'memory', 'front_app')
 
 
 def resolve(name=None, layout=None):
@@ -81,6 +81,7 @@ def apply():
         args += ['--set', panel + '.slider', 'slider.highlight_color=' + c('accent'),
                  'slider.background.color=' + c('border')]
     args += ['--set', 'clock', 'label.color=' + c('secondary'),
+             '--set', 'weather', 'label.color=' + c('secondary'),
              '--set', 'battery', 'label.color=' + c('success')]
     subprocess.run(args, check=True, timeout=5)
 

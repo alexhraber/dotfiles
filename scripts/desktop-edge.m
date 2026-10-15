@@ -398,7 +398,7 @@ static BOOL setVisible(BOOL show) {
     NSMutableArray *args = [NSMutableArray array];
     if (!show) {
         [args addObjectsFromArray:@[@"--trigger",@"desktop_concealed"]];
-        for (NSString *name in @[@"clock", @"volume", @"brightness", @"wifi", @"bluetooth", @"alerts", @"battery",
+        for (NSString *name in @[@"clock", @"weather", @"volume", @"brightness", @"wifi", @"bluetooth", @"alerts", @"battery",
                                  @"cpu", @"gpu", @"memory", @"front_app"])
             [args addObjectsFromArray:@[@"--set", name, @"popup.drawing=off", @"background.drawing=off"]];
     }

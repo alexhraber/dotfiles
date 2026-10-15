@@ -76,6 +76,9 @@ furthest right. Hover panels expose sound, built-in brightness, Wi-Fi, Bluetooth
 calendar, battery and CPU/GPU/RAM details; every displayed temperature is °F.
 Motion, typography, spacing and cached response are part of the product intent.
 Accessibility approvals remain local and unapproved quick panels remain a gap.
+Weather is fixed to user-requested ZIP97750 and the official NWS ZIP forecast
+point, with a compact bar item, immediate cached hover, Fahrenheit/mph, upcoming
+hours and extended outlook. No machine geolocation or API key is involved.
 
 Native fullscreen Spaces and trackpad gestures are retained. macOS requires
 one regular Desktop; this setup neither destroys it nor invents alternate
@@ -101,7 +104,7 @@ These declarations select authoring and proof obligations; they do not attest im
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `0229f36eed59a21f78229356fd3e926ab6826ee2829f8997aff2adce917fbf19`
-- Significant implementation surfaces: `.config/` (3 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (5 files)
+- Repository signal fingerprint: `c55e37c9730ea2f3cd8d6824221a63811dead18e1216de1c705a501150254036`
+- Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

@@ -90,6 +90,14 @@ Device operations use argv arrays. Native Wi-Fi/notification/Focus panels need
 local Accessibility/Automation. scripts/set-wallpaper.swift captures/restores
 per-display URLs and typed image options in a private archive.
 
+plugins/weather.py reads the declared ZIP97750 point from weather.json, resolves
+NWS grid links daily, and fetches hourly/extended forecasts concurrently with
+five-second request deadlines. Private cache, an exclusive refresh lock,
+15-minute freshness interval and failure cooldown avoid repeated traffic. Hover
+only reads cache; a completed one-shot fetch updates an open weather popup.
+Stale data retains its original age and is labeled cached. Temperature formatting
+handles Fahrenheit and Celsius/quantitative input, always displaying °F.
+
 scripts/local_ai.py prepares a versioned Python 3.12 MLX environment, verifies
 the package pins and Metal before atomically changing the stable link, and
 preserves the original link/directory in private state. It loads no model.
@@ -174,7 +182,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `0229f36eed59a21f78229356fd3e926ab6826ee2829f8997aff2adce917fbf19`
-- Significant implementation surfaces: `.config/` (3 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (5 files)
+- Repository signal fingerprint: `c55e37c9730ea2f3cd8d6824221a63811dead18e1216de1c705a501150254036`
+- Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

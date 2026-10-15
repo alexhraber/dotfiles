@@ -25,6 +25,8 @@ sketchybar --add item front_app left --set front_app icon='' icon.width=22 \
   --subscribe front_app front_app_switched
 sketchybar --add item clock right --set clock icon.drawing=off update_freq=30 \
   label.color="$UI_SECONDARY" script="\"$plugin\""
+sketchybar --add item weather right --set weather icon='󰖙' label='—' script="\"$plugin\"" \
+  update_freq=900 updates=when_shown --subscribe weather desktop_revealed system_woke
 sketchybar --add item battery right --set battery icon='󰁹' update_freq=60 \
   label.color="$UI_SUCCESS" script="\"$plugin\"" \
   --subscribe battery power_source_change system_woke desktop_revealed
@@ -42,7 +44,7 @@ for sensor in memory gpu cpu; do
 done
 sketchybar --set cpu update_freq=5 \
   updates=when_shown --subscribe cpu desktop_revealed system_woke
-for parent in clock volume brightness wifi bluetooth alerts battery cpu gpu memory front_app; do
+for parent in clock weather volume brightness wifi bluetooth alerts battery cpu gpu memory front_app; do
   sketchybar --set "$parent" popup.align=right popup.height=30 popup.blur_radius=30 \
     popup.background.color="$UI_POPUP_GLASS" popup.background.border_color="$UI_BORDER" \
     popup.background.border_width=1 popup.background.corner_radius=16 \
@@ -80,10 +82,10 @@ sketchybar --add item access_check left --set access_check drawing=off \
   script="python3 -B \"$config_dir/plugins/controls.py\" access probe" \
   --subscribe access_check desktop_access_check
 sketchybar --add bracket context spaces front_app
-sketchybar --add bracket ribbon cpu gpu memory bluetooth wifi brightness volume battery clock alerts \
+sketchybar --add bracket ribbon cpu gpu memory bluetooth wifi brightness volume battery weather clock alerts \
   --add bracket hardware cpu gpu memory \
     --add bracket connections bluetooth wifi brightness volume \
-    --add bracket session battery clock \
+    --add bracket session battery weather clock \
     --add bracket notifications alerts
 for group in context ribbon hardware connections session notifications; do
   sketchybar --set "$group" background.drawing=on background.height=34 \
