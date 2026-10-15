@@ -41,11 +41,33 @@ writing and refuses later edits. Publication needs task authorization and curren
 proof. Container helpers mount only the chosen project and drop capabilities;
 they do not grant access to host credentials or start machines at login.
 
+## Desktop and inference boundaries
+
+Desktop activation is explicit. The helper uses private SkyLight menu calls,
+DisplayServices brightness and a Mission Control notification with SIP enabled;
+it does not inject code, install an event tap, warp the pointer or require root.
+An OS update may change these interfaces. Ordinary failure restores the native
+menu; SIGKILL cannot run cleanup, and the owned LaunchAgent restarts the helper.
+Undo recovers the menu before checking guarded preference restoration.
+
+Window metadata is limited to application ownership, count and geometry;
+screen recording and private window titles are not needed. Device names,
+addresses, samples, logs, compiled helpers and wallpaper archives remain in
+0700 local state with 0600 records. Device actions pass argv arrays. Native
+quick panels require local Accessibility/Automation; dotfiles cannot approve
+them. LuLu is installed but its extension/filter needs separate local approval;
+installation is not evidence of an active firewall.
+
+MLX preparation verifies the new environment before activation, preserves the
+old directory/link, and refuses later pointer edits. Environment/model stores
+and manifests stay outside Git. Neither this operation nor shell initialization
+loads a model. Ollama remains manually started and is not enabled at login.
+
 <!-- decapod:codebase-attestation:start -->
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `565a71c979f06f17c41ba3d6b7655fe0f259bb145c4a7d039d23c4ea656feca1`
-- Significant implementation surfaces: `.github/` (1 files), `README.md/` (1 files), `scripts/` (4 files), `tests/` (3 files)
+- Repository signal fingerprint: `0229f36eed59a21f78229356fd3e926ab6826ee2829f8997aff2adce917fbf19`
+- Significant implementation surfaces: `.config/` (3 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (5 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

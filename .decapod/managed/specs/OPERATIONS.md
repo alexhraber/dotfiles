@@ -39,6 +39,25 @@ separate evidence; inspect actual validation results before publication.
 
 ## Incident Response
 
+Desktop configuration installation starts nothing. Explicitly enable with
+scripts/dotfiles desktop apply; inspect fresh PID-bound health with desktop
+status. Use desktop permissions for the local SketchyBar Accessibility probe.
+Native quick-panel approval and LuLu filter approval are local OS actions.
+Only SketchyBar and local.dotfiles.desktop-edge start with this profile;
+Borders stays stopped and AeroSpace starts disabled. Models stay manual.
+
+desktop undo restores the native menu first, then original typed Dock/menu
+defaults, matching connected displays' wallpaper/options and service state.
+Reapply retains the original baseline. Later managed preference edits block
+restoration; preserve a newer manually chosen wallpaper before undo. Installer
+file restoration is separate. Recheck private APIs after major macOS updates.
+
+ai prepare/status/undo manage the pinned native MLX environment without models.
+Prepare verifies Python/packages/Metal before switching the stable path; undo
+retains prepared environments and caches. These manifests are local recovery
+records, not whole-machine backups. No backup destination or automatic personal
+file backup policy has been selected by this repository.
+
 Use the printed private backup manifest with install.sh --restore --dry-run,
 then restore after inspection. Later edits or corrupt backups block the operation;
 preserve both versions and reconcile them explicitly. Package/model stores and
@@ -68,7 +87,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `565a71c979f06f17c41ba3d6b7655fe0f259bb145c4a7d039d23c4ea656feca1`
-- Significant implementation surfaces: `.github/` (1 files), `README.md/` (1 files), `scripts/` (4 files), `tests/` (3 files)
+- Repository signal fingerprint: `0229f36eed59a21f78229356fd3e926ab6826ee2829f8997aff2adce917fbf19`
+- Significant implementation surfaces: `.config/` (3 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (5 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

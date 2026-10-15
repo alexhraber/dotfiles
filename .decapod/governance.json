@@ -63,6 +63,15 @@
       "id": "direct-workflow-proof-20261015",
       "summary": "Bind the publication trajectory and fresh prerequisite receipt to the reviewed direct-script candidate; retain all required checks.",
       "input_digest": "sha256:091934e4ccb82276ff3d3e396bc2515fcd28de93e3adae0040768519846e5e06"
+    },
+    {
+      "id": "polished-fullscreen-workstation-1150",
+      "summary": "Implement reproducible fullscreen desktop with coordinated Tidal/Ember/Iris palettes and ribbon/islands layouts, native open-app dock, hover system controls/Fahrenheit telemetry, guarded rollback, sccache and pinned manual MLX lifecycle. Host 51 checks, native compile/geometry/Swift, doctor and real palette switching passed; private approval gaps documented.",
+      "input_digest": "sha256:3cd30cd1546f771770bdd804a927682e64c8ae762baa2fb3c25db9f43cdd83d0",
+      "proof_refs": [
+        "host:doctor-all-and-live-theme-queries",
+        "scripts/check:51-host-tests-and-native-checks"
+      ]
     }
   ],
   "intents": {
@@ -140,7 +149,7 @@
       },
       "deferred_questions": [],
       "human_questions": [],
-      "intent": "Merge dotfiles into main and push as explicitly requested. Remove the unused Just task runner and document the same direct commands; retain all required checks. Report the optional-file case-alias bug to DecapodLabs/decapod. Keep Apple team identity and runtime state outside Git, Ollama off by default and other repository source untouched.",
+      "intent": "Complete the full reproducible M1 Max workstation with a substantial menu-bar and dock redesign. Add curated Tidal, Ember and Iris palettes shared by SketchyBar and the native dock, ribbon/islands layouts, coherent hover/badge/active colors and reliable theme switching. Preserve native fullscreen, one autohiding bar, far-right notifications, Fahrenheit, grouped open-app dock, guarded undo and manual Ollama. Verify real host behavior and appropriate checks; then complete authorized merge and push to main. Keep credentials and machine state local, and do not modify Scripture.",
       "phases": [],
       "proof_hooks": [
         "dotfiles checks and installed runtime smoke checks"
@@ -148,25 +157,25 @@
       "schema_version": "1.1.0",
       "spec_reviews": [
         {
-          "disposition": "unchanged_with_reason",
+          "disposition": "updated",
           "path": ".decapod/managed/specs/ARCHITECTURE.md",
-          "reason": "Reviewed Brewfile, manage.py and shared scripts/check.py after removing only the optional Just dependency and wrapper. Existing Python installer and shared portable check architecture is unchanged; no build or test surface was removed.",
-          "reviewed_code_fingerprint": "565a71c979f06f17c41ba3d6b7655fe0f259bb145c4a7d039d23c4ea656feca1",
-          "spec_material_hash": "3490a1394731807c4794df08f358f17833468c2a6a19471f319afa15b042ed58"
+          "reason": "Reviewed the scoped Python installer, explicit desktop/MLX lifecycles, shared palette module, native AppKit/QuartzCore geometry and animation, private recovery state and headless container proof. Prose describes the implemented workstation without claiming unapproved native quick panels.",
+          "reviewed_code_fingerprint": "0229f36eed59a21f78229356fd3e926ab6826ee2829f8997aff2adce917fbf19",
+          "spec_material_hash": "5f14fd760d8fe216eb1910b2ac6368653c69cc10ca6eb3455e931be2310424c9"
         },
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/INTERFACES.md",
-          "reason": "Reviewed removal of the unused Just wrapper and dependency. All recipes still exist as the documented direct installer, portable check, doctor, editor and Homebrew commands; all required checks remain.",
-          "reviewed_code_fingerprint": "565a71c979f06f17c41ba3d6b7655fe0f259bb145c4a7d039d23c4ea656feca1",
-          "spec_material_hash": "2fea85de2294cd196bbdd076bdcda5879502b7a0532757884a08888358abde38"
+          "reason": "Reviewed direct commands, desktop apply/status/permissions/theme/undo and ai prepare/status/undo; live palette/layout switching, Fahrenheit, far-right notifications, native fullscreen limits and private identity boundaries are documented.",
+          "reviewed_code_fingerprint": "0229f36eed59a21f78229356fd3e926ab6826ee2829f8997aff2adce917fbf19",
+          "spec_material_hash": "35fda0418710e101e1e3325193cbbd40872aebdc3ba95ca0685d2682621a0452"
         },
         {
-          "disposition": "unchanged_with_reason",
+          "disposition": "updated",
           "path": ".decapod/managed/specs/SECURITY.md",
-          "reason": "Reviewed direct command workflow and private identity boundaries after task-runner removal. No credential handling, authentication, service startup or authorization boundary changed.",
-          "reviewed_code_fingerprint": "565a71c979f06f17c41ba3d6b7655fe0f259bb145c4a7d039d23c4ea656feca1",
-          "spec_material_hash": "359298a342c2b1da230c69017557958b8a417795beab060228b159f36c684fec"
+          "reason": "Reviewed argv device actions, local state modes, typed guarded restore, native private APIs with SIP intact, local TCC/LuLu approvals and model-off defaults. No credentials, signing teams or runtime logs enter Git.",
+          "reviewed_code_fingerprint": "0229f36eed59a21f78229356fd3e926ab6826ee2829f8997aff2adce917fbf19",
+          "spec_material_hash": "ff16e721f992dedf2b674440748631320b389191f1e790b54dad1442a2d4bb5a"
         }
       ],
       "state": "APPROVED",
@@ -177,20 +186,40 @@
       ],
       "unknowns": [],
       "unresolved_contradictions": [],
-      "updated_at": "1792059072Z"
+      "updated_at": "1792078160Z"
     },
     "trajectory": {
       "active_boundaries": [
         "Other repository source and all credentials remain untouched."
       ],
-      "artifact_hash": "sha256:0ddd4e9e3d554d6bd7dc9bc56a1673e4a6e072bc14de52ff6865c2df3d87dd49",
+      "artifact_hash": "sha256:fcc1a6dfec99959d631c2c3b172faf1844aba0afeda4b871f9481f3d9d556013",
       "checks": [
+        {
+          "name": "actual_hardware_controls",
+          "status": "passed"
+        },
         {
           "name": "decapod validate",
           "status": "passed"
+        },
+        {
+          "name": "fullscreen_visual",
+          "status": "partial"
+        },
+        {
+          "name": "host_checks_51",
+          "status": "passed"
+        },
+        {
+          "name": "native_compile",
+          "status": "passed"
+        },
+        {
+          "name": "portable_checks",
+          "status": "passed"
         }
       ],
-      "current_phase": "validation",
+      "current_phase": "implementation",
       "custody": {
         "events": [
           {
@@ -218,10 +247,24 @@
             "intent_id": "intent:publish_dotfiles_20261015",
             "kind": "trajectory_step_recorded",
             "sequence": 5
+          },
+          {
+            "detail": "trajectory:publish_dotfiles_20261015",
+            "event_id": "event:6",
+            "intent_id": "intent:publish_dotfiles_20261015",
+            "kind": "trajectory_step_recorded",
+            "sequence": 6
+          },
+          {
+            "detail": "trajectory:publish_dotfiles_20261015",
+            "event_id": "event:7",
+            "intent_id": "intent:publish_dotfiles_20261015",
+            "kind": "trajectory_step_recorded",
+            "sequence": 7
           }
         ],
         "knowledge_candidates": [],
-        "next_sequence": 5,
+        "next_sequence": 7,
         "schema_version": "1.0.0",
         "trajectories": {
           "publish_dotfiles_20261015": {
@@ -266,6 +309,46 @@
                 ],
                 "sequence": 5,
                 "validation_findings": []
+              },
+              {
+                "action": "implementation",
+                "custody_event_id": "event:6",
+                "observations": [
+                  "scripts/desktop.py",
+                  "scripts/desktop-edge.m",
+                  ".config/sketchybar/plugins/controls.py",
+                  "Forty portable tests, ShellCheck and all zsh parsers passed; native ObjC compiles with -Wall -Wextra -Werror and Swift wallpaper helper compiled. Actual macmon CPU/GPU temperatures and RAM labels, blueutil paired JSON/power, audio output JSON and Wi-Fi power read successfully on host. First failed runtime setup automatically restored native menu, wallpaper, and stopped service baseline; corrected setup reports active. Screen capture permission unavailable; awaiting human hover confirmation and verifying agent restart. Native last regular Desktop removal unsupported by macOS/yabai; no Space destruction or shortcut substitution performed."
+                ],
+                "proof_refs": [
+                  "portable_checks",
+                  "native_compile",
+                  "actual_hardware_controls",
+                  "fullscreen_visual"
+                ],
+                "scope": [
+                  "root"
+                ],
+                "sequence": 6,
+                "validation_findings": []
+              },
+              {
+                "action": "trajectory.record",
+                "custody_event_id": "event:7",
+                "observations": [
+                  "scripts/desktop-edge.m",
+                  ".config/sketchybar/plugins/appearance.py",
+                  "scripts/local_ai.py",
+                  ".config/sketchybar/themes.json",
+                  "Host scripts/check passed 51 tests, native -Werror compile, pure dock geometry and Swift typecheck. Doctor --all passed. Native brightness read works. Actual Ember/Islands, Iris/Ribbon and Tidal/Ribbon changed live palettes without native PID change (23640); SketchyBar queries confirm Tidal colors and ribbon. Three own-view dock renders inspected. Ollama pgrep returned no process. Decapod updated from official release to 0.115.0; canonical proof must be refreshed. Native quick-panel Accessibility and LuLu activation remain local approval gaps; no screen-recording permission was bypassed."
+                ],
+                "proof_refs": [
+                  "host_checks_51"
+                ],
+                "scope": [
+                  "root"
+                ],
+                "sequence": 7,
+                "validation_findings": []
               }
             ]
           }
@@ -275,19 +358,28 @@
         "decapod validate"
       ],
       "evidence": [
+        "Forty portable tests, ShellCheck and all zsh parsers passed; native ObjC compiles with -Wall -Wextra -Werror and Swift wallpaper helper compiled. Actual macmon CPU/GPU temperatures and RAM labels, blueutil paired JSON/power, audio output JSON and Wi-Fi power read successfully on host. First failed runtime setup automatically restored native menu, wallpaper, and stopped service baseline; corrected setup reports active. Screen capture permission unavailable; awaiting human hover confirmation and verifying agent restart. Native last regular Desktop removal unsupported by macOS/yabai; no Space destruction or shortcut substitution performed.",
+        "Host scripts/check passed 51 tests, native -Werror compile, pure dock geometry and Swift typecheck. Doctor --all passed. Native brightness read works. Actual Ember/Islands, Iris/Ribbon and Tidal/Ribbon changed live palettes without native PID change (23640); SketchyBar queries confirm Tidal colors and ribbon. Three own-view dock renders inspected. Ollama pgrep returned no process. Decapod updated from official release to 0.115.0; canonical proof must be refreshed. Native quick-panel Accessibility and LuLu activation remain local approval gaps; no screen-recording permission was bypassed.",
         "User explicitly requested removal of unused Just and merge/push to main. Every wrapper operation remains documented as a direct script or brew command. Full source inventory and command coverage reviewed; required check owner is unchanged. Reported actual upstream case-alias bug at https://github.com/DecapodLabs/decapod/issues/1444. Connected GitHub account has admin/push permission on dotfiles; SSH Git access works without installing new credentials.",
         "validation epoch ve_53e0b2dc27cedac2 completed with zero failures"
       ],
       "inspected_files": [
-        "justfile"
+        ".config/sketchybar/plugins/appearance.py",
+        "justfile",
+        "scripts/desktop-edge.m",
+        "scripts/local_ai.py"
       ],
       "intent_id": "intent:publish_dotfiles_20261015",
       "modified_files": [
+        ".config/sketchybar/plugins/controls.py",
+        ".config/sketchybar/themes.json",
         ".decapod/governance.json",
         ".decapod/managed/specs/INTENT.md",
         ".decapod/managed/specs/INTERFACES.md",
         "Brewfile",
         "README.md",
+        "scripts/desktop-edge.m",
+        "scripts/desktop.py",
         "scripts/manage.py"
       ],
       "next_transitions": [

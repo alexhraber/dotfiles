@@ -13,8 +13,8 @@ entrypoints = [
 
 [repo]
 product_name = "dotfiles"
-product_summary = "Reproducible macOS terminal, Neovim, Git, and Codex configuration with scoped installs and reversible backups."
-architecture_direction = "Python installer, portable zsh and Cargo environment, pinned native Neovim plugins, curated Brewfile, and Podman container workspaces."
+product_summary = "Reproducible M1 Max development workstation with themed native desktop, terminal/editor, Git, local AI and scoped reversible setup."
+architecture_direction = "Python lifecycle tools, AppKit/QuartzCore dock, SketchyBar hover controls and shared themes, portable zsh/Cargo environment, pinned Neovim plugins, curated Brewfile and headless Podman workspaces."
 product_type = "service_or_library"
 done_criteria = "Scoped installation and safe restoration pass automated checks; local terminal and editor configuration work; changes are published to main."
 base_branch = "main"
@@ -47,7 +47,7 @@ validation_buildkite_preflights = false
 
 [proof.required_profile]
 id = "repo.pr-readiness.v1"
-reviewed_sources_digest = "sha256:c4f9321dea9502343006ee42ef39eb9e948fd7e96a7e479c6ce9149e9406a28e"
+reviewed_sources_digest = "sha256:924de01ef7ea80331e8745696fd50f374920a0757b0f3d21146bd6cdd895d547"
 
 [proof.repository_contract]
 reviewed_commands_digest = "sha256:acd8fe8534bb79464e6564ce832860acb1de5acb3de926ff9f6f7b92a32e89fa"

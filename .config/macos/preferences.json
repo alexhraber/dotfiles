@@ -16,6 +16,7 @@
     "FXPreferredViewStyle": "Nlsv"
   },
   "com.apple.dock": {
+    "mru-spaces": false,
     "show-recents": false,
     "autohide": true,
     "tilesize": 48,

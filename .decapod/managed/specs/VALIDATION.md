@@ -28,13 +28,14 @@ VM image downloads and model inference are not part of portable unit tests.
 
 ## Evidence Artifacts
 
-The current host and owned verification image use Decapod 0.114.3, verified
-against crates.io rather than relying on the CLI's cached latest-version flag.
+The host now uses Decapod 0.115.0, verified against the crates.io sparse index
+and installed from the official GitHub release through cargo-binstall.
+The earlier owned verification image used 0.114.3 and must be refreshed.
 The shared check owner ran in that image with its declared PATH: ShellCheck,
-all zsh parsers and all 30 tests passed. This diagnostic execution is separate
+all zsh parsers and the earlier 30-test suite passed. This diagnostic execution is separate
 from the required Decapod publication verdict.
 
-The current local check suite passes 30 tests, including backup/restoration of
+The current local check suite passes 51 tests, including backup/restoration of
 fractional Dock values and copied mise/reverse-shell settings. Installed doctor,
 Ghostty validation, real editor LSP attachment, an isolated tmux server and the
 Neovim workbench startup are separate host checks. MLX and Ollama inference and
@@ -46,6 +47,31 @@ helper's environment and arguments were verified with a stub without starting
 the real server. Local configuration success does not establish
 container-based Decapod publication readiness. Publication requires current task
 authorization and passing exact-candidate validation.
+
+The expanded suite protects desktop service ownership, guarded undo, native menu
+recovery, stable LaunchAgent paths, cached hover response, stale-row cleanup,
+safe device argv, clamped brightness/volume, Fahrenheit telemetry and MLX
+activation/restore failure recovery. On macOS the shared check owner compiles
+the native helper with warnings as errors, runs pure geometry tests across
+1–40 apps and narrow displays, and typechecks wallpaper Swift. Linux runs the
+portable suite; native compilation is separate macOS evidence.
+
+Actual host apply reached fresh PID-bound health. The native brightness reader
+works on the built-in display; the released Homebrew utility failed and was
+removed. The dock's own view was rendered for inspection without screen
+recording. MLX prepare verified the existing pinned Python 3.12/Metal stack
+without loading a model. Native quick-panel Accessibility was denied during
+the last local probe; installation does not prove those clicks or LuLu filtering
+work. Mission Control integration is compiled but not a human gesture verdict.
+Full publication validation must be rerun for this expanded candidate.
+
+Palette tests require at least 4.5:1 declared contrast for text/control colors
+against both theme surfaces, reject invalid selections and verify one-call
+layout changes without item removal/reload. Actual host switching exercised
+Ember/Islands, Iris/Ribbon and Tidal/Ribbon with the same healthy native PID.
+Live SketchyBar color and bracket queries agree with Tidal; the three dock
+palettes were inspected using the native view renderer. Full-screen capture
+permission was unavailable, so this is narrower than a whole-screen visual audit.
 
 ## Promotion Gates
 
@@ -87,7 +113,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `565a71c979f06f17c41ba3d6b7655fe0f259bb145c4a7d039d23c4ea656feca1`
-- Significant implementation surfaces: `.github/` (1 files), `README.md/` (1 files), `scripts/` (4 files), `tests/` (3 files)
+- Repository signal fingerprint: `0229f36eed59a21f78229356fd3e926ab6826ee2829f8997aff2adce917fbf19`
+- Significant implementation surfaces: `.config/` (3 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (5 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

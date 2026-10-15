@@ -13,7 +13,7 @@ import tempfile
 import macos_preferences
 
 REPO = Path(__file__).resolve().parents[1]
-GROUPS = ('terminal', 'git', 'codex', 'workspace', 'dev', 'reverse', 'apple', 'infra', 'ai', 'apps', 'macos')
+GROUPS = ('terminal', 'git', 'codex', 'workspace', 'dev', 'reverse', 'apple', 'infra', 'ai', 'apps', 'desktop', 'macos')
 
 
 def homes():
@@ -118,6 +118,16 @@ def plan(groups, args):
     if 'dev' in groups:
         # Copy so an applied worktree can be retained or merged independently.
         ops.append(operation(config / 'mise/config.toml', '.config/mise/config.toml', copy=True))
+        ops.append(operation(home / '.cargo/config.toml', '.config/cargo/config.toml', copy=True))
+    if 'desktop' in groups:
+        legacy = home / '.aerospace.toml'
+        modern = config / 'aerospace/aerospace.toml'
+        if (legacy.exists() or legacy.is_symlink()) and (modern.exists() or modern.is_symlink()):
+            raise ValueError('Two AeroSpace configs exist; reconcile ~/.aerospace.toml and the XDG config before installing desktop')
+        target = legacy if legacy.exists() or legacy.is_symlink() else modern
+        ops.append(operation(target, '.config/aerospace/aerospace.toml'))
+        for rel in ('sketchybar/sketchybarrc', 'sketchybar/themes.json', 'sketchybar/plugins/appearance.py', 'sketchybar/plugins/status.sh', 'sketchybar/plugins/metrics.py', 'sketchybar/plugins/controls.py', 'borders/bordersrc'):
+            ops.append(operation(config / rel, '.config/' + rel))
     if 'reverse' in groups:
         ops.append(operation(config / 'zsh/reverse.zsh', '.config/zsh/reverse.zsh', copy=True))
         local = home / '.zshrc.local'
@@ -258,11 +268,12 @@ def doctor(groups):
     expected = {
         'terminal': ['ghostty', 'starship', 'fastfetch', 'fzf', 'zoxide', 'direnv', 'mise', 'eza', 'bat', 'rg', 'fd', 'lazygit', 'nvim', 'btop', 'tmux'],
         'git': ['git', 'delta'], 'codex': ['codex'], 'workspace': ['podman', 'decapod'],
-        'dev': ['gh', 'jq', 'yq', 'uv', 'cargo-binstall', 'shellcheck', 'shfmt', 'actionlint', 'hadolint', 'ruff', 'basedpyright-langserver', 'tsc', 'typescript-language-server', 'bash-language-server', 'lua-language-server', 'taplo', 'cmake', 'ninja', 'pkg-config', 'ffmpeg'],
+        'dev': ['gh', 'jq', 'yq', 'uv', 'cargo-binstall', 'shellcheck', 'shfmt', 'actionlint', 'hadolint', 'ruff', 'basedpyright-langserver', 'tsc', 'typescript-language-server', 'bash-language-server', 'lua-language-server', 'taplo', 'cmake', 'ninja', 'pkg-config', 'ffmpeg', 'sccache', 'hyperfine'],
         'reverse': ['ghidraRun'],
         'apple': ['mas'] if sys.platform == 'darwin' else [],
         'infra': ['kubectl', 'helm', 'k9s', 'tofu', 'grpcurl'],
         'ai': ['ollama'], 'apps': [], 'macos': [],
+        'desktop': ['aerospace', 'sketchybar', 'borders', 'blueutil', 'SwitchAudioSource'] if sys.platform == 'darwin' else [],
     }
     for tool in dict.fromkeys(t for group in groups for t in expected[group]):
         check('command: ' + tool, shutil.which(tool) is not None)
@@ -306,6 +317,10 @@ def doctor(groups):
             check('Python 3.11+ for TOML validation (install Brewfile dependencies)', False)
     if 'apps' in groups and sys.platform == 'darwin':
         check('Google Chrome application', Path('/Applications/Google Chrome.app').is_dir())
+    if 'desktop' in groups and sys.platform == 'darwin':
+        check('LuLu application', Path('/Applications/LuLu.app').is_dir())
+        if os.uname().machine == 'arm64':
+            check('command: macmon', shutil.which('macmon') is not None)
     if 'ai' in groups and sys.platform == 'darwin' and os.uname().machine == 'arm64':
         # Native MLX has no CLI; Python MLX-LM remains in its separate venv.
         result = subprocess.run(['brew', 'list', '--versions', 'mlx'], capture_output=True, text=True)
@@ -320,7 +335,7 @@ def doctor(groups):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('command', choices=('install', 'doctor', 'restore'))
+    parser.add_argument('command', choices=('install', 'doctor', 'restore', 'desktop', 'ai'))
     parser.add_argument('manifest', nargs='?')
     parser.add_argument('--groups', default='terminal')
     parser.add_argument('--all', action='store_true')
@@ -330,7 +345,21 @@ def main():
     parser.add_argument('--git-name')
     parser.add_argument('--git-email')
     parser.add_argument('--signing-key', help='Public SSH key used for Git signing; identity stays local')
+    parser.add_argument('--theme', choices=('tidal', 'ember', 'iris'), help='Desktop palette')
+    parser.add_argument('--layout', choices=('ribbon', 'islands'), help='Desktop bar layout')
     args = parser.parse_args()
+    if args.command == 'ai':
+        if args.manifest not in ('prepare','status','undo'):
+            parser.error('ai requires prepare, status, or undo')
+        import local_ai
+        return local_ai.main(args.manifest, args.dry_run)
+    if args.command == 'desktop':
+        if args.manifest not in ('apply', 'undo', 'status', 'permissions', 'theme'):
+            parser.error('desktop requires apply, undo, status, permissions, or theme')
+        if args.dry_run:
+            parser.error('Use install --groups desktop --dry-run to preview configuration')
+        import desktop
+        return desktop.main(args.manifest, theme=args.theme, layout=args.layout)
     if args.restore_manifest or args.command == 'restore':
         manifest = args.restore_manifest or args.manifest
         if not manifest:

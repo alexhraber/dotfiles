@@ -4,6 +4,9 @@ A reproducible engineering workstation: Ghostty, Tokyo Night Storm,
 JetBrainsMono Nerd Font, Starship, zsh, tmux, polyglot Neovim, Git, Codex,
 local AI, infrastructure tools, and reversible macOS preferences. Podman is
 the intended container runtime; Decapod is initialized for isolated workspaces.
+The optional desktop profile adds an autohiding SketchyBar and a native,
+open-apps-only dock, inspired by the purple/cyan glass panels in
+[alexhraber/nixos](https://github.com/alexhraber/nixos).
 
 The target workstation is an Apple M1 Max MacBook Pro. All authored configuration
 and automation live in `~/src/dotfiles`; installed shell/editor configuration
@@ -15,8 +18,8 @@ Treat changes as infrastructure as code: edit a declared dependency or config,
 inspect `./install.sh --all --deps --dry-run`, run `scripts/check`, apply,
 then run `scripts/dotfiles doctor --all` and the
 relevant integration check. Repeated apply converges to the declared state;
-doctor detects configuration drift. Only `macos` changes user defaults, with
-per-key backups. Package versions are moving releases, so reproducibility here
+doctor detects configuration drift. The `macos` group and explicit desktop
+lifecycle change user defaults with per-key backups. Package versions are moving releases, so reproducibility here
 means declared tools and preferences, not byte-identical system images.
 
 ## Install
@@ -41,12 +44,13 @@ Select any combination with `--groups terminal,git`. The default stays
 | git | Portable Git settings, delta, global OS/editor ignore file |
 | codex | Codex app, portable CLI preferences and instructions |
 | workspace | Podman and the explicit `cws` container helper |
-| dev | GitHub CLI, jq/yq, uv, Cargo binary installer, linters, language servers, CMake/Ninja/pkg-config and FFmpeg |
+| dev | GitHub CLI, jq/yq, uv, Cargo binary installer, linters, language servers, native build tools, FFmpeg, sccache, hyperfine and Apple Silicon macmon |
 | reverse | Ghidra and its Homebrew-managed JDK for REA native analysis |
 | apple | Mac App Store CLI for the explicit, interactive Xcode setup script |
 | infra | kubectl, Helm, k9s, OpenTofu and grpcurl |
 | ai | Ollama and native MLX on Apple silicon |
 | apps | Google Chrome |
+| desktop | SketchyBar, JankyBorders, initially disabled AeroSpace trial, LuLu, Bluetooth/audio controls and Apple Silicon telemetry |
 | macos | Finder, keyboard, text input, Dock and screenshot preferences |
 
 Dependency installation uses a curated Brewfile
@@ -76,6 +80,21 @@ to `.zshrc.local` with backup/restore and without replacing other local settings
 The engine is headless unless explicitly launched; the
 installer does not register an MCP server or change agent authentication.
 
+The dev group also copies the generic Cargo configuration to
+`~/.cargo/config.toml`, backing up any previous file. It enables local compiler
+caching with [sccache](https://github.com/mozilla/sccache); project Cargo settings
+and `RUSTC_WRAPPER` can override it. Incremental compilation remains enabled for
+development: eligible dependency and release-library compilations are cached,
+while link steps and incremental compilations are not. Inspect usage with
+`sccache --show-stats`; stop its on-demand server with `sccache --stop-server`.
+No cache server is registered at login, and cache contents stay outside Git.
+
+Run `macmon` for on-demand Apple Silicon CPU/GPU/ANE power, temperature and
+memory telemetry, or `btop` for processes. Quit when finished. The installer
+does not enable macmon's HTTP server or service. Use
+`hyperfine --warmup 2 'your-command'` for repeated timing measurements; it runs
+the supplied command repeatedly, so choose a command safe to repeat.
+
 Full Xcode and its iOS SDK are required for Scripture's simulator/device builds.
 Run `scripts/setup-xcode` in a visible terminal after installing the apple group.
 It installs Apple's Xcode through `mas`, selects the toolchain, presents the
@@ -102,8 +121,9 @@ The installer validates destinations before changing files, saves every
 conflicting file or symlink in a private backup directory, and writes a JSON
 manifest. Repeated installs make no configuration changes when files already
 match. Ghostty's XDG and macOS application-support config locations are both
-managed so they cannot accidentally disagree. No LaunchAgents or background
-application services are installed.
+managed so they cannot accidentally disagree. Configuration installation starts
+no services. The explicit desktop runtime command below enables its LaunchAgent
+and desktop services; Ollama remains manually started.
 
 Backups default to `~/.local/state/dotfiles/backups/`; the exact manifest path
 is printed after installation. Restore configuration with:
@@ -128,7 +148,8 @@ dashes, automatic periods and spelling correction; hides recent apps in the Dock
 and stores PNG screenshots in `~/Pictures/Screenshots`.
 
 The macOS group also uses Finder list view and a compact, auto-hiding Dock with
-windows minimized into their application icons. It backs up only changed keys,
+windows minimized into their application icons, and disables automatic Space
+reordering. It backs up only changed keys,
 preserving boolean, integer, floating-point and string types and absent keys,
 then applies and reads each key back. A failed application rolls back preference
 changes. Its separate private manifest uses the same `--restore` command and
@@ -143,6 +164,136 @@ and [key repeat](https://support.apple.com/en-gb/guide/mac-help/mchl0311bdb4/mac
 CLI keys are verified on the installed macOS version, not treated as a stable
 cross-version API. Security controls, cloud accounts, keychains, accessibility
 permissions and browser profiles remain locally managed.
+
+## Workstation design
+
+The desktop follows the fullscreen workflow: content fills the screen, and
+controls appear at the edges only when needed. Tokyo Night Storm grounds the
+terminal and editor; the desktop has three coordinated glass palettes. Tidal
+pairs deep petrol with seafoam and brass; Ember uses warm charcoal, copper and
+rose; Iris combines plum, lavender and mint. SF Pro gives system controls a native feel, while monospaced
+text is reserved for code, telemetry and the calendar grid. The unbranded
+wallpaper keeps most of the screen quiet.
+
+The default ribbon brings hardware, connections and session information into
+one quiet capsule, with application context at the left. The islands layout
+separates those groups. Notifications sit furthest right in both layouts.
+Hover reveals immediate cached controls, then refreshes their data. The dock
+groups open application windows with count badges and a single active marker;
+its fisheye layout moves neighboring icons so magnification stays usable.
+Short eased transitions and exit hysteresis prevent accidental dismissals.
+Reduce Motion is respected. Bar IPC runs away from the animation thread, and
+dock animation stops while hidden.
+
+The same restraint applies below the UI. Native development tools and sccache
+serve the Rust/web/Apple/reverse-engineering workload. Models and containers
+consume resources on demand. Ollama is manual; MLX has an explicit pinned
+prepare/verify/undo lifecycle. AeroSpace and borders are optional experiments,
+leaving native fullscreen Spaces as the default. Changes are declared here,
+backed up locally and verified before publication.
+
+## Desktop profile
+
+Install configuration and dependencies, then explicitly enable the desktop:
+
+```sh
+./install.sh --groups desktop,macos --deps
+scripts/dotfiles desktop apply
+scripts/dotfiles desktop status
+scripts/dotfiles desktop permissions
+scripts/dotfiles desktop theme --theme tidal --layout ribbon
+scripts/dotfiles desktop undo
+```
+
+The native fullscreen workflow remains intact. Reveal the status bar at the
+top three pixels and the dock at the bottom three pixels. Each hides after
+leaving it for 320 ms; hovering a bar control opens its cached panel. Popups remain
+usable while the pointer is inside them. There is no permanently reserved
+strip, extra native menu row, or dock divider.
+
+| Control | Hover / interaction |
+| --- | --- |
+| Clock | Calendar, previous/next month and today |
+| Sound | Volume slider, mute, output selection; scroll the bar item for volume |
+| Display | Built-in brightness slider; scroll the bar item to adjust |
+| Wi-Fi | Power toggle and connection details; native quick panel for network selection |
+| Bluetooth | Power toggle and paired-device connect/disconnect |
+| CPU / GPU | Load graph, real average die temperature in °F, power and fans |
+| RAM | Usage graph, capacity and swap details |
+| Battery | Charge, charging state, time estimate, temperature and cycles |
+| Notifications | Furthest right; Notification Center, Focus and hardware alerts |
+| Current app | App Exposé, Mission Control, theme and layout switching |
+
+Common controls work in the popovers instead of launching Settings. Native
+Wi-Fi, notification and Focus quick panels and App Exposé require local
+Accessibility/Automation approval for the responsible SketchyBar/osascript
+process. Bluetooth may request macOS Bluetooth permission. Approval is a local
+OS action and is not captured or bypassed by dotfiles. Network names can be
+redacted without Location permission; private network/device names are never
+stored in Git. Hardware alerts do not count unread app notifications: macOS
+offers no supported API for reading all other apps' notification content.
+
+Hover the current app name to switch Tidal / Ember / Iris or toggle Ribbon /
+Islands. Changes recolor the live bar, popovers, graphs and sliders in one IPC
+call; the dock updates its glass, hover labels, badges and active marker without
+restarting. Text/control contrast is checked against the declared surfaces.
+`themes.json` declares the fresh-machine default; local selections stay in
+private state and survive apply. `desktop theme` changes only appearance,
+without resetting wallpaper or desktop preferences.
+
+The dock is a small AppKit panel compiled from `scripts/desktop-edge.m`: open
+apps only, stable ordering, hover magnification, grouped window counts and
+badges, click to activate, right-click for Show windows / Hide / Quit.
+Finder appears only when it has a window. Window counts use public WindowServer
+metadata; they do not scrape titles or require screen recording. There are no
+pinned apps, separator, Trash, or new desktop-navigation bindings.
+
+The same native helper observes pointer position without an event tap or cursor
+warping. It checks SketchyBar health before suppressing the native menu, restores
+the native menu when stopped or when SketchyBar is unavailable, and is restarted
+by a user LaunchAgent. Menu suppression uses the reversible private SkyLight
+calls used by [yabai](https://github.com/asmvik/yabai); SIP remains enabled.
+macOS updates can change private interfaces, so recheck after an OS upgrade.
+Built-in brightness uses DisplayServices get/set, following the Apple Silicon
+implementation in [brightness](https://github.com/nriley/brightness/blob/master/brightness.c).
+It does not change external-display brightness. Mission Control temporarily
+suppresses the custom surfaces while the native overview is open.
+The native Dock is kept alive for Mission Control and Spaces; its presentation
+uses auto-hide with a long delay while the replacement is active. The setup
+restarts Dock after changing those preferences, without changing pinned apps.
+
+The profile snapshots the original per-display wallpaper/options, typed menu
+and Dock preferences, and loaded desktop services into
+`~/.local/state/dotfiles/desktop/` (or `XDG_STATE_HOME`). Reapply retains this
+original baseline. Undo restores it, stops only services enabled by the profile,
+and removes its LaunchAgent. Later edits to managed preferences block their
+restoration; native menu recovery happens first. Configuration links and installed
+packages are retained; use the installer's printed manifests to restore files.
+If a newer wallpaper was chosen manually, save that choice before undo, which
+restores the captured wallpaper on matching connected displays.
+
+The wallpaper's authored SVG and exported PNG live in `assets/wallpapers/`.
+The bar and border configuration live under `.config/sketchybar/` and
+`.config/borders/`; compilation products, telemetry, device state, logs,
+LaunchAgents and wallpaper backups stay outside Git. Native compiles run in
+macOS CI; portable lifecycle and control tests also run on Linux.
+Only SketchyBar and the native edge helper start with the enabled profile.
+JankyBorders is available for an optional windowed-workflow trial and stays
+stopped by default: fullscreen windows do not benefit from an extra border daemon.
+
+macOS requires at least one regular Desktop even when all other Spaces are
+fullscreen apps. This setup does not destroy that required Space or move your
+fullscreen apps. Keep the spare Desktop at the far right and use the trackpad.
+Command+number is not mapped to ordinary Desktop shortcuts, which would not
+target fullscreen Spaces. No Alt/Control-number substitutes are installed.
+AeroSpace is installed for an explicit trial, starts disabled, and has no login
+startup or workspace navigation bindings. Launch it manually and use
+`aerospace enable on` to try tiling; `aerospace enable off` pauses it.
+
+LuLu is installed as the outbound firewall option. Launch it once and approve
+its macOS system extension and network filter locally. Rules and approvals are
+machine state and remain outside this repository. Installation alone does not
+mean the firewall filter is active.
 
 ## Shell and projects
 
@@ -288,20 +439,21 @@ without changing the shell's Python. Override its location with `MLX_ENV`.
 not run during shell startup or automatically download models.
 
 The Brewfile includes native MLX. Python MLX-LM uses the pinned Apple-silicon
-Python 3.12 requirements in `requirements/mlx.txt`. Prepare an environment at
-its permanent path before switching the stable `~/.venvs/mlx` link:
+Python 3.12 requirements in `requirements/mlx.txt`:
 
 ```sh
-uv venv --python 3.12 ~/.venvs/mlx-0.32.0-py312
-uv pip sync --python ~/.venvs/mlx-0.32.0-py312/bin/python requirements/mlx.txt
+scripts/dotfiles ai prepare
+scripts/dotfiles ai status
+scripts/dotfiles ai undo
 ```
 
-Verify Metal and a cached model before switching. Preserve an existing
-`~/.venvs/mlx` directory or symlink in a private backup, then link that name to
-the prepared environment. Virtual environments must not be moved after creation
-because their entrypoints contain absolute paths. The regular installer never
-replaces environments, changes GPU memory limits or downloads models. Model
-stores and environment backups remain local state. Regenerate the lock on an
+Prepare retains an already matching environment. Otherwise it creates a
+versioned environment at its permanent path, syncs the declared packages,
+verifies Python 3.12 and native Metal, then switches `~/.venvs/mlx`. A private
+manifest preserves the original directory or symlink for guarded undo; later
+manual pointer edits block replacement. Prepared environments and model caches
+are retained on undo. No model is loaded or downloaded. The regular installer
+does not prepare environments or change GPU memory limits. Regenerate the lock on an
 Apple-silicon Mac with `uv pip compile requirements/mlx.in --python 3.12 --output-file requirements/mlx.txt --no-header`.
 
 ## Podman and Decapod

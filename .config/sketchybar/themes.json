@@ -1,0 +1,24 @@
+{
+  "default": "tidal",
+  "layout": "ribbon",
+  "themes": {
+    "tidal": {
+      "surface": "132630", "popup": "142730", "border": "355361",
+      "foreground": "E8F5F7", "muted": "A0BBC4", "accent": "80D9D1",
+      "secondary": "E4B98A", "highlight": "294956", "success": "9DD8AE",
+      "warning": "F3CB8C", "danger": "FF91A4"
+    },
+    "ember": {
+      "surface": "2A211D", "popup": "2D2420", "border": "574338",
+      "foreground": "FFF1E7", "muted": "C4ACA0", "accent": "EDBD91",
+      "secondary": "E2A6B6", "highlight": "4B3830", "success": "BCD4A7",
+      "warning": "F5CE87", "danger": "FFA1A3"
+    },
+    "iris": {
+      "surface": "242035", "popup": "272239", "border": "4B4164",
+      "foreground": "F3EEFF", "muted": "BCB0D3", "accent": "C1A4F5",
+      "secondary": "83D9D0", "highlight": "443956", "success": "A8DDBB",
+      "warning": "F3CB8C", "danger": "FF9BAE"
+    }
+  }
+}

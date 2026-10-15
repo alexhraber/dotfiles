@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
+borders style=round width=2.0 hidpi=on active_color='gradient(top_left=0xff7c5cff,bottom_right=0xff42c7ff)' inactive_color=0xff2a3447

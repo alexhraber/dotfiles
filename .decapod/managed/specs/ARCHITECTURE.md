@@ -2,7 +2,7 @@
 
 ## Direction
 
-This is a configuration repository, not a service. Bash entrypoints dispatch
+This repository defines a local workstation, including an optional desktop runtime. Bash entrypoints dispatch
 to the Python standard-library installer. zsh and Lua configure the user's
 shell and editor; Homebrew manages the curated tool dependencies.
 
@@ -43,6 +43,11 @@ shell and editor; Homebrew manages the curated tool dependencies.
 - The reverse group copies zsh/reverse.zsh and adds one source line to the
   existing .zshrc.local through the ordinary backed-up file operations. It
   discovers Homebrew Ghidra/JDK only when explicit environment values are absent.
+- The dev group also copies .config/cargo/config.toml through the same guarded
+  backup/restore operations. Cargo uses a local sccache wrapper unless project
+  or environment settings override it. Incremental behavior is retained; cache
+  data remains private machine state. Hyperfine and ARM macOS macmon are explicit
+  tools; no benchmarking, metrics server or startup service is enabled by install.
 - scripts/setup-xcode runs in a visible local terminal. mas and sudo own their
   authentication prompts; Apple presents its license before first-launch setup
   and explicit iOS platform download. This is outside the regular installer.
@@ -55,6 +60,41 @@ shell and editor; Homebrew manages the curated tool dependencies.
   account and runtime settings outside Git.
 
 ## Data and Contracts
+
+scripts/desktop.py owns an explicit, locked apply/status/permissions/undo
+lifecycle. It captures typed defaults, service state and a per-display wallpaper
+archive before enabling the profile. Versioned native binaries live in private
+state; a stable executable symlink lets LaunchAgent upgrades restart the new
+build without changing its plist. Health binds a fresh status record to the
+actual launchctl PID. Reapply retains the original recovery baseline.
+
+scripts/desktop-edge.m uses AppKit/QuartzCore for an open-app dock. One pure
+fisheye geometry function owns painting and hit testing. It polls pointer state,
+animates only while visible, supports Reduce Motion, and observes application,
+Space and display changes. Serial background SketchyBar IPC avoids blocking
+animations. SkyLight menu suppression is health-guarded and restored on ordinary
+termination or bar failure. A Mission Control observer temporarily suppresses
+custom surfaces. Built-in brightness uses dynamically resolved DisplayServices.
+No injection, event tap, SIP change or cursor warping is required.
+
+.config/sketchybar contains rounded control groups and Python hover plugins.
+themes.json and plugins/appearance.py own three validated palettes and the
+ribbon/islands layout. A single live IPC update restyles existing items and
+toggles bracket backgrounds, preserving visibility and popovers. The native
+helper reloads the same private palette on SIGUSR1 or its health interval;
+the native PID remains stable during appearance changes.
+Cached content renders before fresh device reads; request tokens reject stale
+hover responses. Read-only warmup runs on reveal. macmon samples are shared
+through private state and displayed in Fahrenheit, with load graphs and alerts.
+Device operations use argv arrays. Native Wi-Fi/notification/Focus panels need
+local Accessibility/Automation. scripts/set-wallpaper.swift captures/restores
+per-display URLs and typed image options in a private archive.
+
+scripts/local_ai.py prepares a versioned Python 3.12 MLX environment, verifies
+the package pins and Metal before atomically changing the stable link, and
+preserves the original link/directory in private state. It loads no model.
+The generic installer, desktop lifecycle and AI lifecycle are distinct
+transactions with separate recovery state.
 
 Configuration backups use private local state directories and JSON manifests.
 Neovim plugin checkouts, bat caches, shell history, Codex state and Podman VM
@@ -134,7 +174,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `565a71c979f06f17c41ba3d6b7655fe0f259bb145c4a7d039d23c4ea656feca1`
-- Significant implementation surfaces: `.github/` (1 files), `README.md/` (1 files), `scripts/` (4 files), `tests/` (3 files)
+- Repository signal fingerprint: `0229f36eed59a21f78229356fd3e926ab6826ee2829f8997aff2adce917fbf19`
+- Significant implementation surfaces: `.config/` (3 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (5 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

@@ -89,13 +89,41 @@ class InstallTests(unittest.TestCase):
         config = self.home / '.config/mise/config.toml'
         config.parent.mkdir(parents=True)
         config.write_text('[tools]\nnode = "22"\n')
+        cargo = self.home / '.cargo/config.toml'
+        cargo.parent.mkdir(parents=True)
+        cargo.write_text('[build]\njobs = 2\n')
         manifest = self.apply(groups=('dev',))
         self.assertFalse(config.is_symlink())
         self.assertEqual(config.read_bytes(), (ROOT / '.config/mise/config.toml').read_bytes())
+        self.assertFalse(cargo.is_symlink())
+        self.assertEqual(cargo.read_bytes(), (ROOT / '.config/cargo/config.toml').read_bytes())
         self.assertIsNone(self.apply(groups=('dev',)))
         self.assertFalse((self.home / '.zshrc').exists())
         self.restore(manifest)
         self.assertEqual(config.read_text(), '[tools]\nnode = "22"\n')
+        self.assertEqual(cargo.read_text(), '[build]\njobs = 2\n')
+
+    def test_desktop_reuses_legacy_aerospace_path_and_restores(self):
+        legacy = self.home / '.aerospace.toml'
+        legacy.write_text('start-at-login = true\n')
+        manifest = self.apply(groups=('desktop',))
+        self.assertTrue(legacy.is_symlink())
+        self.assertFalse((self.home / '.config/aerospace/aerospace.toml').exists())
+        self.assertIsNone(self.apply(groups=('desktop',)))
+        self.assertTrue((self.home / '.config/sketchybar/plugins/status.sh').is_symlink())
+        self.restore(manifest)
+        self.assertEqual(legacy.read_text(), 'start-at-login = true\n')
+        self.assertFalse((self.home / '.config/sketchybar/sketchybarrc').exists())
+
+    def test_desktop_rejects_ambiguous_aerospace_configs_before_changes(self):
+        (self.home / '.aerospace.toml').write_text('legacy')
+        modern = self.home / '.config/aerospace/aerospace.toml'
+        modern.parent.mkdir(parents=True)
+        modern.write_text('modern')
+        with self.assertRaisesRegex(ValueError, 'Two AeroSpace configs'):
+            self.apply(groups=('desktop',))
+        self.assertEqual(modern.read_text(), 'modern')
+        self.assertFalse((self.home / '.config/sketchybar').exists())
 
     def test_reverse_preserves_local_shell_settings_and_restores(self):
         local = self.home / '.zshrc.local'

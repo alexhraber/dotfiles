@@ -14,7 +14,7 @@ private backup and verification before changing the stable environment link.
 ## Scope
 
 A fresh checkout can preview and install terminal, Git, Codex, workspace, dev,
-reverse engineering, Apple development, infra, AI, apps and macOS groups. All authored configuration and automation live
+reverse engineering, Apple development, infra, AI, apps, desktop and macOS groups. All authored configuration and automation live
 in ~/src/dotfiles; the target host is an Apple M1 Max MacBook Pro.
 Existing configuration is backed up and can be restored
 without overwriting later user edits. Dependencies are declared in Brewfile;
@@ -67,6 +67,25 @@ tasks; future agents must ask the user to select any Apple development team.
 Excluded: Herdr, Tailscale/AMP services, secret migration, unsolicited model
 downloads, account setup, VM startup troubleshooting and modifying Decapod itself.
 
+## Fullscreen desktop and on-demand inference
+
+The explicit desktop profile supports the owner's native fullscreen workflow:
+one autohiding SketchyBar, no competing native menu, and an open-apps-only
+AppKit dock with magnification and grouped window counts. Notifications belong
+furthest right. Hover panels expose sound, built-in brightness, Wi-Fi, Bluetooth,
+calendar, battery and CPU/GPU/RAM details; every displayed temperature is °F.
+Motion, typography, spacing and cached response are part of the product intent.
+Accessibility approvals remain local and unapproved quick panels remain a gap.
+
+Native fullscreen Spaces and trackpad gestures are retained. macOS requires
+one regular Desktop; this setup neither destroys it nor invents alternate
+desktop keyboard bindings. AeroSpace starts disabled and Borders is optional.
+desktop apply/status/permissions/undo provide explicit lifecycle and recovery.
+The installation itself starts no services. The enabled desktop starts only
+SketchyBar and its edge helper; Ollama remains manual with no model preload.
+ai prepare/status/undo make the pinned MLX environment reproducible without
+loading models, preserving the original environment and guarding later edits.
+
 <!-- decapod:declared-capabilities:start -->
 
 ## Declared Capability Surfaces
@@ -82,7 +101,7 @@ These declarations select authoring and proof obligations; they do not attest im
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `565a71c979f06f17c41ba3d6b7655fe0f259bb145c4a7d039d23c4ea656feca1`
-- Significant implementation surfaces: `.github/` (1 files), `README.md/` (1 files), `scripts/` (4 files), `tests/` (3 files)
+- Repository signal fingerprint: `0229f36eed59a21f78229356fd3e926ab6826ee2829f8997aff2adce917fbf19`
+- Significant implementation surfaces: `.config/` (3 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (5 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

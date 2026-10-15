@@ -3,7 +3,7 @@
 ## Inbound Contracts
 
 install.sh accepts --groups with any comma-separated subset of terminal, git,
-codex, workspace, dev, reverse, apple, infra, ai, apps and macos, plus --all, --deps and
+codex, workspace, dev, reverse, apple, infra, ai, apps, desktop and macos, plus --all, --deps and
 --dry-run. The default group is terminal. scripts/dotfiles doctor uses the same
 group selection. Restore accepts a manifest via scripts/dotfiles restore or
 install.sh --restore; dry-run previews both operations.
@@ -56,7 +56,12 @@ is required. scripts/editor_check.py validates installed language servers in
 disposable fixtures rather than changing project files.
 
 The dev group copies .config/mise/config.toml; mise install explicitly installs
-the declared Node/npm defaults. The reverse group copies zsh/reverse.zsh and
+the declared Node/npm defaults. It also copies generic Cargo configuration with
+a local sccache wrapper to ~/.cargo/config.toml through backed-up operations.
+Project settings and RUSTC_WRAPPER can override it; existing files are backed up
+before replacement. sccache --show-stats inspects the on-demand cache; macmon and
+hyperfine are explicit monitoring and benchmark commands. No service is enabled.
+The reverse group copies zsh/reverse.zsh and
 adds its source to .zshrc.local, retaining other settings and explicit Java/Ghidra
 choices. The apple group installs mas on macOS; scripts/setup-xcode requires a
 visible local terminal and installs Xcode, selects it, presents Apple's license,
@@ -67,8 +72,37 @@ assets and command-line build overrides; no team or signing identity is tracked.
 
 Homebrew, GitHub Git transport, rustup/Cargo, Ollama, MLX and Podman remain
 independently managed. Native Neovim package installation fetches pinned plugin
-commits on first startup. No service, REST API or event protocol is authored by
-this repository.
+commits on first startup. The optional desktop profile authors a local user
+LaunchAgent and SketchyBar events; it introduces no network API.
+
+## Desktop and inference lifecycle
+
+scripts/dotfiles desktop apply explicitly starts SketchyBar and the native
+edge helper, sets backed-up menu/Dock defaults and wallpaper, then requires
+fresh PID-bound health. status reports runtime health. permissions probes
+Accessibility from SketchyBar's context and opens local macOS approval settings
+if unavailable. undo restores the native menu first, then guarded preferences,
+wallpaper and prior service state. It retains configuration and packages.
+
+The top three pixels reveal the bar; the bottom-center three pixels reveal
+the open-app dock after an 80 ms dwell. Exit hysteresis is 320 ms. Hover controls
+include calendar, sound/output/mute, built-in brightness, Wi-Fi power/details,
+paired Bluetooth devices, battery and Fahrenheit CPU/GPU telemetry. Notifications
+are furthest right; hardware warnings are not an unread notification count.
+Native quick panels need local OS permissions. No desktop-navigation keyboard
+substitute or automatic Space destruction is installed.
+
+desktop theme --theme tidal|ember|iris --layout ribbon|islands restyles existing
+bar items without reloading, changing wallpaper or restarting the helper.
+The current-app hover panel offers the same choices. themes.json declares
+the reproducible default; private state retains local selections across apply.
+
+scripts/dotfiles ai prepare validates the Apple Silicon platform, retains a
+matching MLX environment or prepares the declared Python/package pins before
+switching ~/.venvs/mlx with private recovery state. status verifies it without
+loading a model; undo restores the original pointer/directory and refuses later
+manual pointer edits. MLX_ENV overrides are preserved and must be unset before
+managing the default path. No inference service or model download is started.
 
 ## Failure Semantics
 
@@ -82,7 +116,7 @@ can leave partial state; the backup manifest remains the recovery input.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `565a71c979f06f17c41ba3d6b7655fe0f259bb145c4a7d039d23c4ea656feca1`
-- Significant implementation surfaces: `.github/` (1 files), `README.md/` (1 files), `scripts/` (4 files), `tests/` (3 files)
+- Repository signal fingerprint: `0229f36eed59a21f78229356fd3e926ab6826ee2829f8997aff2adce917fbf19`
+- Significant implementation surfaces: `.config/` (3 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (5 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
