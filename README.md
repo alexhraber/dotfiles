@@ -175,9 +175,11 @@ rose; Iris combines plum, lavender and mint. SF Pro gives system controls a nati
 text is reserved for code, telemetry and the calendar grid. The unbranded
 wallpaper keeps most of the screen quiet.
 
-The default ribbon brings hardware, connections and session information into
-one quiet capsule, with application context at the left. The islands layout
-separates those groups. Notifications sit furthest right in both layouts.
+The default islands layout separates hardware, connections, session and
+notifications into individual pills, with an eight-point empty gap between
+sections and no connecting background. Application context stays at the left;
+notifications sit furthest right. The optional ribbon layout joins the right
+sections into one capsule and hides the gap items.
 Hardware uses distinct processor, graphics and memory icons, with compact
 CPU/GPU utilization percentages and used memory beside them. Temperatures in
 Fahrenheit, power, capacity and swap details stay in the hover panels. Fixed value widths prevent sampling from

@@ -83,6 +83,13 @@ fresh exact-candidate validation and hosted CI before merge; the earlier
 
 ## Promotion Gates
 
+The separate-pill refinement retains the shared 62-test check owner and native
+checks. The live-layout regression now requires all three gap items to be
+enabled with islands in the same IPC that disables the ribbon background.
+Islands is the declared default; gap items are eight points wide and bracket
+background padding is zero. Host apply and live queries verify the selection;
+full exact-candidate readiness and Linux/macOS CI remain separate requirements.
+
 The top-bar refinement passes 62 host tests, native warnings-as-errors
 compilation, geometry checks and Swift typechecking. Six new hover regressions
 cover canceled dwell, same-panel stability, atomic panel switching, the bridge
@@ -149,7 +156,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `3412d50e5e69a575f172f6b4b458f8614c825455ff14863d5e350e7270cc7cb1`
+- Repository signal fingerprint: `45d5943dc5bf0810673bea8f27bdbf72f5d029ac85a221ba183156d2ca1f97d6`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

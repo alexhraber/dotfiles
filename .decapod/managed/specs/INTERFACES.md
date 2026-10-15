@@ -109,6 +109,8 @@ blur, border, shadow, text, badges or active markers. Autohide, magnification,
 one icon per application and right-click Show windows/Hide/Quit are retained;
 blank transparent space passes clicks through.
 
+Islands is now the default, with eight-point gaps between section pills
+and the connecting ribbon background off. Optional ribbon hides those spacers.
 desktop theme --theme tidal|ember|iris --layout ribbon|islands restyles existing
 bar items without reloading, changing wallpaper or restarting the helper.
 The current-app hover panel offers the same choices. themes.json declares
@@ -139,7 +141,7 @@ can leave partial state; the backup manifest remains the recovery input.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `3412d50e5e69a575f172f6b4b458f8614c825455ff14863d5e350e7270cc7cb1`
+- Repository signal fingerprint: `45d5943dc5bf0810673bea8f27bdbf72f5d029ac85a221ba183156d2ca1f97d6`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

@@ -49,6 +49,10 @@ class DesktopTests(unittest.TestCase):
         for group, drawing in (('ribbon','off'),('hardware','on'),('notifications','on')):
             at = argv.index(group)
             self.assertEqual(argv[at+1],'background.drawing='+drawing)
+            self.assertEqual(argv[at+2], 'drawing='+drawing)
+        for boundary in ('hardware', 'session', 'notifications'):
+            at = argv.index('gap_' + boundary)
+            self.assertEqual(argv[at+1], 'drawing=on')
         self.assertNotIn('--reload',argv)
         self.assertNotIn('--remove',argv)
 

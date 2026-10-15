@@ -69,7 +69,10 @@ downloads, account setup, VM startup troubleshooting and modifying Decapod itsel
 
 ## Fullscreen desktop and on-demand inference
 
-The top bar should feel restrained and predictable. CPU/GPU/memory use icons
+The top bar should feel restrained and predictable. Section pills are separated
+by a space-sized gap with no background
+connecting them. Islands is the reproducible default.
+CPU/GPU/memory use icons
 instead of words; concise fixed-width CPU/GPU utilization and used memory leave
 temperatures and other details in hover panels.
 Pointer movement must not leave delayed panels behind, close panels during a
@@ -120,7 +123,7 @@ These declarations select authoring and proof obligations; they do not attest im
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `3412d50e5e69a575f172f6b4b458f8614c825455ff14863d5e350e7270cc7cb1`
+- Repository signal fingerprint: `45d5943dc5bf0810673bea8f27bdbf72f5d029ac85a221ba183156d2ca1f97d6`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
