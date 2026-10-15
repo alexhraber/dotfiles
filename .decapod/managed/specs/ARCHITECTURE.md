@@ -22,6 +22,11 @@ shell and editor; Homebrew manages the curated tool dependencies.
 - .config/nvim/init.lua: native vim.pack with pinned Tokyo Night and mini.nvim;
   Installed servers cover Rust, Python, JS/TS, Lua, Bash and TOML. Python uses
   project virtual environments and Ruff formatting.
+- The same pinned mini.nvim package supplies the workbench, tabline and static
+  indent guide; no additional editor plugin or runtime is introduced. Starship
+  and fzf share the theme palette; tmux styling uses built-in formats and keys.
+- scripts/macos_preferences.py preserves floating-point values as well as
+  integers, strings and booleans, including fractional preexisting Dock sizes.
 - scripts/macos_preferences.py: reads typed defaults, snapshots changed keys,
   applies with per-key readback and rolls back on error. Preferences and files
   are separate transactions; restoration refuses later edits.
@@ -91,7 +96,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `0ff7c179bd7a6bce3e6996877b6119c569389b8ffce232a77eedb6565ca32d8d`
+- Repository signal fingerprint: `681733e819829878e8dbed2ae67484cffa93d4ff253089704c83b593581d4ab0`
 - Significant implementation surfaces: `.github/` (1 files), `README.md/` (1 files), `scripts/` (3 files), `tests/` (3 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

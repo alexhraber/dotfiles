@@ -40,6 +40,11 @@ a VM. tm attaches or creates the main tmux session with the standard prefix.
 Neovim's leader is Space; mappings and local.lua extension are documented in
 README.md. Codex profiles use separate top-level TOML files.
 
+Ctrl-T previews files with bat, Alt-C previews directories with eza, and Ctrl-/
+toggles previews. Tmux retains Ctrl-b: h/j/k/l select panes, Shift-h/j/k/l resize,
+Tab switches to the previous window. Neovim Space ss opens the workbench;
+[b and ]b switch buffers. The default theme is Tokyo Night Storm throughout.
+
 The root justfile exposes preview, install, check, doctor, editor-check,
 brew-check and outdated. scripts/editor_check.py validates installed language
 servers in disposable fixtures rather than changing project files.
@@ -63,7 +68,7 @@ this repository.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `0ff7c179bd7a6bce3e6996877b6119c569389b8ffce232a77eedb6565ca32d8d`
+- Repository signal fingerprint: `681733e819829878e8dbed2ae67484cffa93d4ff253089704c83b593581d4ab0`
 - Significant implementation surfaces: `.github/` (1 files), `README.md/` (1 files), `scripts/` (3 files), `tests/` (3 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

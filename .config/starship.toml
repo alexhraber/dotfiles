@@ -1,13 +1,13 @@
-# Tokyo Night / Catppuccin-adjacent Starship prompt.
+# Tokyo Night Storm. Keep local identity quiet and project context visible.
 # Keep the signal high: location, git state, runtime, and the command result.
 
 "$schema" = 'https://starship.rs/config-schema.json'
 add_newline = true
-command_timeout = 1000
+command_timeout = 800
 scan_timeout = 30
 
 format = """
-[╭─](bold #7aa2f7)$os$username$hostname$directory$git_branch$git_status$status$jobs$python$nodejs$rust$golang$docker_context$fill$cmd_duration$time
+[╭─](bold #7aa2f7)$os$username$hostname$directory$git_branch$git_status$status$jobs$python$nodejs$rust$swift$golang$docker_context$fill$cmd_duration$time
 [╰─](bold #7aa2f7)$character"""
 
 [fill]
@@ -22,13 +22,13 @@ style = 'bold #bb9af7'
 Macos = ' '
 
 [username]
-show_always = true
+show_always = false
 format = '[$user]($style)'
 style_user = 'bold #c0caf5'
 style_root = 'bold #f7768e'
 
 [hostname]
-ssh_only = false
+ssh_only = true
 format = '[@$hostname ]($style)'
 style = 'bold #565f89'
 
@@ -38,6 +38,7 @@ style = 'bold #7aa2f7'
 read_only = ' '
 read_only_style = '#f7768e'
 truncation_length = 3
+fish_style_pwd_dir_length = 1
 truncate_to_repo = true
 home_symbol = '~'
 
@@ -45,6 +46,8 @@ home_symbol = '~'
 symbol = ' '
 format = '[$symbol$branch]($style) '
 style = 'bold #bb9af7'
+truncation_length = 38
+truncation_symbol = '…'
 
 [git_status]
 format = '([$all_status$ahead_behind]($style) )'
@@ -91,6 +94,11 @@ style = '#ff9e64'
 symbol = ' '
 format = '[$symbol$version]($style) '
 style = '#7dcfff'
+
+[swift]
+symbol = ' '
+format = '[$symbol$version]($style) '
+style = '#ff9e64'
 
 [docker_context]
 symbol = ' '

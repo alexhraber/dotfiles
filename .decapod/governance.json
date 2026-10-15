@@ -13,6 +13,11 @@
       "id": "workstation-setup",
       "summary": "Project-aware Node/npm; native build/media and Ghidra tools; safe copied runtime config; pinned MLX requirements; interactive Xcode setup; configuration backup/restore tests",
       "input_digest": "sha256:a58a79f4efbe312ed72713c0a65ffcb986b6f2e7d0fa252043a6243a1fca92c8"
+    },
+    {
+      "id": "rice-applied",
+      "summary": "Applied cohesive Tokyo Night terminal/editor/tmux/fzf rice; 30 tests and installed doctor passed; backups private; Scripture work handed off",
+      "input_digest": "sha256:474cfe757d7e132c075371afe4f4cf259e325db2094bce106f8353406386a7f3"
     }
   ],
   "intents": {
@@ -43,7 +48,7 @@
       },
       "deferred_questions": [],
       "human_questions": [],
-      "intent": "Equip this M1 Max for the inspected repos with project-aware Node/npm, pinned Rust, native build/media tools, Ghidra, backed-up modern MLX, headless Podman verification, full Xcode installation and Personal Team iOS signing. Preserve credentials and application source; no push or publication.",
+      "intent": "Rice the M1 Max workstation through dotfiles: cohesive Tokyo Night terminal, prompt, tmux, fuzzy finding and Neovim; keep installed Node/Rust/native build/Ghidra/MLX tooling. Stop all Scripture work and provide a separate signing handoff prompt. Apply and verify backed-up configuration locally without push or publication.",
       "phases": [],
       "proof_hooks": [
         "dotfiles checks and installed runtime smoke checks"
@@ -57,14 +62,35 @@
       ],
       "unknowns": [],
       "unresolved_contradictions": [],
-      "updated_at": "1792045360Z"
+      "updated_at": "1792050021Z"
     },
     "trajectory": {
       "active_boundaries": [
         "Current claimed task and isolated work branch"
       ],
-      "artifact_hash": "sha256:e90024f27cebf935f866ad686e250f56d99213f577cf86b56f784ee0d10b72a6",
-      "checks": [],
+      "artifact_hash": "sha256:68125dd5a2118f653ecdb0390f63b28acc1878c50889f88384c01d41e2a08c56",
+      "checks": [
+        {
+          "name": "ghostty_config",
+          "status": "passed"
+        },
+        {
+          "name": "installed_doctor",
+          "status": "passed"
+        },
+        {
+          "name": "neovim_workbench",
+          "status": "passed"
+        },
+        {
+          "name": "scripts/check",
+          "status": "passed"
+        },
+        {
+          "name": "tmux_theme",
+          "status": "passed"
+        }
+      ],
       "current_phase": "intent",
       "custody": {
         "events": [
@@ -86,10 +112,17 @@
             "intent_id": "intent:change_01M4Z1EG4P7THVM2RR4XMS4CK2",
             "kind": "trajectory_step_recorded",
             "sequence": 4
+          },
+          {
+            "detail": "trajectory:branch_01M4Z1EG7DGJZYKJDA80E6K3VH",
+            "event_id": "event:5",
+            "intent_id": "intent:change_01M4Z1EG4P7THVM2RR4XMS4CK2",
+            "kind": "trajectory_step_recorded",
+            "sequence": 5
           }
         ],
         "knowledge_candidates": [],
-        "next_sequence": 4,
+        "next_sequence": 5,
         "schema_version": "1.0.0",
         "trajectories": {
           "branch_01M4Z1EG7DGJZYKJDA80E6K3VH": {
@@ -113,6 +146,25 @@
                 ],
                 "sequence": 4,
                 "validation_findings": []
+              },
+              {
+                "action": "trajectory.record",
+                "custody_event_id": "event:5",
+                "observations": [
+                  "30 tests passed. Installed doctor --all passed. Isolated tmux top bar and navigation parsed. Neovim dashboard rendered headlessly. Repeated install preview reports no changes. MLX and Ollama real inference and Ghidra ARM64/JDK diagnostics passed. Full Decapod publication validation failed on container/spec requirements and is not claimed. User redirected all Scripture work to a separate agent; this task applies workstation rice only. Configuration backup manifests remain private; no push or publication."
+                ],
+                "proof_refs": [
+                  "scripts/check",
+                  "installed_doctor",
+                  "ghostty_config",
+                  "tmux_theme",
+                  "neovim_workbench"
+                ],
+                "scope": [
+                  "root"
+                ],
+                "sequence": 5,
+                "validation_findings": []
               }
             ]
           }
@@ -121,6 +173,7 @@
       "declared_commands": [],
       "destination": "pull request",
       "evidence": [
+        "30 tests passed. Installed doctor --all passed. Isolated tmux top bar and navigation parsed. Neovim dashboard rendered headlessly. Repeated install preview reports no changes. MLX and Ollama real inference and Ghidra ARM64/JDK diagnostics passed. Full Decapod publication validation failed on container/spec requirements and is not claimed. User redirected all Scripture work to a separate agent; this task applies workstation rice only. Configuration backup manifests remain private; no push or publication.",
         "Inspected all five ~/src repositories and the active Scripture worktree. Root dotfiles doctor passes. Node/npm and Rust repo pins are not installed, MLX uses Python 3.9 with working Metal outside sandbox, both Podman machines stopped. Work is local only."
       ],
       "inspected_files": [

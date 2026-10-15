@@ -25,6 +25,7 @@ o.completeopt = { 'menuone', 'noselect', 'popup' }
 o.clipboard = 'unnamedplus'
 o.list = true
 o.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+o.winborder = 'rounded'
 
 if not vim.pack then
   error('This configuration needs Neovim 0.12+. Run the dotfiles dependency installer.')
@@ -38,6 +39,22 @@ vim.cmd.colorscheme('tokyonight-storm')
 for _, module in ipairs({ 'icons', 'statusline', 'pick', 'extra', 'files', 'surround', 'pairs', 'diff', 'completion' }) do
   require('mini.' .. module).setup()
 end
+require('mini.tabline').setup()
+local scope = require('mini.indentscope')
+scope.setup({ symbol = '│', draw = { animation = scope.gen_animation.none() } })
+local starter = require('mini.starter')
+starter.setup({
+  header = 'a r x  /  w o r k b e n c h',
+  footer = 'Space ff  files     Space fg  search     Space e  explorer',
+  items = {
+    { name = 'Find files', action = 'lua MiniPick.builtin.files()', section = 'Work' },
+    { name = 'Search project', action = 'lua MiniPick.builtin.grep_live()', section = 'Work' },
+    { name = 'New buffer', action = 'enew', section = 'Work' },
+    starter.sections.recent_files(5, true),
+    { name = 'Quit', action = 'qall', section = 'Session' },
+  },
+  content_hooks = { starter.gen_hook.adding_bullet('› '), starter.gen_hook.aligning('center', 'center') },
+})
 
 local map = vim.keymap.set
 map('n', '<leader>ff', MiniPick.builtin.files, { desc = 'Find files' })
@@ -52,6 +69,9 @@ for key, direction in pairs({ h = 'h', j = 'j', k = 'k', l = 'l' }) do
 end
 map('n', '<leader>w', '<Cmd>write<CR>', { desc = 'Save file' })
 map('n', '<leader>q', '<Cmd>copen<CR>', { desc = 'Open quickfix' })
+map('n', '[b', '<Cmd>bprevious<CR>', { desc = 'Previous buffer' })
+map('n', ']b', '<Cmd>bnext<CR>', { desc = 'Next buffer' })
+map('n', '<leader>ss', starter.open, { desc = 'Open workbench' })
 
 vim.api.nvim_create_autocmd('TextYankPost', {
   group = vim.api.nvim_create_augroup('DotfilesYank', { clear = true }),

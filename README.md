@@ -118,7 +118,9 @@ and searches the current folder; enables fast key repeat; disables smart quotes,
 dashes, automatic periods and spelling correction; hides recent apps in the Dock;
 and stores PNG screenshots in `~/Pictures/Screenshots`.
 
-The macOS group backs up only changed keys, preserving types and absent keys,
+The macOS group also uses Finder list view and a compact, auto-hiding Dock with
+windows minimized into their application icons. It backs up only changed keys,
+preserving boolean, integer, floating-point and string types and absent keys,
 then applies and reads each key back. A failed application rolls back preference
 changes. Its separate private manifest uses the same `--restore` command and
 refuses to overwrite later edits. File installation and preferences are separate
@@ -155,6 +157,13 @@ standard behavior; invoke `rg` directly. Fastfetch runs in interactive login
 terminals; set `FASTFETCH_DISABLE=1` to skip it. Ghostty retains its standard
 split, tab, zoom, and reload shortcuts.
 
+The rice uses a steady block cursor, subtle Ghostty translucency, matching fzf
+colors, file previews on Ctrl-T and directory previews on Alt-C. Ctrl-/ toggles
+the preview. Starship hides local account/hostname noise, keeps SSH identity,
+and shows project runtimes, bounded Git branch names, command duration and time.
+Tmux uses a top status bar and pane labels: Ctrl-b then h/j/k/l selects a pane,
+Shift-h/j/k/l resizes it, Tab returns to the previous window, and | / - split.
+
 ## Neovim
 
 The configuration requires Neovim 0.12+. Native `vim.pack` installs two plugins
@@ -189,6 +198,10 @@ Rust LSP uses `rust-analyzer` from the existing Rust toolchain;
 install that component with `rustup component add rust-analyzer`. Optional
 language-server configuration and local settings belong in
 `~/.config/nvim/local.lua` (or the equivalent XDG path).
+
+Neovim opens a centered workbench with file search, project search and recent
+files. Space ss reopens it; [b / ]b switches buffers. A tabline, static indent
+guides and rounded floating windows use the same pinned mini.nvim package.
 
 Tokyo Night Storm is shared by Ghostty, Neovim, Starship, bat, delta, and Lazygit.
 The installer builds bat's theme cache. Its vendored theme is attributed and
