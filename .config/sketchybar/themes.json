@@ -1,6 +1,6 @@
 {
   "default": "tidal",
-  "layout": "ribbon",
+  "layout": "islands",
   "themes": {
     "tidal": {
       "surface": "132630", "popup": "142730", "border": "355361",

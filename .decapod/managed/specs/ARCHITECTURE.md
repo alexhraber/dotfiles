@@ -78,6 +78,12 @@ custom surfaces. Built-in brightness uses dynamically resolved DisplayServices.
 No injection, event tap, SIP change or cursor warping is required.
 
 .config/sketchybar contains rounded control groups and Python hover plugins.
+The default islands layout draws four separate right-side section backgrounds.
+Three eight-point empty items separate their bounds; bracket background padding
+is zero so backgrounds cannot expand into the gaps. appearance.apply toggles
+the gaps on for islands and off for optional ribbon in the same live IPC update.
+Bracket and background drawing are both set directly, without interpolation
+of boolean visibility; inactive group backgrounds cannot connect the pills.
 The bar stays at y_offset=4 and toggles visibility without sliding its anchors
 or popups. Hardware icon labels use fixed widths: CPU/GPU show utilization
 percentages and memory shows used GiB; Fahrenheit temperatures, power,
@@ -206,7 +212,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `3412d50e5e69a575f172f6b4b458f8614c825455ff14863d5e350e7270cc7cb1`
+- Repository signal fingerprint: `45d5943dc5bf0810673bea8f27bdbf72f5d029ac85a221ba183156d2ca1f97d6`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

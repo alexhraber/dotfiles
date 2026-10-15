@@ -82,6 +82,12 @@ for control in volume brightness; do
   sketchybar --subscribe "$control" mouse.scrolled
 done
 sketchybar --move alerts before clock
+for boundary in hardware session notifications; do
+  sketchybar --add item "gap_$boundary" right --set "gap_$boundary" width=8 \
+    icon.drawing=off label.drawing=off background.drawing=off padding_left=0 padding_right=0
+done
+sketchybar --move gap_hardware before memory \
+  --move gap_session before volume --move gap_notifications before clock
 sketchybar --add item hover_guard left --set hover_guard drawing=off script="\"$plugin\"" \
   --subscribe hover_guard desktop_revealed desktop_concealed
 sketchybar --add item access_check left --set access_check drawing=off \
@@ -97,7 +103,7 @@ for group in context ribbon hardware connections session notifications; do
   sketchybar --set "$group" background.drawing=on background.height=30 \
     background.corner_radius=10 background.color="$UI_GLASS" \
     background.border_color="$UI_BORDER" background.border_width=1 \
-    background.padding_left=-4 background.padding_right=-4
+    background.padding_left=0 background.padding_right=0
 done
 sketchybar --set cpu padding_left=12 --set memory padding_right=12 \
   --set alerts padding_left=10 padding_right=12 icon.color="$UI_ACCENT" \

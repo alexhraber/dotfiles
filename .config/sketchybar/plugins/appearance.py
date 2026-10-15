@@ -59,11 +59,17 @@ def apply():
     palette = resolve()
     def c(key, alpha='ff'):
         return '0x' + alpha + palette[key]
-    args = ['sketchybar', '--animate', 'tanh', '12']
+    # Apply visibility directly; interpolating boolean drawing properties can
+    # leave overlapping bracket backgrounds enabled after a layout switch.
+    args = ['sketchybar']
     for group in ('context', 'ribbon', 'hardware', 'connections', 'session', 'notifications'):
         active = group == 'context' or (group == 'ribbon') == (palette['layout'] == 'ribbon')
         args += ['--set', group, 'background.drawing=' + ('on' if active else 'off'),
+                 'drawing=' + ('on' if active else 'off'),
                  'background.color=' + c('surface', 'eb'), 'background.border_color=' + c('border')]
+    for boundary in ('hardware', 'session', 'notifications'):
+        args += ['--set', 'gap_' + boundary,
+                 'drawing=' + ('on' if palette['layout']=='islands' else 'off')]
     for panel in PANELS:
         args += ['--set', panel, 'icon.color=' + c('muted'), 'label.color=' + c('foreground'),
                  'popup.background.color=' + c('popup'), 'popup.background.border_color=' + c('border')]
