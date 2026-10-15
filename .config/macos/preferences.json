@@ -12,10 +12,15 @@
   "com.apple.finder": {
     "ShowPathbar": true,
     "ShowStatusBar": true,
-    "FXDefaultSearchScope": "SCcf"
+    "FXDefaultSearchScope": "SCcf",
+    "FXPreferredViewStyle": "Nlsv"
   },
   "com.apple.dock": {
-    "show-recents": false
+    "mru-spaces": false,
+    "show-recents": false,
+    "autohide": true,
+    "tilesize": 48,
+    "minimize-to-application": true
   },
   "com.apple.screencapture": {
     "location": "~/Pictures/Screenshots",

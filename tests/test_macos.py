@@ -92,6 +92,17 @@ class MacOSPreferencesTests(unittest.TestCase):
         self.values['test.domain']['repeat'] = True
         self.assertEqual(len(macos.plan(self.settings)), 2)
 
+    def test_integer_install_preserves_fractional_dock_value_for_restore(self):
+        self.settings.write_text(json.dumps({'test.domain': {'tilesize': 48}}))
+        self.values['test.domain']['tilesize'] = 63.5
+        manifest = self.apply()
+        document = json.loads(manifest.read_text())
+        self.assertEqual(document['changes'][0]['original'], {'type': 'float', 'value': 63.5})
+        with contextlib.redirect_stdout(io.StringIO()), patch.object(macos, 'write', side_effect=self.write):
+            macos.restore(document)
+        self.assertEqual(self.values['test.domain']['tilesize'], 63.5)
+        self.assertIsInstance(self.values['test.domain']['tilesize'], float)
+
     def test_unsupported_original_type_fails_before_any_write(self):
         self.values['test.domain']['repeat'] = {'custom': 2}
         with patch.object(macos, 'write') as write:

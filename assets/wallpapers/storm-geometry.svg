@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3456" height="2234" viewBox="0 0 2560 1655">
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#161925"/><stop offset="1" stop-color="#24283b"/></linearGradient>
+    <radialGradient id="glow"><stop stop-color="#7aa2f7" stop-opacity=".12"/><stop offset="1" stop-color="#7aa2f7" stop-opacity="0"/></radialGradient>
+    <linearGradient id="edge" x1="0" y1="1" x2="1" y2="0"><stop stop-color="#7dcfff"/><stop offset=".55" stop-color="#7aa2f7"/><stop offset="1" stop-color="#bb9af7"/></linearGradient>
+    <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse"><path d="M80 0H0V80" fill="none" stroke="#414868" stroke-opacity=".14"/></pattern>
+  </defs>
+  <rect width="2560" height="1655" fill="url(#bg)"/>
+  <rect width="2560" height="1655" fill="url(#grid)"/>
+  <ellipse cx="1850" cy="720" rx="1000" ry="900" fill="url(#glow)"/>
+  <g fill="none" stroke="url(#edge)" stroke-width="2">
+    <path d="M1490 440 1920 690 1920 1190 1490 940Z" opacity=".24"/>
+    <path d="M1920 690 2350 440 2350 940 1920 1190Z" opacity=".5"/>
+    <path d="M1490 440 1920 190 2350 440 1920 690Z" opacity=".72"/>
+    <path d="M1610 510 1920 330 2230 510M1920 330V1015" opacity=".18"/>
+    <path d="M1400 1280H1920L2420 990M1920 1190V1440M1260 440H1400" opacity=".15"/>
+  </g>
+  <g fill="#7dcfff"><circle cx="1920" cy="190" r="4"/><circle cx="1920" cy="690" r="4"/><circle cx="2350" cy="940" r="3" opacity=".6"/></g>
+</svg>

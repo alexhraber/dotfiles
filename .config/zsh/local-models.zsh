@@ -1,5 +1,10 @@
 # Existing local-model installations; invocation is always explicit.
 # MLX stays in its own virtual environment instead of replacing shell Python.
+aiup() {
+  (( $+commands[ollama] )) || { print -u2 'aiup: ollama is required'; return 1; }
+  print 'Ollama runs in this terminal. Press Ctrl-C when finished.'
+  OLLAMA_KEEP_ALIVE=0 OLLAMA_FLASH_ATTENTION=1 OLLAMA_KV_CACHE_TYPE=q8_0 command ollama serve "$@"
+}
 mlx() {
   local command_path="${MLX_ENV:-$HOME/.venvs/mlx}/bin/mlx_lm.generate"
   [[ -x $command_path ]] || { print -u2 "mlx: executable missing: $command_path"; return 1; }

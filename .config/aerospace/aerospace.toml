@@ -1,0 +1,36 @@
+# A reversible trial: no app-routing rules, mouse warping, or login startup.
+config-version = 2
+start-at-login = false
+after-startup-command = ['enable off']
+default-root-container-layout = 'tiles'
+default-root-container-orientation = 'auto'
+accordion-padding = 24
+on-focused-monitor-changed = []
+focus-follows-mouse.enabled = false
+
+[gaps]
+inner.horizontal = 10
+inner.vertical = 10
+outer.left = 10
+outer.right = 10
+outer.top = 10
+outer.bottom = 14
+
+[mode.main.binding]
+alt-enter = 'exec-and-forget open -a Ghostty'
+alt-h = 'focus left'
+alt-j = 'focus down'
+alt-k = 'focus up'
+alt-l = 'focus right'
+alt-shift-h = 'move left'
+alt-shift-j = 'move down'
+alt-shift-k = 'move up'
+alt-shift-l = 'move right'
+alt-minus = 'resize smart -40'
+alt-equal = 'resize smart +40'
+alt-slash = 'layout tiles horizontal vertical'
+alt-comma = 'layout accordion horizontal vertical'
+alt-shift-space = 'layout floating tiling'
+alt-f = 'fullscreen'
+alt-shift-r = 'reload-config'
+alt-shift-esc = 'enable off'

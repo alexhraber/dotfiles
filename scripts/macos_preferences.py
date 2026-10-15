@@ -7,7 +7,7 @@ import plistlib
 import subprocess
 import tempfile
 
-TYPES = {bool: 'bool', int: 'int', str: 'string'}
+TYPES = {bool: 'bool', int: 'int', float: 'float', str: 'string'}
 
 
 def typed(value):

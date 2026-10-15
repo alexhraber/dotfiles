@@ -57,6 +57,13 @@ bindkey -e
 
 # ── Fuzzy finding ────────────────────────────────────────────────────────────
 export FZF_DEFAULT_OPTS='--height=40% --layout=reverse --border=rounded --info=inline --prompt="❯ " --pointer="▶" --marker="┃"'
+export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS --color=bg+:#3b4261,fg:#c0caf5,fg+:#c0caf5,hl:#7dcfff,hl+:#7dcfff,border:#565f89,prompt:#7aa2f7,pointer:#bb9af7,marker:#9ece6a,spinner:#e0af68,header:#565f89"
+if (( $+commands[bat] )); then
+  export FZF_CTRL_T_OPTS="--preview 'bat --color=always --style=numbers --line-range=:200 {}' --preview-window=right:55%:wrap --bind='ctrl-/:toggle-preview'"
+fi
+if (( $+commands[eza] )); then
+  export FZF_ALT_C_OPTS="--preview 'eza --tree --level=2 --color=always --icons=always {}' --preview-window=right:55% --bind='ctrl-/:toggle-preview'"
+fi
 if (( $+commands[fd] )); then
   export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
   export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"

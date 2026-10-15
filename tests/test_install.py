@@ -85,6 +85,59 @@ class InstallTests(unittest.TestCase):
         self.assertIn('osxkeychain', config.read_text())
         self.assertEqual(config.read_text().count('dotfiles.gitconfig'), 1)
 
+    def test_dev_runtime_config_is_backed_up_copied_and_restorable(self):
+        config = self.home / '.config/mise/config.toml'
+        config.parent.mkdir(parents=True)
+        config.write_text('[tools]\nnode = "22"\n')
+        cargo = self.home / '.cargo/config.toml'
+        cargo.parent.mkdir(parents=True)
+        cargo.write_text('[build]\njobs = 2\n')
+        manifest = self.apply(groups=('dev',))
+        self.assertFalse(config.is_symlink())
+        self.assertEqual(config.read_bytes(), (ROOT / '.config/mise/config.toml').read_bytes())
+        self.assertFalse(cargo.is_symlink())
+        self.assertEqual(cargo.read_bytes(), (ROOT / '.config/cargo/config.toml').read_bytes())
+        self.assertIsNone(self.apply(groups=('dev',)))
+        self.assertFalse((self.home / '.zshrc').exists())
+        self.restore(manifest)
+        self.assertEqual(config.read_text(), '[tools]\nnode = "22"\n')
+        self.assertEqual(cargo.read_text(), '[build]\njobs = 2\n')
+
+    def test_desktop_reuses_legacy_aerospace_path_and_restores(self):
+        legacy = self.home / '.aerospace.toml'
+        legacy.write_text('start-at-login = true\n')
+        manifest = self.apply(groups=('desktop',))
+        self.assertTrue(legacy.is_symlink())
+        self.assertFalse((self.home / '.config/aerospace/aerospace.toml').exists())
+        self.assertIsNone(self.apply(groups=('desktop',)))
+        self.assertTrue((self.home / '.config/sketchybar/plugins/status.sh').is_symlink())
+        self.restore(manifest)
+        self.assertEqual(legacy.read_text(), 'start-at-login = true\n')
+        self.assertFalse((self.home / '.config/sketchybar/sketchybarrc').exists())
+
+    def test_desktop_rejects_ambiguous_aerospace_configs_before_changes(self):
+        (self.home / '.aerospace.toml').write_text('legacy')
+        modern = self.home / '.config/aerospace/aerospace.toml'
+        modern.parent.mkdir(parents=True)
+        modern.write_text('modern')
+        with self.assertRaisesRegex(ValueError, 'Two AeroSpace configs'):
+            self.apply(groups=('desktop',))
+        self.assertEqual(modern.read_text(), 'modern')
+        self.assertFalse((self.home / '.config/sketchybar').exists())
+
+    def test_reverse_preserves_local_shell_settings_and_restores(self):
+        local = self.home / '.zshrc.local'
+        local.write_text('export MY_SETTING=original')
+        manifest = self.apply(groups=('reverse',))
+        self.assertIn('export MY_SETTING=original\n', local.read_text())
+        self.assertIsNone(self.apply(groups=('reverse',)))
+        helper = self.home / '.config/zsh/reverse.zsh'
+        self.assertTrue(helper.is_file())
+        self.assertFalse(helper.is_symlink())
+        self.restore(manifest)
+        self.assertEqual(local.read_text(), 'export MY_SETTING=original')
+        self.assertFalse(helper.exists())
+
     def test_codex_auth_and_machine_state_are_untouched(self):
         folder = self.home / '.codex'
         folder.mkdir()
@@ -207,10 +260,16 @@ source ~/.zshrc
             data = tomllib.loads(path.read_text())
             self.assertNotIn('profiles', data)
             self.assertNotIn('profile', data)
-        result = subprocess.run(['git', 'check-ignore', '--no-index', '.codex/auth.json', '.codex/sessions/example.jsonl', '.codex/config.toml'], cwd=ROOT, text=True, capture_output=True)
+        repo = self.home / 'ignore-check'
+        repo.mkdir()
+        shutil.copy2(ROOT / '.gitignore', repo / '.gitignore')
+        subprocess.run(['git', 'init', '-q', str(repo)], check=True)
+        result = subprocess.run(['git', 'check-ignore', '--no-index', '.codex/auth.json', '.codex/sessions/example.jsonl', '.codex/config.toml', 'Signing.local.xcconfig', 'local.developerprofile', 'AuthKey.p8'], cwd=repo, text=True, capture_output=True)
         self.assertIn('.codex/auth.json', result.stdout)
         self.assertIn('.codex/sessions/example.jsonl', result.stdout)
         self.assertNotIn('.codex/config.toml', result.stdout)
+        for private in ('Signing.local.xcconfig', 'local.developerprofile', 'AuthKey.p8'):
+            self.assertIn(private, result.stdout)
 
     def test_codex_preferences_allow_app_metadata_but_detect_drift(self):
         expected = {'model': 'chosen-model', 'sandbox_workspace_write': {'network_access': True}}

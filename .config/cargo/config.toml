@@ -1,0 +1,3 @@
+[build]
+# Local compilation cache; project configuration and RUSTC_WRAPPER can override.
+rustc-wrapper = "sccache"

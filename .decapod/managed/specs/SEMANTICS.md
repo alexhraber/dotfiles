@@ -1,5 +1,7 @@
 # Semantics
 
+## Invariants
+
 Portable source files are the versioned source of truth. Most local configs
 are symlinks; Codex files are copies because the application can update them.
 An explicit Codex reinstall backs up local edits and reapplies tracked settings.
@@ -20,6 +22,14 @@ Empty directories, installed packages and runtime caches are not rolled back.
 Repeated sourcing of .zshrc does not duplicate hooks or reorder PATH. src starts
 a fresh login shell. Missing modern tools leave standard commands usable. Local
 model and VM commands are explicit; terminal startup launches no model server.
+
+## State Machines
+
+Installation proceeds from planned to preflighted to backed up to applied. A
+caught failure restores completed operations. Preference application has its own
+typed transaction and rollback. Restoration progresses only after every current
+target and backup matches an accepted state; later edits reject the entire run.
+Interruption leaves recovery artifacts rather than guaranteeing crash atomicity.
 
 <!-- decapod:capability-overlay:persistent-state:start -->
 
@@ -47,7 +57,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `bd87ea8ea1effbcd9214006f360947918b918f94b45b80ee867599d5e1d77e51`
-- Significant implementation surfaces: `.github/` (1 files), `README.md/` (1 files), `scripts/` (3 files), `tests/` (3 files)
+- Repository signal fingerprint: `c55e37c9730ea2f3cd8d6824221a63811dead18e1216de1c705a501150254036`
+- Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

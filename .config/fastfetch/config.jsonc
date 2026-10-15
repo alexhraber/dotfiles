@@ -23,15 +23,9 @@
         "separator",
         "os",
         "host",
-        "kernel",
         "uptime",
-        "packages",
-        "shell",
-        "terminal",
-        "terminalfont",
-        "display",
         "cpu",
-        "gpu",
+        { "type": "gpu", "format": "{name} · {core-count} cores" },
         {
             "type": "memory",
             "format": "{used} / {total}"
@@ -40,6 +34,8 @@
             "type": "disk",
             "folders": "/"
         },
+        "terminal",
+        { "type": "battery", "format": "{capacity} · {status}" },
         "break",
         "colors"
     ]
