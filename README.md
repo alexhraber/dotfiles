@@ -40,7 +40,9 @@ Select any combination with `--groups terminal,git`. The default stays
 | git | Portable Git settings, delta, global OS/editor ignore file |
 | codex | Codex app, portable CLI preferences and instructions |
 | workspace | Podman and the explicit `cws` container helper |
-| dev | GitHub CLI, jq/yq, just, uv, Cargo binary installer, linters and language servers |
+| dev | GitHub CLI, jq/yq, just, uv, Cargo binary installer, linters, language servers, CMake/Ninja/pkg-config and FFmpeg |
+| reverse | Ghidra and its Homebrew-managed JDK for REA native analysis |
+| apple | Mac App Store CLI for the explicit, interactive Xcode setup script |
 | infra | kubectl, Helm, k9s, OpenTofu and grpcurl |
 | ai | Ollama and native MLX on Apple silicon |
 | apps | Google Chrome |
@@ -56,6 +58,31 @@ bundle. This avoids administrator-password requirements during app adoption;
 the installer never uses `--force` or deletes browser profiles. Node and TypeScript are
 Homebrew dependencies of language servers. Application runtime versions belong
 in projects using mise, uv or rustup.
+
+The dev group copies `.config/mise/config.toml` with the same backup/restore
+rules as other configuration. It selects Node 24.18.0 and npm 11.16.0, matching
+REA's development pins, and enables project `.nvmrc`/`.node-version` and
+`packageManager` selection. Existing mise activation in zsh switches versions
+when entering projects. Install the declared runtimes explicitly with
+`mise install`; a shell does not install them. See [mise's Node documentation](https://mise.jdx.dev/lang/node.html).
+Rust remains under rustup: the current Decapod checkout needs
+`rustup toolchain install 1.96.1 --profile minimal --component rustfmt,clippy,rust-analyzer`.
+
+For REA's Ghidra backend, install `--groups reverse --deps`. A copied shell
+helper discovers Homebrew Ghidra and JDK 21 through `HOMEBREW_PREFIX`, preserving
+explicit `GHIDRA_INSTALL_DIR` and `JAVA_HOME` choices. Its source line is added
+to `.zshrc.local` with backup/restore and without replacing other local settings.
+The engine is headless unless explicitly launched; the
+installer does not register an MCP server or change agent authentication.
+
+Full Xcode and its iOS SDK are required for Scripture's simulator/device builds.
+Run `scripts/setup-xcode` in a visible terminal after installing the apple group.
+It installs Apple's Xcode through `mas`, selects the toolchain, presents the
+license for local review, runs first-launch setup and downloads the iOS platform.
+Mac administrator and App Store authentication happen locally. Then sign in to
+Xcode Settings > Accounts for Personal Team development signing. Certificates,
+provisioning profiles, Team IDs and signing keys remain outside Git. Command
+Line Tools alone provide Swift and macOS compilation, without iOS builds.
 
 `just preview`, `just install`, `just doctor`, `just check`, and `just brew-check`
 expose routine workflows. `just outdated` reports updates without applying them.
@@ -226,9 +253,22 @@ without changing the shell's Python. Override its location with `MLX_ENV`.
 `mlxserve` binds to loopback unless explicitly overridden. These commands do
 not run during shell startup or automatically download models.
 
-The Brewfile includes native MLX, while Python MLX-LM stays in its existing
-virtual environment. The installer does not replace that environment; a new
-machine needs its own MLX-LM venv. Model stores remain local state.
+The Brewfile includes native MLX. Python MLX-LM uses the pinned Apple-silicon
+Python 3.12 requirements in `requirements/mlx.txt`. Prepare an environment at
+its permanent path before switching the stable `~/.venvs/mlx` link:
+
+```sh
+uv venv --python 3.12 ~/.venvs/mlx-0.32.0-py312
+uv pip sync --python ~/.venvs/mlx-0.32.0-py312/bin/python requirements/mlx.txt
+```
+
+Verify Metal and a cached model before switching. Preserve an existing
+`~/.venvs/mlx` directory or symlink in a private backup, then link that name to
+the prepared environment. Virtual environments must not be moved after creation
+because their entrypoints contain absolute paths. The regular installer never
+replaces environments, changes GPU memory limits or downloads models. Model
+stores and environment backups remain local state. Regenerate the lock on an
+Apple-silicon Mac with `uv pip compile requirements/mlx.in --python 3.12 --output-file requirements/mlx.txt --no-header`.
 
 ## Podman and Decapod
 

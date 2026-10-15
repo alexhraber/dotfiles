@@ -3,7 +3,7 @@
 ## CLI
 
 install.sh accepts --groups with any comma-separated subset of terminal, git,
-codex, workspace, dev, infra, ai, apps and macos, plus --all, --deps and
+codex, workspace, dev, reverse, apple, infra, ai, apps and macos, plus --all, --deps and
 --dry-run. The default group is terminal. scripts/dotfiles doctor uses the same
 group selection. Restore accepts a manifest via scripts/dotfiles restore or
 install.sh --restore; dry-run previews both operations.
@@ -44,6 +44,14 @@ The root justfile exposes preview, install, check, doctor, editor-check,
 brew-check and outdated. scripts/editor_check.py validates installed language
 servers in disposable fixtures rather than changing project files.
 
+The dev group copies .config/mise/config.toml; mise install explicitly installs
+the declared Node/npm defaults. The reverse group copies zsh/reverse.zsh and
+adds its source to .zshrc.local, retaining other settings and explicit Java/Ghidra
+choices. The apple group installs mas on macOS; scripts/setup-xcode requires a
+visible local terminal and installs Xcode, selects it, presents Apple's license,
+runs first-launch setup and downloads iOS. Signing uses local Xcode account
+assets and command-line build overrides; no team or signing identity is tracked.
+
 ## External dependencies
 
 Homebrew, GitHub Git transport, rustup/Cargo, Ollama, MLX and Podman remain
@@ -55,7 +63,7 @@ this repository.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `bd87ea8ea1effbcd9214006f360947918b918f94b45b80ee867599d5e1d77e51`
+- Repository signal fingerprint: `0ff7c179bd7a6bce3e6996877b6119c569389b8ffce232a77eedb6565ca32d8d`
 - Significant implementation surfaces: `.github/` (1 files), `README.md/` (1 files), `scripts/` (3 files), `tests/` (3 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

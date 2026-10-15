@@ -32,6 +32,18 @@ shell and editor; Homebrew manages the curated tool dependencies.
   while the existing VM startup problem is deferred.
 - Brewfile: scoped direct dependencies including dev, infrastructure, local AI
   and Chrome. Installed unmanaged Chrome remains externally managed.
+- Homebrew Bundle receives group selection through HOMEBREW_DOTFILES_GROUPS;
+  its preserved namespace is required because Bundle drops an unprefixed custom
+  variable. The dev group copies mise configuration, independent of a worktree.
+- The reverse group copies zsh/reverse.zsh and adds one source line to the
+  existing .zshrc.local through the ordinary backed-up file operations. It
+  discovers Homebrew Ghidra/JDK only when explicit environment values are absent.
+- scripts/setup-xcode runs in a visible local terminal. mas and sudo own their
+  authentication prompts; Apple presents its license before first-launch setup
+  and explicit iOS platform download. This is outside the regular installer.
+- requirements/mlx.in and its compiled requirements/mlx.txt pin a separate
+  Python 3.12 Apple-silicon inference stack. Environment preparation and the
+  verified stable-link switch are explicit machine operations, not login hooks.
 - .gitconfig: portable settings included by the existing user configuration;
   local identity and signing overrides remain in ~/.gitconfig.local.
 - .codex: allowlisted portable files copied into Codex home to keep app-written
@@ -79,7 +91,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `bd87ea8ea1effbcd9214006f360947918b918f94b45b80ee867599d5e1d77e51`
+- Repository signal fingerprint: `0ff7c179bd7a6bce3e6996877b6119c569389b8ffce232a77eedb6565ca32d8d`
 - Significant implementation surfaces: `.github/` (1 files), `README.md/` (1 files), `scripts/` (3 files), `tests/` (3 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

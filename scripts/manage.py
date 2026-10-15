@@ -13,7 +13,7 @@ import tempfile
 import macos_preferences
 
 REPO = Path(__file__).resolve().parents[1]
-GROUPS = ('terminal', 'git', 'codex', 'workspace', 'dev', 'infra', 'ai', 'apps', 'macos')
+GROUPS = ('terminal', 'git', 'codex', 'workspace', 'dev', 'reverse', 'apple', 'infra', 'ai', 'apps', 'macos')
 
 
 def homes():
@@ -115,6 +115,16 @@ def plan(groups, args):
             ops.append(operation(codex / rel, '.codex/' + rel, copy=True))
     if 'workspace' in groups:
         ops.append(operation(config / 'zsh/workspaces.zsh', '.config/zsh/workspaces.zsh'))
+    if 'dev' in groups:
+        # Copy so an applied worktree can be retained or merged independently.
+        ops.append(operation(config / 'mise/config.toml', '.config/mise/config.toml', copy=True))
+    if 'reverse' in groups:
+        ops.append(operation(config / 'zsh/reverse.zsh', '.config/zsh/reverse.zsh', copy=True))
+        local = home / '.zshrc.local'
+        content = local.read_text() if local.exists() else ''
+        source = '[[ -r "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/reverse.zsh" ]] && source "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/reverse.zsh"'
+        if source not in content.splitlines():
+            ops.append(operation(local, content=content + ('\n' if content and not content.endswith('\n') else '') + source + '\n'))
     return ops
 
 
@@ -223,7 +233,7 @@ def dependencies(groups, dry_run):
     if dry_run:
         print('Would install Brewfile groups: ' + ','.join(groups))
     else:
-        subprocess.run(command, env=dict(os.environ, DOTFILES_GROUPS=','.join(groups)), check=True)
+        subprocess.run(command, env=dict(os.environ, HOMEBREW_DOTFILES_GROUPS=','.join(groups)), check=True)
 
 
 def contains_preferences(actual, expected):
@@ -248,7 +258,9 @@ def doctor(groups):
     expected = {
         'terminal': ['ghostty', 'starship', 'fastfetch', 'fzf', 'zoxide', 'direnv', 'mise', 'eza', 'bat', 'rg', 'fd', 'lazygit', 'nvim', 'btop', 'tmux'],
         'git': ['git', 'delta'], 'codex': ['codex'], 'workspace': ['podman', 'decapod'],
-        'dev': ['gh', 'jq', 'yq', 'just', 'uv', 'cargo-binstall', 'shellcheck', 'shfmt', 'actionlint', 'hadolint', 'ruff', 'basedpyright-langserver', 'tsc', 'typescript-language-server', 'bash-language-server', 'lua-language-server', 'taplo'],
+        'dev': ['gh', 'jq', 'yq', 'just', 'uv', 'cargo-binstall', 'shellcheck', 'shfmt', 'actionlint', 'hadolint', 'ruff', 'basedpyright-langserver', 'tsc', 'typescript-language-server', 'bash-language-server', 'lua-language-server', 'taplo', 'cmake', 'ninja', 'pkg-config', 'ffmpeg'],
+        'reverse': ['ghidraRun'],
+        'apple': ['mas'] if sys.platform == 'darwin' else [],
         'infra': ['kubectl', 'helm', 'k9s', 'tofu', 'grpcurl'],
         'ai': ['ollama'], 'apps': [], 'macos': [],
     }

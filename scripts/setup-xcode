@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Run in a visible local terminal: macOS authentication stays on the Mac.
+set -euo pipefail
+command -v mas >/dev/null || { echo 'Install the apple group first: ./install.sh --groups apple --deps' >&2; exit 1; }
+if [[ ! -d /Applications/Xcode.app ]]; then
+  mas install 497799835
+fi
+[[ -d /Applications/Xcode.app ]] || { echo 'Xcode installation did not complete.' >&2; exit 1; }
+sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+# Present Apple's license for the user to review and accept locally.
+sudo xcodebuild -license
+sudo xcodebuild -runFirstLaunch
+xcodebuild -downloadPlatform iOS
+xcodebuild -version
+xcrun --sdk iphoneos --show-sdk-version
+echo 'Xcode and iOS platform setup complete. Sign in under Xcode > Settings > Accounts for Personal Team signing.'

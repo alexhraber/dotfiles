@@ -2,8 +2,8 @@
 set -euo pipefail
 repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
 cd "$repo_root"
-shellcheck install.sh scripts/dotfiles scripts/check
-for source in .zshrc .zprofile .config/zsh/env.zsh .config/zsh/projects.zsh .config/zsh/local-models.zsh .config/zsh/workspaces.zsh; do
+shellcheck install.sh scripts/dotfiles scripts/check scripts/setup-xcode
+for source in .zshrc .zprofile .config/zsh/env.zsh .config/zsh/projects.zsh .config/zsh/local-models.zsh .config/zsh/workspaces.zsh .config/zsh/reverse.zsh; do
   zsh -n "$source"
 done
 python_bin=python3

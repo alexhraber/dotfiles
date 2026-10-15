@@ -1,5 +1,5 @@
-# Installer sets DOTFILES_GROUPS so optional groups stay optional.
-groups = ENV.fetch("DOTFILES_GROUPS", "terminal,git,codex,workspace,dev,infra,ai,apps,macos").split(",")
+# Homebrew preserves HOMEBREW_* variables when dispatching Bundle.
+groups = ENV.fetch("HOMEBREW_DOTFILES_GROUPS", "terminal,git,codex,workspace,dev,reverse,apple,infra,ai,apps,macos").split(",")
 
 if groups.include?("terminal")
   cask "ghostty"
@@ -18,8 +18,11 @@ if groups.include?("dev")
   # Project runtimes stay under mise/rustup/uv; these are workstation tools.
   %w[gh jq yq just uv cargo-binstall shellcheck shfmt actionlint hadolint
      ruff basedpyright typescript typescript-language-server bash-language-server
-     lua-language-server taplo].each { |name| brew name }
+     lua-language-server taplo cmake ninja pkgconf ffmpeg].each { |name| brew name }
 end
+# REA's free native analysis engine; Homebrew supplies its JDK dependency.
+brew "ghidra" if groups.include?("reverse")
+brew "mas" if groups.include?("apple") && OS.mac?
 if groups.include?("infra")
   %w[kubernetes-cli helm k9s opentofu grpcurl].each { |name| brew name }
 end

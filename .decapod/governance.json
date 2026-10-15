@@ -1,48 +1,36 @@
 {
   "schema_version": "1.0.0",
   "baseline": {
-    "accepted_commit": "e11f9998e6e3b462c48919501ea7e50cfc7fad5b"
+    "accepted_commit": "f1728ae6d6f0894d3c7348e00075c85f2e25d0d8"
   },
   "change": {
-    "id": "change_01M4VT3FNV6P4TW172W0T07G7Y",
-    "base_commit": "e11f9998e6e3b462c48919501ea7e50cfc7fad5b",
+    "id": "change_01M4Z1EG4P7THVM2RR4XMS4CK2",
+    "base_commit": "f1728ae6d6f0894d3c7348e00075c85f2e25d0d8",
     "target_base": "origin/main"
   },
   "checkpoints": [
     {
-      "id": "dotfiles-upgrade-1",
-      "summary": "Scoped reversible installs, terminal and editor configuration, Codex preferences, Rust and local models, Decapod initialization, and explicit documented runtime limits.",
-      "input_digest": "sha256:df084843c309660e6ddca805997a936f1926c3e966f6cf41f77c1fdab01acf0a",
-      "proof_refs": [
-        "local configuration doctor, Neovim startup, Rust LSP and MLX GPU checks passed",
-        "scripts/check: 17 passing tests, ShellCheck, zsh syntax"
-      ]
-    },
-    {
-      "id": "dotfiles-upgrade-final",
-      "summary": "Normalize vendored theme trailing whitespace while preserving settings and attribution.",
-      "input_digest": "sha256:9c4d92928a9cb195df5d405fd1ae28b56d4a613b5045eacf62ab031b11152f24",
-      "proof_refs": [
-        "git diff --cached --check passed; theme settings unchanged"
-      ]
+      "id": "workstation-setup",
+      "summary": "Project-aware Node/npm; native build/media and Ghidra tools; safe copied runtime config; pinned MLX requirements; interactive Xcode setup; configuration backup/restore tests",
+      "input_digest": "sha256:a58a79f4efbe312ed72713c0a65ffcb986b6f2e7d0fa252043a6243a1fca92c8"
     }
   ],
   "intents": {
-    "intent:dotfiles-upgrade": {
+    "intent:change_01M4Z1EG4P7THVM2RR4XMS4CK2": {
       "acceptance_criteria": [],
       "assumptions": [],
       "boundaries": [
-        "No credential publication, Tailscale, AMP, or Herdr."
+        "Current claimed task and isolated work branch"
       ],
       "constraints": [
-        "Dotfiles repository and its managed local configuration."
+        "root"
       ],
       "created_sequence": 1,
-      "id": "intent:dotfiles-upgrade",
+      "id": "intent:change_01M4Z1EG4P7THVM2RR4XMS4CK2",
       "out_of_scope": [],
       "proof_requirements": [],
-      "raw_intent": "Make recommended changes, apply locally, push main; include Neovim, Rust, Decapod, and Podman workspaces.",
-      "refined_intent": "Finish scoped installers, dependency manifest, shell and editor config; prove backups and restore; initialize local Decapod and exercise Podman.",
+      "raw_intent": "Equip M1 Max workstation for the existing Rust, web, Swift, reverse engineering and local AI projects",
+      "refined_intent": "Equip M1 Max workstation for the existing Rust, web, Swift, reverse engineering and local AI projects",
       "status": "refined",
       "updated_sequence": 3
     }
@@ -55,72 +43,47 @@
       },
       "deferred_questions": [],
       "human_questions": [],
-      "intent": "Scoped reversible installation of terminal, Git, Codex, Neovim and Rust integration, with Podman Decapod workspaces. Apply locally and push main; credentials and machine state remain local.",
+      "intent": "Equip this M1 Max for the inspected repos with project-aware Node/npm, pinned Rust, native build/media tools, Ghidra, backed-up modern MLX, headless Podman verification, full Xcode installation and Personal Team iOS signing. Preserve credentials and application source; no push or publication.",
       "phases": [],
       "proof_hooks": [
-        "scripts/check"
+        "dotfiles checks and installed runtime smoke checks"
       ],
       "schema_version": "1.1.0",
       "state": "APPROVED",
       "stop_conditions": [],
-      "title": "Reproducible terminal and editor setup",
+      "title": "Equip M1 Max workstation for the existing Rust, web, Swift, reverse engineering and local AI projects",
       "todo_ids": [
-        "refa_01m4vsjeegam9gex"
+        "fend_01m4z1drb0ngbkk6"
       ],
       "unknowns": [],
       "unresolved_contradictions": [],
-      "updated_at": "1791934868Z"
+      "updated_at": "1792045360Z"
     },
     "trajectory": {
       "active_boundaries": [
-        "No credential publication, Tailscale, AMP, or Herdr."
+        "Current claimed task and isolated work branch"
       ],
-      "artifact_hash": "sha256:fb18afb2b82a4f88da0c585c17f3ae5a8c283b5cf915b5035fdc3267e829343d",
-      "checks": [
-        {
-          "name": "container_runtime",
-          "status": "unavailable"
-        },
-        {
-          "name": "decapod_full_readiness",
-          "status": "unavailable"
-        },
-        {
-          "name": "local_configuration",
-          "status": "passed"
-        },
-        {
-          "name": "mlx_gpu",
-          "status": "passed"
-        },
-        {
-          "name": "repository_checks",
-          "status": "passed"
-        },
-        {
-          "name": "rust_lsp",
-          "status": "passed"
-        }
-      ],
-      "current_phase": "verification",
+      "artifact_hash": "sha256:e90024f27cebf935f866ad686e250f56d99213f577cf86b56f784ee0d10b72a6",
+      "checks": [],
+      "current_phase": "intent",
       "custody": {
         "events": [
           {
             "event_id": "event:2",
-            "intent_id": "intent:dotfiles-upgrade",
+            "intent_id": "intent:change_01M4Z1EG4P7THVM2RR4XMS4CK2",
             "kind": "created",
             "sequence": 2
           },
           {
             "event_id": "event:3",
-            "intent_id": "intent:dotfiles-upgrade",
+            "intent_id": "intent:change_01M4Z1EG4P7THVM2RR4XMS4CK2",
             "kind": "refined",
             "sequence": 3
           },
           {
-            "detail": "trajectory:dotfiles-upgrade",
+            "detail": "trajectory:branch_01M4Z1EG7DGJZYKJDA80E6K3VH",
             "event_id": "event:4",
-            "intent_id": "intent:dotfiles-upgrade",
+            "intent_id": "intent:change_01M4Z1EG4P7THVM2RR4XMS4CK2",
             "kind": "trajectory_step_recorded",
             "sequence": 4
           }
@@ -129,37 +92,24 @@
         "next_sequence": 4,
         "schema_version": "1.0.0",
         "trajectories": {
-          "dotfiles-upgrade": {
+          "branch_01M4Z1EG7DGJZYKJDA80E6K3VH": {
             "evidence_only": true,
-            "id": "dotfiles-upgrade",
-            "intent_id": "intent:dotfiles-upgrade",
+            "id": "branch_01M4Z1EG7DGJZYKJDA80E6K3VH",
+            "intent_id": "intent:change_01M4Z1EG4P7THVM2RR4XMS4CK2",
             "steps": [
               {
-                "action": "verification",
-                "command": "scripts/check",
+                "action": "trajectory.record",
                 "custody_event_id": "event:4",
                 "observations": [
+                  "Brewfile",
                   "scripts/manage.py",
-                  ".config/nvim/init.lua",
-                  ".config/zsh/env.zsh",
                   ".config/zsh/local-models.zsh",
-                  "README.md",
-                  "scripts/check: 17 tests passed plus ShellCheck and zsh syntax; /private/tmp/dotfiles-check.log",
-                  "Local Neovim headless startup and temporary Rust LSP attachment passed.",
-                  "MLX import and Metal availability passed outside the sandbox.",
-                  "Podman connection refused; VM troubleshooting deferred by user instruction.",
-                  "Upstream headless startup issue: https://github.com/DecapodLabs/decapod/issues/1417"
+                  ".github/workflows/check.yml",
+                  "Inspected all five ~/src repositories and the active Scripture worktree. Root dotfiles doctor passes. Node/npm and Rust repo pins are not installed, MLX uses Python 3.9 with working Metal outside sandbox, both Podman machines stopped. Work is local only."
                 ],
-                "proof_refs": [
-                  "repository_checks",
-                  "local_configuration",
-                  "rust_lsp",
-                  "mlx_gpu",
-                  "container_runtime",
-                  "decapod_full_readiness"
-                ],
+                "proof_refs": [],
                 "scope": [
-                  "Dotfiles repository and its managed local configuration."
+                  "root"
                 ],
                 "sequence": 4,
                 "validation_findings": []
@@ -168,32 +118,29 @@
           }
         }
       },
-      "declared_commands": [
-        "scripts/check",
-        "scripts/dotfiles doctor --all"
-      ],
+      "declared_commands": [],
+      "destination": "pull request",
       "evidence": [
-        "Local Neovim headless startup and temporary Rust LSP attachment passed.",
-        "MLX import and Metal availability passed outside the sandbox.",
-        "Podman connection refused; VM troubleshooting deferred by user instruction.",
-        "Upstream headless startup issue: https://github.com/DecapodLabs/decapod/issues/1417",
-        "scripts/check: 17 tests passed plus ShellCheck and zsh syntax; /private/tmp/dotfiles-check.log"
+        "Inspected all five ~/src repositories and the active Scripture worktree. Root dotfiles doctor passes. Node/npm and Rust repo pins are not installed, MLX uses Python 3.9 with working Metal outside sandbox, both Podman machines stopped. Work is local only."
       ],
-      "inspected_files": [],
-      "intent_id": "intent:dotfiles-upgrade",
-      "modified_files": [
-        ".config/nvim/init.lua",
-        ".config/zsh/env.zsh",
+      "inspected_files": [
         ".config/zsh/local-models.zsh",
-        "README.md",
+        ".github/workflows/check.yml",
+        "Brewfile",
         "scripts/manage.py"
       ],
-      "repo_scope": [
-        "Dotfiles repository and its managed local configuration."
+      "intent_id": "intent:change_01M4Z1EG4P7THVM2RR4XMS4CK2",
+      "modified_files": [],
+      "next_transitions": [
+        "Refine plan and declare falsifiable checks"
       ],
-      "run_id": "dotfiles-upgrade",
+      "repo_scope": [
+        "root"
+      ],
+      "run_id": "branch_01M4Z1EG7DGJZYKJDA80E6K3VH",
       "schema_version": "1.1.0",
       "shortcut_risk_signals": [],
+      "task_id": "fend_01m4z1drb0ngbkk6",
       "tool_calls": [],
       "unresolved_assumptions": []
     }

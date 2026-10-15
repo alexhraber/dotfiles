@@ -85,6 +85,31 @@ class InstallTests(unittest.TestCase):
         self.assertIn('osxkeychain', config.read_text())
         self.assertEqual(config.read_text().count('dotfiles.gitconfig'), 1)
 
+    def test_dev_runtime_config_is_backed_up_copied_and_restorable(self):
+        config = self.home / '.config/mise/config.toml'
+        config.parent.mkdir(parents=True)
+        config.write_text('[tools]\nnode = "22"\n')
+        manifest = self.apply(groups=('dev',))
+        self.assertFalse(config.is_symlink())
+        self.assertEqual(config.read_bytes(), (ROOT / '.config/mise/config.toml').read_bytes())
+        self.assertIsNone(self.apply(groups=('dev',)))
+        self.assertFalse((self.home / '.zshrc').exists())
+        self.restore(manifest)
+        self.assertEqual(config.read_text(), '[tools]\nnode = "22"\n')
+
+    def test_reverse_preserves_local_shell_settings_and_restores(self):
+        local = self.home / '.zshrc.local'
+        local.write_text('export MY_SETTING=original')
+        manifest = self.apply(groups=('reverse',))
+        self.assertIn('export MY_SETTING=original\n', local.read_text())
+        self.assertIsNone(self.apply(groups=('reverse',)))
+        helper = self.home / '.config/zsh/reverse.zsh'
+        self.assertTrue(helper.is_file())
+        self.assertFalse(helper.is_symlink())
+        self.restore(manifest)
+        self.assertEqual(local.read_text(), 'export MY_SETTING=original')
+        self.assertFalse(helper.exists())
+
     def test_codex_auth_and_machine_state_are_untouched(self):
         folder = self.home / '.codex'
         folder.mkdir()
