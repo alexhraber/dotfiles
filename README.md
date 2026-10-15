@@ -179,8 +179,8 @@ The default ribbon brings hardware, connections and session information into
 one quiet capsule, with application context at the left. The islands layout
 separates those groups. Notifications sit furthest right in both layouts.
 Hover reveals immediate cached controls, then refreshes their data. The dock
-groups open application windows with count badges and a single active marker;
-its fisheye layout moves neighboring icons so magnification stays usable.
+shows one icon per open application on a fully transparent background. Its
+fisheye layout moves neighboring icons so magnification stays usable.
 Short eased transitions and exit hysteresis prevent accidental dismissals.
 Reduce Motion is respected. Bar IPC runs away from the animation thread, and
 dock animation stops while hidden.
@@ -206,7 +206,8 @@ scripts/dotfiles desktop undo
 ```
 
 The native fullscreen workflow remains intact. Reveal the status bar at the
-top three pixels and the dock at the bottom three pixels. Each hides after
+top three pixels and the dock in the bottom-center 44-point icon footprint.
+The dock icons sit at the screen's bottom edge. Each hides after
 leaving it for 320 ms; hovering a bar control opens its cached panel. Popups remain
 usable while the pointer is inside them. There is no permanently reserved
 strip, extra native menu row, or dock divider.
@@ -236,8 +237,8 @@ offers no supported API for reading all other apps' notification content.
 
 Hover the current app name to switch Tidal / Ember / Iris or toggle Ribbon /
 Islands. Changes recolor the live bar, popovers, graphs and sliders in one IPC
-call; the dock updates its glass, hover labels, badges and active marker without
-restarting. Text/control contrast is checked against the declared surfaces.
+call without restarting. The dock always renders only application artwork,
+independent of the bar theme. Text/control contrast is checked against the declared surfaces.
 `themes.json` declares the fresh-machine default; local selections stay in
 private state and survive apply. `desktop theme` changes only appearance,
 without resetting wallpaper or desktop preferences.
@@ -254,8 +255,12 @@ reads local cache immediately; an old forecast is marked cached rather than
 presented as fresh. Runtime data stays outside Git. No API key is needed.
 
 The dock is a small AppKit panel compiled from `scripts/desktop-edge.m`: open
-apps only, stable ordering, hover magnification, grouped window counts and
-badges, click to activate, right-click for Show windows / Hide / Quit.
+apps only, stable ordering and hover magnification. Resting icons stay at 40 points;
+peak hover size is 77.5 points, 25% larger than the previous 62-point peak
+(crowded displays scale the group to fit). Its background is entirely
+transparent: no glass, shelf, border, shadow, labels, badges or active markers.
+Click an icon to activate it; right-click for Show windows / Hide / Quit.
+Empty transparent regions pass clicks through to the application underneath.
 Finder appears only when it has a window. Window counts use public WindowServer
 metadata; they do not scrape titles or require screen recording. There are no
 pinned apps, separator, Trash, or new desktop-navigation bindings.

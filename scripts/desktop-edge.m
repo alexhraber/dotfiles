@@ -22,27 +22,14 @@ static NSUInteger barRevision = 0, dockRevision = 0;
 static BOOL missionControl = NO;
 static double missionControlSince = 0, nextMissionCheck = 0;
 static BOOL setVisible(BOOL show);
-static NSColor *panelColor, *borderColor, *inkColor, *accentColor, *secondaryColor, *hoverColor;
 static NSString *appearancePath, *themeName;
 static volatile sig_atomic_t appearanceChanged = 0;
 static void appearanceSignal(__unused int sig) { appearanceChanged=1; }
 
-static NSColor *hexColor(NSString *hex) {
-    unsigned long long value=0;
-    if (![hex isKindOfClass:NSString.class] || hex.length!=6 || ![[NSScanner scannerWithString:hex] scanHexLongLong:&value]) return nil;
-    return [NSColor colorWithCalibratedRed:((value>>16)&255)/255.0
-        green:((value>>8)&255)/255.0 blue:(value&255)/255.0 alpha:1];
-}
 static void loadAppearance(void) {
     NSData *data = appearancePath ? [NSData dataWithContentsOfFile:appearancePath] : nil;
     id value = data ? [NSJSONSerialization JSONObjectWithData:data options:0 error:nil] : nil;
     NSDictionary *palette = [value isKindOfClass:NSDictionary.class] ? value : @{};
-    panelColor = hexColor(palette[@"surface"]) ?: hexColor(@"132630");
-    borderColor = hexColor(palette[@"border"]) ?: hexColor(@"355361");
-    inkColor = hexColor(palette[@"foreground"]) ?: hexColor(@"E8F5F7");
-    accentColor = hexColor(palette[@"accent"]) ?: hexColor(@"80D9D1");
-    secondaryColor = hexColor(palette[@"secondary"]) ?: hexColor(@"E4B98A");
-    hoverColor = hexColor(palette[@"highlight"]) ?: hexColor(@"294956");
     themeName = [palette[@"name"] isKindOfClass:NSString.class] ? palette[@"name"] : @"tidal";
 }
 
@@ -81,7 +68,8 @@ static NSRect dockRects(CGFloat width, NSUInteger count, CGFloat pointer, CGFloa
     CGFloat sizes[count], sum = 0;
     for (NSUInteger i=0; i<count; i++) {
         CGFloat distance = pointer-(start+i*(base+gap)+base/2);
-        sizes[i] = base + 22 * zoom * exp(-(distance*distance)/(2*72*72));
+        // A 40pt resting icon peaks at 77.5pt (previously 62pt).
+        sizes[i] = base + base * 0.9375 * zoom * exp(-(distance*distance)/(2*72*72));
         sum += sizes[i];
     }
     CGFloat shrink = MIN(1, MAX(1, available-(count-1)*gap)/sum);
@@ -89,10 +77,24 @@ static NSRect dockRects(CGFloat width, NSUInteger count, CGFloat pointer, CGFloa
     CGFloat total = sum+(count-1)*gap, x=(width-total)/2;
     for (NSUInteger i=0; i<count; i++) {
         CGFloat size = sizes[i]*shrink;
-        rects[i] = NSMakeRect(x, 20, size, size);
+        rects[i] = NSMakeRect(x, 0, size, size);
         x += size+gap;
     }
-    return NSMakeRect((width-total)/2-16, 6, total+32, 66);
+    return NSMakeRect((width-total)/2-16, 0, total+32, 84);
+}
+
+static NSRect dockFrame(NSRect screen, NSUInteger count) {
+    CGFloat width = MIN(screen.size.width-28, count*52+132);
+    return NSMakeRect(NSMidX(screen)-width/2, NSMinY(screen), width, 116);
+}
+
+static NSRect dockRevealRect(NSRect screen, NSUInteger count) {
+    if (!count) return NSZeroRect;
+    NSRect frame = dockFrame(screen,count), rects[count];
+    NSRect footprint = dockRects(frame.size.width,count,-1,0,rects);
+    // Reveal where the resting icons will be, without intercepting app clicks.
+    footprint.size.height = 44;
+    return NSOffsetRect(footprint,frame.origin.x,frame.origin.y);
 }
 
 static int layoutSelfTest(void) {
@@ -102,22 +104,34 @@ static int layoutSelfTest(void) {
             NSRect shelf = dockRects(width,count,point,1,rects);
             if (NSMinX(shelf)<0 || NSMaxX(shelf)>width) return 1;
             for (NSUInteger i=0; i<count; i++)
-                if (NSMinX(rects[i])<0 || NSMaxX(rects[i])>width ||
+                if (NSMinX(rects[i])<0 || NSMaxX(rects[i])>width || NSMinY(rects[i])!=0 ||
+                    NSMaxY(rects[i])>116 ||
                     (i && NSMaxX(rects[i-1])>=NSMinX(rects[i]))) return 1;
         }
-    puts("Dock geometry: bounds, non-overlap, and narrow-display cases passed.");
+    NSRect icon[1];
+    dockRects(800,1,400,0,icon);
+    if (fabs(icon[0].size.width-40)>0.001) return 1;
+    dockRects(800,1,400,1,icon);
+    if (fabs(icon[0].size.width-62*1.25)>0.001) return 1;
+    for (int offset=-1200; offset<=1200; offset+=1200) {
+        NSRect screen = NSMakeRect(offset,offset,1440,900);
+        NSRect frame = dockFrame(screen,3), reveal = dockRevealRect(screen,3), rects[3];
+        dockRects(frame.size.width,3,-1,0,rects);
+        for (NSUInteger i=0; i<3; i++) {
+            NSPoint center = NSMakePoint(frame.origin.x+NSMidX(rects[i]),frame.origin.y+NSMidY(rects[i]));
+            if (!NSPointInRect(center,reveal) || NSMinY(frame)!=NSMinY(screen)) return 1;
+        }
+        if (NSPointInRect(NSMakePoint(NSMidX(reveal),NSMaxY(reveal)+1),reveal)) return 1;
+    }
+    puts("Dock geometry: bottom alignment, reveal footprint, 25% larger peak, bounds and non-overlap passed.");
     return 0;
 }
 
 @interface DockView : NSView
 @property NSArray<NSRunningApplication *> *apps;
-@property NSDictionary<NSNumber *, NSNumber *> *counts;
 @property CGFloat hover;
 @property CGFloat smoothedHover;
 @property CGFloat zoom;
-@property NSTimeInterval hoveredSince;
-@property NSInteger hoveredIndex;
-@property NSVisualEffectView *glass;
 - (void)step;
 @end
 
@@ -129,7 +143,7 @@ static int layoutSelfTest(void) {
     NSRect rects[count];
     dockRects(self.bounds.size.width,count,self.smoothedHover,self.zoom,rects);
     for (NSUInteger i=0; i<count; i++)
-        if (NSPointInRect(point,NSInsetRect(rects[i],-6,-10))) return i;
+        if (NSPointInRect(point,rects[i])) return i;
     return -1;
 }
 - (void)step {
@@ -140,69 +154,20 @@ static int layoutSelfTest(void) {
         if (self.smoothedHover < 0) self.smoothedHover = self.hover;
         else self.smoothedHover += (self.hover-self.smoothedHover)*0.3;
     }
-    NSInteger hovered = self.hover < 0 ? -1 : [self indexAt:NSMakePoint(self.hover,40)];
-    if (hovered != self.hoveredIndex) {
-        self.hoveredIndex = hovered;
-        self.hoveredSince = NSProcessInfo.processInfo.systemUptime;
-    }
     [self setNeedsDisplay:YES];
 }
 - (void)drawRect:(__unused NSRect)dirty {
+    NSRectFillUsingOperation(self.bounds,NSCompositingOperationClear);
     NSUInteger count = self.apps.count;
     if (!count) return;
     NSRect rects[count];
-    NSRect shelf = dockRects(self.bounds.size.width,count,self.smoothedHover,self.zoom,rects);
-    self.glass.frame = shelf;
-    NSBezierPath *background = [NSBezierPath bezierPathWithRoundedRect:shelf xRadius:24 yRadius:24];
-    BOOL solid = NSWorkspace.sharedWorkspace.accessibilityDisplayShouldReduceTransparency;
-    NSGradient *gradient = [[NSGradient alloc] initWithStartingColor:[panelColor colorWithAlphaComponent:solid ? 1 : 0.9]
-        endingColor:[panelColor colorWithAlphaComponent:solid ? 1 : 0.65]];
-    [gradient drawInBezierPath:background angle:90];
-    [[borderColor colorWithAlphaComponent:0.75] setStroke];
-    [background setLineWidth:1]; [background stroke];
-    NSRunningApplication *front = NSWorkspace.sharedWorkspace.frontmostApplication;
-    for (NSUInteger i = 0; i < self.apps.count; i++) {
+    dockRects(self.bounds.size.width,count,self.smoothedHover,self.zoom,rects);
+    [NSGraphicsContext.currentContext setImageInterpolation:NSImageInterpolationHigh];
+    for (NSUInteger i=0; i<count; i++) {
         NSRunningApplication *app = self.apps[i];
-        NSRect icon = rects[i];
-        CGFloat center = NSMidX(icon), size = icon.size.width, bottom = icon.origin.y;
-        NSInteger count = [self.counts[@(app.processIdentifier)] integerValue];
-        if (self.hoveredIndex == (NSInteger)i && self.zoom>0.2) {
-            [[hoverColor colorWithAlphaComponent:0.38*self.zoom] setFill];
-            [[NSBezierPath bezierPathWithRoundedRect:NSInsetRect(icon,-3,-3) xRadius:13 yRadius:13] fill];
-        }
-        [NSGraphicsContext.currentContext setImageInterpolation:NSImageInterpolationHigh];
-        [app.icon drawInRect:icon
+        [app.icon drawInRect:rects[i]
                    fromRect:NSZeroRect operation:NSCompositingOperationSourceOver fraction:app.hidden ? 0.6 : 1
              respectFlipped:NO hints:nil];
-        if (front.processIdentifier == app.processIdentifier) {
-            [secondaryColor setFill];
-            [[NSBezierPath bezierPathWithRoundedRect:NSMakeRect(center-6,10,12,3) xRadius:1.5 yRadius:1.5] fill];
-        }
-        if (count > 1) {
-            NSString *badge = [NSString stringWithFormat:@"%ld", (long)count];
-            NSDictionary *attributes = @{NSFontAttributeName:[NSFont monospacedDigitSystemFontOfSize:9 weight:NSFontWeightSemibold],
-                NSForegroundColorAttributeName:inkColor};
-            CGFloat badgeWidth=MAX(14,[badge sizeWithAttributes:attributes].width+7);
-            NSRect rect = NSMakeRect(center + size/2 - 10, bottom-1, badgeWidth, 13);
-            [hoverColor setFill];
-            [[NSBezierPath bezierPathWithRoundedRect:rect xRadius:6 yRadius:6] fill];
-            [badge drawAtPoint:NSMakePoint(NSMidX(rect)-[badge sizeWithAttributes:attributes].width/2, bottom+1)
-               withAttributes:attributes];
-        }
-        if (self.hoveredIndex == (NSInteger)i && self.zoom>0.8 &&
-            NSProcessInfo.processInfo.systemUptime-self.hoveredSince>0.18) {
-            NSDictionary *attributes = @{NSFontAttributeName:[NSFont systemFontOfSize:11.5 weight:NSFontWeightMedium],
-                NSForegroundColorAttributeName:inkColor};
-            NSString *name = app.localizedName ?: @"App";
-            NSSize text = [name sizeWithAttributes:attributes];
-            CGFloat x = MAX(10, MIN(center-text.width/2, self.bounds.size.width-text.width-10));
-            NSRect pill = NSMakeRect(x-8,88,text.width+16,22);
-            [[panelColor colorWithAlphaComponent:0.97] setFill];
-            NSBezierPath *label = [NSBezierPath bezierPathWithRoundedRect:pill xRadius:8 yRadius:8];
-            [label fill];
-            [[accentColor colorWithAlphaComponent:0.35] setStroke]; [label stroke];
-            [name drawAtPoint:NSMakePoint(x,92) withAttributes:attributes];
-        }
     }
 }
 - (void)mouseDown:(NSEvent *)event {
@@ -283,24 +248,22 @@ static void refreshApps(void) {
     for (NSRunningApplication *app in running)
         if (![ordered containsObject:app]) [ordered addObject:app];
     dockView.apps = ordered;
-    dockView.counts = counts;
 }
 
 static void dockTick(double now, NSPoint pointer) {
     if (now >= nextApps) { nextApps = now + (dockPresented ? 0.5 : 3); refreshApps(); }
     NSScreen *target = nil;
     for (NSScreen *screen in NSScreen.screens) {
-        CGFloat half = MIN(screen.frame.size.width-28, dockView.apps.count*52+64)/2;
-        if (pointer.x >= NSMinX(screen.frame) && pointer.x < NSMaxX(screen.frame)
-            && fabs(pointer.x-NSMidX(screen.frame))<=half
-            && pointer.y >= NSMinY(screen.frame) && pointer.y <= NSMinY(screen.frame)+3) target = screen;
+        if (NSPointInRect(pointer,dockRevealRect(screen.frame,dockView.apps.count))) target = screen;
     }
     if (target && dockView.apps.count && !dockPresented) {
         if (missionControlWindow()) { enterMissionControl(); return; }
         if (!dockEdgeSince) dockEdgeSince = now;
         if (now-dockEdgeSince<0.08) return;
-        CGFloat width = MIN(target.frame.size.width-28, dockView.apps.count*52+132);
-        NSRect end = NSMakeRect(NSMidX(target.frame)-width/2, NSMinY(target.frame)+6, width, 116);
+        NSRect end = dockFrame(target.frame,dockView.apps.count);
+        dockView.hover = pointer.x-NSMinX(end);
+        dockView.smoothedHover = dockView.hover;
+        dockView.zoom = 0;
         [dockPanel setFrame:NSOffsetRect(end,0,-8) display:NO];
         dockPanel.alphaValue = 0;
         [dockPanel orderFrontRegardless];
@@ -327,9 +290,10 @@ static void dockTick(double now, NSPoint pointer) {
     NSRect rects[MAX(1,dockView.apps.count)];
     NSRect shelf = dockRects(dockPanel.frame.size.width,dockView.apps.count,dockView.smoothedHover,dockView.zoom,rects);
     NSRect active = NSOffsetRect(NSInsetRect(shelf,-12,-10),NSMinX(dockPanel.frame),NSMinY(dockPanel.frame));
-    active.size.height = 116;
+    active.size.height = 92;
     BOOL inside = NSPointInRect(pointer,active) || target!=nil;
-    dockPanel.ignoresMouseEvents = !inside;
+    NSPoint local = NSMakePoint(pointer.x-NSMinX(dockPanel.frame),pointer.y-NSMinY(dockPanel.frame));
+    dockPanel.ignoresMouseEvents = !dockMenuOpen && [dockView indexAt:local]<0;
     if (inside || dockMenuOpen) dockAway = 0;
     else {
         if (!dockAway) dockAway = now;
@@ -514,26 +478,16 @@ int main(int argc, const char **argv) { @autoreleasepool {
         | NSWindowCollectionBehaviorFullScreenAuxiliary | NSWindowCollectionBehaviorStationary
         | NSWindowCollectionBehaviorIgnoresCycle;
     dockPanel.opaque = NO; dockPanel.backgroundColor = NSColor.clearColor;
-    dockPanel.hasShadow = YES; dockPanel.hidesOnDeactivate = NO;
-    NSView *container = [[NSView alloc] initWithFrame:dockPanel.contentView.bounds];
-    NSVisualEffectView *glass = [[NSVisualEffectView alloc] initWithFrame:NSZeroRect];
-    glass.material = NSVisualEffectMaterialHUDWindow;
-    glass.blendingMode = NSVisualEffectBlendingModeBehindWindow;
-    glass.state = NSVisualEffectStateActive;
-    glass.appearance = [NSAppearance appearanceNamed:NSAppearanceNameDarkAqua];
-    glass.wantsLayer = YES; glass.layer.cornerRadius=24; glass.layer.masksToBounds=YES;
-    [container addSubview:glass];
-    dockView = [[DockView alloc] initWithFrame:container.bounds];
+    dockPanel.hasShadow = NO; dockPanel.hidesOnDeactivate = NO;
+    dockView = [[DockView alloc] initWithFrame:dockPanel.contentView.bounds];
     dockView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
-    dockView.hover = -1; dockView.smoothedHover = -1; dockView.hoveredIndex = -1;
-    dockView.apps = @[]; dockView.counts = @{}; dockView.glass=glass;
-    [container addSubview:dockView];
-    dockPanel.contentView = container;
+    dockView.hover = -1; dockView.smoothedHover = -1;
+    dockView.apps = @[];
+    dockPanel.contentView = dockView;
     if (preview) {
         refreshApps();
         [dockPanel setFrame:NSMakeRect(0, 0, dockView.apps.count*52+132, 116) display:NO];
         dockView.hover = 150; dockView.smoothedHover=150; dockView.zoom=1;
-        dockView.hoveredIndex=[dockView indexAt:NSMakePoint(150,40)]; dockView.hoveredSince=0;
         NSBitmapImageRep *bitmap = [dockView bitmapImageRepForCachingDisplayInRect:dockView.bounds];
         [dockView cacheDisplayInRect:dockView.bounds toBitmapImageRep:bitmap];
         NSData *png = [bitmap representationUsingType:NSBitmapImageFileTypePNG properties:@{}];

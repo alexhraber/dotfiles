@@ -81,8 +81,20 @@ No injection, event tap, SIP change or cursor warping is required.
 themes.json and plugins/appearance.py own three validated palettes and the
 ribbon/islands layout. A single live IPC update restyles existing items and
 toggles bracket backgrounds, preserving visibility and popovers. The native
-helper reloads the same private palette on SIGUSR1 or its health interval;
-the native PID remains stable during appearance changes.
+helper reloads the selected theme name on SIGUSR1 or its health interval for
+diagnostics. The dock uses application artwork with a transparent background,
+so palette changes affect the bar and popovers without recoloring app icons.
+
+DockView.drawRect clears its pixels and draws only application icons. There
+is no visual-effect background view, fill, outline, window shadow, badge,
+label or active marker. A clear non-opaque panel hosts the view. Hit testing
+uses the same fisheye icon rectangles as drawing; blank areas pass mouse events
+through, while a larger exit envelope retains autohide hysteresis.
+Icon rectangles start at local y=0 and the panel starts at the screen bottom.
+The hidden reveal region follows the resting icon footprint, 44 points tall,
+instead of requiring a trip to a three-pixel edge beneath floating icons.
+Resting size remains 40 points; unconstrained peak grows from 62 to 77.5 points.
+Geometry tests cover this ratio, bottom alignment and reveal on offset displays.
 Cached content renders before fresh device reads; request tokens reject stale
 hover responses. Read-only warmup runs on reveal. macmon samples are shared
 through private state and displayed in Fahrenheit, with load graphs and alerts.
@@ -182,7 +194,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `c55e37c9730ea2f3cd8d6824221a63811dead18e1216de1c705a501150254036`
+- Repository signal fingerprint: `28f7bdc2fc429ce5202d147410f01c9dad1db7d7b5acadb11a1a45815e8db4d1`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

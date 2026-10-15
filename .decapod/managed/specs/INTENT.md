@@ -69,9 +69,17 @@ downloads, account setup, VM startup troubleshooting and modifying Decapod itsel
 
 ## Fullscreen desktop and on-demand inference
 
+The dock is icons only: its background is fully transparent, with no glass,
+shelf, border, shadow, label, badge or active marker. Autohide, magnification,
+application grouping and right-click actions remain. Bar themes and pinned
+ZIP97750 weather are independent of this visual simplification.
+Icons sit at the screen bottom and reveal when the pointer reaches their
+future footprint, removing the extra upward movement. Resting size is preserved;
+peak hover magnification increases by 25% within the available screen width.
+
 The explicit desktop profile supports the owner's native fullscreen workflow:
 one autohiding SketchyBar, no competing native menu, and an open-apps-only
-AppKit dock with magnification and grouped window counts. Notifications belong
+AppKit dock with magnification and one icon per open application. Notifications belong
 furthest right. Hover panels expose sound, built-in brightness, Wi-Fi, Bluetooth,
 calendar, battery and CPU/GPU/RAM details; every displayed temperature is °F.
 Motion, typography, spacing and cached response are part of the product intent.
@@ -104,7 +112,7 @@ These declarations select authoring and proof obligations; they do not attest im
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `c55e37c9730ea2f3cd8d6824221a63811dead18e1216de1c705a501150254036`
+- Repository signal fingerprint: `28f7bdc2fc429ce5202d147410f01c9dad1db7d7b5acadb11a1a45815e8db4d1`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
