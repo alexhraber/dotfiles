@@ -32,9 +32,12 @@ The current local check suite passes 30 tests, including backup/restoration of
 fractional Dock values and copied mise/reverse-shell settings. Installed doctor,
 Ghostty validation, real editor LSP attachment, an isolated tmux server and the
 Neovim workbench startup are separate host checks. MLX and Ollama inference and
-Ghidra's ARM64/JDK diagnostics passed. An ARM64 Alpine container executed during
-a bounded headless VM check; a persistent engine remains unverified, and the VM
-was observed stopped afterward. Local configuration success does not establish
+Ghidra's ARM64/JDK diagnostics passed. A headless ARM64 engine and owned
+verification container run successfully. Project prerequisites passed in that
+container; full publication proof remains a separate required result. Ollama
+was verified stopped with no process, listener or login plist; the foreground
+helper's environment and arguments were verified with a stub without starting
+the real server. Local configuration success does not establish
 container-based Decapod publication readiness. Publication requires current task
 authorization and passing exact-candidate validation.
 

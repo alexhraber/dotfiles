@@ -25,9 +25,13 @@ Ollama uses the existing installation and model catalog. Neither is started by
 shell initialization.
 
 Podman on macOS needs a Linux VM. Use normal quiet machine startup, never debug
-startup that adds --gui. VM state remains local. The current setup preserves
-failed first-boot attempts for diagnosis; this change does not claim that
-container execution succeeded. The upstream GUI issue has the detailed context.
+startup that adds --gui. VM state remains local. A headless ARM64 engine and
+the owned verification container have run successfully; earlier failed startup
+attempts remain separate diagnostic history. Preserve unrelated engine state.
+
+Keep Ollama stopped between sessions. aiup runs the server in a terminal with
+no model preload and zero default keep-alive; Ctrl-C shuts it down. The server
+is never enabled during shell initialization or configuration installation.
 
 Follow Decapod's task/workspace lifecycle for agent coordination. Its generated
 state is managed through CLI/RPC. Repository-local proof and hosted CI remain

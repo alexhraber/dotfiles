@@ -28,49 +28,64 @@
       "id": "ollama-manual-20261015",
       "summary": "Keep local Ollama off by default; add explicit foreground aiup with Ctrl-C shutdown and no model preload. Record actual service-off and stub verification without machine identity.",
       "input_digest": "sha256:f3d18ebad1e1a29d4a9ec5bc024b15f8d45b63a749ef7c586afd3e9a912009b4"
+    },
+    {
+      "id": "proof-context-20261015",
+      "summary": "Reconcile current headless container observations and manual Ollama operations; retain separate full-readiness requirement and content-bound canonical spec reviews.",
+      "input_digest": "sha256:88c96a711c09a40ed4aa9d816e0fa7c7a3bdde94d8663281956f68f31f74c87f"
+    },
+    {
+      "id": "ollama-proof-contract-20261015",
+      "summary": "Review full source inventory after aiup addition and update its exact digest; portable check owner, CI coverage and runtime closure are unchanged.",
+      "input_digest": "sha256:50da7fba1ca8cd1d3da27f7d09ea3f0a02841db906e63d6757b84d5c66836ae0"
+    },
+    {
+      "id": "finalized-proof-context-20261015",
+      "summary": "Bind final reviewed inventory, refreshed generated manifest, canonical spec reviews and current manual Ollama operations to the committed material.",
+      "input_digest": "sha256:312a850f86be0704dc6cfc11d38d82fa6d1575e3fbe5143db9c68a5491b4ad08"
     }
   ],
   "intents": {
-    "intent:change_01M4Z1EG4P7THVM2RR4XMS4CK2": {
+    "intent:workstation_manual_ollama_20261015": {
       "acceptance_criteria": [],
       "assumptions": [],
       "boundaries": [
-        "Current claimed task and isolated work branch"
+        "Only dotfiles authored changes; no unrelated repositories; preserve prior evidence; no model preload or startup services."
       ],
       "constraints": [
         "root"
       ],
       "created_sequence": 1,
-      "id": "intent:change_01M4Z1EG4P7THVM2RR4XMS4CK2",
+      "id": "intent:workstation_manual_ollama_20261015",
       "out_of_scope": [],
       "proof_requirements": [],
-      "raw_intent": "Equip M1 Max workstation for the existing Rust, web, Swift, reverse engineering and local AI projects",
-      "refined_intent": "Equip M1 Max workstation for the existing Rust, web, Swift, reverse engineering and local AI projects",
+      "raw_intent": "Equip the M1 Max development workstation and publish portable dotfiles.",
+      "refined_intent": "Preserve the completed workstation setup and keep Ollama off until explicitly started with aiup, then Ctrl-C shutdown. Exclude all Apple team identity and machine state from Git.",
       "status": "refined",
       "updated_sequence": 3
     }
   },
   "epochs": {
-    "ve_7f671c0b7cfec860": {
+    "ve_1976b3b902de577c": {
       "constitution_hash": "sha256:65c0bcebba71b34387bedca5260c5e860aeefcc164effa724d846d23fc8f3ff5",
       "constitution_version": "embedded-docs@0.114.2",
-      "epoch_id": "ve_7f671c0b7cfec860",
+      "epoch_id": "ve_1976b3b902de577c",
       "evaluator_identity": "decapod-validate@0.114.2",
       "evaluator_set_hash": "sha256:5e69ddb5f0ac67ab28dc174c2c28783b15ffd4ba2c705942d8ead9eccc330b07",
-      "generated_specs_fingerprint": "60748b35822094592834a86196c34c2bfa40d4d9855ae3240bf34f0c4016250a",
-      "generated_specs_manifest_hash": "sha256:30facef4eb0287f19b8624009b6a13f81817f9bc1c31c11105fc1a2aef8ac720",
+      "generated_specs_fingerprint": "9a7da8d053d167c923de250f90f469856dcbb11aa390179091a488611dc58b74",
+      "generated_specs_manifest_hash": "sha256:766f5f9cd8b08cc6a5836f1c077baceb5f23c2f90bba467e1974af0de3232dc0",
       "material_hashes": {
         "constitution:core/DECAPOD": "sha256:65c0bcebba71b34387bedca5260c5e860aeefcc164effa724d846d23fc8f3ff5",
-        "generated_spec:.decapod/managed/specs/ARCHITECTURE.md": "sha256:3a82ffa2a8b0a908f26660a856f2d4496eac44cf581decdfc83e9ef554a311df",
-        "generated_spec:.decapod/managed/specs/INTENT.md": "sha256:acb5df11ee75f3152166a19fd873f18022e34b907e6777ef2acf45e7e9b71732",
-        "generated_spec:.decapod/managed/specs/INTERFACES.md": "sha256:6c337e1f9244100f22fd7be51fa39d40aa2f6ef092f42361eae95c469e800206",
-        "generated_spec:.decapod/managed/specs/OPERATIONS.md": "sha256:6737f780daa99da4c6f23d3ce0ddb732dc2e3012e0a0910ed24441cc0d82ea39",
-        "generated_spec:.decapod/managed/specs/README.md": "sha256:213e593f8769969cb07cff251f7199dc8675f7d8d61b2620acfb65c5013afcd4",
-        "generated_spec:.decapod/managed/specs/SECURITY.md": "sha256:a572c5725af3f6c0efd206b0256eb98533bbb1935db84730b71477414494771e",
-        "generated_spec:.decapod/managed/specs/SEMANTICS.md": "sha256:4669933a78cb4fec00ccf9865b2d6e1c153c0792b509b9d97d7d928b7951d475",
-        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:7bfae45be9dbe38dff1282a0c17cb063b66288568e264a9c63b5d8d7850d3cdb",
-        "generated_specs_fingerprint": "60748b35822094592834a86196c34c2bfa40d4d9855ae3240bf34f0c4016250a",
-        "generated_specs_manifest": "sha256:30facef4eb0287f19b8624009b6a13f81817f9bc1c31c11105fc1a2aef8ac720",
+        "generated_spec:.decapod/managed/specs/ARCHITECTURE.md": "sha256:ee00f61f1634a6cbedb555cff7f7c3fd53003210c2d81c0cd326b55dd3751d66",
+        "generated_spec:.decapod/managed/specs/INTENT.md": "sha256:8374ac71ab0591f25232499f79b0b443f254ad9e3f19312e73ab9a8390237507",
+        "generated_spec:.decapod/managed/specs/INTERFACES.md": "sha256:ba17afd01df11e9c5832fb9f1b8307af0490cc575b0f54422a2db451e801c1d5",
+        "generated_spec:.decapod/managed/specs/OPERATIONS.md": "sha256:0a94d1480cbbff242bc2c6333ba61968db4b68601b6d6066cd824747262ed67d",
+        "generated_spec:.decapod/managed/specs/README.md": "sha256:6c2bbdaab486ac0cb384a2a968db069d138075ff632a3e542f97743002a8063b",
+        "generated_spec:.decapod/managed/specs/SECURITY.md": "sha256:bb9a5571c060f9c46fb3ad05c0c667dffc604ba12d9097c25daae5400bcd73e2",
+        "generated_spec:.decapod/managed/specs/SEMANTICS.md": "sha256:a5847038daad8e5fca176b341186bb2a4e90e5932c8af0485aaa698337f0c5c3",
+        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:e4cc2e10c381e33c8208b610042b34b6c535b298d8046fc7389e1a6056685f42",
+        "generated_specs_fingerprint": "9a7da8d053d167c923de250f90f469856dcbb11aa390179091a488611dc58b74",
+        "generated_specs_manifest": "sha256:766f5f9cd8b08cc6a5836f1c077baceb5f23c2f90bba467e1974af0de3232dc0",
         "governance_context": "sha256:bb60e504bbdb2a87dca738847b4b6ee10a10f2a101280c3f660b4d0c486ef823",
         "governance_material:.decapod/managed/Dockerfile.decapod": "sha256:cea1d31b9ccb103dc45bb46da17f42c01f9a830c6559093ffe00e7b249cbfcab",
         "governance_material:AGENTS.md": "sha256:0e6e59d391c44bb66c955fabee6d83908e47de35b67cafe45b607a0831d5ff7a",
@@ -81,7 +96,7 @@
         "governance_section:plan": "sha256:a0e0142b5e917dda5fbdb391e7104c78f7193297102544f40706804354af1bbf",
         "living_spec_material:.decapod/managed/specs/ARCHITECTURE.md": "sha256:3490a1394731807c4794df08f358f17833468c2a6a19471f319afa15b042ed58",
         "living_spec_material:.decapod/managed/specs/INTENT.md": "sha256:d7e8d99feaceb34608a44ccd2b461816ea555f30d9f0951db18e9557b955c2c6",
-        "living_spec_material:.decapod/managed/specs/INTERFACES.md": "sha256:522f1ae1ff156b233a6998fd083a227c376e0253f844758e858aef23f36e0233",
+        "living_spec_material:.decapod/managed/specs/INTERFACES.md": "sha256:20a9b7f2657e0c37c52690966e722b9c94bc81c15d414335aef9ae4c34407bac",
         "living_spec_material:.decapod/managed/specs/OPERATIONS.md": "sha256:a5e7058c29dd425793f1ac50dc2077c0861df228b9827416dc46c7b8bab02583",
         "living_spec_material:.decapod/managed/specs/README.md": "sha256:0988c85d6c05f02d52684c9aafae50e95fd5d5576739d3e9d995af682697fd99",
         "living_spec_material:.decapod/managed/specs/SECURITY.md": "sha256:359298a342c2b1da230c69017557958b8a417795beab060228b159f36c684fec",
@@ -111,6 +126,29 @@
         "dotfiles checks and installed runtime smoke checks"
       ],
       "schema_version": "1.1.0",
+      "spec_reviews": [
+        {
+          "disposition": "unchanged_with_reason",
+          "path": ".decapod/managed/specs/ARCHITECTURE.md",
+          "reason": "Reviewed installer dispatch, native editor configuration, scripts/check.py shared owner and foreground local-model helper. Existing architecture already states explicit invocation and no login hooks; no structural change is required.",
+          "reviewed_code_fingerprint": "9a7da8d053d167c923de250f90f469856dcbb11aa390179091a488611dc58b74",
+          "spec_material_hash": "3490a1394731807c4794df08f358f17833468c2a6a19471f319afa15b042ed58"
+        },
+        {
+          "disposition": "updated",
+          "path": ".decapod/managed/specs/INTERFACES.md",
+          "reason": "Reviewed aiup implementation and stub verification against the documented foreground serve, environment, no preload, Ctrl-C shutdown, client override and no login service contract.",
+          "reviewed_code_fingerprint": "9a7da8d053d167c923de250f90f469856dcbb11aa390179091a488611dc58b74",
+          "spec_material_hash": "20a9b7f2657e0c37c52690966e722b9c94bc81c15d414335aef9ae4c34407bac"
+        },
+        {
+          "disposition": "unchanged_with_reason",
+          "path": ".decapod/managed/specs/SECURITY.md",
+          "reason": "Reviewed external model lifecycle and private Apple setup. No account data, team identity, signing assets or machine state enter tracked configuration; manual server defaults remain loopback.",
+          "reviewed_code_fingerprint": "9a7da8d053d167c923de250f90f469856dcbb11aa390179091a488611dc58b74",
+          "spec_material_hash": "359298a342c2b1da230c69017557958b8a417795beab060228b159f36c684fec"
+        }
+      ],
       "state": "APPROVED",
       "stop_conditions": [],
       "title": "Equip M1 Max workstation for the existing Rust, web, Swift, reverse engineering and local AI projects",
@@ -119,14 +157,13 @@
       ],
       "unknowns": [],
       "unresolved_contradictions": [],
-      "updated_at": "1792051594Z"
+      "updated_at": "1792057014Z"
     },
     "trajectory": {
       "active_boundaries": [
-        "Current claimed task and isolated work branch",
-        "Ollama must remain stopped until manually started; never register login startup or preload a model."
+        "Only dotfiles authored changes; no unrelated repositories; preserve prior evidence; no model preload or startup services."
       ],
-      "artifact_hash": "sha256:d442f219437a89a041db769f446479b7fdf9f2d12cd86b7ad2c43ac6ad698a22",
+      "artifact_hash": "sha256:1740e6dbe3d0bfe4f2c6b402914db639ebdb8c2dfb1912c280e855eaf3dee165",
       "checks": [
         {
           "name": "aiup-contract",
@@ -137,35 +174,7 @@
           "status": "passed"
         },
         {
-          "name": "ghostty_config",
-          "status": "passed"
-        },
-        {
-          "name": "installed_doctor",
-          "status": "passed"
-        },
-        {
-          "name": "neovim_workbench",
-          "status": "passed"
-        },
-        {
           "name": "ollama-off",
-          "status": "passed"
-        },
-        {
-          "name": "project-prerequisites",
-          "status": "passed"
-        },
-        {
-          "name": "publication-readiness",
-          "status": "failed"
-        },
-        {
-          "name": "scripts/check",
-          "status": "passed"
-        },
-        {
-          "name": "tmux_theme",
           "status": "passed"
         }
       ],
@@ -174,72 +183,53 @@
         "events": [
           {
             "event_id": "event:2",
-            "intent_id": "intent:change_01M4Z1EG4P7THVM2RR4XMS4CK2",
+            "intent_id": "intent:workstation_manual_ollama_20261015",
             "kind": "created",
             "sequence": 2
           },
           {
             "event_id": "event:3",
-            "intent_id": "intent:change_01M4Z1EG4P7THVM2RR4XMS4CK2",
+            "intent_id": "intent:workstation_manual_ollama_20261015",
             "kind": "refined",
             "sequence": 3
           },
           {
-            "detail": "trajectory:branch_01M4Z1EG7DGJZYKJDA80E6K3VH",
+            "detail": "trajectory:workstation_manual_ollama_20261015",
             "event_id": "event:4",
-            "intent_id": "intent:change_01M4Z1EG4P7THVM2RR4XMS4CK2",
+            "intent_id": "intent:workstation_manual_ollama_20261015",
             "kind": "trajectory_step_recorded",
             "sequence": 4
           },
           {
-            "detail": "trajectory:branch_01M4Z1EG7DGJZYKJDA80E6K3VH",
+            "detail": "trajectory:workstation_manual_ollama_20261015",
             "event_id": "event:5",
-            "intent_id": "intent:change_01M4Z1EG4P7THVM2RR4XMS4CK2",
+            "intent_id": "intent:workstation_manual_ollama_20261015",
             "kind": "trajectory_step_recorded",
             "sequence": 5
-          },
-          {
-            "detail": "trajectory:branch_01M4Z1EG7DGJZYKJDA80E6K3VH",
-            "event_id": "event:6",
-            "intent_id": "intent:change_01M4Z1EG4P7THVM2RR4XMS4CK2",
-            "kind": "trajectory_step_recorded",
-            "sequence": 6
-          },
-          {
-            "detail": "trajectory:branch_01M4Z1EG7DGJZYKJDA80E6K3VH",
-            "event_id": "event:7",
-            "intent_id": "intent:change_01M4Z1EG4P7THVM2RR4XMS4CK2",
-            "kind": "trajectory_step_recorded",
-            "sequence": 7
-          },
-          {
-            "detail": "trajectory:branch_01M4Z1EG7DGJZYKJDA80E6K3VH",
-            "event_id": "event:8",
-            "intent_id": "intent:change_01M4Z1EG4P7THVM2RR4XMS4CK2",
-            "kind": "trajectory_step_recorded",
-            "sequence": 8
           }
         ],
         "knowledge_candidates": [],
-        "next_sequence": 8,
+        "next_sequence": 5,
         "schema_version": "1.0.0",
         "trajectories": {
-          "branch_01M4Z1EG7DGJZYKJDA80E6K3VH": {
+          "workstation_manual_ollama_20261015": {
             "evidence_only": true,
-            "id": "branch_01M4Z1EG7DGJZYKJDA80E6K3VH",
-            "intent_id": "intent:change_01M4Z1EG4P7THVM2RR4XMS4CK2",
+            "id": "workstation_manual_ollama_20261015",
+            "intent_id": "intent:workstation_manual_ollama_20261015",
             "steps": [
               {
                 "action": "trajectory.record",
+                "command": "decapod validate",
                 "custody_event_id": "event:4",
                 "observations": [
-                  "Brewfile",
-                  "scripts/manage.py",
                   ".config/zsh/local-models.zsh",
-                  ".github/workflows/check.yml",
-                  "Inspected all five ~/src repositories and the active Scripture worktree. Root dotfiles doctor passes. Node/npm and Rust repo pins are not installed, MLX uses Python 3.9 with working Metal outside sandbox, both Podman machines stopped. Work is local only."
+                  "scripts/check.py",
+                  "Ollama has no process or listener, launchd service absent, login plist archived privately. New-shell aiup function available; external stub verified serve argument and KEEP_ALIVE=0, FLASH_ATTENTION=1, KV_CACHE_TYPE=q8_0. Earlier workstation checks and historical trajectory retained in Git. Publication readiness still unproven."
                 ],
-                "proof_refs": [],
+                "proof_refs": [
+                  "ollama-off",
+                  "aiup-contract"
+                ],
                 "scope": [
                   "root"
                 ],
@@ -247,32 +237,13 @@
                 "validation_findings": []
               },
               {
-                "action": "trajectory.record",
-                "custody_event_id": "event:5",
-                "observations": [
-                  "30 tests passed. Installed doctor --all passed. Isolated tmux top bar and navigation parsed. Neovim dashboard rendered headlessly. Repeated install preview reports no changes. MLX and Ollama real inference and Ghidra ARM64/JDK diagnostics passed. Full Decapod publication validation failed on container/spec requirements and is not claimed. User redirected all Scripture work to a separate agent; this task applies workstation rice only. Configuration backup manifests remain private; no push or publication."
-                ],
-                "proof_refs": [
-                  "scripts/check",
-                  "installed_doctor",
-                  "ghostty_config",
-                  "tmux_theme",
-                  "neovim_workbench"
-                ],
-                "scope": [
-                  "root"
-                ],
-                "sequence": 5,
-                "validation_findings": []
-              },
-              {
                 "action": "validation",
                 "command": "decapod validate",
-                "custody_event_id": "event:6",
+                "custody_event_id": "event:5",
                 "observations": [
                   ".decapod/governance.json",
                   ".decapod/governance.json",
-                  "validation epoch ve_7f671c0b7cfec860 completed with zero failures"
+                  "validation epoch ve_1976b3b902de577c completed with zero failures"
                 ],
                 "proof_refs": [
                   "decapod validate"
@@ -280,45 +251,7 @@
                 "scope": [
                   "root"
                 ],
-                "sequence": 6,
-                "validation_findings": []
-              },
-              {
-                "action": "trajectory.record",
-                "custody_event_id": "event:7",
-                "observations": [
-                  ".config/zsh/local-models.zsh",
-                  "README.md",
-                  "decapod govern project-check in the owned headless container passed 187 checks; full readiness next requires staging its generated receipt."
-                ],
-                "proof_refs": [
-                  "project-prerequisites"
-                ],
-                "scope": [
-                  "root"
-                ],
-                "sequence": 7,
-                "validation_findings": []
-              },
-              {
-                "action": "trajectory.record",
-                "custody_event_id": "event:8",
-                "observations": [
-                  ".config/zsh/local-models.zsh",
-                  "README.md",
-                  ".decapod/managed/specs/INTERFACES.md",
-                  "Ollama process check empty, service absent, loopback API refused connection, and leftover login plist archived privately. aiup parsed and environment/argument forwarding verified using an external stub without starting the server. Full validation blocked on unstaged generated receipt; stage and rerun after checkpoint."
-                ],
-                "proof_refs": [
-                  "ollama-off",
-                  "aiup-contract",
-                  "publication-readiness"
-                ],
-                "scope": [
-                  "Add an explicit foreground Ollama helper and document Ctrl-C shutdown; retain all portable workstation work.",
-                  "root"
-                ],
-                "sequence": 8,
+                "sequence": 5,
                 "validation_findings": []
               }
             ]
@@ -328,37 +261,25 @@
       "declared_commands": [
         "decapod validate"
       ],
-      "destination": "pull request",
       "evidence": [
-        "30 tests passed. Installed doctor --all passed. Isolated tmux top bar and navigation parsed. Neovim dashboard rendered headlessly. Repeated install preview reports no changes. MLX and Ollama real inference and Ghidra ARM64/JDK diagnostics passed. Full Decapod publication validation failed on container/spec requirements and is not claimed. User redirected all Scripture work to a separate agent; this task applies workstation rice only. Configuration backup manifests remain private; no push or publication.",
-        "Inspected all five ~/src repositories and the active Scripture worktree. Root dotfiles doctor passes. Node/npm and Rust repo pins are not installed, MLX uses Python 3.9 with working Metal outside sandbox, both Podman machines stopped. Work is local only.",
-        "Ollama process check empty, service absent, loopback API refused connection, and leftover login plist archived privately. aiup parsed and environment/argument forwarding verified using an external stub without starting the server. Full validation blocked on unstaged generated receipt; stage and rerun after checkpoint.",
-        "decapod govern project-check in the owned headless container passed 187 checks; full readiness next requires staging its generated receipt.",
-        "validation epoch ve_7f671c0b7cfec860 completed with zero failures"
+        "Ollama has no process or listener, launchd service absent, login plist archived privately. New-shell aiup function available; external stub verified serve argument and KEEP_ALIVE=0, FLASH_ATTENTION=1, KV_CACHE_TYPE=q8_0. Earlier workstation checks and historical trajectory retained in Git. Publication readiness still unproven.",
+        "validation epoch ve_1976b3b902de577c completed with zero failures"
       ],
       "inspected_files": [
         ".config/zsh/local-models.zsh",
-        ".github/workflows/check.yml",
-        "Brewfile",
-        "README.md",
-        "scripts/manage.py"
+        "scripts/check.py"
       ],
-      "intent_id": "intent:change_01M4Z1EG4P7THVM2RR4XMS4CK2",
+      "intent_id": "intent:workstation_manual_ollama_20261015",
       "modified_files": [
-        ".config/zsh/local-models.zsh",
-        ".decapod/governance.json",
-        ".decapod/managed/specs/INTERFACES.md",
-        "README.md"
+        ".decapod/governance.json"
       ],
       "next_transitions": [
-        "Refine plan and declare falsifiable checks",
         "publish"
       ],
       "repo_scope": [
-        "Add an explicit foreground Ollama helper and document Ctrl-C shutdown; retain all portable workstation work.",
         "root"
       ],
-      "run_id": "branch_01M4Z1EG7DGJZYKJDA80E6K3VH",
+      "run_id": "workstation_manual_ollama_20261015",
       "schema_version": "1.1.0",
       "shortcut_risk_signals": [],
       "task_id": "fend_01m4z1drb0ngbkk6",
@@ -376,45 +297,45 @@
       },
       "decapod_release": "0.114.2",
       "drift_findings": [],
-      "elapsed_ms": 1994,
-      "epoch_ref": "ve_7f671c0b7cfec860",
+      "elapsed_ms": 1771,
+      "epoch_ref": "ve_1976b3b902de577c",
       "fail_count": 0,
       "failures": [],
       "gate_timings": [
         {
-          "elapsed_ms": 934,
+          "elapsed_ms": 768,
           "name": "validate_project_specs_docs"
         },
         {
-          "elapsed_ms": 312,
+          "elapsed_ms": 298,
           "name": "validate_markdown_primitives_roundtrip_gate"
         },
         {
-          "elapsed_ms": 165,
+          "elapsed_ms": 163,
           "name": "validate_machine_contract"
         },
         {
-          "elapsed_ms": 107,
+          "elapsed_ms": 108,
           "name": "validate_stale_workspaces"
         },
         {
-          "elapsed_ms": 105,
-          "name": "validate_git_workspace_context"
-        },
-        {
-          "elapsed_ms": 96,
+          "elapsed_ms": 97,
           "name": "validate_obligations"
         },
         {
-          "elapsed_ms": 61,
+          "elapsed_ms": 71,
+          "name": "validate_git_workspace_context"
+        },
+        {
+          "elapsed_ms": 63,
           "name": "validate_legacy_jsonl_retired"
         },
         {
-          "elapsed_ms": 33,
+          "elapsed_ms": 34,
           "name": "validate_archive_integrity"
         },
         {
-          "elapsed_ms": 17,
+          "elapsed_ms": 16,
           "name": "validate_repomap_determinism"
         },
         {
@@ -426,32 +347,36 @@
           "name": "validate_control_plane_contract"
         },
         {
-          "elapsed_ms": 12,
+          "elapsed_ms": 11,
           "name": "validate_git_protected_branch"
         },
         {
-          "elapsed_ms": 11,
+          "elapsed_ms": 10,
           "name": "validate_git_push_pr_gate"
         },
         {
-          "elapsed_ms": 10,
-          "name": "validate_no_legacy_namespaces"
-        },
-        {
-          "elapsed_ms": 9,
+          "elapsed_ms": 8,
           "name": "validate_federation_gates"
         },
         {
           "elapsed_ms": 7,
+          "name": "validate_no_legacy_namespaces"
+        },
+        {
+          "elapsed_ms": 6,
           "name": "validate_gatekeeper_gate"
         },
         {
-          "elapsed_ms": 4,
+          "elapsed_ms": 5,
           "name": "validate_lineage_hard_gate"
         },
         {
           "elapsed_ms": 3,
           "name": "validate_generated_artifact_whitelist"
+        },
+        {
+          "elapsed_ms": 3,
+          "name": "validate_lcm_immutability"
         },
         {
           "elapsed_ms": 3,
@@ -462,12 +387,8 @@
           "name": "validate_knowledge_promotions_if_present"
         },
         {
-          "elapsed_ms": 3,
-          "name": "validate_lcm_immutability"
-        },
-        {
           "elapsed_ms": 2,
-          "name": "validate_entrypoint_invariants"
+          "name": "validate_plan_governed_execution_gate"
         },
         {
           "elapsed_ms": 2,
@@ -475,11 +396,7 @@
         },
         {
           "elapsed_ms": 2,
-          "name": "validate_plan_governed_execution_gate"
-        },
-        {
-          "elapsed_ms": 2,
-          "name": "validate_health_purity"
+          "name": "validate_entrypoint_invariants"
         },
         {
           "elapsed_ms": 1,
@@ -487,11 +404,15 @@
         },
         {
           "elapsed_ms": 1,
+          "name": "validate_trajectory_artifacts_if_present"
+        },
+        {
+          "elapsed_ms": 1,
           "name": "validate_override_authority"
         },
         {
           "elapsed_ms": 1,
-          "name": "validate_trajectory_artifacts_if_present"
+          "name": "validate_health_purity"
         },
         {
           "elapsed_ms": 1,
@@ -499,11 +420,11 @@
         },
         {
           "elapsed_ms": 1,
-          "name": "validate_validation_receipt_if_present"
+          "name": "validate_jev_history_if_present"
         },
         {
           "elapsed_ms": 1,
-          "name": "validate_recursive_improvement_passes_if_present"
+          "name": "validate_validation_receipt_if_present"
         },
         {
           "elapsed_ms": 1,
@@ -511,23 +432,11 @@
         },
         {
           "elapsed_ms": 1,
-          "name": "validate_jev_history_if_present"
+          "name": "validate_recursive_improvement_passes_if_present"
         },
         {
           "elapsed_ms": 1,
-          "name": "validate_project_config_toml"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_internalization_artifacts_if_present"
-        },
-        {
-          "elapsed_ms": 0,
           "name": "validate_health_cache_integrity"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_spec_drift"
         },
         {
           "elapsed_ms": 0,
@@ -535,7 +444,11 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_project_scoped_state"
+          "name": "validate_spec_drift"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_project_config_toml"
         },
         {
           "elapsed_ms": 0,
@@ -543,15 +456,15 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_docs_templates_bucket"
-        },
-        {
-          "elapsed_ms": 0,
           "name": "validate_heartbeat_invocation_gate"
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_watcher_purity"
+          "name": "validate_project_scoped_state"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_docs_templates_bucket"
         },
         {
           "elapsed_ms": 0,
@@ -559,11 +472,15 @@
         },
         {
           "elapsed_ms": 0,
+          "name": "validate_watcher_purity"
+        },
+        {
+          "elapsed_ms": 0,
           "name": "validate_repo_map"
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_risk_map_violations"
+          "name": "validate_internalization_artifacts_if_present"
         },
         {
           "elapsed_ms": 0,
@@ -571,11 +488,7 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_root_dockerfile_seed_detection"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_embedded_self_contained"
+          "name": "validate_risk_map_violations"
         },
         {
           "elapsed_ms": 0,
@@ -583,11 +496,19 @@
         },
         {
           "elapsed_ms": 0,
+          "name": "validate_context_capsules_if_present"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_embedded_self_contained"
+        },
+        {
+          "elapsed_ms": 0,
           "name": "validate_interface_contract_bootstrap"
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_context_capsules_if_present"
+          "name": "validate_root_dockerfile_seed_detection"
         },
         {
           "elapsed_ms": 0,
@@ -606,18 +527,18 @@
           "name": "validate_tooling_gate"
         }
       ],
-      "git_revision": "4f637b96b8154cceca83fb5022d2c01d241e77c0",
+      "git_revision": "6b5fb118874c8c100fc596c59fa5a00a7e8f5d5c",
       "kind": "validation_receipt",
       "parallelism": 1,
-      "pass_count": 187,
+      "pass_count": 188,
       "prediction_uses_warnings": true,
-      "receipt_hash": "sha256:50d78581217783c401a1f3f8ef4d395fcb49af0d118655162a580d79964624ed",
-      "repo_signal_fingerprint": "60748b35822094592834a86196c34c2bfa40d4d9855ae3240bf34f0c4016250a",
+      "receipt_hash": "sha256:bfa6373bfecbdbe02151e693435635bf03da9cb8c802e4c72d8101641f12ada4",
+      "repo_signal_fingerprint": "9a7da8d053d167c923de250f90f469856dcbb11aa390179091a488611dc58b74",
       "schema_version": "1.0.0",
       "status": "ok",
       "temporary_artifacts_cleaned": 0,
-      "trajectory_artifact_hash": "sha256:39efab9e04707b1adc1cae0b59b6c5ddaed0ad70cfb18eeb324d2ef37b99fa31",
-      "trajectory_run_id": "branch_01M4Z1EG7DGJZYKJDA80E6K3VH",
+      "trajectory_artifact_hash": "sha256:1740e6dbe3d0bfe4f2c6b402914db639ebdb8c2dfb1912c280e855eaf3dee165",
+      "trajectory_run_id": "workstation_manual_ollama_20261015",
       "warn_count": 4,
       "warnings": [
         "Risk map missing (run `decapod riskmap init`)",
