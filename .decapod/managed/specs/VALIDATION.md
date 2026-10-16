@@ -83,6 +83,14 @@ fresh exact-candidate validation and hosted CI before merge; the earlier
 
 ## Promotion Gates
 
+The clock regression executes the actual status.sh clock route for routine,
+desktop_revealed and system_woke events with only SketchyBar IPC replaced by a
+recording function. Each emitted label must equal current system time with
+seconds, including across a second boundary. Live queries separately verify
+one-second cadence and advancement against the Mac's clock while the bar is
+hidden; wake subscription is verified without forcing the user's Mac to sleep.
+The native helper source and identity remain unchanged by this repair.
+
 The Nocturne/native-panel refinement expands the shared suite to 67 tests.
 It checks readable fourth-theme contrast, cached native descriptors, private
 file modes, row replacement, canceled hover dwell, same-panel reuse, transfers,
@@ -174,7 +182,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `24ed6c04e2cec95be473e0b513645a0537485559fa45f36a7a056a751665c10c`
+- Repository signal fingerprint: `5b8a47db51f254c4b7baacfbbd7d238791a1f802cb9c748d8a28c28265cc74df`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

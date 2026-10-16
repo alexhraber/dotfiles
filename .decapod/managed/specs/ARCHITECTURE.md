@@ -92,6 +92,11 @@ The bar stays at y_offset=4 and toggles visibility without sliding its anchors
 or popups. Hardware icon labels use fixed widths: CPU/GPU show utilization
 percentages and memory shows used GiB; Fahrenheit temperatures, power,
 capacity and swap remain in the panels.
+The clock has update_freq=1 and explicit updates=on, with desktop_revealed and
+system_woke subscriptions. status.sh formats current /bin/date output with
+seconds on every event, rather than retaining a previous value. A fixed
+96-point label contains the readout without moving adjacent pills. The native
+helper is unchanged, retaining its binary identity and existing OS consent.
 Nocturne uses charcoal surfaces, violet clock/Apple/notification accents and
 cyan hardware/weather icons. Native panels are opaque and blur-free.
 themes.json and plugins/appearance.py own four validated palettes and the
@@ -231,7 +236,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `24ed6c04e2cec95be473e0b513645a0537485559fa45f36a7a056a751665c10c`
+- Repository signal fingerprint: `5b8a47db51f254c4b7baacfbbd7d238791a1f802cb9c748d8a28c28265cc74df`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
