@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "baseline": {
-    "accepted_commit": "2ad77938d987a9b920922a9886b452037779b916",
+    "accepted_commit": "6765404c675b14f1f8e8b21c2b1dfed6e9f2d951",
     "unresolved": {
       "claim:actual-app-menus": {
         "falsifier": "Native action guards permit stale/disabled/submenu leaf execution, or the UI claims menus work without Accessibility.",
@@ -15,29 +15,32 @@
     }
   },
   "change": {
-    "id": "change_01M51RDFY6YV0S7H31JWNVK2D0",
-    "base_commit": "2ad77938d987a9b920922a9886b452037779b916",
+    "id": "change_01M52TT1AFE7NSKQHQNS7VJA74",
+    "base_commit": "6765404c675b14f1f8e8b21c2b1dfed6e9f2d951",
     "target_base": "origin/main"
   },
   "claims": {
-    "current-clock": {
-      "statement": "The bar reads current macOS system time every second with visible seconds and refreshes on reveal/wake, preserving native helper identity.",
-      "falsifier": "Live readings fail to advance every second or differ from current system time beyond the one-second refresh cadence, or event routing fails the actual clock script regression.",
+    "hidden-seconds": {
+      "statement": "Clock displays hour and minute without seconds while retaining one-second updates and reveal/wake refresh.",
+      "falsifier": "Rendering regression or live query shows seconds, update_freq differs from 1, or updates is not on.",
       "status": "supported",
       "proof_refs": [
-        "/private/tmp/dotfiles-clock-proof.py"
+        "tests/test_desktop.py"
       ]
     }
   },
   "checkpoints": [
     {
-      "id": "clock-refresh-1",
-      "summary": "Clock uses current system time every second, adds reveal/wake refresh and fixed-width seconds; 27 targeted tests and four live time comparisons pass; project prerequisites passed 184 gates; native helper and OS consent unchanged.",
-      "input_digest": "sha256:37035299335022c58c53da37fc1f8df469090430bb4a639aea8fcf9c3d491ed9"
+      "id": "clock-hidden-seconds",
+      "summary": "Hide displayed clock seconds and compact its width; retain one-second hidden, reveal and wake refresh",
+      "input_digest": "sha256:28432ca0dbaccf1f8e40d04b5a5b35fdac40df7f3f3a49043cf873675ae5a6f2",
+      "proof_refs": [
+        "target/minute-project-check.json"
+      ]
     }
   ],
   "intents": {
-    "intent:change_01M51RDFY6YV0S7H31JWNVK2D0": {
+    "intent:change_01M52TT1AFE7NSKQHQNS7VJA74": {
       "acceptance_criteria": [],
       "assumptions": [],
       "boundaries": [
@@ -47,52 +50,52 @@
         "root"
       ],
       "created_sequence": 1,
-      "id": "intent:change_01M51RDFY6YV0S7H31JWNVK2D0",
+      "id": "intent:change_01M52TT1AFE7NSKQHQNS7VJA74",
       "out_of_scope": [],
       "proof_requirements": [],
-      "raw_intent": "Fix stale menu bar clock with one-second system-time refresh\n\nUse current macOS system time every second, refresh on reveal/wake, verify actual label advances and survives hidden state; preserve native helper identity and calendar permissions; apply and publish main.",
-      "refined_intent": "Fix stale menu bar clock with one-second system-time refresh\n\nUse current macOS system time every second, refresh on reveal/wake, verify actual label advances and survives hidden state; preserve native helper identity and calendar permissions; apply and publish main.",
+      "raw_intent": "Hide clock seconds while retaining one-second refresh\n\nDisplay compact minute-only clock; preserve update_freq=1, updates=on and reveal/wake subscriptions. Verify rendering and cadence, apply, merge and push.",
+      "refined_intent": "Hide clock seconds while retaining one-second refresh\n\nDisplay compact minute-only clock; preserve update_freq=1, updates=on and reveal/wake subscriptions. Verify rendering and cadence, apply, merge and push.",
       "status": "refined",
       "updated_sequence": 3
     }
   },
   "epochs": {
-    "ve_05148954d1fb6b51": {
+    "ve_7926507d9a1047a4": {
       "constitution_hash": "sha256:4aecac1e2910b7b886f7ed4314520a3936c4a2996bbe91d0ab10f3a8416e2928",
       "constitution_version": "embedded-docs@0.116.0",
-      "epoch_id": "ve_05148954d1fb6b51",
+      "epoch_id": "ve_7926507d9a1047a4",
       "evaluator_identity": "decapod-validate@0.116.0",
       "evaluator_set_hash": "sha256:57b992eda1c34987d2c43112ba92bbbf7bd6db93378c64bf6ba3799eeb422fbc",
-      "generated_specs_fingerprint": "5b8a47db51f254c4b7baacfbbd7d238791a1f802cb9c748d8a28c28265cc74df",
-      "generated_specs_manifest_hash": "sha256:a8b43f5551b1aa25370099caa29422922e176d7955c89ecd904cd46eb6390e51",
+      "generated_specs_fingerprint": "2ed975429e5acb516732c32f96a4c54cfef1dd0e8b32ed314e2cb29c52d86e47",
+      "generated_specs_manifest_hash": "sha256:040cd0df79ffcf3276d5d686e2cd214009240f6c8f41fb06d74f37c3e59c79d6",
       "material_hashes": {
         "constitution:core/DECAPOD": "sha256:4aecac1e2910b7b886f7ed4314520a3936c4a2996bbe91d0ab10f3a8416e2928",
-        "generated_spec:.decapod/managed/specs/ARCHITECTURE.md": "sha256:f63663cd288d7fbc5089b61fb4fb7de5e38d40d3a29349c28a75609452a7eae4",
-        "generated_spec:.decapod/managed/specs/INTENT.md": "sha256:fc12448bb4cfd0a369f7879492b2fe93944781918c399fd6fd5a953170eb98b3",
-        "generated_spec:.decapod/managed/specs/INTERFACES.md": "sha256:cc9faaff5feb0e9d76a91a2657ab82f348681de65d43326973e7c28d33bb4017",
-        "generated_spec:.decapod/managed/specs/OPERATIONS.md": "sha256:26ebc913c2343690bde401079f4ea4cc4ac37ba279eaae8847ec66ce594d8bfa",
-        "generated_spec:.decapod/managed/specs/README.md": "sha256:8edaafb968a66a22b365bdcfe8f022a3673b7790678ec638437ce0a8f062bf2f",
-        "generated_spec:.decapod/managed/specs/SECURITY.md": "sha256:9831c2c3d3abf4015944f8b8341317f77b19aba333bec663c12111fba1f73be0",
-        "generated_spec:.decapod/managed/specs/SEMANTICS.md": "sha256:99f4fa47b805787ac7a0e39cf0f9cbb4fd2542714008dfeb3d677e8a380bb230",
-        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:a7cc7f27d6893940e045f101f605dec773e6fafc6a4bea7fba7c354fffdbbaf8",
-        "generated_specs_fingerprint": "5b8a47db51f254c4b7baacfbbd7d238791a1f802cb9c748d8a28c28265cc74df",
-        "generated_specs_manifest": "sha256:a8b43f5551b1aa25370099caa29422922e176d7955c89ecd904cd46eb6390e51",
-        "governance_context": "sha256:5bcc321b99565dc60f7a7f220f5376386cc502c79d071de02119a47add93665b",
+        "generated_spec:.decapod/managed/specs/ARCHITECTURE.md": "sha256:5ffdbeb83e7f3a2c59c3a28001aeb169b21c06e96b3ff57935fddd236cae6411",
+        "generated_spec:.decapod/managed/specs/INTENT.md": "sha256:3b0f885da1e57fb85f675ea5b968d705a8daa43fcdd3f26f3f0d83a7fa139c5a",
+        "generated_spec:.decapod/managed/specs/INTERFACES.md": "sha256:1aab911388ee54fe81c5354764522e264c84398bb1352818f5a5bc8f6ca20462",
+        "generated_spec:.decapod/managed/specs/OPERATIONS.md": "sha256:94ad80c40b0c87b0c92cfc6cf644884717606ca2b55e9c7ddba32fb6b7fc7a67",
+        "generated_spec:.decapod/managed/specs/README.md": "sha256:96995fc3b0b06a24563a09a2b28f2ba571e716d8445090507b27f6ebc3b04507",
+        "generated_spec:.decapod/managed/specs/SECURITY.md": "sha256:d35ecc2c1bddea4e526774079dbdb1fb1babeede5a22edaad837a3926abc1bc0",
+        "generated_spec:.decapod/managed/specs/SEMANTICS.md": "sha256:eda0c97d33ab49fd836a4e58708193d58b9cc273268a70e0d717f1f5e74326ed",
+        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:c03d2b72f8748bcb6a3fc56bd2d649e7377e99512ca519b1ebd0fac53f08dd71",
+        "generated_specs_fingerprint": "2ed975429e5acb516732c32f96a4c54cfef1dd0e8b32ed314e2cb29c52d86e47",
+        "generated_specs_manifest": "sha256:040cd0df79ffcf3276d5d686e2cd214009240f6c8f41fb06d74f37c3e59c79d6",
+        "governance_context": "sha256:76ebf2212beca7abbd62d189e141dd15e95215bc64002bd1a26036cd6fb25001",
         "governance_material:.decapod/managed/Dockerfile.decapod": "sha256:563b282fbcaed9ae568a21947c1809e855cbcb8f01a14fbf2337b129306d29dd",
         "governance_material:AGENTS.md": "sha256:d220d7feaf0171cc11a864ab60a17ce71a45b15c95169cbebdc59ad2e98db5e5",
         "governance_material:CLAUDE.md": "sha256:40e9e30dbbf914832b0052b90c2830a347b03642232b97dff17777e6b733ea84",
         "governance_material:CODEX.md": "sha256:c5c077b247f971721aa3f21d05439dd66b8740cd154fc4b501887e520ce853f6",
         "governance_material:GEMINI.md": "sha256:12b257127ccbb672e4468cd3fdb073ca40d26eabf3d1a59c27054b86bec9d9c9",
-        "governance_section:claims": "sha256:30a3f04adcce98ad3ae8a3ba5a9986bae46587076ffae883e2568aecca67d03f",
-        "governance_section:plan": "sha256:da736fd0a147420cfab27f5d9d193e6f7e5c1ecea9c7142681d177e51dd5718a",
-        "living_spec_material:.decapod/managed/specs/ARCHITECTURE.md": "sha256:5b7cf84160ad2fd5e6452429c78cef57049824d4b68825396e279214cee17b69",
-        "living_spec_material:.decapod/managed/specs/INTENT.md": "sha256:b379ad8bc7543d1a10489ee88d8fcbb117e698ed1b3979b386b2447ed5631110",
-        "living_spec_material:.decapod/managed/specs/INTERFACES.md": "sha256:39984eecff74ded2d33eef5fe93ed2261b6700aa650bb55090c11f8f3803f1c8",
+        "governance_section:claims": "sha256:ee8169aafbae0c17777012d35ff463b7a91a7cedb6a254c18dc2594ba0da060a",
+        "governance_section:plan": "sha256:463cc44560060248e573559164e5bc01fd94a61c79068d90cd2069c19b2116c9",
+        "living_spec_material:.decapod/managed/specs/ARCHITECTURE.md": "sha256:c98faba50607725c6e00abc11b26e9353037b8a9659afffae9047a0e5732081a",
+        "living_spec_material:.decapod/managed/specs/INTENT.md": "sha256:6afb32f2828239aa91bf5916845d31ebb790480da3d2a647f173e8c282e88827",
+        "living_spec_material:.decapod/managed/specs/INTERFACES.md": "sha256:a23606f7b7322b1897792a0b2a8c857b149e85c7e2e468118bbe38b8fa869c65",
         "living_spec_material:.decapod/managed/specs/OPERATIONS.md": "sha256:b43e9fa0eef9fb3e28d84cc5386c79f64f1f3cb9a37a1b8834bbb84e24dbea17",
         "living_spec_material:.decapod/managed/specs/README.md": "sha256:0988c85d6c05f02d52684c9aafae50e95fd5d5576739d3e9d995af682697fd99",
         "living_spec_material:.decapod/managed/specs/SECURITY.md": "sha256:586ee92a521385a0b2dda4d63a544b38c4709ad1554b2d9d69d7c093e67a2658",
         "living_spec_material:.decapod/managed/specs/SEMANTICS.md": "sha256:92bbe2607c6f8f94191a95ea977d9785f3472a0fae2835520dd86eae73130d5c",
-        "living_spec_material:.decapod/managed/specs/VALIDATION.md": "sha256:12d3f96710c6f7df0dd375a16e8df52c91466cca2e22f644fffbe3f6f5eb1b42",
+        "living_spec_material:.decapod/managed/specs/VALIDATION.md": "sha256:ca1dfe1b5458f4c470545598ac3aa0e8829643c0a6016236c492ae5892adc4ca",
         "proof_rubric": "sha256:99e8ef25629da391e9b479db9fff52b82f340224f7a69d8a88d2992ae8e90466",
         "validation_profile": "sha256:37a8eec1ce19687d132fe29051dca629d164e2c4958ba141d5f4133a33f0688f"
       },
@@ -111,7 +114,7 @@
       },
       "deferred_questions": [],
       "human_questions": [],
-      "intent": "Update clock from current macOS system time every second, including seconds in a fixed-width label, and refresh immediately on bar reveal and wake. No separate NTP stream, daemon or system time changes. Preserve hover/calendar behavior and native helper identity/permissions. Verify live second-by-second advancement while hidden and event refresh, then run required exact publication proof, merge and push main.",
+      "intent": "Show local macOS hour:minute and AM/PM without seconds in a compact fixed-width clock. Preserve update_freq=1, updates=on, desktop_revealed/system_woke subscriptions and native calendar interaction. Update the existing rendering regression and specs; verify the live label and cadence, run required publication checks, merge and push main.",
       "phases": [],
       "proof_hooks": [
         "decapod validate"
@@ -121,51 +124,51 @@
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/ARCHITECTURE.md",
-          "reason": "Documents system-clock reads each second, explicit hidden updates, reveal/wake subscriptions and unchanged native helper identity.",
-          "reviewed_code_fingerprint": "5b8a47db51f254c4b7baacfbbd7d238791a1f802cb9c748d8a28c28265cc74df",
-          "spec_material_hash": "5b7cf84160ad2fd5e6452429c78cef57049824d4b68825396e279214cee17b69"
+          "reason": "Hours/minutes display and compact 74-point width replace visible seconds; the one-second cadence and reveal/wake hooks are preserved.",
+          "reviewed_code_fingerprint": "2ed975429e5acb516732c32f96a4c54cfef1dd0e8b32ed314e2cb29c52d86e47",
+          "spec_material_hash": "c98faba50607725c6e00abc11b26e9353037b8a9659afffae9047a0e5732081a"
         },
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/INTERFACES.md",
-          "reason": "Clock now displays seconds, updates continuously and refreshes on reveal/wake; calendar interaction remains unchanged.",
-          "reviewed_code_fingerprint": "5b8a47db51f254c4b7baacfbbd7d238791a1f802cb9c748d8a28c28265cc74df",
-          "spec_material_hash": "39984eecff74ded2d33eef5fe93ed2261b6700aa650bb55090c11f8f3803f1c8"
+          "reason": "Explicitly hides seconds while retaining continuous system-time refresh and calendar hover interaction.",
+          "reviewed_code_fingerprint": "2ed975429e5acb516732c32f96a4c54cfef1dd0e8b32ed314e2cb29c52d86e47",
+          "spec_material_hash": "a23606f7b7322b1897792a0b2a8c857b149e85c7e2e468118bbe38b8fa869c65"
         },
         {
           "disposition": "unchanged_with_reason",
           "path": ".decapod/managed/specs/SECURITY.md",
-          "reason": "The repair only formats existing local macOS time and changes event cadence; no NTP service, network endpoint, permission or credential changes.",
-          "reviewed_code_fingerprint": "5b8a47db51f254c4b7baacfbbd7d238791a1f802cb9c748d8a28c28265cc74df",
+          "reason": "Clock presentation only; no new API, network, credential, system-clock or OS-permission behavior.",
+          "reviewed_code_fingerprint": "2ed975429e5acb516732c32f96a4c54cfef1dd0e8b32ed314e2cb29c52d86e47",
           "spec_material_hash": "586ee92a521385a0b2dda4d63a544b38c4709ad1554b2d9d69d7c093e67a2658"
         }
       ],
       "state": "APPROVED",
       "stop_conditions": [],
-      "title": "Keep the custom clock synchronized with macOS time",
+      "title": "Hide clock seconds without reducing refresh cadence",
       "todo_ids": [
-        "bugs_01m51rcsczgxc6va"
+        "code_01m52ts7ryxp67am"
       ],
       "unknowns": [],
       "unresolved_contradictions": [],
-      "updated_at": "1792134736Z"
+      "updated_at": "1792170429Z"
     },
     "trajectory": {
       "active_boundaries": [
         "Current claimed task and isolated work branch"
       ],
-      "artifact_hash": "sha256:4ddbc403905e4ad2cd0d50222feaaa9d6c829eeb8c4c15ed4d7071b78f515e42",
+      "artifact_hash": "sha256:3b6c43991760e96cf928730b130a8ad259b321c486055eacb8623eb1f1ba0b93",
       "checks": [
-        {
-          "name": "clock_routes",
-          "status": "passed"
-        },
         {
           "name": "decapod validate",
           "status": "passed"
         },
         {
-          "name": "live_second_cadence",
+          "name": "desktop_regressions",
+          "status": "passed"
+        },
+        {
+          "name": "live_format_and_cadence",
           "status": "passed"
         }
       ],
@@ -174,27 +177,27 @@
         "events": [
           {
             "event_id": "event:2",
-            "intent_id": "intent:change_01M51RDFY6YV0S7H31JWNVK2D0",
+            "intent_id": "intent:change_01M52TT1AFE7NSKQHQNS7VJA74",
             "kind": "created",
             "sequence": 2
           },
           {
             "event_id": "event:3",
-            "intent_id": "intent:change_01M51RDFY6YV0S7H31JWNVK2D0",
+            "intent_id": "intent:change_01M52TT1AFE7NSKQHQNS7VJA74",
             "kind": "refined",
             "sequence": 3
           },
           {
-            "detail": "trajectory:branch_01M51RDG0NBGYRYYGPH79378GZ",
+            "detail": "trajectory:branch_01M52TT1D1SYACC1XH3F3CD7XH",
             "event_id": "event:4",
-            "intent_id": "intent:change_01M51RDFY6YV0S7H31JWNVK2D0",
+            "intent_id": "intent:change_01M52TT1AFE7NSKQHQNS7VJA74",
             "kind": "trajectory_step_recorded",
             "sequence": 4
           },
           {
-            "detail": "trajectory:branch_01M51RDG0NBGYRYYGPH79378GZ",
+            "detail": "trajectory:branch_01M52TT1D1SYACC1XH3F3CD7XH",
             "event_id": "event:5",
-            "intent_id": "intent:change_01M51RDFY6YV0S7H31JWNVK2D0",
+            "intent_id": "intent:change_01M52TT1AFE7NSKQHQNS7VJA74",
             "kind": "trajectory_step_recorded",
             "sequence": 5
           }
@@ -203,26 +206,24 @@
         "next_sequence": 5,
         "schema_version": "1.0.0",
         "trajectories": {
-          "branch_01M51RDG0NBGYRYYGPH79378GZ": {
+          "branch_01M52TT1D1SYACC1XH3F3CD7XH": {
             "evidence_only": true,
-            "id": "branch_01M51RDG0NBGYRYYGPH79378GZ",
-            "intent_id": "intent:change_01M51RDFY6YV0S7H31JWNVK2D0",
+            "id": "branch_01M52TT1D1SYACC1XH3F3CD7XH",
+            "intent_id": "intent:change_01M52TT1AFE7NSKQHQNS7VJA74",
             "steps": [
               {
                 "action": "verification",
                 "custody_event_id": "event:4",
                 "observations": [
-                  ".config/sketchybar/sketchybarrc",
                   ".config/sketchybar/plugins/status.sh",
+                  ".config/sketchybar/sketchybarrc",
                   "tests/test_desktop.py",
-                  "Targeted desktop suite: 27 tests passed, including actual shell clock route for routine/reveal/wake",
-                  "Four live readings advanced from 12:06:30 AM through 12:06:34 AM, matching system wall time within one second; update_freq=1 and updates=on verified",
-                  "Reviewed complete source inventory: only clock config and status shell changed; required command closure unchanged",
-                  "/private/tmp/dotfiles-clock-proof.py"
+                  "27 desktop tests passed. Live clock label 10:06 AM; update_freq=1, updates=on, label.width=74 and reveal/wake event subscriptions retained.",
+                  "Complete source inventory reviewed: only clock formatting and fixed width changed; command closure and native helper sources unchanged."
                 ],
                 "proof_refs": [
-                  "clock_routes",
-                  "live_second_cadence"
+                  "desktop_regressions",
+                  "live_format_and_cadence"
                 ],
                 "scope": [
                   "root"
@@ -237,7 +238,7 @@
                 "observations": [
                   ".decapod/governance.json",
                   ".decapod/governance.json",
-                  "validation epoch ve_05148954d1fb6b51 completed with zero failures"
+                  "validation epoch ve_7926507d9a1047a4 completed with zero failures"
                 ],
                 "proof_refs": [
                   "decapod validate"
@@ -257,33 +258,31 @@
       ],
       "destination": "pull request",
       "evidence": [
-        "/private/tmp/dotfiles-clock-proof.py",
-        "Four live readings advanced from 12:06:30 AM through 12:06:34 AM, matching system wall time within one second; update_freq=1 and updates=on verified",
-        "Reviewed complete source inventory: only clock config and status shell changed; required command closure unchanged",
-        "Targeted desktop suite: 27 tests passed, including actual shell clock route for routine/reveal/wake",
-        "validation epoch ve_05148954d1fb6b51 completed with zero failures"
+        "27 desktop tests passed. Live clock label 10:06 AM; update_freq=1, updates=on, label.width=74 and reveal/wake event subscriptions retained.",
+        "Complete source inventory reviewed: only clock formatting and fixed width changed; command closure and native helper sources unchanged.",
+        "validation epoch ve_7926507d9a1047a4 completed with zero failures"
       ],
       "inspected_files": [
         ".config/sketchybar/plugins/status.sh",
         ".config/sketchybar/sketchybarrc"
       ],
-      "intent_id": "intent:change_01M51RDFY6YV0S7H31JWNVK2D0",
+      "intent_id": "intent:change_01M52TT1AFE7NSKQHQNS7VJA74",
       "modified_files": [
         ".decapod/governance.json",
         "tests/test_desktop.py"
       ],
       "next_transitions": [
+        "Complete required exact-candidate proof and publish the already-applied preference",
         "Refine plan and declare falsifiable checks",
-        "Run exact required repository proof and hosted CI; publish and retain clock-only live settings",
         "publish"
       ],
       "repo_scope": [
         "root"
       ],
-      "run_id": "branch_01M51RDG0NBGYRYYGPH79378GZ",
+      "run_id": "branch_01M52TT1D1SYACC1XH3F3CD7XH",
       "schema_version": "1.1.0",
       "shortcut_risk_signals": [],
-      "task_id": "bugs_01m51rcsczgxc6va",
+      "task_id": "code_01m52ts7ryxp67am",
       "tool_calls": [],
       "unresolved_assumptions": []
     },
@@ -298,86 +297,86 @@
       },
       "decapod_release": "0.116.0",
       "drift_findings": [],
-      "elapsed_ms": 2001,
-      "epoch_ref": "ve_05148954d1fb6b51",
+      "elapsed_ms": 2243,
+      "epoch_ref": "ve_7926507d9a1047a4",
       "fail_count": 0,
       "failures": [],
       "gate_timings": [
         {
-          "elapsed_ms": 409,
+          "elapsed_ms": 593,
           "name": "validate_stale_workspaces"
         },
         {
-          "elapsed_ms": 382,
+          "elapsed_ms": 485,
           "name": "validate_project_specs_docs"
         },
         {
-          "elapsed_ms": 298,
+          "elapsed_ms": 329,
           "name": "validate_markdown_primitives_roundtrip_gate"
         },
         {
-          "elapsed_ms": 199,
-          "name": "validate_machine_contract"
-        },
-        {
-          "elapsed_ms": 138,
+          "elapsed_ms": 185,
           "name": "validate_git_workspace_context"
         },
         {
-          "elapsed_ms": 98,
+          "elapsed_ms": 136,
+          "name": "validate_machine_contract"
+        },
+        {
+          "elapsed_ms": 102,
           "name": "validate_obligations"
         },
         {
-          "elapsed_ms": 58,
+          "elapsed_ms": 64,
           "name": "validate_legacy_jsonl_retired"
         },
         {
-          "elapsed_ms": 33,
+          "elapsed_ms": 46,
           "name": "validate_archive_integrity"
         },
         {
-          "elapsed_ms": 20,
+          "elapsed_ms": 24,
           "name": "validate_repomap_determinism"
         },
         {
-          "elapsed_ms": 16,
-          "name": "validate_control_plane_contract"
-        },
-        {
-          "elapsed_ms": 15,
+          "elapsed_ms": 17,
           "name": "validate_schema_determinism"
         },
         {
-          "elapsed_ms": 12,
+          "elapsed_ms": 15,
+          "name": "validate_control_plane_contract"
+        },
+        {
+          "elapsed_ms": 14,
           "name": "validate_git_push_pr_gate"
         },
         {
-          "elapsed_ms": 12,
-          "name": "validate_no_legacy_namespaces"
+          "elapsed_ms": 14,
+          "name": "validate_git_protected_branch"
         },
         {
-          "elapsed_ms": 12,
+          "elapsed_ms": 13,
           "name": "validate_federation_gates"
         },
         {
           "elapsed_ms": 10,
-          "name": "validate_git_protected_branch"
+          "name": "validate_no_legacy_namespaces"
         },
         {
-          "elapsed_ms": 7,
-          "name": "validate_lineage_hard_gate"
-        },
-        {
-          "elapsed_ms": 6,
+          "elapsed_ms": 8,
           "name": "validate_gatekeeper_gate"
         },
         {
-          "elapsed_ms": 3,
+          "elapsed_ms": 8,
+          "name": "validate_lineage_hard_gate"
+        },
+        {
+          "elapsed_ms": 4,
           "name": "validate_generated_artifact_whitelist"
         },
         {
           "elapsed_ms": 3,
-          "name": "validate_lcm_immutability"
+          "name": "validate_watcher_audit"
         },
         {
           "elapsed_ms": 3,
@@ -385,31 +384,23 @@
         },
         {
           "elapsed_ms": 3,
-          "name": "validate_watcher_audit"
+          "name": "validate_lcm_immutability"
         },
         {
-          "elapsed_ms": 2,
+          "elapsed_ms": 3,
           "name": "validate_lcm_rebuild_gate"
-        },
-        {
-          "elapsed_ms": 2,
-          "name": "validate_entrypoint_invariants"
-        },
-        {
-          "elapsed_ms": 2,
-          "name": "validate_knowledge_integrity"
         },
         {
           "elapsed_ms": 2,
           "name": "validate_plan_governed_execution_gate"
         },
         {
-          "elapsed_ms": 1,
-          "name": "validate_health_purity"
+          "elapsed_ms": 2,
+          "name": "validate_knowledge_integrity"
         },
         {
           "elapsed_ms": 1,
-          "name": "validate_validation_receipt_if_present"
+          "name": "validate_trajectory_artifacts_if_present"
         },
         {
           "elapsed_ms": 1,
@@ -421,15 +412,19 @@
         },
         {
           "elapsed_ms": 1,
-          "name": "validate_trajectory_artifacts_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_research_claims_if_present"
+          "name": "validate_health_purity"
         },
         {
           "elapsed_ms": 1,
           "name": "validate_recursive_improvement_passes_if_present"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_entrypoint_invariants"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_research_claims_if_present"
         },
         {
           "elapsed_ms": 1,
@@ -441,15 +436,15 @@
         },
         {
           "elapsed_ms": 1,
+          "name": "validate_validation_receipt_if_present"
+        },
+        {
+          "elapsed_ms": 1,
           "name": "validate_spec_drift"
         },
         {
           "elapsed_ms": 1,
           "name": "validate_health_cache_integrity"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_repo_map"
         },
         {
           "elapsed_ms": 0,
@@ -473,7 +468,7 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_docs_templates_bucket"
+          "name": "validate_context_capsule_policy_contract"
         },
         {
           "elapsed_ms": 0,
@@ -481,15 +476,7 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_context_capsule_policy_contract"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_workunit_manifests_if_present"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_context_capsules_if_present"
+          "name": "validate_docs_templates_bucket"
         },
         {
           "elapsed_ms": 0,
@@ -497,7 +484,19 @@
         },
         {
           "elapsed_ms": 0,
+          "name": "validate_repo_map"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_root_dockerfile_seed_detection"
+        },
+        {
+          "elapsed_ms": 0,
           "name": "validate_embedded_self_contained"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_context_capsules_if_present"
         },
         {
           "elapsed_ms": 0,
@@ -509,15 +508,15 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_root_dockerfile_seed_detection"
+          "name": "validate_eval_gate_if_required"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_workunit_manifests_if_present"
         },
         {
           "elapsed_ms": 0,
           "name": "validate_risk_map"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_eval_gate_if_required"
         },
         {
           "elapsed_ms": 0,
@@ -528,24 +527,24 @@
           "name": "validate_tooling_gate"
         }
       ],
-      "git_revision": "2ad77938d987a9b920922a9886b452037779b916",
+      "git_revision": "6765404c675b14f1f8e8b21c2b1dfed6e9f2d951",
       "kind": "validation_receipt",
       "parallelism": 1,
       "pass_count": 184,
       "prediction_uses_warnings": true,
-      "receipt_hash": "sha256:d5d68762d513d26b5f70d2b101314f0ff31cac204074648ff6c388fa6986547c",
-      "repo_signal_fingerprint": "5b8a47db51f254c4b7baacfbbd7d238791a1f802cb9c748d8a28c28265cc74df",
+      "receipt_hash": "sha256:85f7a8d7171d0ed0cf6a905e08b618a16b97f46a149c14597a56e52f4fce7ab7",
+      "repo_signal_fingerprint": "2ed975429e5acb516732c32f96a4c54cfef1dd0e8b32ed314e2cb29c52d86e47",
       "schema_version": "1.0.0",
       "status": "ok",
       "temporary_artifacts_cleaned": 0,
-      "trajectory_artifact_hash": "sha256:4ddbc403905e4ad2cd0d50222feaaa9d6c829eeb8c4c15ed4d7071b78f515e42",
-      "trajectory_run_id": "branch_01M51RDG0NBGYRYYGPH79378GZ",
+      "trajectory_artifact_hash": "sha256:3b6c43991760e96cf928730b130a8ad259b321c486055eacb8623eb1f1ba0b93",
+      "trajectory_run_id": "branch_01M52TT1D1SYACC1XH3F3CD7XH",
       "warn_count": 4,
       "warnings": [
         "Risk map missing (run `decapod riskmap init`)",
-        "Stale workspaces preserved for explicit review: <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (current_workspace: workspace contains the current process; rerun prune from the host checkout after leaving this workspace so Git can release the branch), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.)",
+        "Stale workspaces preserved for explicit review: <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (current_workspace: workspace contains the current process; rerun prune from the host checkout after leaving this workspace so Git can release the branch), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.)",
         "Watcher audit trail missing (run `decapod govern watcher run`)",
-        "Workspace branch 'agent/unknown/bugs_01m51rcsczgxc6va' has unpushed commits or does not exist on origin. Branch pushes and iteration are allowed before preflight; hold PR creation until intent is converged, the branch is mergeable, and full `decapod validate` succeeds against the exact current candidate and accepted target."
+        "Workspace branch 'agent/unknown/code_01m52ts7ryxp67am' has unpushed commits or does not exist on origin. Branch pushes and iteration are allowed before preflight; hold PR creation until intent is converged, the branch is mergeable, and full `decapod validate` succeeds against the exact current candidate and accepted target."
       ]
     }
   }

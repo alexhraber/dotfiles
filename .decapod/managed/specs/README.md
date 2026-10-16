@@ -20,7 +20,7 @@ they are not evidence of runtime guarantees.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `5b8a47db51f254c4b7baacfbbd7d238791a1f802cb9c748d8a28c28265cc74df`
+- Repository signal fingerprint: `2ed975429e5acb516732c32f96a4c54cfef1dd0e8b32ed314e2cb29c52d86e47`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

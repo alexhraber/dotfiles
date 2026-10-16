@@ -85,10 +85,11 @@ fresh exact-candidate validation and hosted CI before merge; the earlier
 
 The clock regression executes the actual status.sh clock route for routine,
 desktop_revealed and system_woke events with only SketchyBar IPC replaced by a
-recording function. Each emitted label must equal current system time with
-seconds, including across a second boundary. Live queries separately verify
-one-second cadence and advancement against the Mac's clock while the bar is
-hidden; wake subscription is verified without forcing the user's Mac to sleep.
+recording function. Each emitted label must equal current system hours/minutes
+and AM/PM without seconds. Live queries verify update_freq=1 and updates=on
+independently of the compact display format. The earlier second-by-second live
+comparison established hidden-bar advancement against the Mac's clock; cadence
+and reveal/wake hooks remain unchanged by this presentation adjustment.
 The native helper source and identity remain unchanged by this repair.
 
 The Nocturne/native-panel refinement expands the shared suite to 67 tests.
@@ -182,7 +183,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `5b8a47db51f254c4b7baacfbbd7d238791a1f802cb9c748d8a28c28265cc74df`
+- Repository signal fingerprint: `2ed975429e5acb516732c32f96a4c54cfef1dd0e8b32ed314e2cb29c52d86e47`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

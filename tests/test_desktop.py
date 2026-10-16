@@ -23,7 +23,7 @@ spec.loader.exec_module(metrics)
 
 
 class DesktopTests(unittest.TestCase):
-    def test_clock_events_read_current_system_time_with_seconds(self):
+    def test_clock_events_read_current_system_time_without_seconds(self):
         with tempfile.TemporaryDirectory() as temp:
             directory = Path(temp)
             hook = directory / 'shell-hook'
@@ -32,10 +32,10 @@ class DesktopTests(unittest.TestCase):
                 log = directory / event
                 env = dict(os.environ, BASH_ENV=str(hook), CLOCK_LOG=str(log),
                            XDG_STATE_HOME=str(directory), NAME='clock', SENDER=event)
-                before = datetime.now().strftime('%-I:%M:%S %p')
+                before = datetime.now().strftime('%-I:%M %p')
                 subprocess.run(['bash', str(ROOT / '.config/sketchybar/plugins/status.sh')],
                                env=env, check=True, timeout=3)
-                after = datetime.now().strftime('%-I:%M:%S %p')
+                after = datetime.now().strftime('%-I:%M %p')
                 args = log.read_bytes().decode().split('\0')[:-1]
                 self.assertEqual(args[:2], ['--set', 'clock'])
                 self.assertIn(args[2], ('label=' + before, 'label=' + after))

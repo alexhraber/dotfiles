@@ -93,9 +93,10 @@ or popups. Hardware icon labels use fixed widths: CPU/GPU show utilization
 percentages and memory shows used GiB; Fahrenheit temperatures, power,
 capacity and swap remain in the panels.
 The clock has update_freq=1 and explicit updates=on, with desktop_revealed and
-system_woke subscriptions. status.sh formats current /bin/date output with
-seconds on every event, rather than retaining a previous value. A fixed
-96-point label contains the readout without moving adjacent pills. The native
+system_woke subscriptions. status.sh formats current /bin/date output as
+hours/minutes and AM/PM on every event; hiding seconds does not reduce refresh
+cadence or retain a previous value. A fixed 74-point label contains the compact
+readout without moving adjacent pills. The native
 helper is unchanged, retaining its binary identity and existing OS consent.
 Nocturne uses charcoal surfaces, violet clock/Apple/notification accents and
 cyan hardware/weather icons. Native panels are opaque and blur-free.
@@ -236,7 +237,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `5b8a47db51f254c4b7baacfbbd7d238791a1f802cb9c748d8a28c28265cc74df`
+- Repository signal fingerprint: `2ed975429e5acb516732c32f96a4c54cfef1dd0e8b32ed314e2cb29c52d86e47`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

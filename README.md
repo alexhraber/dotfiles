@@ -226,7 +226,7 @@ strip, extra native menu row, or dock divider.
 | --- | --- |
 | Apple | Real Apple menu commands, in the custom style |
 | Active app / File / Edit / View / … | The active application's actual menu commands, disabled states, shortcuts and submenus |
-| Clock | Current macOS time with seconds; native month grid, date selection, previous/next month, today and synced calendar agenda |
+| Clock | Current macOS time; native month grid, date selection, previous/next month, today and synced calendar agenda |
 | Weather | ZIP 97750 forecast, wind in mph, precipitation chance, upcoming hours and extended outlook |
 | Sound | Volume slider, mute, output selection; scroll the bar item for volume |
 | Display | Built-in brightness slider; scroll the bar item to adjust |
@@ -278,7 +278,7 @@ Access; this helper only reads events and provides no event editing. Event title
 remain in memory, and calendar selections stay in private local state.
 
 The clock reads the macOS system clock every second, including while hidden,
-and refreshes on bar reveal and wake. Its fixed-width seconds readout does not
+and refreshes on bar reveal and wake. Seconds stay hidden; its compact fixed-width readout does not
 shift adjacent controls. Time synchronization stays with macOS; no separate NTP
 client, network stream or clock daemon is installed.
 
