@@ -169,13 +169,14 @@ permissions and browser profiles remain locally managed.
 
 The desktop follows the fullscreen workflow: content fills the screen, and
 controls appear at the edges only when needed. Tokyo Night Storm grounds the
-terminal and editor; the desktop has three coordinated glass palettes. Tidal
+terminal and editor; the desktop defaults to Nocturne charcoal, violet and cyan.
+Three alternate palettes remain available. Tidal
 pairs deep petrol with seafoam and brass; Ember uses warm charcoal, copper and
 rose; Iris combines plum, lavender and mint. SF Pro gives system controls a native feel, while monospaced
-text is reserved for code, telemetry and the calendar grid. The unbranded
+text is reserved for code and telemetry. The unbranded
 wallpaper keeps most of the screen quiet.
 
-The default islands layout separates hardware, connections, session and
+The default islands layout separates hardware, connections, battery, clock/weather and
 notifications into individual pills, with an eight-point empty gap between
 sections and no connecting background. Application context stays at the left;
 notifications sit furthest right. The optional ribbon layout joins the right
@@ -189,8 +190,8 @@ shows one icon per open application on a fully transparent background. Its
 fisheye layout moves neighboring icons so magnification stays usable.
 The bar reveals at a fixed position, so controls do not slide away from the
 pointer. Hover requests cancel on exit, panel switches commit together, and
-repeated hover keeps the current popup open. A short bridge grace period lets
-the pointer reach popup rows, graphs and sliders. Reduce Motion is respected
+repeated hover keeps the current panel open. A short bridge grace period lets
+the pointer reach native rows, graphs and sliders. Reduce Motion is respected
 for dock animation. Bar IPC runs away from the animation thread, and
 dock animation stops while hidden.
 
@@ -210,7 +211,7 @@ Install configuration and dependencies, then explicitly enable the desktop:
 scripts/dotfiles desktop apply
 scripts/dotfiles desktop status
 scripts/dotfiles desktop permissions
-scripts/dotfiles desktop theme --theme tidal --layout ribbon
+scripts/dotfiles desktop theme --theme nocturne --layout islands
 scripts/dotfiles desktop undo
 ```
 
@@ -223,7 +224,9 @@ strip, extra native menu row, or dock divider.
 
 | Control | Hover / interaction |
 | --- | --- |
-| Clock | Calendar, previous/next month and today |
+| Apple | Real Apple menu commands, in the custom style |
+| Active app / File / Edit / View / … | The active application's actual menu commands, disabled states, shortcuts and submenus |
+| Clock | Native month grid, date selection, previous/next month, today and synced calendar agenda |
 | Weather | ZIP 97750 forecast, wind in mph, precipitation chance, upcoming hours and extended outlook |
 | Sound | Volume slider, mute, output selection; scroll the bar item for volume |
 | Display | Built-in brightness slider; scroll the bar item to adjust |
@@ -233,7 +236,6 @@ strip, extra native menu row, or dock divider.
 | RAM | Usage graph, capacity and swap details |
 | Battery | Charge, charging state, time estimate, temperature and cycles |
 | Notifications | Furthest right; Notification Center, Focus and hardware alerts |
-| Current app | App Exposé, Mission Control, theme and layout switching |
 
 The hardware icons replace CPU / GPU / RAM words in the main bar; panel headings
 retain descriptive names. `G` beside the memory icon means used GiB; full capacity
@@ -249,13 +251,45 @@ redacted without Location permission; private network/device names are never
 stored in Git. Hardware alerts do not count unread app notifications: macOS
 offers no supported API for reading all other apps' notification content.
 
-Hover the current app name to switch Tidal / Ember / Iris or toggle Ribbon /
-Islands. Changes recolor the live bar, popovers, graphs and sliders in one IPC
-call without restarting. The dock always renders only application artwork,
+Nocturne uses charcoal surfaces, readable violet accents and cyan hardware
+icons, inspired by the owner's NixOS Waybar. From the far right inward, the
+order is notifications, clock, weather, then battery, controls and hardware.
+Eight-point gaps separate the section pills; the outer bar is transparent.
+The left side holds the Apple logo, active app and its actual menu headings.
+
+Use `desktop theme --theme nocturne|tidal|ember|iris --layout islands|ribbon`
+to change the live appearance. The dock always renders only application artwork,
 independent of the bar theme. Text/control contrast is checked against the declared surfaces.
 `themes.json` declares the fresh-machine default; local selections stay in
 private state and survive apply. `desktop theme` changes only appearance,
 without resetting wallpaper or desktop preferences.
+
+All hover controls use native AppKit panels with clear headings, aligned
+details, action highlights and scrollable content. Sound and display use native
+sliders; hardware graphs share a bounded private history and refresh while open.
+Native pointer geometry keeps panels open through the anchor-to-panel crossing.
+Late refreshes cannot reopen a dismissed request or replace a newer panel.
+
+Calendar uses EventKit on macOS 14 or later. Add Google in **System Settings →
+Internet Accounts**, enable Calendars, then use the clock's **Allow calendar
+access** button. The agenda reads the calendars already synced to this Mac;
+**Calendars…** chooses which sources are shown. macOS calls this Full Calendar
+Access; this helper only reads events and provides no event editing. Event titles
+remain in memory, and calendar selections stay in private local state.
+
+Apple/app menus require Accessibility approval for **Desktop Controls**.
+Hover the Apple logo and choose **Enable Accessibility…** if needed. The helper
+reads the active app's Accessibility menu tree and presses the selected real
+command exactly once. Disabled items remain disabled, and a changed foreground
+app invalidates a pending command. Apps that do not expose a menu through
+Accessibility show an unavailable state. No replacement desktop shortcuts are
+installed. Submenus open on hover; native shortcut labels are informational.
+
+The native helper is built atomically as a locally ad-hoc-signed app bundle;
+failed builds cannot replace its active link. It embeds generic permission
+descriptions and no personal signing team. macOS can request approval again
+after a native binary update because an ad-hoc signature is specific to that
+build. Palette/layout changes do not rebuild it. OS consent is never bypassed.
 
 Weather is fixed to ZIP **97750**, using the point returned by the
 [NWS ZIP lookup](https://forecast.weather.gov/zipcity.php?inputstring=97750)

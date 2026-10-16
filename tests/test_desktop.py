@@ -26,7 +26,7 @@ class DesktopTests(unittest.TestCase):
             values = [int(hex_color[i:i+2],16)/255 for i in (0,2,4)]
             values = [v/12.92 if v<=0.04045 else ((v+0.055)/1.055)**2.4 for v in values]
             return sum(a*b for a,b in zip(values,(0.2126,0.7152,0.0722)))
-        for theme in ('tidal','ember','iris'):
+        for theme in ('nocturne','tidal','ember','iris'):
             palette = appearance.resolve(theme,'ribbon')
             for foreground in ('foreground','muted','accent','secondary','warning','danger'):
                 for background in ('surface','popup'):
@@ -50,7 +50,7 @@ class DesktopTests(unittest.TestCase):
             at = argv.index(group)
             self.assertEqual(argv[at+1],'background.drawing='+drawing)
             self.assertEqual(argv[at+2], 'drawing='+drawing)
-        for boundary in ('hardware', 'session', 'notifications'):
+        for boundary in ('hardware', 'session', 'chronicle', 'notifications'):
             at = argv.index('gap_' + boundary)
             self.assertEqual(argv[at+1], 'drawing=on')
         self.assertNotIn('--reload',argv)
@@ -58,74 +58,64 @@ class DesktopTests(unittest.TestCase):
 
     def test_cached_hover_renders_without_waiting_for_device_commands(self):
         with tempfile.TemporaryDirectory() as temp, patch.object(controls, 'STATE', Path(temp)), \
-             patch.object(controls, 'bar') as bar, patch.object(controls.time, 'sleep'), \
+             patch.object(controls, 'native_controls') as native, patch.object(controls.time, 'sleep'), \
              patch.object(controls, 'panel_rows', side_effect=AssertionError('slow device query')):
             controls.store('volume.cache.json', {'time': time.time(), 'rows': [['Sound · 50%', None]]})
             controls.show('volume')
-            self.assertTrue(any('popup.drawing=on' in call.args for call in bar.call_args_list))
+            native.assert_called_once_with()
+            self.assertEqual(controls.read('native-panel.json')['slider'], 50)
 
-    def test_shorter_popup_clears_previous_actions_and_rows(self):
+    def test_shorter_panel_replaces_previous_actions_and_rows(self):
         with tempfile.TemporaryDirectory() as temp, patch.object(controls, 'STATE', Path(temp)), \
-             patch.object(controls, 'bar') as bar:
+             patch.object(controls, 'native_controls'):
+            controls.render_rows('bluetooth', [('Bluetooth', None), ('Connect', ['bluetooth-power', 'on'])])
             controls.render_rows('bluetooth', [('Bluetooth', None)])
-            args = bar.call_args.args
-            at = args.index('bluetooth.row.5')
-            row = args[at:args.index('--set', at)]
-            self.assertIn('drawing=off', row)
-            self.assertIn('click_script=', row)
-            self.assertIn('script=', row)
+            self.assertEqual(controls.read('bluetooth.json'), [None])
+            self.assertEqual(controls.read('native-panel.json')['rows'], [{'text': 'Bluetooth', 'action': False}])
+            self.assertEqual((Path(temp) / 'native-panel.json').stat().st_mode & 0o777, 0o600)
 
     def test_leaving_before_hover_dwell_cancels_pending_popup(self):
         def during_dwell(seconds):
             if seconds == 0.12:
                 controls.leave('cpu')
         with tempfile.TemporaryDirectory() as temp, patch.object(controls, 'STATE', Path(temp)), \
-             patch.object(controls, 'bar') as bar, \
+             patch.object(controls, 'native_controls') as native, \
              patch.object(controls.time, 'sleep', side_effect=during_dwell), \
              patch.object(controls, 'panel_rows', side_effect=AssertionError('cancelled hover fetched data')):
             controls.show('cpu')
-            self.assertFalse(any('popup.drawing=on' in call.args for call in bar.call_args_list))
+            native.assert_not_called()
 
     def test_repeated_hover_does_not_close_and_reopen_current_panel(self):
         with tempfile.TemporaryDirectory() as temp, patch.object(controls, 'STATE', Path(temp)), \
-             patch.object(controls, 'bar') as bar, patch.object(controls.time, 'sleep') as sleep:
+             patch.object(controls, 'native_controls') as native, patch.object(controls.time, 'sleep') as sleep:
             controls.render_rows('volume', [('Sound', None)])
             controls.store('volume.cache.json', {'time': time.time(), 'rows': [['Sound', None]]})
-            bar.reset_mock()
+            native.reset_mock()
             controls.show('volume')
             sleep.assert_not_called()
-            bar.assert_called_once()
-            self.assertNotIn('popup.drawing=off', bar.call_args.args)
+            native.assert_called_once_with()
 
-    def test_panel_switch_commits_close_and_open_in_one_ipc(self):
+    def test_panel_switch_reuses_native_window_with_one_notification(self):
         with tempfile.TemporaryDirectory() as temp, patch.object(controls, 'STATE', Path(temp)), \
-             patch.object(controls, 'bar') as bar:
+             patch.object(controls, 'native_controls') as native:
             controls.render_rows('cpu', [('CPU', None)])
-            bar.reset_mock()
+            native.reset_mock()
             controls.render_rows('gpu', [('GPU', None)])
-            bar.assert_called_once()
-            args = bar.call_args.args
-            self.assertEqual(args[:4], ('--set', 'cpu', 'popup.drawing=off', 'background.drawing=off'))
-            self.assertIn('popup.drawing=on', args)
+            native.assert_called_once_with()
+            self.assertEqual(controls.read('native-panel.json')['name'], 'gpu')
             self.assertEqual(controls.read('active.json')['name'], 'gpu')
 
-    def test_anchor_to_information_row_keeps_popup_without_action_highlight(self):
-        def cross_into_popup(seconds):
-            if seconds == 0.24:
-                controls.keep('cpu.row.0')
+    def test_open_panel_exit_defers_to_native_pointer_geometry(self):
         with tempfile.TemporaryDirectory() as temp, patch.object(controls, 'STATE', Path(temp)), \
-             patch.object(controls, 'bar') as bar, \
-             patch.object(controls.time, 'sleep', side_effect=cross_into_popup):
+             patch.object(controls, 'native_controls') as native, \
+             patch.object(controls.time, 'sleep') as sleep:
             controls.render_rows('cpu', [('CPU', None)])
             controls.store('hover.json', [1, 'cpu'])
-            bar.reset_mock()
+            native.reset_mock()
             controls.leave('cpu')
             self.assertEqual(controls.read('active.json')['name'], 'cpu')
-            self.assertFalse(any('popup.drawing=off' in call.args for call in bar.call_args_list))
-            self.assertIn('background.drawing=off', bar.call_args.args)
-            # Information rows need events too, so crossing them cancels close.
-            controls.render_rows('cpu', [('CPU', None)])
-            self.assertTrue(any(arg.startswith('script=') and arg != 'script=' for arg in bar.call_args.args))
+            native.assert_not_called()
+            sleep.assert_not_called()
 
     def test_old_row_exit_cannot_cancel_new_panel_hover(self):
         with tempfile.TemporaryDirectory() as temp, patch.object(controls, 'STATE', Path(temp)), \
@@ -141,11 +131,54 @@ class DesktopTests(unittest.TestCase):
             controls.render_rows('gpu', [('GPU', None)])
             return [('CPU slow response', None)]
         with tempfile.TemporaryDirectory() as temp, patch.object(controls, 'STATE', Path(temp)), \
-             patch.object(controls, 'bar') as bar, patch.object(controls.time, 'sleep'), \
+             patch.object(controls, 'native_controls'), patch.object(controls.time, 'sleep'), \
              patch.object(controls, 'fresh_rows', side_effect=newer_hover):
             controls.show('cpu')
             self.assertEqual(controls.read('active.json')['name'], 'gpu')
-            self.assertNotIn('label=CPU slow response', bar.call_args.args)
+            self.assertEqual(controls.read('native-panel.json')['rows'][0]['text'], 'GPU')
+
+    def test_native_descriptor_has_no_command_or_private_device_identifier(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(controls, 'STATE', Path(temp)), \
+             patch.object(controls, 'native_controls'):
+            controls.render_rows('bluetooth', [('Bluetooth · On', None), ('Headphones', ['bluetooth-device', '--connect', 'private-address'])])
+            descriptor = controls.read('native-panel.json')
+            self.assertNotIn('private-address', json.dumps(descriptor))
+            self.assertTrue(descriptor['rows'][1]['action'])
+
+    def test_stale_native_action_cannot_operate_new_panel_or_replaced_row(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(controls, 'STATE', Path(temp)), \
+             patch.object(controls, 'native_controls'), patch.object(controls, 'action') as action:
+            controls.render_rows('volume', [('Sound · 50%', None), ('Mute', ['mute', 'true'])])
+            revision = controls.read('native-panel.json')['revision']
+            controls.render_rows('volume', [('Sound · 50%', None), ('Unmute', ['mute', 'false'])])
+            controls.native_action('native-action', 'volume', '1', revision)
+            current = controls.read('native-panel.json')['revision']
+            controls.native_action('native-action', 'volume', '-1', current)
+            action.assert_not_called()
+
+    def test_native_slider_uses_existing_clamped_action_and_rejects_wrong_panel(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(controls, 'STATE', Path(temp)), \
+             patch.object(controls, 'native_controls'), patch.object(controls, 'action') as action, \
+             patch.object(controls, 'fresh_rows', return_value=[('Sound · 100%', None)]):
+            controls.render_rows('volume', [('Sound · 50%', None)])
+            revision = controls.read('native-panel.json')['revision']
+            controls.native_action('native-slider', 'volume', 'nan', revision)
+            action.assert_not_called()
+            controls.native_action('native-slider', 'volume', '150', revision)
+            action.assert_called_once_with(['volume', '150'])
+
+    def test_calendar_pending_hover_cancels_and_reentry_keeps_calendar(self):
+        def during_dwell(seconds):
+            if seconds == 0.12:
+                controls.leave('clock')
+        with tempfile.TemporaryDirectory() as temp, patch.object(controls, 'STATE', Path(temp)), \
+             patch.object(controls, 'native_calendar') as calendar, patch.object(controls, 'native_controls'), \
+             patch.object(controls.time, 'sleep', side_effect=during_dwell):
+            controls.show('clock')
+            calendar.assert_not_called()
+            controls.store('active.json', {'name': 'clock'})
+            controls.show('clock')
+            calendar.assert_called_once_with('')
 
     def test_agent_reapply_keeps_stable_launch_path_and_restarts_new_build(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -167,6 +200,17 @@ class DesktopTests(unittest.TestCase):
             self.assertEqual(agent.read_bytes(), original)
             unload.assert_not_called()
             run.assert_called_once_with('launchctl', 'kickstart', '-k', f'gui/{os.getuid()}/{desktop.LABEL}')
+
+    def test_failed_native_build_never_publishes_partial_app_or_changes_active_link(self):
+        with tempfile.TemporaryDirectory() as temp:
+            directory = Path(temp)
+            (directory / 'desktop-edge').symlink_to('previous-good-build')
+            with patch.object(desktop, 'run', side_effect=RuntimeError('compiler failed')):
+                with self.assertRaisesRegex(RuntimeError, 'compiler failed'):
+                    desktop.compile_tools(directory)
+            self.assertEqual(os.readlink(directory / 'desktop-edge'), 'previous-good-build')
+            self.assertEqual(list(directory.glob('DesktopControls-*.app')), [])
+            self.assertEqual(list(directory.glob('desktop-build-*')), [])
 
     def test_device_actions_are_argv_even_with_hostile_names(self):
         name = 'Speaker \"; $(touch /tmp/should-not-exist)'

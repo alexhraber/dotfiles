@@ -28,9 +28,9 @@ VM image downloads and model inference are not part of portable unit tests.
 
 ## Evidence Artifacts
 
-The host now uses Decapod 0.115.0, verified against the crates.io sparse index
+The host now uses Decapod 0.116.0, verified against the crates.io sparse index
 and installed from the official GitHub release through cargo-binstall.
-The earlier owned verification image used 0.114.3 and must be refreshed.
+The owned verification image was refreshed from 0.115.0 to the same release.
 The shared check owner ran in that image with its declared PATH: ShellCheck,
 all zsh parsers and the earlier 30-test suite passed. This diagnostic execution is separate
 from the required Decapod publication verdict.
@@ -82,6 +82,24 @@ fresh exact-candidate validation and hosted CI before merge; the earlier
 51-test candidate passed both platforms and canonical local readiness.
 
 ## Promotion Gates
+
+The Nocturne/native-panel refinement expands the shared suite to 67 tests.
+It checks readable fourth-theme contrast, cached native descriptors, private
+file modes, row replacement, canceled hover dwell, same-panel reuse, transfers,
+stale device responses, stale native callbacks, slider bounds and failed-build
+atomicity. macOS compilation uses warnings as errors with AppKit, QuartzCore,
+EventKit and ApplicationServices. Native self-tests additionally cover 72 months,
+leap years/DST/year navigation, malformed panel payloads and application-menu
+index/current-app/disabled/submenu action guards. These tests require no real
+calendar content or destructive menu actions.
+
+Actual EventKit access is granted for the final native build and returns seven
+synced calendars and selected-grid events, without recording titles. Accessibility
+approval and actual menu interaction remain separate pending host evidence. Ad-hoc
+native binary updates can require renewed consent. The generic
+native control preview was inspected with deterministic fixture data. Exact
+publication readiness and hosted Linux/macOS jobs remain required after source
+and governance are finalized; compiled/tested does not establish OS consent.
 
 The separate-pill refinement retains the shared 62-test check owner and native
 checks. The live-layout regression now requires all three gap items to be
@@ -156,7 +174,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `45d5943dc5bf0810673bea8f27bdbf72f5d029ac85a221ba183156d2ca1f97d6`
-- Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (6 files)
+- Repository signal fingerprint: `24ed6c04e2cec95be473e0b513645a0537485559fa45f36a7a056a751665c10c`
+- Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

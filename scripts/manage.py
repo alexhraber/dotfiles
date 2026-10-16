@@ -345,7 +345,7 @@ def main():
     parser.add_argument('--git-name')
     parser.add_argument('--git-email')
     parser.add_argument('--signing-key', help='Public SSH key used for Git signing; identity stays local')
-    parser.add_argument('--theme', choices=('tidal', 'ember', 'iris'), help='Desktop palette')
+    parser.add_argument('--theme', choices=('nocturne', 'tidal', 'ember', 'iris'), help='Desktop palette')
     parser.add_argument('--layout', choices=('ribbon', 'islands'), help='Desktop bar layout')
     args = parser.parse_args()
     if args.command == 'ai':

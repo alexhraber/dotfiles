@@ -12,7 +12,7 @@ STATE = Path(os.environ.get('XDG_STATE_HOME', Path.home() / '.local/state')) / '
 LAYOUTS = ('ribbon', 'islands')
 TOKENS = ('surface', 'popup', 'border', 'foreground', 'muted', 'accent',
           'secondary', 'highlight', 'success', 'warning', 'danger')
-PANELS = ('clock', 'weather', 'volume', 'brightness', 'wifi', 'bluetooth', 'alerts', 'battery', 'cpu', 'gpu', 'memory', 'front_app')
+PANELS = ('clock', 'weather', 'volume', 'brightness', 'wifi', 'bluetooth', 'alerts', 'battery', 'cpu', 'gpu', 'memory')
 
 
 def resolve(name=None, layout=None):
@@ -24,7 +24,7 @@ def resolve(name=None, layout=None):
     name = name or saved.get('name', catalog['default'])
     layout = layout or saved.get('layout', catalog['layout'])
     if name not in catalog['themes'] or layout not in LAYOUTS:
-        raise ValueError('Choose tidal, ember or iris; layout ribbon or islands')
+        raise ValueError('Choose nocturne, tidal, ember or iris; layout ribbon or islands')
     palette = catalog['themes'][name]
     if any(not re.fullmatch(r'[0-9a-fA-F]{6}', palette.get(key, '')) for key in TOKENS):
         raise ValueError('Palette colors must be six hexadecimal digits')
@@ -62,33 +62,26 @@ def apply():
     # Apply visibility directly; interpolating boolean drawing properties can
     # leave overlapping bracket backgrounds enabled after a layout switch.
     args = ['sketchybar']
-    for group in ('context', 'ribbon', 'hardware', 'connections', 'session', 'notifications'):
+    for group in ('context', 'chronicle', 'ribbon', 'hardware', 'connections', 'session', 'notifications'):
         active = group == 'context' or (group == 'ribbon') == (palette['layout'] == 'ribbon')
         args += ['--set', group, 'background.drawing=' + ('on' if active else 'off'),
                  'drawing=' + ('on' if active else 'off'),
                  'background.color=' + c('surface', 'eb'), 'background.border_color=' + c('border')]
-    for boundary in ('hardware', 'session', 'notifications'):
+    for boundary in ('hardware', 'session', 'chronicle', 'notifications'):
         args += ['--set', 'gap_' + boundary,
                  'drawing=' + ('on' if palette['layout']=='islands' else 'off')]
     for panel in PANELS:
-        args += ['--set', panel, 'icon.color=' + c('muted'), 'label.color=' + c('foreground'),
-                 'popup.background.color=' + c('popup'), 'popup.background.border_color=' + c('border')]
-        try:
-            actions = json.loads((STATE / 'bar' / (panel + '.json')).read_text())
-        except (OSError, ValueError):
-            actions = []
-        for row in range(14):
-            action = row < len(actions) and actions[row]
-            args += ['--set', f'{panel}.row.{row}', 'label.color=' + c('accent' if action else 'foreground')]
+        args += ['--set', panel, 'icon.color=' + c('muted'), 'label.color=' + c('foreground')]
     for panel in ('cpu', 'gpu', 'memory'):
-        args += ['--set', panel, 'label.color=' + c('muted'),
-                 '--set', panel + '.graph', 'graph.color=' + c('accent'), 'graph.fill_color=' + c('accent', '33')]
-    for panel in ('volume', 'brightness'):
-        args += ['--set', panel + '.slider', 'slider.highlight_color=' + c('accent'),
-                 'slider.background.color=' + c('border')]
+        args += ['--set', panel, 'label.color=' + c('muted'), 'icon.color=' + c('secondary')]
     args += ['--set', 'clock', 'label.color=' + c('foreground'),
              '--set', 'weather', 'label.color=' + c('foreground'),
              '--set', 'battery', 'label.color=' + c('foreground'),
+             '--set', 'apple', 'icon.color=' + c('accent'),
+             '--set', 'front_app', 'label.color=' + c('foreground'),
+             '--set', r'/app_menu\..*/', 'label.color=' + c('foreground'),
+             '--set', 'clock', 'label.color=' + c('accent'),
+             '--set', 'weather', 'icon.color=' + c('secondary'),
              '--set', 'alerts', 'icon.color=' + c('accent')]
     subprocess.run(args, check=True, timeout=5)
 

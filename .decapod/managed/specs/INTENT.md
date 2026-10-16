@@ -69,6 +69,22 @@ downloads, account setup, VM startup troubleshooting and modifying Decapod itsel
 
 ## Fullscreen desktop and on-demand inference
 
+The refined desktop uses Nocturne charcoal/violet/cyan styling across native
+controls. From the far right inward: notifications, clock, weather, then all
+other controls. The left side replaces the decorative workspace affordance
+with the Apple logo and the active application's real app/File/Edit/View/etc.
+menus. Accessibility reads and presses the owning app's actual commands;
+disabled commands and submenus are retained, with no invented per-app actions.
+Local macOS consent is required and remains a user action.
+
+The clock is a native Sunday-first month grid and selected-day agenda, with
+today/month navigation, event dots and per-calendar source selection. EventKit
+reads calendars synced through macOS Internet Accounts, including Google when
+the user enables it there. No OAuth tokens or event content enter Git; events
+stay in memory. Hardware, sound, display, connectivity, battery, notifications
+and weather share native panels with usable hover bridges and explicit actions.
+The helper reads events only even though macOS requires Full Calendar Access.
+
 The top bar should feel restrained and predictable. Section pills are separated
 by a space-sized gap with no background
 connecting them. Islands is the reproducible default.
@@ -123,7 +139,7 @@ These declarations select authoring and proof obligations; they do not attest im
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `45d5943dc5bf0810673bea8f27bdbf72f5d029ac85a221ba183156d2ca1f97d6`
-- Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (6 files)
+- Repository signal fingerprint: `24ed6c04e2cec95be473e0b513645a0537485559fa45f36a7a056a751665c10c`
+- Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

@@ -1,14 +1,12 @@
 """Hover controls for SketchyBar. Device names and samples stay in private state."""
-import calendar
 from contextlib import contextmanager
-from datetime import date
 import fcntl
 import json
+import math
 import os
 from pathlib import Path
 import plistlib
 import re
-import shlex
 import subprocess
 import sys
 import time
@@ -24,16 +22,20 @@ def brightness(*values):
     return command(str(STATE.parent / 'desktop-edge'), '--brightness', *values)
 
 
+def native_calendar(action):
+    return command(str(STATE.parent / 'desktop-edge'), '--calendar' + ('-' + action if action else ''))
+
+
+def native_controls(action=''):
+    return command(str(STATE.parent / 'desktop-edge'), '--controls' + ('-' + action if action else ''))
+
+
 def command(*args, timeout=5):
     return subprocess.check_output(args, text=True, stderr=subprocess.DEVNULL, timeout=timeout).strip()
 
 
 def bar(*args):
     command('sketchybar', *args, timeout=3)
-
-
-def script(*args):
-    return shlex.join(['python3', '-B', str(HERE), *map(str, args)])
 
 
 def store(name, value):
@@ -96,23 +98,13 @@ def panel_rows(name):
     if name == 'weather':
         return weather.rows()
     if name == 'clock':
-        offset = read('calendar.json', 0)
-        today = date.today()
-        month = today.year * 12 + today.month - 1 + offset
-        year, index = divmod(month, 12)
-        lines = calendar.TextCalendar(firstweekday=0).formatmonth(year, index + 1).splitlines()
-        return [(line, None) for line in lines] + [
-            ('← Previous month', ['month', str(offset - 1)]),
-            ('Today', ['month', '0']), ('Next month →', ['month', str(offset + 1)])]
+        return [('Calendar', None), ('Native month grid and synced agenda', None)]
     if name == 'brightness':
         value = brightness()
-        bar('--set', 'brightness.slider', 'slider.percentage=' + value,
-            '--set', 'brightness', 'label=' + value + '%')
         return [('Display · ' + value + '%', None), ('Built-in display brightness', None)]
     if name == 'volume':
         volume = command('osascript', '-e', 'output volume of (get volume settings)')
         muted = command('osascript', '-e', 'output muted of (get volume settings)') == 'true'
-        bar('--set', 'volume.slider', 'slider.percentage=' + volume)
         rows = [('Sound · ' + volume + '%' + (' · muted' if muted else ''), None),
                 ('Unmute' if muted else 'Mute', ['mute', 'false' if muted else 'true'])]
         try:
@@ -176,19 +168,12 @@ def panel_rows(name):
             ('Focus / Control Center', ['native', 'Control Center']),
             ('System health', None)] + [(message, None) for message in messages] + (
                 [('All clear', None)] if not messages else [])
-    if name == 'front_app':
-        palette = appearance.resolve()
-        return [('Current application', None), ('Show app windows', ['expose']),
-                ('Mission Control', ['mission-control']), ('Appearance', None)] + [
-                (('● ' if palette['name']==theme else '○ ') + title, ['appearance', '--theme', theme])
-                for theme, title in (('tidal','Tidal · petrol / seafoam'), ('ember','Ember · charcoal / copper'), ('iris','Iris · plum / lavender'))] + [
-                ('Layout · ' + palette['layout'].title(), ['appearance', '--layout', 'islands' if palette['layout']=='ribbon' else 'ribbon'])]
     metrics = sample()
     if not metrics:
         return [('Waiting for hardware sample…', None)]
     if name == 'memory':
         memory = metrics['memory']
-        return [('Memory', None)] + [
+        return [(f'Memory · {memory["ram_usage"]/2**30:.1f} GiB', None)] + [
             (f'{label} · {memory[key]/2**30:.2f} GiB', None)
             for key, label in (('ram_usage', 'Used'), ('ram_total', 'Total'),
                                ('swap_usage', 'Swap used'), ('swap_total', 'Swap capacity'))]
@@ -210,6 +195,12 @@ def show(name):
     with interaction():
         if read('hover.json') != token:
             return
+        if name == 'clock':
+            if not already_open:
+                close_panels()
+            native_calendar('')
+            store('active.json', {'name': name, 'time': time.time()})
+            return
     cached = read(name + '.cache.json', {})
     if cached.get('rows'):
         if not render_rows(name, cached['rows'], token):
@@ -224,37 +215,13 @@ def show(name):
     render_rows(name, rows, token)
 
 
-def keep(item):
-    name = item.split('.', 1)[0]
-    with interaction():
-        if read('active.json', {}).get('name') != name:
-            return
-        store('hover.json', [time.time_ns(), name])
-        actions = read(name + '.json', [])
-        parts = item.split('.')
-        actionable = len(parts)==3 and parts[1]=='row' and parts[2].isdigit() \
-            and int(parts[2])<len(actions) and actions[int(parts[2])]
-        if len(parts)==3:
-            bar('--set', item, 'background.drawing=' + ('on' if actionable else 'off'),
-                'background.color=' + appearance.color('highlight'))
-
-
 def leave(item):
     name = item.split('.', 1)[0]
-    token = [time.time_ns(), None]
+    # Native windows own exit hysteresis and their anchor-to-panel bridge.
+    # Cancel a pending open, but retain an open panel while crossing into it.
     with interaction():
-        if '.row.' in item:
-            bar('--set', item, 'background.drawing=off')
-        current = read('hover.json', [None, None])
-        if current[1] != name:
-            return
-        # Cancel pending opens immediately; give the pointer time to bridge
-        # from the anchor into its popup (or between rows/slider/graph).
-        store('hover.json', token)
-    time.sleep(0.24)
-    with interaction():
-        if read('hover.json') == token:
-            close_panels()
+        if read('active.json', {}).get('name') != name and read('hover.json', [None, None])[1] == name:
+            store('hover.json', [time.time_ns(), None])
 
 
 def fresh_rows(name):
@@ -277,23 +244,22 @@ def render_rows(name, rows, token=None):
 def _render_rows(name, rows):
     rows = rows[:14]
     store(name + '.json', [action for _, action in rows])
-    previous = read('active.json', {}).get('name')
-    args = []
-    if previous and previous != name:
-        args += ['--set', previous, 'popup.drawing=off', 'background.drawing=off']
-    for i in range(14):
-        label, action = rows[i] if i < len(rows) else ('', None)
-        calendar_grid = name=='clock' and 0<i<8
-        font = 'SF Mono:Regular:12.0' if calendar_grid else 'SF Pro:Semibold:13.0' if i==0 else 'SF Pro:Medium:12.0' if action else 'SF Pro:Regular:12.0'
-        args += ['--set', f'{name}.row.{i}', 'drawing=' + ('on' if i < len(rows) else 'off'),
-                 'label=' + label, 'label.color=' + appearance.color('accent' if action else 'foreground'),
-                 'label.font=' + font, 'label.align=' + ('center' if name=='clock' else 'left'),
-                 'background.drawing=off',
-                 'script=' + (shlex.quote(str(HERE.parent/'status.sh')) if i < len(rows) else ''),
-                 'click_script=' + (script('action', name, i) if action else '')]
-    args += ['--set', name, 'popup.drawing=on', 'background.drawing=on',
-             'background.color=' + appearance.color('highlight', '66')]
-    bar(*args)
+    document = {'name': name, 'revision': str(time.time_ns()), 'request': str(read('hover.json', [0])[0]),
+                'rows': [{'text': str(label)[:512], 'action': bool(action)} for label, action in rows]}
+    if name == 'weather' and len(rows) > 1 and rows[1][0].startswith('Hourly forecast · '):
+        document['rows'][0]['text'] = 'Weather · ' + rows[1][0].split(' · ', 1)[1]
+        document['rows'][1]['text'] = rows[0][0]
+    elif name == 'alerts':
+        document['rows'][0]['text'] = 'Notifications · Quick controls'
+    if name in ('volume', 'brightness') and rows:
+        value = re.search(r'(\d+)%', rows[0][0])
+        if value:
+            document['slider'] = max(0, min(100, int(value[1])))
+    history = read('history.json', {}).get(name, [])
+    if name in ('cpu', 'gpu', 'memory') and history:
+        document['history'] = history[-60:]
+    store('native-panel.json', document)
+    native_controls()
     store('active.json', {'name': name, 'time': time.time()})
 
 
@@ -325,18 +291,41 @@ end tell
 
 
 def close_panels():
-    args = []
-    for panel in PANELS:
-        args += ['--set', panel, 'popup.drawing=off', 'background.drawing=off']
-    bar(*args)
+    native_calendar('hide')
+    native_controls('hide')
     store('active.json', {})
+
+
+def native_action(kind, name, value, revision):
+    """Reject stale native rows; callbacks carry indices/percentages, never code."""
+    with interaction():
+        document = read('native-panel.json', {})
+        if document.get('name') != name or document.get('revision') != revision:
+            return
+        if read('active.json', {}).get('name') != name:
+            return
+        token = read('hover.json')
+        if kind == 'native-slider':
+            if name not in ('volume', 'brightness') or not math.isfinite(float(value)):
+                return
+            selected = [name, value]
+        else:
+            actions = read(name + '.json', [])
+            index = int(value)
+            if index < 0 or index >= len(actions) or not actions[index]:
+                return
+            selected = actions[index]
+    try:
+        action(selected)
+        rows = fresh_rows(name)
+    except (OSError, subprocess.SubprocessError, ValueError):
+        rows = [(name.title(), None), ('Action unavailable · check local permissions', None)]
+    render_rows(name, rows, token)
 
 
 def action(args):
     kind, *values = args
-    if kind == 'month':
-        store('calendar.json', int(values[0]))
-    elif kind == 'mute':
+    if kind == 'mute':
         command('osascript', '-e', 'set volume output muted ' + values[0])
     elif kind == 'volume':
         value = max(0, min(100, int(float(values[0]))))
@@ -354,13 +343,6 @@ def action(args):
         command('blueutil', *values)
     elif kind == 'native':
         native_item(values[0])
-    elif kind == 'mission-control':
-        command('open', '-a', 'Mission Control')
-    elif kind == 'expose':
-        # Standard App Exposé; only on an explicit click.
-        command('osascript', '-e', 'tell application "System Events" to key code 125 using control down')
-    elif kind == 'appearance':
-        command(str(HERE.parents[3] / 'scripts/dotfiles'), 'desktop', 'theme', *values, timeout=10)
     elif kind == 'weather-refresh':
         subprocess.Popen([sys.executable,'-B',str(HERE.parent/'weather.py'),'--refresh'],
                          stdin=subprocess.DEVNULL,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
@@ -372,8 +354,6 @@ def main():
     kind, name, *extra = sys.argv[1:]
     if kind == 'hover' and name in PANELS:
         show(name)
-    elif kind == 'keep' and name.split('.', 1)[0] in PANELS:
-        keep(name)
     elif kind == 'leave' and name.split('.', 1)[0] in PANELS:
         leave(name)
     elif kind == 'access':
@@ -396,9 +376,8 @@ def main():
         with interaction():
             store('hover.json', [time.time_ns(), None])
             close_panels()
-    elif kind == 'slider':
-        if name in ('volume', 'brightness'):
-            action([name, os.environ.get('PERCENTAGE', '0')])
+    elif kind in ('native-action', 'native-slider') and name in PANELS and len(extra) == 2:
+        native_action(kind, name, *extra)
     elif kind == 'refresh' and name in ('wifi', 'bluetooth'):
         try:
             powered = command('blueutil', '--power') == '1' if name == 'bluetooth' else command(
@@ -412,17 +391,6 @@ def main():
         value = int(brightness() if name == 'brightness' else command('osascript', '-e', 'output volume of (get volume settings)'))
         delta = max(-5, min(5, int(float(os.environ.get('SCROLL_DELTA', '0')))))
         action([name, str(value + delta * 2)])
-    elif kind == 'action' and name in PANELS:
-        actions = read(name + '.json', [])
-        selected = actions[int(extra[0])]
-        if selected:
-            try:
-                bar('--set', f'{name}.row.{extra[0]}', 'label=Updating…')
-                action(selected)
-                (STATE / (name+'.cache.json')).unlink(missing_ok=True)
-                show(name)
-            except (OSError, subprocess.SubprocessError, ValueError):
-                bar('--set', f'{name}.row.0', 'label=Action unavailable · check local permissions')
 
 
 if __name__ == '__main__':

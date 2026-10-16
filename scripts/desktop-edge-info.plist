@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>CFBundleIdentifier</key><string>local.dotfiles.desktop-edge</string>
+  <key>CFBundleName</key><string>Desktop Controls</string>
+  <key>CFBundleDisplayName</key><string>Desktop Controls</string>
+  <key>CFBundleExecutable</key><string>desktop-edge</string>
+  <key>CFBundlePackageType</key><string>APPL</string>
+  <key>CFBundleVersion</key><string>1</string>
+  <key>LSUIElement</key><true/>
+  <key>NSCalendarsFullAccessUsageDescription</key><string>Show your synced Google Calendar agenda in the menu bar. Desktop Controls only reads events.</string>
+</dict></plist>

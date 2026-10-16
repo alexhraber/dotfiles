@@ -92,6 +92,11 @@ Crowded layouts scale to fit. Exit hysteresis is 320 ms. Hover controls
 include calendar, sound/output/mute, built-in brightness, Wi-Fi power/details,
 paired Bluetooth devices, battery and Fahrenheit CPU/GPU telemetry. Notifications
 are furthest right; hardware warnings are not an unread notification count.
+From that right edge inward, clock and weather come immediately after
+notifications. The Apple logo and actual foreground-app menu headings occupy
+the left. Hover reads real menu contents; clicking enabled leaf commands uses
+AXPress, with submenus, disabled states and shortcut labels retained. This
+requires Desktop Controls Accessibility approval. No app-menu data is persisted.
 Native quick panels need local OS permissions. No desktop-navigation keyboard
 substitute or automatic Space destruction is installed.
 
@@ -101,20 +106,28 @@ memory in GiB (`G`); temperatures in °F, total capacity, swap, power and fans
 remain available on hover.
 Sound and brightness are icons alone. Heat and swap warning colors remain.
 The bar reveals in place at y_offset=4. A 120ms hover dwell is canceled by exit;
-240ms grace supports crossing into popups. Reentering an open panel does not
-close/reopen it. Information rows keep the popup alive without action styling.
+native window/anchor geometry and 320ms grace support crossing into panels.
+Reentering an open panel does not close/reopen it. Only actions highlight.
 
 The dock renders only app icons over fully transparent pixels. It has no shelf,
 blur, border, shadow, text, badges or active markers. Autohide, magnification,
 one icon per application and right-click Show windows/Hide/Quit are retained;
 blank transparent space passes clicks through.
 
-Islands is now the default, with eight-point gaps between section pills
+Nocturne/Islands is the fresh-machine default, with eight-point gaps between section pills
 and the connecting ribbon background off. Optional ribbon hides those spacers.
-desktop theme --theme tidal|ember|iris --layout ribbon|islands restyles existing
+desktop theme --theme nocturne|tidal|ember|iris --layout ribbon|islands restyles existing
 bar items without reloading, changing wallpaper or restarting the helper.
-The current-app hover panel offers the same choices. themes.json declares
-the reproducible default; private state retains local selections across apply.
+themes.json declares the reproducible default; private state retains local
+selections across apply. The current-app control now opens its real app menu.
+
+Clock opens a native 42-cell Sunday-first month grid with month/today navigation,
+selected-day agenda, event dots and Calendars source selection. The helper
+requests macOS Full Calendar Access only on an explicit connect action and only
+reads EventKit events. Google authentication/sync belongs to macOS Internet
+Accounts. All synced sources can be selected locally; no Google token is tracked.
+Ad-hoc-signed binary updates can require renewed OS approval; theme changes do
+not rebuild. Local client notifications carry only bounded action names/indices.
 
 Weather is next to the clock and leaves notifications furthest right. The
 declared ZIP97750 NWS lookup point is44.662,-119.788; no location tracking or
@@ -141,7 +154,7 @@ can leave partial state; the backup manifest remains the recovery input.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `45d5943dc5bf0810673bea8f27bdbf72f5d029ac85a221ba183156d2ca1f97d6`
-- Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (6 files)
+- Repository signal fingerprint: `24ed6c04e2cec95be473e0b513645a0537485559fa45f36a7a056a751665c10c`
+- Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
