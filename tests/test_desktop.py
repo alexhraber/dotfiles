@@ -1,8 +1,10 @@
 import importlib.util
+from datetime import datetime
 import json
 import os
 from pathlib import Path
 import sys
+import subprocess
 import tempfile
 import time
 import unittest
@@ -21,6 +23,23 @@ spec.loader.exec_module(metrics)
 
 
 class DesktopTests(unittest.TestCase):
+    def test_clock_events_read_current_system_time_with_seconds(self):
+        with tempfile.TemporaryDirectory() as temp:
+            directory = Path(temp)
+            hook = directory / 'shell-hook'
+            hook.write_text('sketchybar() { printf "%s\\0" "$@" > "$CLOCK_LOG"; }\n')
+            for event in ('routine', 'desktop_revealed', 'system_woke'):
+                log = directory / event
+                env = dict(os.environ, BASH_ENV=str(hook), CLOCK_LOG=str(log),
+                           XDG_STATE_HOME=str(directory), NAME='clock', SENDER=event)
+                before = datetime.now().strftime('%-I:%M:%S %p')
+                subprocess.run(['bash', str(ROOT / '.config/sketchybar/plugins/status.sh')],
+                               env=env, check=True, timeout=3)
+                after = datetime.now().strftime('%-I:%M:%S %p')
+                args = log.read_bytes().decode().split('\0')[:-1]
+                self.assertEqual(args[:2], ['--set', 'clock'])
+                self.assertIn(args[2], ('label=' + before, 'label=' + after))
+
     def test_theme_text_and_controls_have_readable_contrast(self):
         def luminance(hex_color):
             values = [int(hex_color[i:i+2],16)/255 for i in (0,2,4)]

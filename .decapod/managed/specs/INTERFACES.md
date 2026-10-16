@@ -97,6 +97,10 @@ notifications. The Apple logo and actual foreground-app menu headings occupy
 the left. Hover reads real menu contents; clicking enabled leaf commands uses
 AXPress, with submenus, disabled states and shortcut labels retained. This
 requires Desktop Controls Accessibility approval. No app-menu data is persisted.
+Clock labels use local 12-hour time including seconds, sourced from macOS once
+per second while shown or hidden. Reveal and wake also request a fresh value.
+The calendar hover/click interface is unchanged; no new service, time-setting
+command or independent NTP/network synchronization is introduced.
 Native quick panels need local OS permissions. No desktop-navigation keyboard
 substitute or automatic Space destruction is installed.
 
@@ -154,7 +158,7 @@ can leave partial state; the backup manifest remains the recovery input.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `24ed6c04e2cec95be473e0b513645a0537485559fa45f36a7a056a751665c10c`
+- Repository signal fingerprint: `5b8a47db51f254c4b7baacfbbd7d238791a1f802cb9c748d8a28c28265cc74df`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

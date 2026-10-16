@@ -84,6 +84,10 @@ the user enables it there. No OAuth tokens or event content enter Git; events
 stay in memory. Hardware, sound, display, connectivity, battery, notifications
 and weather share native panels with usable hover bridges and explicit actions.
 The helper reads events only even though macOS requires Full Calendar Access.
+Its bar label must show current macOS time with seconds, refresh every second
+even when hidden, and update immediately on reveal and wake. A correct system
+clock must never appear minutes behind through a stale cached display. This
+uses macOS time synchronization and adds no NTP client or clock daemon.
 
 The top bar should feel restrained and predictable. Section pills are separated
 by a space-sized gap with no background
@@ -139,7 +143,7 @@ These declarations select authoring and proof obligations; they do not attest im
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `24ed6c04e2cec95be473e0b513645a0537485559fa45f36a7a056a751665c10c`
+- Repository signal fingerprint: `5b8a47db51f254c4b7baacfbbd7d238791a1f802cb9c748d8a28c28265cc74df`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

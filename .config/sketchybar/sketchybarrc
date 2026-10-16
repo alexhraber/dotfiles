@@ -28,8 +28,8 @@ for menu in {0..11}; do
     label.font='SF Pro:Medium:12.0' label.max_chars=16 padding_left=4 padding_right=4 \
     script="\"$plugin\"" --subscribe "app_menu.$menu" mouse.entered mouse.clicked
 done
-sketchybar --add item clock right --set clock icon.drawing=off label.width=74 label.align=center update_freq=30 \
-  label.color="$UI_SECONDARY" script="\"$plugin\""
+sketchybar --add item clock right --set clock icon.drawing=off label.width=96 label.align=center update_freq=1 updates=on \
+  label.color="$UI_SECONDARY" script="\"$plugin\"" --subscribe clock desktop_revealed system_woke
 sketchybar --add item weather right --set weather icon='󰖙' label='—' label.width=43 label.align=right script="\"$plugin\"" \
   update_freq=900 updates=when_shown --subscribe weather desktop_revealed system_woke
 sketchybar --add item battery right --set battery icon='󰁹' label.width=34 label.align=right update_freq=60 \

@@ -54,7 +54,7 @@ case "${NAME:-}" in
       icon.background.image="app.${INFO:-Finder}"
     ;;
   clock)
-    sketchybar --set "$NAME" label="$(date '+%-I:%M %p')"
+    sketchybar --set "$NAME" label="$(/bin/date '+%-I:%M:%S %p')"
     ;;
   battery)
     charge="$(pmset -g batt | sed -nE 's/.*[[:space:]]([0-9]+%);.*/\1/p')"
