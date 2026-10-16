@@ -63,6 +63,11 @@ Native control descriptors are private bounded JSON read from one fixed path;
 the helper rejects symlinks, wrong owner/mode, nonregular files and malformed
 types/ranges. Descriptors contain display text and action booleans, not shell
 commands. Callbacks use fixed executable/script paths and literal arguments;
+Extended forecast cards are capped at six, text is bounded, condition names
+come from an allowlist, and hardware/battery meters reject nonfinite/out-of-range
+values. The weather strip reads cached declared-location data without new
+network requests, account state or location permission. Deterministic preview
+fixtures contain no actual calendar events, device identifiers or network names.
 backend revision/panel/index checks select previously generated argv actions.
 This is local-user tooling, not isolation from a compromised same-user process.
 
@@ -96,7 +101,7 @@ loads a model. Ollama remains manually started and is not enabled at login.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `2ed975429e5acb516732c32f96a4c54cfef1dd0e8b32ed314e2cb29c52d86e47`
+- Repository signal fingerprint: `e6d3a1aa54f0e646abd9c791efc056f7ddba4cb28a935b3c3486c1c643040fc6`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

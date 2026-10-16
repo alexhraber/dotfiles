@@ -117,6 +117,18 @@ The dock renders only app icons over fully transparent pixels. It has no shelf,
 blur, border, shadow, text, badges or active markers. Autohide, magnification,
 one icon per application and right-click Show windows/Hide/Quit are retained;
 blank transparent space passes clicks through.
+Native control descriptors may include subtitle text (160 characters), a finite
+0–1 meter for CPU/GPU/memory/battery, and up to six weather forecast cards.
+Each card contains hour, temperature, condition and precipitation strings of
+at most 16 characters. Condition is one of clear, night, cloudy, rain, snow,
+storm or fog; it maps to a fixed SF Symbol inside the helper. These fields
+carry display data only and cannot select commands or arbitrary symbols.
+The compiled helper accepts --controls-preview PATH [PANEL] for deterministic
+nonpersonal fixtures; omission retains the CPU preview. All ten native control
+panel types are supported. Dock geometry and hit rectangles remain unchanged;
+its smoothing is time-based and its timer follows the target display up to 120 Hz.
+The private desktop status record includes controls.backend_available, true
+when a supported installed Python executable can launch native callbacks.
 
 Nocturne/Islands is the fresh-machine default, with eight-point gaps between section pills
 and the connecting ribbon background off. Optional ribbon hides those spacers.
@@ -158,7 +170,7 @@ can leave partial state; the backup manifest remains the recovery input.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `2ed975429e5acb516732c32f96a4c54cfef1dd0e8b32ed314e2cb29c52d86e47`
+- Repository signal fingerprint: `e6d3a1aa54f0e646abd9c791efc056f7ddba4cb28a935b3c3486c1c643040fc6`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

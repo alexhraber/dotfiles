@@ -9,4 +9,4 @@ void DFControlsTick(double now, NSPoint pointer);
 BOOL DFControlsContainsPointer(NSPoint pointer);
 NSDictionary *DFControlsStatus(void);
 int DFControlsSelfTest(void);
-BOOL DFControlsPreview(NSString *path);
+BOOL DFControlsPreview(NSString *path, NSString *kind);

@@ -127,7 +127,28 @@ def bar_values(data):
     return icon(period), label, appearance.color('warning' if stale else 'secondary')
 
 
-def rows():
+def outlook():
+    """Six cached hours for the native panel; hover never fetches the network."""
+    config = json.loads(CONFIG.read_text())
+    result = []
+    for period in periods(cached(config))[:6]:
+        description = period.get('shortForecast', '').lower()
+        condition = next((kind for word, kind in (
+            ('thunder', 'storm'), ('snow', 'snow'), ('rain', 'rain'),
+            ('shower', 'rain'), ('fog', 'fog'), ('cloud', 'cloudy'))
+            if word in description), 'clear' if period.get('isDaytime', True) else 'night')
+        probability = period.get('probabilityOfPrecipitation', {}).get('value')
+        precipitation = f'{probability:.0f}%' if isinstance(probability, (int, float)) and math.isfinite(probability) and 0 <= probability <= 100 else '—'
+        try:
+            hour = datetime.fromisoformat(period['startTime']).strftime('%-I%p').lower()
+        except (KeyError, TypeError, ValueError):
+            continue
+        result.append({'hour': hour, 'temperature': temperature(period),
+                       'condition': condition, 'precipitation': precipitation})
+    return result
+
+
+def rows(include_hours=True):
     config = json.loads(CONFIG.read_text())
     data = cached(config)
     available = periods(data)
@@ -140,7 +161,7 @@ def rows():
               ('Wind · '+period.get('windDirection','')+' '+period.get('windSpeed','—'),None)]
     probability = period.get('probabilityOfPrecipitation', {}).get('value')
     result.append(('Precipitation · '+(f'{probability:.0f}%' if probability is not None else '—'),None))
-    for upcoming in available[1:8:3]:
+    for upcoming in available[1:8:3] if include_hours else []:
         hour = datetime.fromisoformat(upcoming['startTime']).strftime('%-I %p')
         result.append((hour+' · '+temperature(upcoming)+' · '+upcoming.get('shortForecast',''),None))
     for upcoming in data['daily'][:4]:
@@ -158,7 +179,7 @@ def main():
     hover = read('hover.json', [])
     if len(hover)==2 and hover[1]=='weather':
         import controls
-        controls.render_rows('weather', rows(), hover)
+        controls.render_rows('weather', rows(include_hours=False), hover)
 
 
 if __name__ == '__main__':

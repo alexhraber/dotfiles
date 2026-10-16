@@ -264,11 +264,22 @@ independent of the bar theme. Text/control contrast is checked against the decla
 private state and survive apply. `desktop theme` changes only appearance,
 without resetting wallpaper or desktop preferences.
 
-All hover controls use native AppKit panels with clear headings, aligned
-details, action highlights and scrollable content. Sound and display use native
-sliders; hardware graphs share a bounded private history and refresh while open.
+All hover controls use native AppKit panels with SF Symbol headings, large
+current readings, a violet accent rule and cyan detail graphs. CPU, GPU, memory
+and battery use capacity meters and two-column detail cards. Sound and display
+use accent-colored native sliders; hardware graphs show a 0–100% scale and latest
+sample, share a bounded private history and refresh while open. Weather adds six
+cached hourly cards with conditions, Fahrenheit temperatures and precipitation
+chance above the extended outlook. Device actions have distinct hover targets
+and connected-device indicators; longer panels scroll without a second background.
 Native pointer geometry keeps panels open through the anchor-to-panel crossing.
 Late refreshes cannot reopen a dismissed request or replace a newer panel.
+Native actions select the installed versioned Homebrew Python first, with Intel
+Homebrew and system-Python fallbacks; a missing unversioned `python3` link does
+not silently disable buttons. Desktop status reports backend availability.
+Deterministic, account-free native previews are available through the compiled
+helper: `desktop-edge --controls-preview /tmp/panel.png weather` (or `cpu`, `gpu`,
+`memory`, `battery`, `volume`, `brightness`, `wifi`, `bluetooth`, `alerts`).
 
 Calendar uses EventKit on macOS 14 or later. Add Google in **System Settings →
 Internet Accounts**, enable Calendars, then use the clock's **Allow calendar
@@ -314,6 +325,9 @@ peak hover size is 77.5 points, 25% larger than the previous 62-point peak
 transparent: no glass, shelf, border, shadow, labels, badges or active markers.
 Click an icon to activate it; right-click for Show windows / Hide / Quit.
 Empty transparent regions pass clicks through to the application underneath.
+Magnification uses elapsed-time smoothing at up to the display's native 120 Hz,
+settles exactly, and avoids animation redraws once stationary. Reduce Motion
+snaps both zoom and horizontal tracking to their targets.
 Finder appears only when it has a window. Window counts use public WindowServer
 metadata; they do not scrape titles or require screen recording. There are no
 pinned apps, separator, Trash, or new desktop-navigation bindings.

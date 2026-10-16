@@ -101,6 +101,11 @@ static NSRect dockRevealRect(NSRect screen, NSUInteger count) {
     return NSOffsetRect(footprint,frame.origin.x,frame.origin.y);
 }
 
+static CGFloat settle(CGFloat value, CGFloat target, double elapsed, double response, CGFloat tolerance) {
+    CGFloat next=value+(target-value)*(1-exp(-elapsed/response));
+    return fabs(target-next)<tolerance ? target : next;
+}
+
 static int layoutSelfTest(void) {
     for (NSUInteger count=1; count<=40; count++) for (int width=800; width<=2200; width+=200)
         for (int point=0; point<=width; point+=37) {
@@ -127,7 +132,17 @@ static int layoutSelfTest(void) {
         }
         if (NSPointInRect(NSMakePoint(NSMidX(reveal),NSMaxY(reveal)+1),reveal)) return 1;
     }
+    CGFloat reference=0;
+    for (int rate=30;rate<=120;rate*=2) {
+        CGFloat value=0;
+        for (int i=0;i<rate/10;i++) value=settle(value,1,1.0/rate,0.067,0.00001);
+        if (rate==30) reference=value;
+        else if (fabs(value-reference)>0.00001) return 1;
+        for (int i=rate/10;i<rate;i++) value=settle(value,1,1.0/rate,0.067,0.00001);
+        if (value!=1) return 1;
+    }
     puts("Dock geometry: bottom alignment, reveal footprint, 25% larger peak, bounds and non-overlap passed.");
+    puts("Dock motion: elapsed-time smoothing is frame-rate independent and settles exactly.");
     return 0;
 }
 
@@ -136,6 +151,7 @@ static int layoutSelfTest(void) {
 @property CGFloat hover;
 @property CGFloat smoothedHover;
 @property CGFloat zoom;
+@property double lastStep;
 - (void)step;
 @end
 
@@ -151,14 +167,18 @@ static int layoutSelfTest(void) {
     return -1;
 }
 - (void)step {
+    double now=CACurrentMediaTime(), elapsed=self.lastStep ? MIN(0.1,now-self.lastStep) : 1.0/60;
+    self.lastStep=now;
+    CGFloat previousZoom=self.zoom, previousHover=self.smoothedHover;
     CGFloat desired = self.hover < 0 ? 0 : 1;
     self.zoom = NSWorkspace.sharedWorkspace.accessibilityDisplayShouldReduceMotion
-        ? desired : self.zoom+(desired-self.zoom)*0.22;
+        ? desired : settle(self.zoom,desired,elapsed,0.067,0.001);
     if (self.hover >= 0) {
         if (self.smoothedHover < 0) self.smoothedHover = self.hover;
-        else self.smoothedHover += (self.hover-self.smoothedHover)*0.3;
+        else self.smoothedHover = NSWorkspace.sharedWorkspace.accessibilityDisplayShouldReduceMotion
+            ? self.hover : settle(self.smoothedHover,self.hover,elapsed,0.047,0.05);
     }
-    [self setNeedsDisplay:YES];
+    if (self.zoom!=previousZoom || self.smoothedHover!=previousHover) [self setNeedsDisplay:YES];
 }
 - (void)drawRect:(__unused NSRect)dirty {
     NSRectFillUsingOperation(self.bounds,NSCompositingOperationClear);
@@ -253,6 +273,7 @@ static void refreshApps(void) {
     for (NSRunningApplication *app in running)
         if (![ordered containsObject:app]) [ordered addObject:app];
     dockView.apps = ordered;
+    [dockView setNeedsDisplay:YES];
 }
 
 static void dockTick(double now, NSPoint pointer) {
@@ -269,6 +290,7 @@ static void dockTick(double now, NSPoint pointer) {
         dockView.hover = pointer.x-NSMinX(end);
         dockView.smoothedHover = dockView.hover;
         dockView.zoom = 0;
+        dockView.lastStep=0;
         [dockPanel setFrame:NSOffsetRect(end,0,-8) display:NO];
         dockPanel.alphaValue = 0;
         [dockPanel orderFrontRegardless];
@@ -280,7 +302,8 @@ static void dockTick(double now, NSPoint pointer) {
             [dockPanel.animator setAlphaValue:1];
         } completionHandler:nil];
         [dockAnimationTimer invalidate];
-        dockAnimationTimer = [NSTimer scheduledTimerWithTimeInterval:1.0/60 repeats:YES block:^(__unused NSTimer *timer) {
+        NSInteger frameRate=MAX(30,MIN(120,target.maximumFramesPerSecond));
+        dockAnimationTimer = [NSTimer scheduledTimerWithTimeInterval:1.0/frameRate repeats:YES block:^(__unused NSTimer *timer) {
             if (!dockPanel.visible) return;
             NSPoint mouse = NSEvent.mouseLocation;
             dockView.hover = NSPointInRect(mouse,NSInsetRect(dockPanel.frame,-6,-6))
@@ -316,7 +339,6 @@ static void dockTick(double now, NSPoint pointer) {
         }
     }
     dockView.hover = NSPointInRect(pointer, active) ? pointer.x-NSMinX(dockPanel.frame) : -1;
-    [dockView setNeedsDisplay:YES];
 }
 
 static BOOL insideBarWindow(NSPoint pointer) {
@@ -454,9 +476,9 @@ int main(int argc, const char **argv) { @autoreleasepool {
     if (argc==2 && (strcmp(argv[1],"--controls")==0 || strcmp(argv[1],"--controls-hide")==0)) {
         DFControlsNotify(strcmp(argv[1],"--controls")==0 ? @"show" : @"hide"); return 0;
     }
-    if (argc==3 && strcmp(argv[1],"--controls-preview")==0) {
+    if ((argc==3 || argc==4) && strcmp(argv[1],"--controls-preview")==0) {
         [NSApplication sharedApplication]; [NSApp setActivationPolicy:NSApplicationActivationPolicyAccessory];
-        return DFControlsPreview([NSString stringWithUTF8String:argv[2]]) ? 0 : 1;
+        return DFControlsPreview([NSString stringWithUTF8String:argv[2]],argc==4 ? [NSString stringWithUTF8String:argv[3]] : @"cpu") ? 0 : 1;
     }
     if (argc==2 && (strcmp(argv[1],"--calendar")==0 || strcmp(argv[1],"--calendar-hide")==0 || strcmp(argv[1],"--calendar-access")==0)) {
         DFCalendarNotify(strcmp(argv[1],"--calendar")==0 ? @"show" : strcmp(argv[1],"--calendar-hide")==0 ? @"hide" : @"access");

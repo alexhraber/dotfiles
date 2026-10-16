@@ -80,6 +80,11 @@ animations. SkyLight menu suppression is health-guarded and restored on ordinary
 termination or bar failure. A Mission Control observer temporarily suppresses
 custom surfaces. Built-in brightness uses dynamically resolved DisplayServices.
 No injection, event tap, SIP change or cursor warping is required.
+DockView.step uses elapsed-time exponential smoothing rather than per-frame
+increments, with exact settlement tolerances and an animation timer capped to
+the target display's 30–120 Hz range. Settled animation ticks do not invalidate
+the view; the existing app-list refresh still redraws artwork periodically.
+Reduce Motion snaps zoom and pointer tracking directly to their targets.
 
 .config/sketchybar contains rounded control groups and Python hover plugins.
 The default islands layout draws five separate right-side section backgrounds.
@@ -123,6 +128,18 @@ advisory lock. Dwell and device reads happen outside the lock. Anchor exit
 cancels pending opens; scripts/control-panel.m owns the native window/anchor
 bridge and 320ms exit grace. Typed descriptors contain bounded labels, action
 booleans, optional slider percentage and bounded graph samples, never commands.
+Optional meter values are finite fractions on hardware/battery panels only.
+weather.outlook reads the same private forecast cache and emits at most six
+unexpired hourly cards with bounded text and an enumerated condition. Native
+validation checks those fields before rendering SF Symbols, large readings,
+two-column telemetry cards, accent sliders and forecast tiles. The weather
+backend omits its old hourly text rows in this view; action indices still map
+to the original descriptor rows, including the explicit refresh command.
+Native callbacks resolve executable Python candidates in versioned ARM/Intel
+Homebrew, unversioned Homebrew, then system order. They no longer depend on an
+unversioned /opt/homebrew/bin/python3 symlink. DFControlsStatus exposes only a
+backend_available boolean; source and device commands retain their fixed argv
+boundaries. The selector is exercised independently with executable predicates.
 The helper reads a fixed private path with owner/mode/size/type checks and
 O_NOFOLLOW. Native callbacks carry panel, revision and row index/percentage to
 the installed backend; stale callbacks are rejected before action selection.
@@ -237,7 +254,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `2ed975429e5acb516732c32f96a4c54cfef1dd0e8b32ed314e2cb29c52d86e47`
+- Repository signal fingerprint: `e6d3a1aa54f0e646abd9c791efc056f7ddba4cb28a935b3c3486c1c643040fc6`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
