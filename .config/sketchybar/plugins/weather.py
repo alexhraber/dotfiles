@@ -158,7 +158,7 @@ def main():
     hover = read('hover.json', [])
     if len(hover)==2 and hover[1]=='weather':
         import controls
-        controls.render_rows('weather',rows())
+        controls.render_rows('weather', rows(), hover)
 
 
 if __name__ == '__main__':

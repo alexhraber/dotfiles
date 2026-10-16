@@ -10,6 +10,7 @@ import signal
 import shutil
 import subprocess
 import time
+import tempfile
 import importlib.util
 import macos_preferences
 
@@ -44,17 +45,36 @@ def run(*args, **kwargs):
 def compile_tools(directory):
     tools = {}
     for source, name, command in (
-        ('desktop-edge.m', 'desktop-edge', ['xcrun', 'clang', '-fobjc-arc', '-Wall', '-Wextra', '-Werror', '-framework', 'AppKit', '-framework', 'QuartzCore']),
+        ('desktop-edge.m', 'desktop-edge', ['xcrun', 'clang', '-fobjc-arc', '-Wall', '-Wextra', '-Werror', '-mmacosx-version-min=14.0', '-framework', 'AppKit', '-framework', 'QuartzCore', '-framework', 'EventKit', '-framework', 'ApplicationServices']),
         ('set-wallpaper.swift', 'wallpaper', ['xcrun', 'swiftc']),
     ):
         path = ROOT / 'scripts' / source
-        digest = hashlib.sha256(path.read_bytes()).hexdigest()[:16]
-        target = directory / (name + '-' + digest)
+        material = path.read_bytes()
+        if name == 'desktop-edge':
+            material += b''.join((ROOT / 'scripts' / extra).read_bytes()
+                                 for extra in ('calendar-panel.m', 'calendar-panel.h', 'control-panel.m', 'control-panel.h', 'app-menu.m', 'app-menu.h', 'desktop-edge-info.plist'))
+        digest = hashlib.sha256(material).hexdigest()[:16]
+        bundle = directory / ('DesktopControls-' + digest + '.app')
+        target = bundle / 'Contents/MacOS/desktop-edge' if name == 'desktop-edge' else directory / (name + '-' + digest)
         if not target.is_file():
-            temporary = target.with_suffix('.new')
-            run(*command, path, '-o', temporary)
-            temporary.chmod(0o700)
-            os.replace(temporary, target)
+            if name == 'desktop-edge':
+                # Publish a complete signed bundle only after all build steps
+                # pass. A failed compiler/signature never becomes the cache.
+                with tempfile.TemporaryDirectory(prefix='desktop-build-', dir=directory) as temp:
+                    staged = Path(temp) / 'Desktop Controls.app'
+                    executable = staged / 'Contents/MacOS/desktop-edge'
+                    executable.parent.mkdir(parents=True)
+                    run(*command, path, ROOT / 'scripts/calendar-panel.m', ROOT / 'scripts/control-panel.m', ROOT / 'scripts/app-menu.m', '-o', executable)
+                    executable.chmod(0o700)
+                    shutil.copyfile(ROOT / 'scripts/desktop-edge-info.plist', staged / 'Contents/Info.plist')
+                    run('codesign', '--force', '--sign', '-', '--identifier', LABEL, staged)
+                    run('codesign', '--verify', '--strict', staged)
+                    os.replace(staged, bundle)
+            else:
+                temporary = target.with_suffix('.new')
+                run(*command, path, '-o', temporary)
+                temporary.chmod(0o700)
+                os.replace(temporary, target)
         tools[name] = str(target)
     return tools
 

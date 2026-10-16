@@ -43,6 +43,29 @@ they do not grant access to host credentials or start machines at login.
 
 ## Desktop and inference boundaries
 
+Calendar authentication belongs to macOS Internet Accounts. EventKit requires
+Full Calendar Access on macOS 14+, requested only by explicit user action; the
+helper uses read APIs and offers no event mutations. Event titles/dates/source
+objects stay in memory. Only selected calendar IDs are saved in private state.
+Generic native bundles contain permission purpose strings, never a personal
+team, certificate or account. They are ad-hoc signed locally; binary updates
+may require fresh OS consent. Dotfiles never writes TCC databases or bypasses
+OS permission prompts.
+
+The custom Apple/app menus require Accessibility for Desktop Controls. Actual
+AX menu elements are read on a bounded background queue and retained in memory.
+Enabled leaf actions are pressed once only if the same app is still foreground;
+an action timeout is never automatically retried because a modal command may
+already be executing. Hover only reads/opens custom menus. Disabled commands
+remain disabled. No menu titles or command data are committed to Git.
+
+Native control descriptors are private bounded JSON read from one fixed path;
+the helper rejects symlinks, wrong owner/mode, nonregular files and malformed
+types/ranges. Descriptors contain display text and action booleans, not shell
+commands. Callbacks use fixed executable/script paths and literal arguments;
+backend revision/panel/index checks select previously generated argv actions.
+This is local-user tooling, not isolation from a compromised same-user process.
+
 Desktop activation is explicit. The helper uses private SkyLight menu calls,
 DisplayServices brightness and a Mission Control notification with SIP enabled;
 it does not inject code, install an event tap, warp the pointer or require root.
@@ -73,7 +96,7 @@ loads a model. Ollama remains manually started and is not enabled at login.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `45d5943dc5bf0810673bea8f27bdbf72f5d029ac85a221ba183156d2ca1f97d6`
-- Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (6 files)
+- Repository signal fingerprint: `24ed6c04e2cec95be473e0b513645a0537485559fa45f36a7a056a751665c10c`
+- Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

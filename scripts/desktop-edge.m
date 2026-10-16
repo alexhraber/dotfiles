@@ -1,5 +1,8 @@
 #import <AppKit/AppKit.h>
 #import <QuartzCore/QuartzCore.h>
+#import "calendar-panel.h"
+#import "control-panel.h"
+#import "app-menu.h"
 #include <dlfcn.h>
 #include <signal.h>
 #include <sys/file.h>
@@ -27,6 +30,7 @@ static volatile sig_atomic_t appearanceChanged = 0;
 static void appearanceSignal(__unused int sig) { appearanceChanged=1; }
 
 static void loadAppearance(void) {
+    if (appearancePath) DFControlsAppearance(appearancePath);
     NSData *data = appearancePath ? [NSData dataWithContentsOfFile:appearancePath] : nil;
     id value = data ? [NSJSONSerialization JSONObjectWithData:data options:0 error:nil] : nil;
     NSDictionary *palette = [value isKindOfClass:NSDictionary.class] ? value : @{};
@@ -214,6 +218,7 @@ static BOOL missionControlWindow(void) {
     return NO;
 }
 static void enterMissionControl(void) {
+    DFCalendarHide();
     missionControl=YES; missionControlSince=NSProcessInfo.processInfo.systemUptime;
     dockPresented=NO; dockRevision++; dockEdgeSince=0;
     [dockPanel orderOut:nil]; [dockAnimationTimer invalidate]; dockAnimationTimer=nil;
@@ -361,6 +366,9 @@ static BOOL setVisible(BOOL show) {
     NSUInteger revision = ++barRevision;
     NSMutableArray *args = [NSMutableArray array];
     if (!show) {
+        DFCalendarHide();
+        DFControlsHide();
+        DFMenusHide();
         [args addObjectsFromArray:@[@"--trigger",@"desktop_concealed"]];
         for (NSString *name in @[@"clock", @"weather", @"volume", @"brightness", @"wifi", @"bluetooth", @"alerts", @"battery",
                                  @"cpu", @"gpu", @"memory", @"front_app"])
@@ -404,6 +412,9 @@ static void tick(void) {
         });
     }
     NSPoint pointer = NSEvent.mouseLocation;
+    DFCalendarTick(now,pointer);
+    DFControlsTick(now,pointer);
+    DFMenusTick(now,pointer,visible);
     if (missionControl) {
         if (now-missionControlSince>0.5 && now>=nextMissionCheck) {
             nextMissionCheck=now+0.15;
@@ -426,7 +437,7 @@ static void tick(void) {
         if (missionControlWindow()) { enterMissionControl(); return; }
         if (!setVisible(YES)) { healthy = NO; nativeMenu(NO); }
         awaySince = 0;
-    } else if (visible && !inside && !insideBarWindow(pointer)) {
+    } else if (visible && !inside && !insideBarWindow(pointer) && !DFCalendarContainsPointer(pointer) && !DFControlsContainsPointer(pointer) && !DFMenusContainsPointer(pointer)) {
         if (!awaySince) awaySince = now;
         if (now - awaySince >= 0.32) {
             if (!setVisible(NO)) { healthy = NO; nativeMenu(NO); }
@@ -438,7 +449,23 @@ static void tick(void) {
 }
 
 int main(int argc, const char **argv) { @autoreleasepool {
-    if (argc==2 && strcmp(argv[1],"--self-test")==0) return layoutSelfTest();
+    if (argc==2 && strcmp(argv[1],"--self-test")==0) return layoutSelfTest() || DFCalendarSelfTest() || DFControlsSelfTest() || DFMenusSelfTest();
+    if (argc==3 && strcmp(argv[1],"--app-menu")==0) { DFMenusNotify([NSString stringWithUTF8String:argv[2]]); return 0; }
+    if (argc==2 && (strcmp(argv[1],"--controls")==0 || strcmp(argv[1],"--controls-hide")==0)) {
+        DFControlsNotify(strcmp(argv[1],"--controls")==0 ? @"show" : @"hide"); return 0;
+    }
+    if (argc==3 && strcmp(argv[1],"--controls-preview")==0) {
+        [NSApplication sharedApplication]; [NSApp setActivationPolicy:NSApplicationActivationPolicyAccessory];
+        return DFControlsPreview([NSString stringWithUTF8String:argv[2]]) ? 0 : 1;
+    }
+    if (argc==2 && (strcmp(argv[1],"--calendar")==0 || strcmp(argv[1],"--calendar-hide")==0 || strcmp(argv[1],"--calendar-access")==0)) {
+        DFCalendarNotify(strcmp(argv[1],"--calendar")==0 ? @"show" : strcmp(argv[1],"--calendar-hide")==0 ? @"hide" : @"access");
+        return 0;
+    }
+    if (argc==3 && strcmp(argv[1],"--calendar-preview")==0) {
+        [NSApplication sharedApplication]; [NSApp setActivationPolicy:NSApplicationActivationPolicyAccessory];
+        return DFCalendarPreview([NSString stringWithUTF8String:argv[2]]) ? 0 : 1;
+    }
     if ((argc==2 || argc==3) && strcmp(argv[1],"--brightness")==0)
         return brightnessCommand(argc==3 ? argv[2] : NULL);
     void *library = dlopen("/System/Library/PrivateFrameworks/SkyLight.framework/SkyLight", RTLD_LAZY);
@@ -462,7 +489,12 @@ int main(int argc, const char **argv) { @autoreleasepool {
         : [[[NSString stringWithUTF8String:argv[3]] stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"appearance.json"];
     loadAppearance();
     [NSApplication sharedApplication];
-    [NSApp setActivationPolicy:NSApplicationActivationPolicyProhibited];
+    [NSApp setActivationPolicy:NSApplicationActivationPolicyAccessory];
+    if (!preview) {
+        NSString *directory=[[NSString stringWithUTF8String:argv[3]] stringByDeletingLastPathComponent];
+        DFCalendarInitialize(directory); DFControlsInitialize(directory);
+        DFMenusInitialize(barPath);
+    }
     barQueue = dispatch_queue_create("local.dotfiles.desktop.bar",DISPATCH_QUEUE_SERIAL);
     dockPanel = [[NSPanel alloc] initWithContentRect:NSMakeRect(0, 0, 300, 116)
         styleMask:NSWindowStyleMaskBorderless | NSWindowStyleMaskNonactivatingPanel
@@ -502,7 +534,7 @@ int main(int argc, const char **argv) { @autoreleasepool {
                              NSWorkspaceDidWakeNotification,
                              NSWorkspaceDidActivateApplicationNotification]) {
         [center addObserverForName:name object:nil queue:NSOperationQueue.mainQueue
-            usingBlock:^(__unused NSNotification *note) { nextHealth = 0; }];
+            usingBlock:^(__unused NSNotification *note) { nextHealth = 0; DFCalendarHide(); DFControlsHide(); DFMenusHide(); }];
     }
     [NSNotificationCenter.defaultCenter addObserverForName:NSApplicationDidChangeScreenParametersNotification
         object:nil queue:NSOperationQueue.mainQueue usingBlock:^(__unused NSNotification *note) { nextHealth = 0; }];
@@ -515,6 +547,9 @@ int main(int argc, const char **argv) { @autoreleasepool {
                 NSDictionary *state = @{@"healthy": @(healthy), @"visible": @(visible),
                     @"dock_visible": @(dockPanel.visible), @"open_apps": @(dockView.apps.count),
                     @"mission_control": @(missionControl),
+                    @"calendar": DFCalendarStatus(),
+                    @"controls": DFControlsStatus(),
+                    @"app_menus": DFMenusStatus(),
                     @"theme": themeName,
                     @"pid": @(getpid()), @"updated": @([NSDate.date timeIntervalSince1970])};
                 NSData *data = [NSJSONSerialization dataWithJSONObject:state options:0 error:nil];

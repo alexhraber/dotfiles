@@ -26,6 +26,11 @@ def main():
                                 capture_output=True, text=True, timeout=5)
         data = json.loads(sample.stdout)
         controls.store('metrics.json', data)
+        history = controls.read('history.json', {})
+        for name, value in (('cpu', data['cpu_scaled_ratio']), ('gpu', data['gpu_scaled_ratio']),
+                            ('memory', data['memory']['ram_usage'] / data['memory']['ram_total'])):
+            history[name] = (history.get(name, []) + [max(0, min(1, value))])[-60:]
+        controls.store('history.json', history)
         values = labels(data, {key:controls.appearance.color(key) for key in ('danger','warning','muted')})
         messages = controls.alerts(data, controls.command('pmset', '-g', 'batt'))
         values['alerts'] = ('', controls.appearance.color('warning' if messages else 'accent'))
@@ -37,11 +42,9 @@ def main():
         if name=='alerts':
             args += ['icon.color=' + color]
     subprocess.run(args, check=True, timeout=3)
-    if 'data' in locals():
-        subprocess.run(['sketchybar', '--push', 'cpu.graph', str(data['cpu_scaled_ratio']),
-                        '--push', 'gpu.graph', str(data['gpu_scaled_ratio']),
-                        '--push', 'memory.graph', str(data['memory']['ram_usage'] / data['memory']['ram_total'])],
-                       check=True, timeout=3)
+    hover = controls.read('hover.json', [])
+    if len(hover) == 2 and hover[1] in ('cpu', 'gpu', 'memory'):
+        controls.render_rows(hover[1], controls.fresh_rows(hover[1]), hover)
 
 
 if __name__ == '__main__':

@@ -1,22 +1,45 @@
 {
   "schema_version": "1.0.0",
   "baseline": {
-    "accepted_commit": "cde7103133c5e768e7fa830b2d888db56cc3cd2b"
+    "accepted_commit": "89a2fc58add4c71d1a4a36983fb953b10840cf29"
   },
   "change": {
-    "id": "change_01M50MM1RSEAPS1SX1VV1NP0FH",
-    "base_commit": "cde7103133c5e768e7fa830b2d888db56cc3cd2b",
+    "id": "change_01M50PD5221H9C1QASH2E832PD",
+    "base_commit": "89a2fc58add4c71d1a4a36983fb953b10840cf29",
     "target_base": "origin/main"
+  },
+  "claims": {
+    "actual-app-menus": {
+      "statement": "The custom Apple/application menus mirror AX commands and require local Accessibility approval; actual command execution remains unverified until that approval is granted.",
+      "falsifier": "Native action guards permit stale/disabled/submenu leaf execution, or the UI claims menus work without Accessibility.",
+      "status": "open",
+      "proof_refs": [
+        "scripts/app-menu.m"
+      ]
+    },
+    "native-panels": {
+      "statement": "Nocturne native calendar and device panels replace text popup rows with typed local descriptors and stale-action guards; notifications precede clock and weather from the right edge.",
+      "falsifier": "Shared regressions, native compile/self-tests or live item order contradict the typed-descriptor, hover/date/action or order contracts.",
+      "status": "supported",
+      "proof_refs": [
+        "/private/tmp/dotfiles-nocturne-host-check.txt"
+      ]
+    }
   },
   "checkpoints": [
     {
-      "id": "separated-pills-final",
-      "summary": "Islands default,8point empty section gaps, no connecting ribbon, direct item/background visibility; shared62 checks and21 desktop checks passed; user approved live appearance.",
-      "input_digest": "sha256:0c85699a1793c012370bde5c3585259214b9f03c70394627b12cc473b3a0651d"
+      "id": "nocturne-source-1",
+      "summary": "Native Nocturne panels, EventKit calendar and actual AX app menus; 67 host tests/native guards pass; calendar consent granted, Accessibility remains pending; reviewed source/command contract and updated release-bound specs.",
+      "input_digest": "sha256:6ba6e4c5d5027c561ee49450be0ca7da9a7d595897a0fc50f3902dbaeff0dd5f"
+    },
+    {
+      "id": "nocturne-ready-2",
+      "summary": "Decapod 0.116.0 bounded project prerequisites passed 187 gates with zero failures; native/portable host verification retained; stage the current receipt and exact candidate for full repository-local publication readiness.",
+      "input_digest": "sha256:405b9472e7897de567b87b95467823b65dee7a630b28fa529bbc301e84ecad53"
     }
   ],
   "intents": {
-    "intent:change_01M50MM1RSEAPS1SX1VV1NP0FH": {
+    "intent:change_01M50PD5221H9C1QASH2E832PD": {
       "acceptance_criteria": [],
       "assumptions": [],
       "boundaries": [
@@ -26,52 +49,52 @@
         "root"
       ],
       "created_sequence": 1,
-      "id": "intent:change_01M50MM1RSEAPS1SX1VV1NP0FH",
+      "id": "intent:change_01M50PD5221H9C1QASH2E832PD",
       "out_of_scope": [],
       "proof_requirements": [],
-      "raw_intent": "Separate menu bar section pills with gaps and remove connecting background",
-      "refined_intent": "Separate menu bar section pills with gaps and remove connecting background",
+      "raw_intent": "Replace text calendar with native month grid and synced Google Calendar agenda",
+      "refined_intent": "Replace text calendar with native month grid and synced Google Calendar agenda",
       "status": "refined",
       "updated_sequence": 3
     }
   },
   "epochs": {
-    "ve_92eccc2f7d551687": {
-      "constitution_hash": "sha256:2a8f4611e9727b754c29e2d34ad0ad648c78c8e76c607fe3ef2c6fb0a48983e4",
-      "constitution_version": "embedded-docs@0.115.0",
-      "epoch_id": "ve_92eccc2f7d551687",
-      "evaluator_identity": "decapod-validate@0.115.0",
-      "evaluator_set_hash": "sha256:9e6b438cfcc84ae873e2f38f0f78d9b58ddf784a880014255d8810f5d21e4cdb",
-      "generated_specs_fingerprint": "45d5943dc5bf0810673bea8f27bdbf72f5d029ac85a221ba183156d2ca1f97d6",
-      "generated_specs_manifest_hash": "sha256:b87c5ef39e77425e8470f244073226cef12b7a6f6f8b8b7960e8baed99f08faa",
+    "ve_67da1d36ca80824b": {
+      "constitution_hash": "sha256:4aecac1e2910b7b886f7ed4314520a3936c4a2996bbe91d0ab10f3a8416e2928",
+      "constitution_version": "embedded-docs@0.116.0",
+      "epoch_id": "ve_67da1d36ca80824b",
+      "evaluator_identity": "decapod-validate@0.116.0",
+      "evaluator_set_hash": "sha256:57b992eda1c34987d2c43112ba92bbbf7bd6db93378c64bf6ba3799eeb422fbc",
+      "generated_specs_fingerprint": "24ed6c04e2cec95be473e0b513645a0537485559fa45f36a7a056a751665c10c",
+      "generated_specs_manifest_hash": "sha256:fc9a5a6f90f22f1a0189e63f72bc676b4a475344ec5c41e631d2fc2c1bb3df97",
       "material_hashes": {
-        "constitution:core/DECAPOD": "sha256:2a8f4611e9727b754c29e2d34ad0ad648c78c8e76c607fe3ef2c6fb0a48983e4",
-        "generated_spec:.decapod/managed/specs/ARCHITECTURE.md": "sha256:b4f3558d564970e866daccd61e229df6c5626c393b689aaac9dea68ac9105cea",
-        "generated_spec:.decapod/managed/specs/INTENT.md": "sha256:96f056eb2abd1e35f213ef340a713506bcc4d827105a0a34981e3613cfb68f60",
-        "generated_spec:.decapod/managed/specs/INTERFACES.md": "sha256:485981986e8582c46926e97a03b10804c469fd47c8523b103cd9d635c1669c6f",
-        "generated_spec:.decapod/managed/specs/OPERATIONS.md": "sha256:4ffb3d56c8f8114e8ec531a449f40db12451ccb01ccb82b058182127d5f6e160",
-        "generated_spec:.decapod/managed/specs/README.md": "sha256:46c1f2a18eeca8824610129f02fb0d999a589454ed3927e1e50f082d2d1de53e",
-        "generated_spec:.decapod/managed/specs/SECURITY.md": "sha256:b6570308ad96f44c5281e0ca1cbb75591e34ec8d0ed8e3e4c9173036b6842909",
-        "generated_spec:.decapod/managed/specs/SEMANTICS.md": "sha256:bb054a6b421f8ac77515dde48a11485bd5a6713fbf15044e832eaa368f8daf23",
-        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:29cc3111d20ccd454bb3e60986e8817fdf80318f9cb711085ba3d38aa8bf9134",
-        "generated_specs_fingerprint": "45d5943dc5bf0810673bea8f27bdbf72f5d029ac85a221ba183156d2ca1f97d6",
-        "generated_specs_manifest": "sha256:b87c5ef39e77425e8470f244073226cef12b7a6f6f8b8b7960e8baed99f08faa",
-        "governance_context": "sha256:83a8b582bb5c932a5f9c45bea0032c14168f193bf43ca61173081cba00e8a998",
-        "governance_material:.decapod/managed/Dockerfile.decapod": "sha256:1b0e312b4164c34cbfd351a406e465ceaefffbf7ae196f1e07f05b71ae7526b3",
-        "governance_material:AGENTS.md": "sha256:66aea85a529f3d057ba054f4e8dec5d88d2914ee554397219398203117f6ad59",
-        "governance_material:CLAUDE.md": "sha256:852c35dcb100d65725ede1d6ecf0ed9b6398993a55268ffda56a98ff634577ac",
-        "governance_material:CODEX.md": "sha256:f3aa0b4f0f1deeec77c76d985d9c20013a8717271637013986606cf5d15a1bb0",
-        "governance_material:GEMINI.md": "sha256:13d954c7e064d4c9283d09474765e1d25350ddb2d1084c4186f6dfa9698ee63a",
-        "governance_section:claims": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
-        "governance_section:plan": "sha256:8412f56908914eb1856fbe45a96d7ad8e84d452e593c96b49de3a17e87a749ac",
-        "living_spec_material:.decapod/managed/specs/ARCHITECTURE.md": "sha256:6a54babc979dc6195d2e705f08df88aee9de602eee641bd248ed59fc2d801109",
-        "living_spec_material:.decapod/managed/specs/INTENT.md": "sha256:709ec54a05c0f74833e3be1b42c344b87863f35e335d1a84fcbd968eceff3e4b",
-        "living_spec_material:.decapod/managed/specs/INTERFACES.md": "sha256:ad1c33758066bc08884993557367ec28939943a6232ce1045084161f0391e23f",
+        "constitution:core/DECAPOD": "sha256:4aecac1e2910b7b886f7ed4314520a3936c4a2996bbe91d0ab10f3a8416e2928",
+        "generated_spec:.decapod/managed/specs/ARCHITECTURE.md": "sha256:b88ce4f6be921e537ac2b80f8ffdae5a3293dde9817148c12ac0de435e2539e7",
+        "generated_spec:.decapod/managed/specs/INTENT.md": "sha256:269aff7d0469b0dc490db69befbc2039d24f8b97acf0e3d4ceea91f777d7df93",
+        "generated_spec:.decapod/managed/specs/INTERFACES.md": "sha256:f4d96db74f262160234e7f652601024c5b64559bc54a81726572a0dd259c3785",
+        "generated_spec:.decapod/managed/specs/OPERATIONS.md": "sha256:eb4f10acae50a9a0ad1c96a9079e7a643c6f140b4cfc0645325c1d35832e4799",
+        "generated_spec:.decapod/managed/specs/README.md": "sha256:fcf4349707fd6b430f088600ad0f545036d28a1900ee1677fc02b19543f72b62",
+        "generated_spec:.decapod/managed/specs/SECURITY.md": "sha256:87c144b8e0662334245dd79faf78903af87789a3d7cb0d7f981f5ad76ef49252",
+        "generated_spec:.decapod/managed/specs/SEMANTICS.md": "sha256:5af7515183971740d1a0e4efe09e1dd3ac77f338ad93999fff1a5458e7046628",
+        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:97ecb0247d65268a74793614a32dc85cc04fb48fb815d2b82bf5fd3458273c04",
+        "generated_specs_fingerprint": "24ed6c04e2cec95be473e0b513645a0537485559fa45f36a7a056a751665c10c",
+        "generated_specs_manifest": "sha256:fc9a5a6f90f22f1a0189e63f72bc676b4a475344ec5c41e631d2fc2c1bb3df97",
+        "governance_context": "sha256:51752ddedf412b3143e9c14e74d3d90d82c511ed842ef73c6f822c1aa7295cf2",
+        "governance_material:.decapod/managed/Dockerfile.decapod": "sha256:563b282fbcaed9ae568a21947c1809e855cbcb8f01a14fbf2337b129306d29dd",
+        "governance_material:AGENTS.md": "sha256:d220d7feaf0171cc11a864ab60a17ce71a45b15c95169cbebdc59ad2e98db5e5",
+        "governance_material:CLAUDE.md": "sha256:40e9e30dbbf914832b0052b90c2830a347b03642232b97dff17777e6b733ea84",
+        "governance_material:CODEX.md": "sha256:c5c077b247f971721aa3f21d05439dd66b8740cd154fc4b501887e520ce853f6",
+        "governance_material:GEMINI.md": "sha256:12b257127ccbb672e4468cd3fdb073ca40d26eabf3d1a59c27054b86bec9d9c9",
+        "governance_section:claims": "sha256:8b798f9f39aa58082679b196c8c1823b81b44ffbfcca4de939b07f058a8c35e3",
+        "governance_section:plan": "sha256:172c15a03751b0745b9883b5df6a4f169427cfa2fede33a1c046ff35813281cf",
+        "living_spec_material:.decapod/managed/specs/ARCHITECTURE.md": "sha256:9c2f05f145ec1c9b4a1cdb9d15ba1b613fceb2ea62fafe8c106280357d00dbaa",
+        "living_spec_material:.decapod/managed/specs/INTENT.md": "sha256:c166d281ec814e7b58365607eea715d51f973597879cb8ebb8eec523c244f588",
+        "living_spec_material:.decapod/managed/specs/INTERFACES.md": "sha256:780724c1180640d52e2abf07ddffbc17601feb633a8d25fa32fe636c96803d32",
         "living_spec_material:.decapod/managed/specs/OPERATIONS.md": "sha256:b43e9fa0eef9fb3e28d84cc5386c79f64f1f3cb9a37a1b8834bbb84e24dbea17",
         "living_spec_material:.decapod/managed/specs/README.md": "sha256:0988c85d6c05f02d52684c9aafae50e95fd5d5576739d3e9d995af682697fd99",
-        "living_spec_material:.decapod/managed/specs/SECURITY.md": "sha256:5fc8a37235845fe072a5fb4ef5c678b4864c71fca1c15326c5563478bdb8e494",
+        "living_spec_material:.decapod/managed/specs/SECURITY.md": "sha256:586ee92a521385a0b2dda4d63a544b38c4709ad1554b2d9d69d7c093e67a2658",
         "living_spec_material:.decapod/managed/specs/SEMANTICS.md": "sha256:92bbe2607c6f8f94191a95ea977d9785f3472a0fae2835520dd86eae73130d5c",
-        "living_spec_material:.decapod/managed/specs/VALIDATION.md": "sha256:a3a5afa644f4a584551740a9828fd16bbffd5315a057b6d117ee721f067432be",
+        "living_spec_material:.decapod/managed/specs/VALIDATION.md": "sha256:3d26d048df322b2f5e3d9b19ceeb1d7df5c460ef534d6dbd8ca1b31c84427f5c",
         "proof_rubric": "sha256:99e8ef25629da391e9b479db9fff52b82f340224f7a69d8a88d2992ae8e90466",
         "validation_profile": "sha256:37a8eec1ce19687d132fe29051dca629d164e2c4958ba141d5f4133a33f0688f"
       },
@@ -90,7 +113,7 @@
       },
       "deferred_questions": [],
       "human_questions": [],
-      "intent": "Make islands the reproducible default: separate hardware, connections, session and notification pills with 8point empty spacers and no connecting ribbon. Keep individual pill backgrounds, icons, utilization, hover behavior, pinned weather and imperial details. Optional ribbon layout remains available and hides the spacers. Verify live properties, shared checks and full publication proof; apply, merge and push main.",
+      "intent": "Deliver a cohesive Nocturne charcoal/violet/cyan custom autohiding desktop. Replace decorative workspace controls with a styled Apple menu and the active application real menus, using Accessibility read/press with current-app and stale-request guards. From the far right inward: notifications, clock, weather, then other controls, with spaced section pills. Native calendar reads actual synced events after OS permission; other native panels offer hardware graphs, sound/display sliders and safe device actions. Keep personal team/auth/calendar data out of Git, fullscreen Spaces intact, dock icons fully transparent, models manual and rollback available. Verify native menu/payload boundaries, date math, hover transfers, actions, lifecycle and exact publication proof; apply, merge and push main.",
       "phases": [],
       "proof_hooks": [
         "decapod validate"
@@ -100,60 +123,71 @@
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/ARCHITECTURE.md",
-          "reason": "Reviewed separate bracket geometry,8point empty spacers, direct item/background visibility and nonanimated layout switching; only appearance.py, sketchybarrc and themes.json inventory hashes changed, required command and CI contract unchanged.",
-          "reviewed_code_fingerprint": "45d5943dc5bf0810673bea8f27bdbf72f5d029ac85a221ba183156d2ca1f97d6",
-          "spec_material_hash": "6a54babc979dc6195d2e705f08df88aee9de602eee641bd248ed59fc2d801109"
+          "reason": "Documents atomic signed app bundles, private native descriptors, EventKit store, AX menu tree/press guards and native hover lifecycle.",
+          "reviewed_code_fingerprint": "24ed6c04e2cec95be473e0b513645a0537485559fa45f36a7a056a751665c10c",
+          "spec_material_hash": "9c2f05f145ec1c9b4a1cdb9d15ba1b613fceb2ea62fafe8c106280357d00dbaa"
         },
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/INTERFACES.md",
-          "reason": "Documented islands as default, separate section pills and optional ribbon mode hiding the spacers, preserving existing controls and theme commands.",
-          "reviewed_code_fingerprint": "45d5943dc5bf0810673bea8f27bdbf72f5d029ac85a221ba183156d2ca1f97d6",
-          "spec_material_hash": "ad1c33758066bc08884993557367ec28939943a6232ce1045084161f0391e23f"
+          "reason": "Replaces workspace popover contract with actual menu headings and records calendar consent, native callbacks and Nocturne/right-side ordering.",
+          "reviewed_code_fingerprint": "24ed6c04e2cec95be473e0b513645a0537485559fa45f36a7a056a751665c10c",
+          "spec_material_hash": "780724c1180640d52e2abf07ddffbc17601feb633a8d25fa32fe636c96803d32"
         },
         {
-          "disposition": "unchanged_with_reason",
+          "disposition": "updated",
           "path": ".decapod/managed/specs/SECURITY.md",
-          "reason": "Only section backgrounds, spacing and local appearance selection change; no permission, network, account, credential, private API or device action boundary changes.",
-          "reviewed_code_fingerprint": "45d5943dc5bf0810673bea8f27bdbf72f5d029ac85a221ba183156d2ca1f97d6",
-          "spec_material_hash": "5fc8a37235845fe072a5fb4ef5c678b4864c71fca1c15326c5563478bdb8e494"
+          "reason": "Reviews local EventKit/Accessibility consent, read-only calendar behavior, in-memory menu/event content, bounded descriptors and single AXPress dispatch.",
+          "reviewed_code_fingerprint": "24ed6c04e2cec95be473e0b513645a0537485559fa45f36a7a056a751665c10c",
+          "spec_material_hash": "586ee92a521385a0b2dda4d63a544b38c4709ad1554b2d9d69d7c093e67a2658"
         }
       ],
       "state": "APPROVED",
       "stop_conditions": [],
-      "title": "Separate menu bar section pills with gaps and remove connecting background",
+      "title": "Native desktop menus, calendar and Nocturne controls",
       "todo_ids": [
-        "code_01m50mjqn4hr2wqg"
+        "code_01m50p2742m8pfdw"
       ],
       "unknowns": [],
       "unresolved_contradictions": [],
-      "updated_at": "1792096986Z"
+      "updated_at": "1792131552Z"
     },
     "trajectory": {
       "active_boundaries": [
-        "Current claimed task and isolated work branch",
-        "Keep accepted icon utilization bar, hover controls, transparent dock, native Spaces and private runtime state"
+        "Current claimed task and isolated work branch"
       ],
-      "artifact_hash": "sha256:747c3af6281fff03ee8952eb7652ec77dd09635a36b0e1c00f5d05fceac90823",
+      "artifact_hash": "sha256:ff1ed713309fa633d9c5483caed1de9ca77863dc2694a52a06623712833625d8",
       "checks": [
+        {
+          "name": "current_accessibility_consent",
+          "status": "unavailable"
+        },
+        {
+          "name": "current_calendar_consent",
+          "status": "passed"
+        },
         {
           "name": "decapod validate",
           "status": "passed"
         },
         {
-          "name": "extended-desktop-regression",
+          "name": "exact_publication_readiness",
+          "status": "unavailable"
+        },
+        {
+          "name": "host_suite",
           "status": "passed"
         },
         {
-          "name": "host-shared-suite",
+          "name": "live_activation",
           "status": "passed"
         },
         {
-          "name": "live-apply",
+          "name": "native_compile",
           "status": "passed"
         },
         {
-          "name": "user-layout-feedback",
+          "name": "native_menu_guards",
           "status": "passed"
         }
       ],
@@ -162,81 +196,111 @@
         "events": [
           {
             "event_id": "event:2",
-            "intent_id": "intent:change_01M50MM1RSEAPS1SX1VV1NP0FH",
+            "intent_id": "intent:change_01M50PD5221H9C1QASH2E832PD",
             "kind": "created",
             "sequence": 2
           },
           {
             "event_id": "event:3",
-            "intent_id": "intent:change_01M50MM1RSEAPS1SX1VV1NP0FH",
+            "intent_id": "intent:change_01M50PD5221H9C1QASH2E832PD",
             "kind": "refined",
             "sequence": 3
           },
           {
-            "detail": "trajectory:branch_01M50MM1V6P2GC6EMRT52DN2XE",
+            "detail": "trajectory:branch_01M50PD54D57R2MT8R5DFBPF1W",
             "event_id": "event:4",
-            "intent_id": "intent:change_01M50MM1RSEAPS1SX1VV1NP0FH",
+            "intent_id": "intent:change_01M50PD5221H9C1QASH2E832PD",
             "kind": "trajectory_step_recorded",
             "sequence": 4
           },
           {
-            "detail": "trajectory:branch_01M50MM1V6P2GC6EMRT52DN2XE",
+            "detail": "trajectory:branch_01M50PD54D57R2MT8R5DFBPF1W",
             "event_id": "event:5",
-            "intent_id": "intent:change_01M50MM1RSEAPS1SX1VV1NP0FH",
+            "intent_id": "intent:change_01M50PD5221H9C1QASH2E832PD",
             "kind": "trajectory_step_recorded",
             "sequence": 5
+          },
+          {
+            "detail": "trajectory:branch_01M50PD54D57R2MT8R5DFBPF1W",
+            "event_id": "event:6",
+            "intent_id": "intent:change_01M50PD5221H9C1QASH2E832PD",
+            "kind": "trajectory_step_recorded",
+            "sequence": 6
           }
         ],
         "knowledge_candidates": [],
-        "next_sequence": 5,
+        "next_sequence": 6,
         "schema_version": "1.0.0",
         "trajectories": {
-          "branch_01M50MM1V6P2GC6EMRT52DN2XE": {
+          "branch_01M50PD54D57R2MT8R5DFBPF1W": {
             "evidence_only": true,
-            "id": "branch_01M50MM1V6P2GC6EMRT52DN2XE",
-            "intent_id": "intent:change_01M50MM1RSEAPS1SX1VV1NP0FH",
+            "id": "branch_01M50PD54D57R2MT8R5DFBPF1W",
+            "intent_id": "intent:change_01M50PD5221H9C1QASH2E832PD",
             "steps": [
               {
-                "action": "validation",
+                "action": "implementation",
                 "custody_event_id": "event:4",
                 "observations": [
-                  ".config/sketchybar/plugins/appearance.py",
-                  ".config/sketchybar/sketchybarrc",
-                  ".config/sketchybar/plugins/appearance.py",
-                  ".config/sketchybar/sketchybarrc",
-                  ".config/sketchybar/themes.json",
-                  "tests/test_desktop.py",
-                  "Host shared62 tests/native Werror compile/geometry/Swift passed. Extended desktop suite21tests passes with direct bracket visibility and all3 gap items asserted. Live configuration has8point empty spacers and zero bracket background padding; direct group drawing disables the continuous ribbon. User observed much better. Islands default and local selection are retained. Reviewed complete inventory: appearance, bar configuration and theme catalog changed; CI/runtime closure unchanged. Old host task baselines missing in coordination mirror were reopened via supported QA prune; genuine previous validated completions remain in private backup /Users/arx/.local/state/dotfiles/proofs/bar-verified-control-plane-20261015.db."
+                  "<external-path>",
+                  "scripts/desktop.py",
+                  "scripts/calendar-panel.m",
+                  "scripts/control-panel.m",
+                  "scripts/app-menu.m",
+                  "/private/tmp/dotfiles-nocturne-host-check.txt",
+                  "/private/tmp/dotfiles-nocturne-controls.png"
                 ],
                 "proof_refs": [
-                  "host-shared-suite",
-                  "extended-desktop-regression",
-                  "live-apply",
-                  "user-layout-feedback"
+                  "native_compile",
+                  "host_suite",
+                  "live_activation",
+                  "current_calendar_consent",
+                  "current_accessibility_consent"
                 ],
                 "scope": [
                   "root"
                 ],
                 "sequence": 4,
+                "validation_findings": [
+                  "The prior calendar build returned seven synced calendars and eight events after OS consent; current ad-hoc build requires fresh permission. Provider identity has not been asserted from counts. Accessibility remains pending, so actual app-menu execution is not yet proven."
+                ]
+              },
+              {
+                "action": "verification",
+                "command": "python3.14 -B scripts/check.py",
+                "custody_event_id": "event:5",
+                "observations": [
+                  "Final native helper healthy; EventKit access 3 and seven synced calendars; no event titles retained in evidence",
+                  "Reviewed complete source inventory b6b33eff and unchanged shared-check command closure acd8fe85; explicit declaration updated after review",
+                  "/private/tmp/dotfiles-nocturne-host-check.txt"
+                ],
+                "proof_refs": [
+                  "current_calendar_consent",
+                  "host_suite",
+                  "native_menu_guards",
+                  "exact_publication_readiness"
+                ],
+                "scope": [
+                  "root"
+                ],
+                "sequence": 5,
                 "validation_findings": []
               },
               {
                 "action": "validation",
                 "command": "decapod validate",
-                "custody_event_id": "event:5",
+                "custody_event_id": "event:6",
                 "observations": [
                   ".decapod/governance.json",
                   ".decapod/governance.json",
-                  "validation epoch ve_92eccc2f7d551687 completed with zero failures"
+                  "validation epoch ve_67da1d36ca80824b completed with zero failures"
                 ],
                 "proof_refs": [
                   "decapod validate"
                 ],
                 "scope": [
-                  ".config/sketchybar",
                   "root"
                 ],
-                "sequence": 5,
+                "sequence": 6,
                 "validation_findings": []
               }
             ]
@@ -244,39 +308,44 @@
         }
       },
       "declared_commands": [
-        "decapod validate"
+        "decapod validate",
+        "python3.14 -B scripts/check.py"
       ],
       "destination": "pull request",
       "evidence": [
-        "Host shared62 tests/native Werror compile/geometry/Swift passed. Extended desktop suite21tests passes with direct bracket visibility and all3 gap items asserted. Live configuration has8point empty spacers and zero bracket background padding; direct group drawing disables the continuous ribbon. User observed much better. Islands default and local selection are retained. Reviewed complete inventory: appearance, bar configuration and theme catalog changed; CI/runtime closure unchanged. Old host task baselines missing in coordination mirror were reopened via supported QA prune; genuine previous validated completions remain in private backup /Users/arx/.local/state/dotfiles/proofs/bar-verified-control-plane-20261015.db.",
-        "validation epoch ve_92eccc2f7d551687 completed with zero failures"
+        "/private/tmp/dotfiles-nocturne-controls.png",
+        "/private/tmp/dotfiles-nocturne-host-check.txt",
+        "Final native helper healthy; EventKit access 3 and seven synced calendars; no event titles retained in evidence",
+        "Reviewed complete source inventory b6b33eff and unchanged shared-check command closure acd8fe85; explicit declaration updated after review",
+        "validation epoch ve_67da1d36ca80824b completed with zero failures"
       ],
       "inspected_files": [
-        ".config/sketchybar/plugins/appearance.py",
-        ".config/sketchybar/sketchybarrc"
+        "<external-path>",
+        "scripts/desktop.py"
       ],
-      "intent_id": "intent:change_01M50MM1RSEAPS1SX1VV1NP0FH",
+      "intent_id": "intent:change_01M50PD5221H9C1QASH2E832PD",
       "modified_files": [
-        ".config/sketchybar/plugins/appearance.py",
-        ".config/sketchybar/sketchybarrc",
-        ".config/sketchybar/themes.json",
         ".decapod/governance.json",
-        "tests/test_desktop.py"
+        "scripts/app-menu.m",
+        "scripts/calendar-panel.m",
+        "scripts/control-panel.m"
       ],
       "next_transitions": [
+        "Finish source/spec review, verify live geometry and obtain required exact publication readiness",
         "Refine plan and declare falsifiable checks",
         "publish"
       ],
       "repo_scope": [
-        ".config/sketchybar",
         "root"
       ],
-      "run_id": "branch_01M50MM1V6P2GC6EMRT52DN2XE",
+      "run_id": "branch_01M50PD54D57R2MT8R5DFBPF1W",
       "schema_version": "1.1.0",
       "shortcut_risk_signals": [],
-      "task_id": "code_01m50mjqn4hr2wqg",
+      "task_id": "code_01m50p2742m8pfdw",
       "tool_calls": [],
-      "unresolved_assumptions": []
+      "unresolved_assumptions": [
+        "The prior calendar build returned seven synced calendars and eight events after OS consent; current ad-hoc build requires fresh permission. Provider identity has not been asserted from counts. Accessibility remains pending, so actual app-menu execution is not yet proven."
+      ]
     },
     "validation": {
       "ci_prediction": {
@@ -287,68 +356,68 @@
         ],
         "result": "review"
       },
-      "decapod_release": "0.115.0",
+      "decapod_release": "0.116.0",
       "drift_findings": [],
-      "elapsed_ms": 1794,
-      "epoch_ref": "ve_92eccc2f7d551687",
+      "elapsed_ms": 4085,
+      "epoch_ref": "ve_67da1d36ca80824b",
       "fail_count": 0,
       "failures": [],
       "gate_timings": [
         {
-          "elapsed_ms": 395,
-          "name": "validate_project_specs_docs"
-        },
-        {
-          "elapsed_ms": 308,
-          "name": "validate_markdown_primitives_roundtrip_gate"
-        },
-        {
-          "elapsed_ms": 247,
+          "elapsed_ms": 2016,
           "name": "validate_machine_contract"
         },
         {
-          "elapsed_ms": 218,
+          "elapsed_ms": 744,
+          "name": "validate_project_specs_docs"
+        },
+        {
+          "elapsed_ms": 350,
+          "name": "validate_markdown_primitives_roundtrip_gate"
+        },
+        {
+          "elapsed_ms": 310,
           "name": "validate_stale_workspaces"
         },
         {
-          "elapsed_ms": 144,
+          "elapsed_ms": 148,
           "name": "validate_git_workspace_context"
         },
         {
-          "elapsed_ms": 94,
+          "elapsed_ms": 114,
           "name": "validate_obligations"
         },
         {
-          "elapsed_ms": 91,
+          "elapsed_ms": 78,
           "name": "validate_legacy_jsonl_retired"
         },
         {
-          "elapsed_ms": 34,
+          "elapsed_ms": 39,
           "name": "validate_archive_integrity"
         },
         {
-          "elapsed_ms": 22,
+          "elapsed_ms": 19,
           "name": "validate_repomap_determinism"
         },
         {
-          "elapsed_ms": 17,
+          "elapsed_ms": 18,
           "name": "validate_schema_determinism"
         },
         {
-          "elapsed_ms": 14,
+          "elapsed_ms": 15,
           "name": "validate_control_plane_contract"
         },
         {
-          "elapsed_ms": 13,
-          "name": "validate_git_push_pr_gate"
+          "elapsed_ms": 12,
+          "name": "validate_federation_gates"
         },
         {
           "elapsed_ms": 12,
           "name": "validate_git_protected_branch"
         },
         {
-          "elapsed_ms": 11,
-          "name": "validate_federation_gates"
+          "elapsed_ms": 12,
+          "name": "validate_git_push_pr_gate"
         },
         {
           "elapsed_ms": 10,
@@ -356,23 +425,15 @@
         },
         {
           "elapsed_ms": 7,
-          "name": "validate_gatekeeper_gate"
-        },
-        {
-          "elapsed_ms": 6,
           "name": "validate_lineage_hard_gate"
         },
         {
-          "elapsed_ms": 4,
-          "name": "validate_knowledge_promotions_if_present"
+          "elapsed_ms": 7,
+          "name": "validate_gatekeeper_gate"
         },
         {
           "elapsed_ms": 4,
-          "name": "validate_generated_artifact_whitelist"
-        },
-        {
-          "elapsed_ms": 3,
-          "name": "validate_validation_receipt_if_present"
+          "name": "validate_trajectory_artifacts_if_present"
         },
         {
           "elapsed_ms": 3,
@@ -380,7 +441,11 @@
         },
         {
           "elapsed_ms": 3,
-          "name": "validate_research_claims_if_present"
+          "name": "validate_plan_governed_execution_gate"
+        },
+        {
+          "elapsed_ms": 3,
+          "name": "validate_knowledge_promotions_if_present"
         },
         {
           "elapsed_ms": 3,
@@ -388,15 +453,19 @@
         },
         {
           "elapsed_ms": 3,
+          "name": "validate_recursive_improvement_passes_if_present"
+        },
+        {
+          "elapsed_ms": 3,
+          "name": "validate_generated_artifact_whitelist"
+        },
+        {
+          "elapsed_ms": 3,
           "name": "validate_lcm_rebuild_gate"
         },
         {
-          "elapsed_ms": 2,
-          "name": "validate_plan_governed_execution_gate"
-        },
-        {
-          "elapsed_ms": 2,
-          "name": "validate_trajectory_artifacts_if_present"
+          "elapsed_ms": 3,
+          "name": "validate_validation_receipt_if_present"
         },
         {
           "elapsed_ms": 2,
@@ -404,19 +473,15 @@
         },
         {
           "elapsed_ms": 2,
-          "name": "validate_entrypoint_invariants"
+          "name": "validate_research_claims_if_present"
         },
         {
           "elapsed_ms": 2,
           "name": "validate_jev_history_if_present"
         },
         {
-          "elapsed_ms": 1,
-          "name": "validate_recursive_improvement_passes_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_health_purity"
+          "elapsed_ms": 2,
+          "name": "validate_entrypoint_invariants"
         },
         {
           "elapsed_ms": 1,
@@ -424,7 +489,7 @@
         },
         {
           "elapsed_ms": 1,
-          "name": "validate_database_schema_versions"
+          "name": "validate_health_purity"
         },
         {
           "elapsed_ms": 1,
@@ -432,15 +497,19 @@
         },
         {
           "elapsed_ms": 1,
+          "name": "validate_database_schema_versions"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_workunit_manifests_if_present"
+        },
+        {
+          "elapsed_ms": 1,
           "name": "validate_health_cache_integrity"
         },
         {
-          "elapsed_ms": 1,
+          "elapsed_ms": 0,
           "name": "validate_spec_drift"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_project_config_toml"
         },
         {
           "elapsed_ms": 0,
@@ -448,7 +517,15 @@
         },
         {
           "elapsed_ms": 0,
+          "name": "validate_context_capsule_policy_contract"
+        },
+        {
+          "elapsed_ms": 0,
           "name": "validate_watcher_purity"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_project_config_toml"
         },
         {
           "elapsed_ms": 0,
@@ -464,11 +541,11 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_context_capsule_policy_contract"
+          "name": "validate_docs_templates_bucket"
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_docs_templates_bucket"
+          "name": "validate_repo_map"
         },
         {
           "elapsed_ms": 0,
@@ -476,7 +553,7 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_repo_map"
+          "name": "validate_context_capsules_if_present"
         },
         {
           "elapsed_ms": 0,
@@ -496,19 +573,11 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_context_capsules_if_present"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_workunit_manifests_if_present"
+          "name": "validate_eval_gate_if_required"
         },
         {
           "elapsed_ms": 0,
           "name": "validate_risk_map"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_eval_gate_if_required"
         },
         {
           "elapsed_ms": 0,
@@ -519,24 +588,24 @@
           "name": "validate_tooling_gate"
         }
       ],
-      "git_revision": "cde7103133c5e768e7fa830b2d888db56cc3cd2b",
+      "git_revision": "28e01460021bd5a65bcdaca8a7835c6389574277",
       "kind": "validation_receipt",
       "parallelism": 1,
-      "pass_count": 184,
+      "pass_count": 187,
       "prediction_uses_warnings": true,
-      "receipt_hash": "sha256:a8648ecd4de5ddcad1c2852bc69f7e73d128c00a9d0100441288e5bab1dd3aaf",
-      "repo_signal_fingerprint": "45d5943dc5bf0810673bea8f27bdbf72f5d029ac85a221ba183156d2ca1f97d6",
+      "receipt_hash": "sha256:a78bb39d25547883b1f61112d0564f18987a0bd4e6b4274a414a3dc54249e3c5",
+      "repo_signal_fingerprint": "24ed6c04e2cec95be473e0b513645a0537485559fa45f36a7a056a751665c10c",
       "schema_version": "1.0.0",
       "status": "ok",
       "temporary_artifacts_cleaned": 0,
-      "trajectory_artifact_hash": "sha256:747c3af6281fff03ee8952eb7652ec77dd09635a36b0e1c00f5d05fceac90823",
-      "trajectory_run_id": "branch_01M50MM1V6P2GC6EMRT52DN2XE",
+      "trajectory_artifact_hash": "sha256:ff1ed713309fa633d9c5483caed1de9ca77863dc2694a52a06623712833625d8",
+      "trajectory_run_id": "branch_01M50PD54D57R2MT8R5DFBPF1W",
       "warn_count": 4,
       "warnings": [
         "Risk map missing (run `decapod riskmap init`)",
-        "Stale workspaces preserved for explicit review: <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (current_workspace: workspace contains the current process; rerun prune from the host checkout after leaving this workspace so Git can release the branch), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.)",
+        "Stale workspaces preserved for explicit review: <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (current_workspace: workspace contains the current process; rerun prune from the host checkout after leaving this workspace so Git can release the branch), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.)",
         "Watcher audit trail missing (run `decapod govern watcher run`)",
-        "Workspace branch 'agent/unknown/code_01m50mjqn4hr2wqg' has unpushed commits or does not exist on origin. Branch pushes and iteration are allowed before preflight; hold PR creation until intent is converged, the branch is mergeable, and full `decapod validate` succeeds against the exact current candidate and accepted target."
+        "Workspace branch 'agent/unknown/code_01m50p2742m8pfdw' has unpushed commits or does not exist on origin. Branch pushes and iteration are allowed before preflight; hold PR creation until intent is converged, the branch is mergeable, and full `decapod validate` succeeds against the exact current candidate and accepted target."
       ]
     }
   }

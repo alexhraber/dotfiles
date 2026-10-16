@@ -63,10 +63,14 @@ shell and editor; Homebrew manages the curated tool dependencies.
 
 scripts/desktop.py owns an explicit, locked apply/status/permissions/undo
 lifecycle. It captures typed defaults, service state and a per-display wallpaper
-archive before enabling the profile. Versioned native binaries live in private
+archive before enabling the profile. Versioned native app bundles live in private
 state; a stable executable symlink lets LaunchAgent upgrades restart the new
 build without changing its plist. Health binds a fresh status record to the
 actual launchctl PID. Reapply retains the original recovery baseline.
+compile_tools hashes all native sources/headers and the generic permission
+plist, builds in a temporary private directory, ad-hoc signs and verifies the
+complete bundle, then atomically publishes it. Failed builds leave no cached
+partial bundle or changed active link. No team identity is embedded in source.
 
 scripts/desktop-edge.m uses AppKit/QuartzCore for an open-app dock. One pure
 fisheye geometry function owns painting and hit testing. It polls pointer state,
@@ -78,8 +82,8 @@ custom surfaces. Built-in brightness uses dynamically resolved DisplayServices.
 No injection, event tap, SIP change or cursor warping is required.
 
 .config/sketchybar contains rounded control groups and Python hover plugins.
-The default islands layout draws four separate right-side section backgrounds.
-Three eight-point empty items separate their bounds; bracket background padding
+The default islands layout draws five separate right-side section backgrounds.
+Four eight-point empty items separate their bounds; bracket background padding
 is zero so backgrounds cannot expand into the gaps. appearance.apply toggles
 the gaps on for islands and off for optional ribbon in the same live IPC update.
 Bracket and background drawing are both set directly, without interpolation
@@ -88,13 +92,14 @@ The bar stays at y_offset=4 and toggles visibility without sliding its anchors
 or popups. Hardware icon labels use fixed widths: CPU/GPU show utilization
 percentages and memory shows used GiB; Fahrenheit temperatures, power,
 capacity and swap remain in the panels.
-Chrome is tighter and neutral with an accent reserved for notifications and
-actions. Popups use opaque, blur-free surfaces.
-themes.json and plugins/appearance.py own three validated palettes and the
+Nocturne uses charcoal surfaces, violet clock/Apple/notification accents and
+cyan hardware/weather icons. Native panels are opaque and blur-free.
+themes.json and plugins/appearance.py own four validated palettes and the
 ribbon/islands layout. A single live IPC update restyles existing items and
 toggles bracket backgrounds, preserving visibility and popovers. The native
-helper reloads the selected theme name on SIGUSR1 or its health interval for
-diagnostics. The dock uses application artwork with a transparent background,
+helper reloads the selected palette on SIGUSR1 or its health interval; native
+controls/calendar restyle and menus close for a coherent next open.
+The dock uses application artwork with a transparent background,
 so palette changes affect the bar and popovers without recoloring app icons.
 
 DockView.drawRect clears its pixels and draws only application icons. There
@@ -107,15 +112,29 @@ The hidden reveal region follows the resting icon footprint, 44 points tall,
 instead of requiring a trip to a three-pixel edge beneath floating icons.
 Resting size remains 40 points; unconstrained peak grows from 62 to 77.5 points.
 Geometry tests cover this ratio, bottom alignment and reveal on offset displays.
-controls.py serializes hover state plus IPC commits under a short advisory
-file lock. Dwell and device reads happen outside the lock. Exiting an anchor
-cancels pending opens immediately; a 240ms bridge allows entering information
-rows, actionable rows, sliders or graphs before closing. Panel transfers close
-the previous panel and render the new one in one IPC; repeated hover does not
-close the active panel. Token checks reject stale fresh-data responses.
-All visible rows receive keep/leave events; only actionable rows highlight.
+controls.py serializes hover state plus descriptor commits under a short
+advisory lock. Dwell and device reads happen outside the lock. Anchor exit
+cancels pending opens; scripts/control-panel.m owns the native window/anchor
+bridge and 320ms exit grace. Typed descriptors contain bounded labels, action
+booleans, optional slider percentage and bounded graph samples, never commands.
+The helper reads a fixed private path with owner/mode/size/type checks and
+O_NOFOLLOW. Native callbacks carry panel, revision and row index/percentage to
+the installed backend; stale callbacks are rejected before action selection.
+Dismissed request IDs cannot reopen through a late device response. Repeated
+hover reuses the same window. Token checks reject stale fresh-data responses.
 Cached content renders before fresh device reads. Read-only warmup runs on reveal. macmon samples are shared
 through private state and displayed in Fahrenheit, with load graphs and alerts.
+scripts/calendar-panel.m owns an EventKit store, 42-day grid and selected-day
+agenda. Calendar reads run on a serial queue and stale month responses are
+rejected by revision. Permission requests occur only on an explicit local
+connect action. Source selection is private; event content remains in memory.
+scripts/app-menu.m reads the frontmost app's AX menu bar on a background queue,
+mirrors headings into bounded SketchyBar slots with an overflow menu, and draws
+native themed dropdowns/submenus. Menu rows retain actual AX elements, enabled
+states, marks and shortcut labels. Only a selected enabled leaf in the same
+foreground app receives one AXPress. Queries have messaging timeouts and
+bounded item/depth limits; commands are never executed on hover. App/Space
+changes dismiss menus. Menus, calendar and control windows exclude each other.
 Device operations use argv arrays. Native Wi-Fi/notification/Focus panels need
 local Accessibility/Automation. scripts/set-wallpaper.swift captures/restores
 per-display URLs and typed image options in a private archive.
@@ -212,7 +231,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `45d5943dc5bf0810673bea8f27bdbf72f5d029ac85a221ba183156d2ca1f97d6`
-- Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (7 files), `tests/` (6 files)
+- Repository signal fingerprint: `24ed6c04e2cec95be473e0b513645a0537485559fa45f36a7a056a751665c10c`
+- Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

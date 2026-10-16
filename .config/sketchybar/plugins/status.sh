@@ -7,20 +7,26 @@ if [[ -r $appearance ]]; then
   # shellcheck source=/dev/null
   source "$appearance"
 fi
+if [[ ${SENDER:-} == mouse.entered || ${SENDER:-} == mouse.clicked ]]; then
+  menu_index=''
+  case "${NAME:-}" in
+    apple) menu_index=0 ;;
+    front_app) menu_index=1 ;;
+    app_menu.*) menu_index=$(( ${NAME#app_menu.} + 2 )) ;;
+  esac
+  if [[ -n $menu_index ]]; then
+    python3 -B "$plugin_dir/controls.py" cancel all
+    exec "${XDG_STATE_HOME:-$HOME/.local/state}/dotfiles/desktop/desktop-edge" --app-menu "$menu_index"
+  fi
+fi
 case "${SENDER:-}" in
   mouse.entered)
-    if [[ $NAME == *.* ]]; then
-      exec python3 -B "$plugin_dir/controls.py" keep "$NAME"
-    fi
     exec python3 -B "$plugin_dir/controls.py" hover "$NAME"
     ;;
   mouse.exited)
     exec python3 -B "$plugin_dir/controls.py" leave "$NAME"
     ;;
   mouse.clicked)
-    if [[ $NAME == *.slider ]]; then
-      exec python3 -B "$plugin_dir/controls.py" slider "${NAME%.slider}"
-    fi
     exec python3 -B "$plugin_dir/controls.py" hover "$NAME"
     ;;
   mouse.scrolled)
@@ -59,7 +65,6 @@ case "${NAME:-}" in
     if [[ -z $volume || ! $volume =~ ^[0-9]+([.][0-9]+)?$ ]]; then
       volume="$(osascript -e 'output volume of (get volume settings)')"
     fi
-    sketchybar --set "$NAME" label="${volume%%.*}%" \
-      --set volume.slider slider.percentage="${volume%%.*}"
+    sketchybar --set "$NAME" label="${volume%%.*}%"
     ;;
 esac

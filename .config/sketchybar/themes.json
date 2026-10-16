@@ -1,7 +1,13 @@
 {
-  "default": "tidal",
+  "default": "nocturne",
   "layout": "islands",
   "themes": {
+    "nocturne": {
+      "surface": "11151D", "popup": "11151D", "border": "2A3447",
+      "foreground": "E6EDF7", "muted": "94A3B8", "accent": "B8A6FF",
+      "secondary": "42C7FF", "highlight": "202735", "success": "9DD8AE",
+      "warning": "F3CB8C", "danger": "FF91A4"
+    },
     "tidal": {
       "surface": "132630", "popup": "142730", "border": "355361",
       "foreground": "E8F5F7", "muted": "A0BBC4", "accent": "80D9D1",
