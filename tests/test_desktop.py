@@ -23,6 +23,35 @@ spec.loader.exec_module(metrics)
 
 
 class DesktopTests(unittest.TestCase):
+    def test_native_capacity_meters_are_bounded_and_missing_capacity_is_omitted(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(controls,'STATE',Path(temp)), \
+             patch.object(controls,'native_controls'):
+            controls.render_rows('cpu',[('CPU · 150%',None)])
+            self.assertEqual(controls.read('native-panel.json')['meter'],1)
+            controls.render_rows('battery',[('Battery · —%',None)])
+            self.assertNotIn('meter',controls.read('native-panel.json'))
+            controls.store('metrics.json',{'memory':{'ram_usage':16,'ram_total':64}})
+            controls.render_rows('memory',[('Memory · 16 GiB',None)])
+            self.assertEqual(controls.read('native-panel.json')['meter'],0.25)
+            controls.store('metrics.json',{'memory':{'ram_usage':16,'ram_total':0}})
+            controls.render_rows('memory',[('Memory · unavailable',None)])
+            self.assertNotIn('meter',controls.read('native-panel.json'))
+
+    def test_native_weather_cards_preserve_row_action_indices(self):
+        cards=[{'hour':'10am','temperature':'50°F','condition':'rain','precipitation':'20%'}]
+        rows=[('97750',None),('Hourly forecast · 50°F',None),('Light rain',None),('Refresh forecast',['weather-refresh'])]
+        with tempfile.TemporaryDirectory() as temp, patch.object(controls,'STATE',Path(temp)), \
+             patch.object(controls,'native_controls'), patch.object(controls.weather,'outlook',return_value=cards), \
+             patch.object(controls,'action') as action, patch.object(controls,'fresh_rows',return_value=rows):
+            controls.render_rows('weather',rows)
+            descriptor=controls.read('native-panel.json')
+            self.assertEqual(descriptor['forecast'],cards)
+            self.assertEqual(descriptor['subtitle'],'Light rain')
+            self.assertEqual(descriptor['rows'][0]['text'],'Weather · 50°F')
+            self.assertNotIn('weather-refresh',json.dumps(descriptor))
+            controls.native_action('native-action','weather','3',descriptor['revision'])
+            action.assert_called_once_with(['weather-refresh'])
+
     def test_clock_events_read_current_system_time_without_seconds(self):
         with tempfile.TemporaryDirectory() as temp:
             directory = Path(temp)

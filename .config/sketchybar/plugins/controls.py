@@ -96,7 +96,7 @@ def alerts(metrics, battery=''):
 def panel_rows(name):
     """Each row is text plus an optional argv action, never interpolated shell."""
     if name == 'weather':
-        return weather.rows()
+        return weather.rows(include_hours=False)
     if name == 'clock':
         return [('Calendar', None), ('Native month grid and synced agenda', None)]
     if name == 'brightness':
@@ -149,10 +149,10 @@ def panel_rows(name):
         match = re.search(r'(\d+)%;\s*([^;]+);?\s*([^\n]*)', result)
         charge, state, estimate = match.groups() if match else ('—', 'Unavailable', '')
         rows = [('Battery · ' + charge + '%', None),
-                (state.strip().capitalize(), None)]
+                ('State · ' + state.strip().capitalize(), None)]
         estimate = estimate.replace('present: true', '').strip()
         if estimate:
-            rows.append((estimate.capitalize(), None))
+            rows.append(('Estimate · ' + estimate.capitalize(), None))
         try:
             batteries = plistlib.loads(subprocess.check_output(['ioreg', '-r', '-c', 'AppleSmartBattery', '-a'], timeout=3))
             battery = batteries[0]
@@ -249,6 +249,8 @@ def _render_rows(name, rows):
     if name == 'weather' and len(rows) > 1 and rows[1][0].startswith('Hourly forecast · '):
         document['rows'][0]['text'] = 'Weather · ' + rows[1][0].split(' · ', 1)[1]
         document['rows'][1]['text'] = rows[0][0]
+        document['forecast'] = weather.outlook()
+        document['subtitle'] = str(rows[2][0])[:160] if len(rows) > 2 else ''
     elif name == 'alerts':
         document['rows'][0]['text'] = 'Notifications · Quick controls'
     if name in ('volume', 'brightness') and rows:
@@ -258,6 +260,17 @@ def _render_rows(name, rows):
     history = read('history.json', {}).get(name, [])
     if name in ('cpu', 'gpu', 'memory') and history:
         document['history'] = history[-60:]
+    if name in ('cpu', 'gpu', 'memory'):
+        document['subtitle'] = 'Unified memory' if name == 'memory' else 'Apple Silicon · utilization'
+    if name in ('cpu', 'gpu', 'battery') and rows:
+        value = re.search(r' · (\d+(?:\.\d+)?)%', rows[0][0])
+        if value:
+            document['meter'] = max(0, min(1, float(value[1]) / 100))
+    elif name == 'memory':
+        memory = sample().get('memory', {})
+        used, total = memory.get('ram_usage', 0), memory.get('ram_total', 0)
+        if isinstance(used, (int, float)) and isinstance(total, (int, float)) and total > 0 and math.isfinite(used / total):
+            document['meter'] = max(0, min(1, used / total))
     store('native-panel.json', document)
     native_controls()
     store('active.json', {'name': name, 'time': time.time()})

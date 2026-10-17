@@ -83,6 +83,30 @@ fresh exact-candidate validation and hosted CI before merge; the earlier
 
 ## Promotion Gates
 
+The native-panel elevation adds cached six-hour forecast tests covering imperial
+conversion, expired periods, missing cache, invalid dates and precipitation,
+without network access. Descriptor regressions cover finite bounded capacity,
+missing memory totals and unchanged refresh-action indices. Native self-tests
+reject malformed forecast arrays, unsupported conditions and meter values.
+The native executable selector is tested with versioned-only Homebrew paths,
+Intel fallback and no executable, protecting the observed missing-python3-link
+failure without changing actual device settings in a test.
+Dock tests compare smoothing after equal elapsed time at 30, 60 and 120 Hz,
+require exact settlement, and retain the bottom-aligned geometry checks.
+The ten account-free native preview fixtures expose typography, meter/graph
+layout, forecast cards, action rows and sliders for visual inspection.
+The host shared check owner compiles with warnings as errors and executes the
+native self-tests; canonical exact-candidate readiness and hosted macOS/Linux
+checks remain publication gates. Native helper changes require fresh live
+health and separate verification of existing calendar permission after apply.
+The applied elevation build reached fresh healthy PID-bound status with its
+control backend available; ten panel routes and the one-second minute-only
+clock were exercised on the host. The user approved the final build's standard
+local calendar dialog, and fresh status reports Full Calendar Access, seven
+synced calendars and six selected-grid events without retaining their titles.
+Earlier-build consent alone was not used as evidence. App-menu Accessibility
+remains separately pending and is not established by panel rendering tests.
+
 The clock regression executes the actual status.sh clock route for routine,
 desktop_revealed and system_woke events with only SketchyBar IPC replaced by a
 recording function. Each emitted label must equal current system hours/minutes
@@ -183,7 +207,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `2ed975429e5acb516732c32f96a4c54cfef1dd0e8b32ed314e2cb29c52d86e47`
+- Repository signal fingerprint: `e6d3a1aa54f0e646abd9c791efc056f7ddba4cb28a935b3c3486c1c643040fc6`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

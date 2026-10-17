@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "baseline": {
-    "accepted_commit": "6765404c675b14f1f8e8b21c2b1dfed6e9f2d951",
+    "accepted_commit": "e66c235609e446acd7e9a265f69f44372dc616cf",
     "unresolved": {
       "claim:actual-app-menus": {
         "falsifier": "Native action guards permit stale/disabled/submenu leaf execution, or the UI claims menus work without Accessibility.",
@@ -15,87 +15,98 @@
     }
   },
   "change": {
-    "id": "change_01M52TT1AFE7NSKQHQNS7VJA74",
-    "base_commit": "6765404c675b14f1f8e8b21c2b1dfed6e9f2d951",
+    "id": "change_01M52X54NTPYVG7HF7ZV4B4CRN",
+    "base_commit": "e66c235609e446acd7e9a265f69f44372dc616cf",
     "target_base": "origin/main"
   },
   "claims": {
-    "hidden-seconds": {
-      "statement": "Clock displays hour and minute without seconds while retaining one-second updates and reveal/wake refresh.",
-      "falsifier": "Rendering regression or live query shows seconds, update_freq differs from 1, or updates is not on.",
+    "native-panel-elevation": {
+      "statement": "Native control panels provide symbol headers, large values, bounded meter/stat/forecast cards, existing guarded actions and an available versioned Python backend.",
+      "falsifier": "Native previews or payload tests fail, backend_available is false, or callbacks bypass stale revision/index guards.",
       "status": "supported",
       "proof_refs": [
-        "tests/test_desktop.py"
+        "scripts/control-panel.m",
+        "tests/test_desktop.py",
+        "tests/test_weather.py"
       ]
     }
   },
   "checkpoints": [
     {
-      "id": "clock-hidden-seconds",
-      "summary": "Hide displayed clock seconds and compact its width; retain one-second hidden, reveal and wake refresh",
-      "input_digest": "sha256:28432ca0dbaccf1f8e40d04b5a5b35fdac40df7f3f3a49043cf873675ae5a6f2",
+      "id": "elevation-source",
+      "summary": "Native panel elevation, cached forecast cards, versioned Python callbacks and time-based dock animation; source checkpoint before clean-candidate prerequisites",
+      "input_digest": "sha256:96f889f2ebacdddbde5bfcced18a62fb50db658b9da6c9104aaa8bb947a8e9aa",
       "proof_refs": [
-        "target/minute-project-check.json"
+        "tests/test_desktop.py",
+        "tests/test_weather.py"
+      ]
+    },
+    {
+      "id": "elevation-ready",
+      "summary": "Native desktop elevation with successful clean-candidate project prerequisites and host rendering evidence",
+      "input_digest": "sha256:5243437d43c430c00034bfa2b471c53e9a03a593912a39525e503b082e0e401c",
+      "proof_refs": [
+        "target/elevation-project-check.json"
       ]
     }
   ],
   "intents": {
-    "intent:change_01M52TT1AFE7NSKQHQNS7VJA74": {
+    "intent:change_01M52X54NTPYVG7HF7ZV4B4CRN": {
       "acceptance_criteria": [],
       "assumptions": [],
       "boundaries": [
         "Current claimed task and isolated work branch"
       ],
       "constraints": [
-        "root"
+        "desktop"
       ],
       "created_sequence": 1,
-      "id": "intent:change_01M52TT1AFE7NSKQHQNS7VJA74",
+      "id": "intent:change_01M52X54NTPYVG7HF7ZV4B4CRN",
       "out_of_scope": [],
       "proof_requirements": [],
-      "raw_intent": "Hide clock seconds while retaining one-second refresh\n\nDisplay compact minute-only clock; preserve update_freq=1, updates=on and reveal/wake subscriptions. Verify rendering and cadence, apply, merge and push.",
-      "refined_intent": "Hide clock seconds while retaining one-second refresh\n\nDisplay compact minute-only clock; preserve update_freq=1, updates=on and reveal/wake subscriptions. Verify rendering and cadence, apply, merge and push.",
+      "raw_intent": "Elevate interactive desktop panels and dock finish\n\nContinue the user-authorized visual polish: inspect current runtime, improve coherent native hover panels and dock presentation, retain fullscreen/autohide workflow, icons-only transparent dock, one-second minute-only clock, rightmost alerts-clock-weather, imperial weather 97750, reversible reproducible setup; verify and publish to main.",
+      "refined_intent": "Elevate interactive desktop panels and dock finish\n\nContinue the user-authorized visual polish: inspect current runtime, improve coherent native hover panels and dock presentation, retain fullscreen/autohide workflow, icons-only transparent dock, one-second minute-only clock, rightmost alerts-clock-weather, imperial weather 97750, reversible reproducible setup; verify and publish to main.",
       "status": "refined",
       "updated_sequence": 3
     }
   },
   "epochs": {
-    "ve_7926507d9a1047a4": {
-      "constitution_hash": "sha256:4aecac1e2910b7b886f7ed4314520a3936c4a2996bbe91d0ab10f3a8416e2928",
-      "constitution_version": "embedded-docs@0.116.0",
-      "epoch_id": "ve_7926507d9a1047a4",
-      "evaluator_identity": "decapod-validate@0.116.0",
-      "evaluator_set_hash": "sha256:57b992eda1c34987d2c43112ba92bbbf7bd6db93378c64bf6ba3799eeb422fbc",
-      "generated_specs_fingerprint": "2ed975429e5acb516732c32f96a4c54cfef1dd0e8b32ed314e2cb29c52d86e47",
-      "generated_specs_manifest_hash": "sha256:040cd0df79ffcf3276d5d686e2cd214009240f6c8f41fb06d74f37c3e59c79d6",
+    "ve_88bc64812a4c29c9": {
+      "constitution_hash": "sha256:2204c9f42ce7535bc72659ba2a7f8afb3e46175c4aadb52a78a66d0c57434528",
+      "constitution_version": "embedded-docs@0.117.0",
+      "epoch_id": "ve_88bc64812a4c29c9",
+      "evaluator_identity": "decapod-validate@0.117.0",
+      "evaluator_set_hash": "sha256:7cea840a7a5102edbdc792bd99448ef8eb9c6f794c2dbea608214c1531ac54e7",
+      "generated_specs_fingerprint": "e6d3a1aa54f0e646abd9c791efc056f7ddba4cb28a935b3c3486c1c643040fc6",
+      "generated_specs_manifest_hash": "sha256:b4999e118e8871e985678d63239c77b86a92b5db940d99310d72189130adc28b",
       "material_hashes": {
-        "constitution:core/DECAPOD": "sha256:4aecac1e2910b7b886f7ed4314520a3936c4a2996bbe91d0ab10f3a8416e2928",
-        "generated_spec:.decapod/managed/specs/ARCHITECTURE.md": "sha256:5ffdbeb83e7f3a2c59c3a28001aeb169b21c06e96b3ff57935fddd236cae6411",
-        "generated_spec:.decapod/managed/specs/INTENT.md": "sha256:3b0f885da1e57fb85f675ea5b968d705a8daa43fcdd3f26f3f0d83a7fa139c5a",
-        "generated_spec:.decapod/managed/specs/INTERFACES.md": "sha256:1aab911388ee54fe81c5354764522e264c84398bb1352818f5a5bc8f6ca20462",
-        "generated_spec:.decapod/managed/specs/OPERATIONS.md": "sha256:94ad80c40b0c87b0c92cfc6cf644884717606ca2b55e9c7ddba32fb6b7fc7a67",
-        "generated_spec:.decapod/managed/specs/README.md": "sha256:96995fc3b0b06a24563a09a2b28f2ba571e716d8445090507b27f6ebc3b04507",
-        "generated_spec:.decapod/managed/specs/SECURITY.md": "sha256:d35ecc2c1bddea4e526774079dbdb1fb1babeede5a22edaad837a3926abc1bc0",
-        "generated_spec:.decapod/managed/specs/SEMANTICS.md": "sha256:eda0c97d33ab49fd836a4e58708193d58b9cc273268a70e0d717f1f5e74326ed",
-        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:c03d2b72f8748bcb6a3fc56bd2d649e7377e99512ca519b1ebd0fac53f08dd71",
-        "generated_specs_fingerprint": "2ed975429e5acb516732c32f96a4c54cfef1dd0e8b32ed314e2cb29c52d86e47",
-        "generated_specs_manifest": "sha256:040cd0df79ffcf3276d5d686e2cd214009240f6c8f41fb06d74f37c3e59c79d6",
-        "governance_context": "sha256:76ebf2212beca7abbd62d189e141dd15e95215bc64002bd1a26036cd6fb25001",
-        "governance_material:.decapod/managed/Dockerfile.decapod": "sha256:563b282fbcaed9ae568a21947c1809e855cbcb8f01a14fbf2337b129306d29dd",
-        "governance_material:AGENTS.md": "sha256:d220d7feaf0171cc11a864ab60a17ce71a45b15c95169cbebdc59ad2e98db5e5",
-        "governance_material:CLAUDE.md": "sha256:40e9e30dbbf914832b0052b90c2830a347b03642232b97dff17777e6b733ea84",
-        "governance_material:CODEX.md": "sha256:c5c077b247f971721aa3f21d05439dd66b8740cd154fc4b501887e520ce853f6",
-        "governance_material:GEMINI.md": "sha256:12b257127ccbb672e4468cd3fdb073ca40d26eabf3d1a59c27054b86bec9d9c9",
-        "governance_section:claims": "sha256:ee8169aafbae0c17777012d35ff463b7a91a7cedb6a254c18dc2594ba0da060a",
-        "governance_section:plan": "sha256:463cc44560060248e573559164e5bc01fd94a61c79068d90cd2069c19b2116c9",
-        "living_spec_material:.decapod/managed/specs/ARCHITECTURE.md": "sha256:c98faba50607725c6e00abc11b26e9353037b8a9659afffae9047a0e5732081a",
-        "living_spec_material:.decapod/managed/specs/INTENT.md": "sha256:6afb32f2828239aa91bf5916845d31ebb790480da3d2a647f173e8c282e88827",
-        "living_spec_material:.decapod/managed/specs/INTERFACES.md": "sha256:a23606f7b7322b1897792a0b2a8c857b149e85c7e2e468118bbe38b8fa869c65",
+        "constitution:core/DECAPOD": "sha256:2204c9f42ce7535bc72659ba2a7f8afb3e46175c4aadb52a78a66d0c57434528",
+        "generated_spec:.decapod/managed/specs/ARCHITECTURE.md": "sha256:725cba3f486f171128bec7b2f0dc00fd00611accb203b00c91fc76eb55420d31",
+        "generated_spec:.decapod/managed/specs/INTENT.md": "sha256:572d3ff48ba6087df543b3171de99b37c158533a5ab528188d69b35908f58d78",
+        "generated_spec:.decapod/managed/specs/INTERFACES.md": "sha256:b20fe4a2d4f42ef4ec75b3e6025219f22f0f38428891ec0a5559fd7b158cdb27",
+        "generated_spec:.decapod/managed/specs/OPERATIONS.md": "sha256:9d25fc7bf8dad0efcd71959e3109c232a6afb9a779b38aee25e2fe27c0c10774",
+        "generated_spec:.decapod/managed/specs/README.md": "sha256:c579569b32beee6de5444e82a929aabaca01f4f9d77dae6d7e422e80e341e13d",
+        "generated_spec:.decapod/managed/specs/SECURITY.md": "sha256:44cfdc993ac81e3cf9927f341bbbe43d3682f6d1c087ffb755897406bb8cb0f8",
+        "generated_spec:.decapod/managed/specs/SEMANTICS.md": "sha256:d0988036727614ee6097ed39ad64f28719fb92113b4f06d7b21a51aba2b841d8",
+        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:81db8c83a2d525c31c3fee41644a755fce6f56f2b20267102cc3c1f31306b662",
+        "generated_specs_fingerprint": "e6d3a1aa54f0e646abd9c791efc056f7ddba4cb28a935b3c3486c1c643040fc6",
+        "generated_specs_manifest": "sha256:b4999e118e8871e985678d63239c77b86a92b5db940d99310d72189130adc28b",
+        "governance_context": "sha256:5887508040cdd7a76095e771a716423edbaacc39ec5035044bac3dd2be9a0282",
+        "governance_material:.decapod/managed/Dockerfile.decapod": "sha256:012f00f03e0cb13b7f30a37915ae219f0ad674ce69400b1d206ea61304e0b867",
+        "governance_material:AGENTS.md": "sha256:daa00ac900710bdb9d5d6a06e9da19dd365515915892efcfb16a9309d08e7ae3",
+        "governance_material:CLAUDE.md": "sha256:43697d68008ea760465ec3b03ec4bf8858b9511e9bd7479b5c8490573382cd06",
+        "governance_material:CODEX.md": "sha256:2cdaef9d03eebe7671de46c3b7fcdb26ca101027e3bae0f5459ece3e25de5226",
+        "governance_material:GEMINI.md": "sha256:ae64e6e38508e8b892211ca749fa289229d1289c509e711c4009027d0485cf15",
+        "governance_section:claims": "sha256:c8faeca242a822d6ad05bd55e28abd575ec937501886e6a1c95e95cc0f5e0497",
+        "governance_section:plan": "sha256:e9bb8057ae3f5d79f10b4913ae2f9b49032e4be0a9d0f017ac2c5f456c10614a",
+        "living_spec_material:.decapod/managed/specs/ARCHITECTURE.md": "sha256:22650f2f73a47a990e4ca7ee5143b86e0aee553246a5b6f632d8568e20d233be",
+        "living_spec_material:.decapod/managed/specs/INTENT.md": "sha256:124a0d65d8dc2b550b73c48a1b3ca4f967d117860cca748d23d46476d8354c0a",
+        "living_spec_material:.decapod/managed/specs/INTERFACES.md": "sha256:0d833c1484bf28fccb4d30f10203200a8434475f3313b59d7563d1a4351d46f8",
         "living_spec_material:.decapod/managed/specs/OPERATIONS.md": "sha256:b43e9fa0eef9fb3e28d84cc5386c79f64f1f3cb9a37a1b8834bbb84e24dbea17",
         "living_spec_material:.decapod/managed/specs/README.md": "sha256:0988c85d6c05f02d52684c9aafae50e95fd5d5576739d3e9d995af682697fd99",
-        "living_spec_material:.decapod/managed/specs/SECURITY.md": "sha256:586ee92a521385a0b2dda4d63a544b38c4709ad1554b2d9d69d7c093e67a2658",
+        "living_spec_material:.decapod/managed/specs/SECURITY.md": "sha256:567892e9f114cc70b0070b41a6c902c6579dca4f15b61029be1946e580503234",
         "living_spec_material:.decapod/managed/specs/SEMANTICS.md": "sha256:92bbe2607c6f8f94191a95ea977d9785f3472a0fae2835520dd86eae73130d5c",
-        "living_spec_material:.decapod/managed/specs/VALIDATION.md": "sha256:ca1dfe1b5458f4c470545598ac3aa0e8829643c0a6016236c492ae5892adc4ca",
+        "living_spec_material:.decapod/managed/specs/VALIDATION.md": "sha256:b714f42b544bb52c551967be5ee7908f6421b320563bdc2fcff13a9fb7db0076",
         "proof_rubric": "sha256:99e8ef25629da391e9b479db9fff52b82f340224f7a69d8a88d2992ae8e90466",
         "validation_profile": "sha256:37a8eec1ce19687d132fe29051dca629d164e2c4958ba141d5f4133a33f0688f"
       },
@@ -114,62 +125,76 @@
       },
       "deferred_questions": [],
       "human_questions": [],
-      "intent": "Show local macOS hour:minute and AM/PM without seconds in a compact fixed-width clock. Preserve update_freq=1, updates=on, desktop_revealed/system_woke subscriptions and native calendar interaction. Update the existing rendering regression and specs; verify the live label and cadence, run required publication checks, merge and push main.",
+      "intent": "Make the existing Nocturne desktop feel cohesive: native panel headers with SF Symbols, large current values and real status, colored telemetry history with scale and latest point, structured cached six-hour weather cards, clearer action rows and accent sliders. Keep icons-only transparent dock pixels/sizing; make show/hide motion respect Reduce Motion and reduce wasted redraws when stable. Preserve fullscreen/autohide, notification-clock-weather order, minute-only one-second clock, 97750 imperial weather, privacy, and undo. Verify descriptors, native rendering/geometry, macOS/Linux checks and live runtime before publishing.",
       "phases": [],
       "proof_hooks": [
-        "decapod validate"
+        "Native self-tests and deterministic preview images",
+        "Portable descriptor and stale-action regressions",
+        "Live health, calendar consent and clock cadence"
       ],
       "schema_version": "1.1.0",
       "spec_reviews": [
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/ARCHITECTURE.md",
-          "reason": "Hours/minutes display and compact 74-point width replace visible seconds; the one-second cadence and reveal/wake hooks are preserved.",
-          "reviewed_code_fingerprint": "2ed975429e5acb516732c32f96a4c54cfef1dd0e8b32ed314e2cb29c52d86e47",
-          "spec_material_hash": "c98faba50607725c6e00abc11b26e9353037b8a9659afffae9047a0e5732081a"
+          "reason": "Final review includes native rendering, elapsed-time dock motion and versioned Python callback discovery.",
+          "reviewed_code_fingerprint": "e6d3a1aa54f0e646abd9c791efc056f7ddba4cb28a935b3c3486c1c643040fc6",
+          "spec_material_hash": "22650f2f73a47a990e4ca7ee5143b86e0aee553246a5b6f632d8568e20d233be"
         },
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/INTERFACES.md",
-          "reason": "Explicitly hides seconds while retaining continuous system-time refresh and calendar hover interaction.",
-          "reviewed_code_fingerprint": "2ed975429e5acb516732c32f96a4c54cfef1dd0e8b32ed314e2cb29c52d86e47",
-          "spec_material_hash": "a23606f7b7322b1897792a0b2a8c857b149e85c7e2e468118bbe38b8fa869c65"
+          "reason": "Bounded optional descriptor fields, ten preview types and backend availability status reviewed; action revision guards retained.",
+          "reviewed_code_fingerprint": "e6d3a1aa54f0e646abd9c791efc056f7ddba4cb28a935b3c3486c1c643040fc6",
+          "spec_material_hash": "0d833c1484bf28fccb4d30f10203200a8434475f3313b59d7563d1a4351d46f8"
         },
         {
-          "disposition": "unchanged_with_reason",
+          "disposition": "updated",
           "path": ".decapod/managed/specs/SECURITY.md",
-          "reason": "Clock presentation only; no new API, network, credential, system-clock or OS-permission behavior.",
-          "reviewed_code_fingerprint": "2ed975429e5acb516732c32f96a4c54cfef1dd0e8b32ed314e2cb29c52d86e47",
-          "spec_material_hash": "586ee92a521385a0b2dda4d63a544b38c4709ad1554b2d9d69d7c093e67a2658"
+          "reason": "No secrets, arbitrary symbol names or callback commands enter descriptors; no OS approval bypass; new binary consent remains a local action.",
+          "reviewed_code_fingerprint": "e6d3a1aa54f0e646abd9c791efc056f7ddba4cb28a935b3c3486c1c643040fc6",
+          "spec_material_hash": "567892e9f114cc70b0070b41a6c902c6579dca4f15b61029be1946e580503234"
         }
       ],
       "state": "APPROVED",
       "stop_conditions": [],
-      "title": "Hide clock seconds without reducing refresh cadence",
+      "title": "Elevate interactive desktop panels and dock finish",
       "todo_ids": [
-        "code_01m52ts7ryxp67am"
+        "docs_01m52x3smwtr40tb"
       ],
       "unknowns": [],
       "unresolved_contradictions": [],
-      "updated_at": "1792170429Z"
+      "updated_at": "1792176605Z"
     },
     "trajectory": {
       "active_boundaries": [
         "Current claimed task and isolated work branch"
       ],
-      "artifact_hash": "sha256:3b6c43991760e96cf928730b130a8ad259b321c486055eacb8623eb1f1ba0b93",
+      "artifact_hash": "sha256:7056648a3074b044a48100808441f1a5821e2b76ab6e42d3651f5607c2c4c5c5",
       "checks": [
+        {
+          "name": "calendar_consent",
+          "status": "passed"
+        },
         {
           "name": "decapod validate",
           "status": "passed"
         },
         {
-          "name": "desktop_regressions",
+          "name": "host_shared_checks",
           "status": "passed"
         },
         {
-          "name": "live_format_and_cadence",
+          "name": "live_panels",
           "status": "passed"
+        },
+        {
+          "name": "native_previews",
+          "status": "passed"
+        },
+        {
+          "name": "project_prerequisites",
+          "status": "failed"
         }
       ],
       "current_phase": "validation",
@@ -177,76 +202,150 @@
         "events": [
           {
             "event_id": "event:2",
-            "intent_id": "intent:change_01M52TT1AFE7NSKQHQNS7VJA74",
+            "intent_id": "intent:change_01M52X54NTPYVG7HF7ZV4B4CRN",
             "kind": "created",
             "sequence": 2
           },
           {
             "event_id": "event:3",
-            "intent_id": "intent:change_01M52TT1AFE7NSKQHQNS7VJA74",
+            "intent_id": "intent:change_01M52X54NTPYVG7HF7ZV4B4CRN",
             "kind": "refined",
             "sequence": 3
           },
           {
-            "detail": "trajectory:branch_01M52TT1D1SYACC1XH3F3CD7XH",
+            "detail": "trajectory:branch_01M52X54QYZCCMB07Y3TCAKYJH",
             "event_id": "event:4",
-            "intent_id": "intent:change_01M52TT1AFE7NSKQHQNS7VJA74",
+            "intent_id": "intent:change_01M52X54NTPYVG7HF7ZV4B4CRN",
             "kind": "trajectory_step_recorded",
             "sequence": 4
           },
           {
-            "detail": "trajectory:branch_01M52TT1D1SYACC1XH3F3CD7XH",
+            "detail": "trajectory:branch_01M52X54QYZCCMB07Y3TCAKYJH",
             "event_id": "event:5",
-            "intent_id": "intent:change_01M52TT1AFE7NSKQHQNS7VJA74",
+            "intent_id": "intent:change_01M52X54NTPYVG7HF7ZV4B4CRN",
             "kind": "trajectory_step_recorded",
             "sequence": 5
+          },
+          {
+            "detail": "trajectory:branch_01M52X54QYZCCMB07Y3TCAKYJH",
+            "event_id": "event:6",
+            "intent_id": "intent:change_01M52X54NTPYVG7HF7ZV4B4CRN",
+            "kind": "trajectory_step_recorded",
+            "sequence": 6
+          },
+          {
+            "detail": "trajectory:branch_01M52X54QYZCCMB07Y3TCAKYJH",
+            "event_id": "event:7",
+            "intent_id": "intent:change_01M52X54NTPYVG7HF7ZV4B4CRN",
+            "kind": "trajectory_step_recorded",
+            "sequence": 7
+          },
+          {
+            "detail": "trajectory:branch_01M52X54QYZCCMB07Y3TCAKYJH",
+            "event_id": "event:8",
+            "intent_id": "intent:change_01M52X54NTPYVG7HF7ZV4B4CRN",
+            "kind": "trajectory_step_recorded",
+            "sequence": 8
           }
         ],
         "knowledge_candidates": [],
-        "next_sequence": 5,
+        "next_sequence": 8,
         "schema_version": "1.0.0",
         "trajectories": {
-          "branch_01M52TT1D1SYACC1XH3F3CD7XH": {
+          "branch_01M52X54QYZCCMB07Y3TCAKYJH": {
             "evidence_only": true,
-            "id": "branch_01M52TT1D1SYACC1XH3F3CD7XH",
-            "intent_id": "intent:change_01M52TT1AFE7NSKQHQNS7VJA74",
+            "id": "branch_01M52X54QYZCCMB07Y3TCAKYJH",
+            "intent_id": "intent:change_01M52X54NTPYVG7HF7ZV4B4CRN",
             "steps": [
               {
-                "action": "verification",
+                "action": "trajectory.record",
                 "custody_event_id": "event:4",
                 "observations": [
-                  ".config/sketchybar/plugins/status.sh",
-                  ".config/sketchybar/sketchybarrc",
-                  "tests/test_desktop.py",
-                  "27 desktop tests passed. Live clock label 10:06 AM; update_freq=1, updates=on, label.width=74 and reveal/wake event subscriptions retained.",
-                  "Complete source inventory reviewed: only clock formatting and fixed width changed; command closure and native helper sources unchanged."
+                  "scripts/control-panel.m",
+                  "scripts/desktop-edge.m",
+                  ".config/sketchybar/plugins/controls.py",
+                  ".config/sketchybar/plugins/weather.py"
                 ],
-                "proof_refs": [
-                  "desktop_regressions",
-                  "live_format_and_cadence"
-                ],
+                "proof_refs": [],
                 "scope": [
-                  "root"
+                  "desktop"
                 ],
                 "sequence": 4,
+                "validation_findings": [
+                  "Existing Reduce Motion show/hide support is retained; dock polish targets stationary redraw suppression and precise settlement rather than adding visual chrome."
+                ]
+              },
+              {
+                "action": "verification",
+                "custody_event_id": "event:5",
+                "observations": [
+                  "scripts/control-panel.m",
+                  "scripts/desktop-edge.m",
+                  ".config/sketchybar/plugins/controls.py",
+                  ".config/sketchybar/plugins/weather.py",
+                  "tests/test_desktop.py",
+                  "tests/test_weather.py",
+                  "72 host tests; native warnings-as-errors build and self-tests; ten final-binary preview fixtures inspected; ten live panel descriptors; fresh healthy PID 59584 backend_available=true; transparent bar and minute-only update_freq=1 updates=on. Private proof /Users/arx/.local/state/dotfiles/proofs/panel-elevation-20261016/live.json and /private/tmp/dotfiles-elevation-host-check.txt. New ad-hoc identity requires local calendar consent (access=0), pending OS dialog; no event titles persisted.",
+                  "Full implementation inventory reviewed at 43146b906de096707d094ab3a3169f1ac9cf1d381091701683817351c2aa1996; command closure unchanged acd8fe85. Existing required repo.pr-readiness.v1 suite retained. No unrelated implementation changes."
+                ],
+                "proof_refs": [
+                  "host_shared_checks",
+                  "native_previews",
+                  "live_panels",
+                  "calendar_consent"
+                ],
+                "scope": [
+                  "desktop"
+                ],
+                "sequence": 5,
+                "validation_findings": []
+              },
+              {
+                "action": "trajectory.record",
+                "custody_event_id": "event:6",
+                "observations": [
+                  "User approved final-build OS calendar dialog. Current healthy PID 59584 reports access=3, calendars=7, events=6; private proof /Users/arx/.local/state/dotfiles/proofs/panel-elevation-20261016/calendar-consent.json. No event titles retained."
+                ],
+                "proof_refs": [
+                  "calendar_consent"
+                ],
+                "scope": [
+                  "desktop"
+                ],
+                "sequence": 6,
+                "validation_findings": []
+              },
+              {
+                "action": "trajectory.record",
+                "custody_event_id": "event:7",
+                "observations": [
+                  "Project check reports only 13 dirty authored files exceeding the six-file incremental commit limit. Preserve exact checkpointed material in an unpublished candidate commit, rerun project-check on the clean candidate, then amend this own unpublished commit with the successful receipt before canonical validation."
+                ],
+                "proof_refs": [
+                  "project_prerequisites"
+                ],
+                "scope": [
+                  "desktop"
+                ],
+                "sequence": 7,
                 "validation_findings": []
               },
               {
                 "action": "validation",
                 "command": "decapod validate",
-                "custody_event_id": "event:5",
+                "custody_event_id": "event:8",
                 "observations": [
                   ".decapod/governance.json",
                   ".decapod/governance.json",
-                  "validation epoch ve_7926507d9a1047a4 completed with zero failures"
+                  "validation epoch ve_88bc64812a4c29c9 completed with zero failures"
                 ],
                 "proof_refs": [
                   "decapod validate"
                 ],
                 "scope": [
-                  "root"
+                  "desktop"
                 ],
-                "sequence": 5,
+                "sequence": 8,
                 "validation_findings": []
               }
             ]
@@ -258,33 +357,43 @@
       ],
       "destination": "pull request",
       "evidence": [
-        "27 desktop tests passed. Live clock label 10:06 AM; update_freq=1, updates=on, label.width=74 and reveal/wake event subscriptions retained.",
-        "Complete source inventory reviewed: only clock formatting and fixed width changed; command closure and native helper sources unchanged.",
-        "validation epoch ve_7926507d9a1047a4 completed with zero failures"
+        "72 host tests; native warnings-as-errors build and self-tests; ten final-binary preview fixtures inspected; ten live panel descriptors; fresh healthy PID 59584 backend_available=true; transparent bar and minute-only update_freq=1 updates=on. Private proof /Users/arx/.local/state/dotfiles/proofs/panel-elevation-20261016/live.json and /private/tmp/dotfiles-elevation-host-check.txt. New ad-hoc identity requires local calendar consent (access=0), pending OS dialog; no event titles persisted.",
+        "Full implementation inventory reviewed at 43146b906de096707d094ab3a3169f1ac9cf1d381091701683817351c2aa1996; command closure unchanged acd8fe85. Existing required repo.pr-readiness.v1 suite retained. No unrelated implementation changes.",
+        "Project check reports only 13 dirty authored files exceeding the six-file incremental commit limit. Preserve exact checkpointed material in an unpublished candidate commit, rerun project-check on the clean candidate, then amend this own unpublished commit with the successful receipt before canonical validation.",
+        "User approved final-build OS calendar dialog. Current healthy PID 59584 reports access=3, calendars=7, events=6; private proof /Users/arx/.local/state/dotfiles/proofs/panel-elevation-20261016/calendar-consent.json. No event titles retained.",
+        "validation epoch ve_88bc64812a4c29c9 completed with zero failures"
       ],
       "inspected_files": [
-        ".config/sketchybar/plugins/status.sh",
-        ".config/sketchybar/sketchybarrc"
+        ".config/sketchybar/plugins/controls.py",
+        ".config/sketchybar/plugins/weather.py",
+        "scripts/control-panel.m",
+        "scripts/desktop-edge.m"
       ],
-      "intent_id": "intent:change_01M52TT1AFE7NSKQHQNS7VJA74",
+      "intent_id": "intent:change_01M52X54NTPYVG7HF7ZV4B4CRN",
       "modified_files": [
+        ".config/sketchybar/plugins/controls.py",
+        ".config/sketchybar/plugins/weather.py",
         ".decapod/governance.json",
-        "tests/test_desktop.py"
+        "scripts/control-panel.m",
+        "scripts/desktop-edge.m",
+        "tests/test_desktop.py",
+        "tests/test_weather.py"
       ],
       "next_transitions": [
-        "Complete required exact-candidate proof and publish the already-applied preference",
         "Refine plan and declare falsifiable checks",
         "publish"
       ],
       "repo_scope": [
-        "root"
+        "desktop"
       ],
-      "run_id": "branch_01M52TT1D1SYACC1XH3F3CD7XH",
+      "run_id": "branch_01M52X54QYZCCMB07Y3TCAKYJH",
       "schema_version": "1.1.0",
       "shortcut_risk_signals": [],
-      "task_id": "code_01m52ts7ryxp67am",
+      "task_id": "docs_01m52x3smwtr40tb",
       "tool_calls": [],
-      "unresolved_assumptions": []
+      "unresolved_assumptions": [
+        "Existing Reduce Motion show/hide support is retained; dock polish targets stationary redraw suppression and precise settlement rather than adding visual chrome."
+      ]
     },
     "validation": {
       "ci_prediction": {
@@ -295,84 +404,84 @@
         ],
         "result": "review"
       },
-      "decapod_release": "0.116.0",
+      "decapod_release": "0.117.0",
       "drift_findings": [],
-      "elapsed_ms": 2243,
-      "epoch_ref": "ve_7926507d9a1047a4",
+      "elapsed_ms": 2130,
+      "epoch_ref": "ve_88bc64812a4c29c9",
       "fail_count": 0,
       "failures": [],
       "gate_timings": [
         {
-          "elapsed_ms": 593,
-          "name": "validate_stale_workspaces"
-        },
-        {
-          "elapsed_ms": 485,
+          "elapsed_ms": 657,
           "name": "validate_project_specs_docs"
         },
         {
-          "elapsed_ms": 329,
+          "elapsed_ms": 439,
+          "name": "validate_stale_workspaces"
+        },
+        {
+          "elapsed_ms": 301,
           "name": "validate_markdown_primitives_roundtrip_gate"
         },
         {
-          "elapsed_ms": 185,
+          "elapsed_ms": 144,
           "name": "validate_git_workspace_context"
         },
         {
-          "elapsed_ms": 136,
+          "elapsed_ms": 131,
           "name": "validate_machine_contract"
         },
         {
-          "elapsed_ms": 102,
+          "elapsed_ms": 94,
           "name": "validate_obligations"
         },
         {
-          "elapsed_ms": 64,
+          "elapsed_ms": 59,
           "name": "validate_legacy_jsonl_retired"
         },
         {
-          "elapsed_ms": 46,
+          "elapsed_ms": 32,
           "name": "validate_archive_integrity"
         },
         {
-          "elapsed_ms": 24,
+          "elapsed_ms": 18,
           "name": "validate_repomap_determinism"
         },
         {
-          "elapsed_ms": 17,
+          "elapsed_ms": 14,
           "name": "validate_schema_determinism"
         },
         {
-          "elapsed_ms": 15,
-          "name": "validate_control_plane_contract"
-        },
-        {
-          "elapsed_ms": 14,
-          "name": "validate_git_push_pr_gate"
-        },
-        {
-          "elapsed_ms": 14,
+          "elapsed_ms": 13,
           "name": "validate_git_protected_branch"
         },
         {
           "elapsed_ms": 13,
+          "name": "validate_git_push_pr_gate"
+        },
+        {
+          "elapsed_ms": 13,
+          "name": "validate_control_plane_contract"
+        },
+        {
+          "elapsed_ms": 12,
           "name": "validate_federation_gates"
         },
         {
-          "elapsed_ms": 10,
+          "elapsed_ms": 9,
           "name": "validate_no_legacy_namespaces"
         },
         {
-          "elapsed_ms": 8,
-          "name": "validate_gatekeeper_gate"
-        },
-        {
-          "elapsed_ms": 8,
+          "elapsed_ms": 7,
           "name": "validate_lineage_hard_gate"
         },
         {
-          "elapsed_ms": 4,
-          "name": "validate_generated_artifact_whitelist"
+          "elapsed_ms": 6,
+          "name": "validate_gatekeeper_gate"
+        },
+        {
+          "elapsed_ms": 3,
+          "name": "validate_lcm_immutability"
         },
         {
           "elapsed_ms": 3,
@@ -384,10 +493,10 @@
         },
         {
           "elapsed_ms": 3,
-          "name": "validate_lcm_immutability"
+          "name": "validate_generated_artifact_whitelist"
         },
         {
-          "elapsed_ms": 3,
+          "elapsed_ms": 2,
           "name": "validate_lcm_rebuild_gate"
         },
         {
@@ -399,16 +508,12 @@
           "name": "validate_knowledge_integrity"
         },
         {
+          "elapsed_ms": 2,
+          "name": "validate_entrypoint_invariants"
+        },
+        {
           "elapsed_ms": 1,
           "name": "validate_trajectory_artifacts_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_database_schema_versions"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_override_authority"
         },
         {
           "elapsed_ms": 1,
@@ -416,11 +521,11 @@
         },
         {
           "elapsed_ms": 1,
-          "name": "validate_recursive_improvement_passes_if_present"
+          "name": "validate_override_authority"
         },
         {
           "elapsed_ms": 1,
-          "name": "validate_entrypoint_invariants"
+          "name": "validate_policy_integrity"
         },
         {
           "elapsed_ms": 1,
@@ -428,7 +533,7 @@
         },
         {
           "elapsed_ms": 1,
-          "name": "validate_policy_integrity"
+          "name": "validate_database_schema_versions"
         },
         {
           "elapsed_ms": 1,
@@ -440,7 +545,7 @@
         },
         {
           "elapsed_ms": 1,
-          "name": "validate_spec_drift"
+          "name": "validate_recursive_improvement_passes_if_present"
         },
         {
           "elapsed_ms": 1,
@@ -448,11 +553,15 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_project_config_toml"
+          "name": "validate_canon_mutation"
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_canon_mutation"
+          "name": "validate_spec_drift"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_risk_map_violations"
         },
         {
           "elapsed_ms": 0,
@@ -460,7 +569,7 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_risk_map_violations"
+          "name": "validate_project_config_toml"
         },
         {
           "elapsed_ms": 0,
@@ -480,11 +589,11 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_internalization_artifacts_if_present"
+          "name": "validate_repo_map"
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_repo_map"
+          "name": "validate_internalization_artifacts_if_present"
         },
         {
           "elapsed_ms": 0,
@@ -492,7 +601,7 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_embedded_self_contained"
+          "name": "validate_state_commit_gate"
         },
         {
           "elapsed_ms": 0,
@@ -500,7 +609,7 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_state_commit_gate"
+          "name": "validate_embedded_self_contained"
         },
         {
           "elapsed_ms": 0,
@@ -508,15 +617,11 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_eval_gate_if_required"
-        },
-        {
-          "elapsed_ms": 0,
           "name": "validate_workunit_manifests_if_present"
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_risk_map"
+          "name": "validate_eval_gate_if_required"
         },
         {
           "elapsed_ms": 0,
@@ -524,27 +629,31 @@
         },
         {
           "elapsed_ms": 0,
+          "name": "validate_risk_map"
+        },
+        {
+          "elapsed_ms": 0,
           "name": "validate_tooling_gate"
         }
       ],
-      "git_revision": "6765404c675b14f1f8e8b21c2b1dfed6e9f2d951",
+      "git_revision": "aeb0b6b981aedd0c68f69ea95d3cb4a9570e906c",
       "kind": "validation_receipt",
       "parallelism": 1,
-      "pass_count": 184,
+      "pass_count": 187,
       "prediction_uses_warnings": true,
-      "receipt_hash": "sha256:85f7a8d7171d0ed0cf6a905e08b618a16b97f46a149c14597a56e52f4fce7ab7",
-      "repo_signal_fingerprint": "2ed975429e5acb516732c32f96a4c54cfef1dd0e8b32ed314e2cb29c52d86e47",
+      "receipt_hash": "sha256:6d4e64060a550ca9c8a3ac37efbd65bef88cb4aee75c8db7299dc870432c15ce",
+      "repo_signal_fingerprint": "e6d3a1aa54f0e646abd9c791efc056f7ddba4cb28a935b3c3486c1c643040fc6",
       "schema_version": "1.0.0",
       "status": "ok",
       "temporary_artifacts_cleaned": 0,
-      "trajectory_artifact_hash": "sha256:3b6c43991760e96cf928730b130a8ad259b321c486055eacb8623eb1f1ba0b93",
-      "trajectory_run_id": "branch_01M52TT1D1SYACC1XH3F3CD7XH",
+      "trajectory_artifact_hash": "sha256:7056648a3074b044a48100808441f1a5821e2b76ab6e42d3651f5607c2c4c5c5",
+      "trajectory_run_id": "branch_01M52X54QYZCCMB07Y3TCAKYJH",
       "warn_count": 4,
       "warnings": [
         "Risk map missing (run `decapod riskmap init`)",
-        "Stale workspaces preserved for explicit review: <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (current_workspace: workspace contains the current process; rerun prune from the host checkout after leaving this workspace so Git can release the branch), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.)",
+        "Stale workspaces preserved for explicit review: <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (current_workspace: workspace contains the current process; rerun prune from the host checkout after leaving this workspace so Git can release the branch), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.)",
         "Watcher audit trail missing (run `decapod govern watcher run`)",
-        "Workspace branch 'agent/unknown/code_01m52ts7ryxp67am' has unpushed commits or does not exist on origin. Branch pushes and iteration are allowed before preflight; hold PR creation until intent is converged, the branch is mergeable, and full `decapod validate` succeeds against the exact current candidate and accepted target."
+        "Workspace branch 'agent/unknown/docs_01m52x3smwtr40tb' has unpushed commits or does not exist on origin. Branch pushes and iteration are allowed before preflight; hold PR creation until intent is converged, the branch is mergeable, and full `decapod validate` succeeds against the exact current candidate and accepted target."
       ]
     }
   }

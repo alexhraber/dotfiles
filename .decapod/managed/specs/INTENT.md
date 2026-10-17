@@ -83,6 +83,12 @@ reads calendars synced through macOS Internet Accounts, including Google when
 the user enables it there. No OAuth tokens or event content enter Git; events
 stay in memory. Hardware, sound, display, connectivity, battery, notifications
 and weather share native panels with usable hover bridges and explicit actions.
+Their visual hierarchy uses symbol headings, large current readings, bounded
+capacity meters, telemetry detail cards and readable trend graphs. Weather
+offers a six-hour cached outlook with imperial units for the declared ZIP;
+hovering never initiates a forecast fetch. Dock motion should follow the
+display refresh rate, settle without continual animation redraws, and respect
+Reduce Motion while retaining its entirely transparent icons-only appearance.
 The helper reads events only even though macOS requires Full Calendar Access.
 Its bar label must show current macOS hours/minutes with seconds hidden, refresh every second
 even when hidden, and update immediately on reveal and wake. A correct system
@@ -143,7 +149,7 @@ These declarations select authoring and proof obligations; they do not attest im
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `2ed975429e5acb516732c32f96a4c54cfef1dd0e8b32ed314e2cb29c52d86e47`
+- Repository signal fingerprint: `e6d3a1aa54f0e646abd9c791efc056f7ddba4cb28a935b3c3486c1c643040fc6`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
