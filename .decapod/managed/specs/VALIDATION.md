@@ -2,6 +2,39 @@
 
 ## Proof Surfaces
 
+The external-level correction passes 86 host tests, including native compilation
+and self-tests. New regressions cover hovered and pinned sliders, hidden/stale/
+dismissed panes, the first key before the next native status sample, transient
+read failures, and out-of-order events or a pane closing during a read. Actual
+OS brightness and volume changes updated the existing unpinned hover session
+through SketchyBar events; inspected native captures show the new value and
+thumb. The original levels and pointer were restored. Private proof artifacts
+remain outside Git; canonical validation and hosted checks gate publication.
+
+All 87 host tests pass, including a shell event regression proving that Apple
+and the app-name control open native menus only on click. Native menu compilation
+passes with warnings as errors. Nested app-menu self-tests cover the two-index command allowlist, preserving
+the app menu and all other headings in order while excluding Apple, empty
+menu trees and inventories larger than the previous flat-slot capacity. Real
+AX hover behavior still requires final-build OS consent and installed proof.
+On the final installed helper, the app-name click opens the permission pane
+directly under the custom bar; hover does not open it, leaving the pointer
+outside keeps it open, and a second click closes it. The bar inventory contains
+no standalone application headings. Fresh helper health and Calendar access
+were confirmed. Real app commands and hover contents remain unverified while
+macOS reports Accessibility off. The final live slider check also passes and
+restores brightness, volume and mute state.
+
+The Apple menu's native self-tests cover its fixed entries/application targets
+and confirm that restart/shutdown/logout map to the OS confirmation events,
+excluding immediate/forced variants. Host native compilation passes with
+warnings as errors. A real AppKit menu preview was captured and inspected;
+About This Mac and System Settings launches succeeded through their fixed
+native targets. The installed lock symbol is present, but automated verification
+does not lock, sleep, restart, shut down, log out or force-terminate an app.
+The final installed helper must be checked for fresh health and calendar access
+separately because the Apple feature changes its ad-hoc identity.
+
 The next-hour correction is covered at mid-hour, exactly on the hour and across
 midnight with explicit-offset timestamps. Expired and in-progress periods are
 excluded from the six-card hourly strip, invalid starts do not consume its
@@ -229,7 +262,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `91499f5aa1fd514d566d20a2035f6536e27bd313f811bfce537728e375048e47`
+- Repository signal fingerprint: `c90d7a78288a21050213593e790c937dd8687f29e3dc5391cf1bb2eba8f0d425`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

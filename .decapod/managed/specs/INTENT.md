@@ -72,8 +72,9 @@ downloads, account setup, VM startup troubleshooting and modifying Decapod itsel
 The refined desktop offers Graphite slate/champagne/ice-blue styling across native
 controls. From the far right inward: notifications, clock, weather, then all
 other controls. The left side replaces the decorative workspace affordance
-with the Apple logo and the active application's real app/File/Edit/View/etc.
-menus. Accessibility reads and presses the owning app's actual commands;
+with only the Apple logo and active application. Clicking the app name opens
+a pane containing its actual app/File/Edit/View/Window/Help/etc. headings;
+hovering each heading reveals its real commands and further submenus. Accessibility reads and presses the owning app's actual commands;
 disabled commands and submenus are retained, with no invented per-app actions.
 Local macOS consent is required and remains a user action.
 The right-hand composition has four separated groups: hardware, device/power
@@ -85,6 +86,14 @@ Native descriptors carry real bar anchors and pin intent, with request-bound
 dismissal acknowledgments. Hover previews; click pins; Escape, an outside click
 or clicking the same control dismisses. Compact panels retain their top edge
 and scroll position on refresh, without global keyboard or desktop shortcuts.
+Sound and display panes must follow system keyboard level changes while still
+hovered or pinned, without pointer reentry or idle device polling.
+The Apple icon should work like a normal system menu on click, with About This
+Mac, Settings and useful system/session entries. It uses native menu tracking,
+outside-click dismissal and Escape. Core information/settings actions must not
+depend on Accessibility to another application's menu. Current-app menu headings
+are nested under the click-only app-name control and use the actual AX menu
+bridge and its local OS permission. No separate menu headings occupy the bar.
 The owner explicitly approves the weather pane's current layout: preserve its
 header and hourly strip. Add six matching daily icon cards immediately below,
 starting tomorrow, with Fahrenheit highs/lows and forecast-local day boundaries.
@@ -161,7 +170,7 @@ These declarations select authoring and proof obligations; they do not attest im
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `91499f5aa1fd514d566d20a2035f6536e27bd313f811bfce537728e375048e47`
+- Repository signal fingerprint: `c90d7a78288a21050213593e790c937dd8687f29e3dc5391cf1bb2eba8f0d425`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

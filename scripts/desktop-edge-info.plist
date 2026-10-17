@@ -9,4 +9,5 @@
   <key>CFBundleVersion</key><string>1</string>
   <key>LSUIElement</key><true/>
   <key>NSCalendarsFullAccessUsageDescription</key><string>Show your synced Google Calendar agenda in the menu bar. Desktop Controls only reads events.</string>
+  <key>NSAppleEventsUsageDescription</key><string>Open the system actions you choose from the Apple menu, including sleep and confirmation dialogs for restart, shutdown, or logout.</string>
 </dict></plist>

@@ -14,9 +14,14 @@ esac
 if [[ ${SENDER:-} == mouse.entered || ${SENDER:-} == mouse.clicked ]]; then
   menu_index=''
   case "${NAME:-}" in
-    apple) menu_index=0 ;;
-    front_app) menu_index=1 ;;
-    app_menu.*) menu_index=$(( ${NAME#app_menu.} + 2 )) ;;
+    apple)
+      [[ ${SENDER:-} == mouse.entered ]] && exit 0
+      menu_index=0
+      ;;
+    front_app)
+      [[ ${SENDER:-} == mouse.entered ]] && exit 0
+      menu_index=1
+      ;;
   esac
   if [[ -n $menu_index ]]; then
     python3 -B "$plugin_dir/controls.py" cancel all
@@ -70,5 +75,13 @@ case "${NAME:-}" in
       volume="$(osascript -e 'output volume of (get volume settings)')"
     fi
     sketchybar --set "$NAME" label="${volume%%.*}%"
+    if [[ ${SENDER:-} == volume_change ]]; then
+      exec python3 -B "$plugin_dir/controls.py" changed volume
+    fi
+    ;;
+  brightness)
+    if [[ ${SENDER:-} == brightness_change ]]; then
+      exec python3 -B "$plugin_dir/controls.py" changed brightness
+    fi
     ;;
 esac

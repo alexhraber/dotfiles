@@ -47,7 +47,7 @@ validation_buildkite_preflights = false
 
 [proof.required_profile]
 id = "repo.pr-readiness.v1"
-reviewed_sources_digest = "sha256:a52529b1359c3e7d18f3c8804d4d4d69f64c29b2f4bd161f289d638464896df1"
+reviewed_sources_digest = "sha256:c32ba2bf1317a380f0e32d7fb66f1f44c4a40d12f194199c448e4c63ca577754"
 
 [proof.repository_contract]
 reviewed_commands_digest = "sha256:acd8fe8534bb79464e6564ce832860acb1de5acb3de926ff9f6f7b92a32e89fa"
