@@ -23,6 +23,97 @@ spec.loader.exec_module(metrics)
 
 
 class DesktopTests(unittest.TestCase):
+    def open_level_control(self, root, name, pinned=False):
+        controls.store('hover.json', [1, name])
+        controls.store('pin.json', {'request':'1', 'pinned':pinned})
+        controls.store('anchor.json', {'request':'1', 'anchors':[dict(x=1200,y=4,width=40,height=34)]})
+        controls.render_rows(name, [(('Sound' if name=='volume' else 'Display')+' · 50%', None)])
+        (root/'status.json').write_text(json.dumps({'updated':time.time(),
+            'controls':{'visible':True,'name':name}}))
+
+    def test_system_level_changes_refresh_visible_hover_and_pinned_sliders(self):
+        for name in ('brightness','volume'):
+            for pinned in (False,True):
+                with self.subTest(name=name,pinned=pinned), tempfile.TemporaryDirectory() as temp, \
+                     patch.object(controls,'STATE',Path(temp)/'bar'), patch.object(controls,'native_controls') as native, \
+                     patch.object(controls,'panel_rows',return_value=[('Level · 70%',None)]):
+                    self.open_level_control(Path(temp),name,pinned)
+                    native.reset_mock()
+                    before=controls.read('native-panel.json')
+                    self.assertTrue(controls.refresh_open(name))
+                    after=controls.read('native-panel.json')
+                    self.assertEqual(after['slider'],70)
+                    for key in ('name','request','pinned','anchors'):
+                        self.assertEqual(after[key],before[key])
+                    native.assert_called_once_with()
+
+    def test_system_level_events_do_not_query_or_reopen_hidden_stale_or_dismissed_panes(self):
+        for case in ('hidden','other','stale','dismissed','new-request'):
+            with self.subTest(case=case), tempfile.TemporaryDirectory() as temp, \
+                 patch.object(controls,'STATE',Path(temp)/'bar'), patch.object(controls,'native_controls') as native, \
+                 patch.object(controls,'panel_rows') as rows:
+                root=Path(temp); self.open_level_control(root,'volume',True); native.reset_mock()
+                status=json.loads((root/'status.json').read_text())
+                if case=='hidden': status['controls']['visible']=False
+                elif case=='other': status['controls']['name']='brightness'
+                elif case=='stale': status['updated']-=10
+                elif case=='dismissed': controls.store('native-dismissed.json',{'request':'1'})
+                else: controls.store('hover.json',[2,'brightness'])
+                (root/'status.json').write_text(json.dumps(status))
+                self.assertFalse(controls.refresh_open('volume'))
+                rows.assert_not_called(); native.assert_not_called()
+
+    def test_slow_device_event_cannot_overwrite_newer_event_or_new_pane(self):
+        for switch_panel in (False,True):
+            with self.subTest(switch_panel=switch_panel), tempfile.TemporaryDirectory() as temp, \
+                 patch.object(controls,'STATE',Path(temp)/'bar'), patch.object(controls,'native_controls'):
+                root=Path(temp); self.open_level_control(root,'brightness')
+                def slower_result(name):
+                    if switch_panel:
+                        controls.store('hover.json',[2,'volume'])
+                        controls.render_rows('volume',[('Sound · 80%',None)])
+                    else:
+                        with patch.object(controls,'panel_rows',return_value=[('Display · 80%',None)]):
+                            self.assertTrue(controls.refresh_open(name))
+                    return [('Display · 60%',None)]
+                with patch.object(controls,'panel_rows',side_effect=slower_result):
+                    self.assertFalse(controls.refresh_open('brightness'))
+                after=controls.read('native-panel.json')
+                self.assertEqual(after['slider'],80)
+                self.assertEqual(after['name'],'volume' if switch_panel else 'brightness')
+
+    def test_failed_device_event_read_retains_last_good_slider(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(controls,'STATE',Path(temp)/'bar'), \
+             patch.object(controls,'native_controls') as native, \
+             patch.object(controls,'panel_rows',side_effect=OSError('transient read failure')):
+            self.open_level_control(Path(temp),'brightness'); native.reset_mock()
+            self.assertFalse(controls.refresh_open('brightness'))
+            self.assertEqual(controls.read('native-panel.json')['slider'],50)
+            native.assert_not_called()
+
+    def test_first_key_after_open_is_not_lost_to_previous_native_status_sample(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(controls,'STATE',Path(temp)/'bar'), \
+             patch.object(controls,'native_controls'), \
+             patch.object(controls,'panel_rows',return_value=[('Display · 60%',None)]):
+            root=Path(temp); self.open_level_control(root,'brightness')
+            (root/'status.json').write_text(json.dumps({'updated':controls.read('active.json')['time']-0.2,
+                'controls':{'visible':False,'name':'volume'}}))
+            self.assertTrue(controls.refresh_open('brightness'))
+            self.assertEqual(controls.read('native-panel.json')['slider'],60)
+
+    def test_device_event_finishing_after_panel_closes_cannot_refresh_it(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(controls,'STATE',Path(temp)/'bar'), \
+             patch.object(controls,'native_controls') as native:
+            root=Path(temp); self.open_level_control(root,'brightness'); native.reset_mock()
+            def closed_while_reading(name):
+                (root/'status.json').write_text(json.dumps({'updated':time.time(),
+                    'controls':{'visible':False,'name':name}}))
+                return [('Display · 60%',None)]
+            with patch.object(controls,'panel_rows',side_effect=closed_while_reading):
+                self.assertFalse(controls.refresh_open('brightness'))
+            self.assertEqual(controls.read('native-panel.json')['slider'],50)
+            native.assert_not_called()
+
     def test_item_anchors_use_real_rectangles_and_reject_hidden_or_nonfinite_geometry(self):
         response={'bounding_rects':{'display-1':{'origin':[1400,4],'size':[56,40]},
             'hidden':{'origin':[-9999,-9999],'size':[1,1]},'bad':{'origin':[float('nan'),4],'size':[50,40]}}}

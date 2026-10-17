@@ -52,12 +52,25 @@ team, certificate or account. They are ad-hoc signed locally; binary updates
 may require fresh OS consent. Dotfiles never writes TCC databases or bypasses
 OS permission prompts.
 
-The custom Apple/app menus require Accessibility for Desktop Controls. Actual
+The current-app/File/Edit/View menus require Accessibility for Desktop Controls. Actual
 AX menu elements are read on a bounded background queue and retained in memory.
 Enabled leaf actions are pressed once only if the same app is still foreground;
 an action timeout is never automatically retried because a modal command may
 already be executing. Hover only reads/opens custom menus. Disabled commands
 remain disabled. No menu titles or command data are committed to Git.
+
+The Apple icon uses fixed native menu actions rather than another app's AX
+tree. Application launches resolve four allowlisted bundle identifiers, with
+an exact installed system path fallback for About This Mac. No menu payload
+supplies shell text or an arbitrary URL. Force Quit displays a Cancel-default
+native chooser, retains the selected running-application object and never acts
+on hover. Power/session actions run only after item selection: restart and
+shutdown use kAEShowRestartDialog/kAEShowShutdownDialog, and logout uses
+kAELogOut, never their immediate/forced variants. Automation consent is left to
+macOS, with a generic purpose string. Screen lock uses a dynamically resolved
+private login-service function; it is disabled if unsupported and is not invoked
+by automated checks. This Apple-menu build changes the ad-hoc binary identity;
+Calendar or Accessibility may require renewed local approval.
 
 Native control descriptors are private bounded JSON read from one fixed path;
 the helper rejects symlinks, wrong owner/mode, nonregular files and malformed
@@ -71,6 +84,14 @@ fixtures contain no actual calendar events, device identifiers or network names.
 backend revision/panel/index checks select previously generated argv actions.
 This is local-user tooling, not isolation from a compromised same-user process.
 
+System level events select only the fixed volume/brightness read paths. Event
+text does not select executable commands or settings. The private device-refresh
+record contains only an event token, control name and request identifier; it
+arbitrates concurrent reads without storing device details. Visibility, request
+and dismissal checks run before and after device reads, so delayed events cannot
+reopen a dismissed panel or replace a newer interaction. This refresh path adds
+no timer or background device-reading process; its native helper API is unchanged.
+
 Item anchors are capped at eight finite bounded rectangles; hidden/offscreen
 sentinels and invalid sizes are rejected. Pinning accepts only a boolean and
 native dismissal writes a request-only 0600 file with exclusive no-follow
@@ -80,7 +101,8 @@ a global event tap. This native build changes the ad-hoc identity, so prior
 Calendar or Accessibility consent does not prove access for the new build.
 
 Desktop activation is explicit. The helper uses private SkyLight menu calls,
-DisplayServices brightness and a Mission Control notification with SIP enabled;
+DisplayServices brightness, login-service screen lock and a Mission Control
+notification with SIP enabled;
 it does not inject code, install an event tap, warp the pointer or require root.
 An OS update may change these interfaces. Ordinary failure restores the native
 menu; SIGKILL cannot run cleanup, and the owned LaunchAgent restarts the helper.
@@ -109,7 +131,7 @@ loads a model. Ollama remains manually started and is not enabled at login.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `91499f5aa1fd514d566d20a2035f6536e27bd313f811bfce537728e375048e47`
+- Repository signal fingerprint: `bde504472bcaa4b7a44bc3f0560daca7711523d692569bb034cdcbc42e648a46`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

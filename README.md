@@ -224,7 +224,7 @@ strip, extra native menu row, or dock divider.
 
 | Control | Hover / interaction |
 | --- | --- |
-| Apple | Real Apple menu commands, in the custom style |
+| Apple | Click for a native system menu: About This Mac, System Settings, App Store, System Information, Force Quit and session/power actions |
 | Active app / File / Edit / View / … | The active application's actual menu commands, disabled states, shortcuts and submenus |
 | Clock | Current macOS time; native month grid, date selection, previous/next month, today and synced calendar agenda |
 | Weather | ZIP 97750 forecast, wind in mph, precipitation chance, upcoming hours and extended outlook |
@@ -267,7 +267,8 @@ without resetting wallpaper or desktop preferences.
 All hover controls use native AppKit panels with SF Symbol headings, clear
 current readings, a violet accent rule and cyan detail graphs. CPU, GPU, memory
 and battery use capacity meters and two-column detail cards. Sound and display
-use accent-colored native sliders; hardware graphs show a 0–100% scale and latest
+use accent-colored native sliders that follow keyboard level changes while open;
+hardware graphs show a 0–100% scale and latest
 sample, share a bounded private history and refresh while open. Weather adds six
 cached hourly cards starting next hour, with conditions, Fahrenheit temperatures and precipitation
 chance. A second matching row immediately below it shows **tomorrow and the next
@@ -301,9 +302,16 @@ and refreshes on bar reveal and wake. Seconds stay hidden; its compact fixed-wid
 shift adjacent controls. Time synchronization stays with macOS; no separate NTP
 client, network stream or clock daemon is installed.
 
-Apple/app menus require Accessibility approval for **Desktop Controls**.
-Hover the Apple logo and choose **Enable Accessibility…** if needed. The helper
-reads the active app's Accessibility menu tree and presses the selected real
+The Apple logo opens a native AppKit menu on click; hover only highlights it.
+It has normal menu selection, outside-click dismissal and Escape. About This Mac
+and System Settings open directly without Accessibility. Restart, Shut Down and
+Log Out request macOS confirmation dialogs; Force Quit opens a native app chooser.
+Lock Screen uses the installed macOS login service when supported. These session
+actions run only when selected, and macOS may ask for Automation approval.
+
+Active-app/File/Edit/View menus require Accessibility approval for **Desktop Controls**.
+Hover the active-app control and choose **Enable Accessibility…** if needed. The helper
+reads that app's Accessibility menu tree and presses the selected real
 command exactly once. Disabled items remain disabled, and a changed foreground
 app invalidates a pending command. Apps that do not expose a menu through
 Accessibility show an unavailable state. No replacement desktop shortcuts are

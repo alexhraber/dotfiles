@@ -125,6 +125,19 @@ same item, Escape or an outside mouse-down dismisses it; local panel handling
 uses no global event tap or navigation shortcut. A private request-bound
 dismissal acknowledgement permits future hover without reviving an old pin.
 
+SketchyBar brightness_change and volume_change events route through status.sh
+to controls.refresh_open for the corresponding pane. The backend checks the
+active hover request, dismissal acknowledgement and a native status sample
+younger than three seconds before querying actual system values. A sample
+older than the current open request does not discard an immediate first key.
+Device reads run outside the interaction lock. A private device-refresh token
+lets only the latest event commit while a second visibility/request check
+prevents a slow result from replacing a newer pane or refreshing a closed one.
+Transient read failures retain the last good slider. Rendering preserves the
+existing request, anchor and pin; native geometry and tracking behavior are
+unchanged. This level-refresh path adds no polling loop or native API. The
+separate Apple-menu change in this candidate does rebuild the helper.
+
 weather.daily_outlook groups the cached NWS day/night periods by the declared
 America/Los_Angeles date and returns tomorrow through six days ahead. The cache
 retains fourteen periods, and the verification image includes tzdata. Below
@@ -175,7 +188,18 @@ scripts/calendar-panel.m owns an EventKit store, 42-day grid and selected-day
 agenda. Calendar reads run on a serial queue and stale month responses are
 rejected by revision. Permission requests occur only on an explicit local
 connect action. Source selection is private; event content remains in memory.
-scripts/app-menu.m reads the frontmost app's AX menu bar on a background queue,
+scripts/app-menu.m gives the Apple icon a click-only AppKit NSMenu. Its
+placement uses the bar's explicit y=4 and maximum 40-point height, rather than
+adding a second notch-safe-area inset. Fixed enum
+actions resolve installed About This Mac, Settings, App Store and System
+Information bundles through NSWorkspace. Force Quit presents a native chooser
+of running foreground apps with Cancel as the default and acts only after the
+user selects an app and confirms. Lock Screen dynamically resolves the installed
+login framework's SACLockScreenImmediate symbol; unavailable support disables
+the item. Sleep and confirmation-based restart/shutdown/logout use fixed Apple
+events to loginwindow. Native menu tracking keeps the bar open until selection
+or dismissal; Apple hover only highlights and does not read the AX tree.
+The same source reads the frontmost app's AX menu bar on a background queue,
 mirrors headings into bounded SketchyBar slots with an overflow menu, and draws
 native themed dropdowns/submenus. Menu rows retain actual AX elements, enabled
 states, marks and shortcut labels. Only a selected enabled leaf in the same
@@ -278,7 +302,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `91499f5aa1fd514d566d20a2035f6536e27bd313f811bfce537728e375048e47`
+- Repository signal fingerprint: `bde504472bcaa4b7a44bc3f0560daca7711523d692569bb034cdcbc42e648a46`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

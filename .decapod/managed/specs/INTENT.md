@@ -85,6 +85,13 @@ Native descriptors carry real bar anchors and pin intent, with request-bound
 dismissal acknowledgments. Hover previews; click pins; Escape, an outside click
 or clicking the same control dismisses. Compact panels retain their top edge
 and scroll position on refresh, without global keyboard or desktop shortcuts.
+Sound and display panes must follow system keyboard level changes while still
+hovered or pinned, without pointer reentry or idle device polling.
+The Apple icon should work like a normal system menu on click, with About This
+Mac, Settings and useful system/session entries. It uses native menu tracking,
+outside-click dismissal and Escape. Core information/settings actions must not
+depend on Accessibility to another application's menu. Current-app menu headings
+continue to use the actual AX menu bridge and its local OS permission.
 The owner explicitly approves the weather pane's current layout: preserve its
 header and hourly strip. Add six matching daily icon cards immediately below,
 starting tomorrow, with Fahrenheit highs/lows and forecast-local day boundaries.
@@ -161,7 +168,7 @@ These declarations select authoring and proof obligations; they do not attest im
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `91499f5aa1fd514d566d20a2035f6536e27bd313f811bfce537728e375048e47`
+- Repository signal fingerprint: `bde504472bcaa4b7a44bc3f0560daca7711523d692569bb034cdcbc42e648a46`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

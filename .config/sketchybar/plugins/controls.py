@@ -270,6 +270,52 @@ def fresh_rows(name):
     return rows
 
 
+def visible_control(name, token):
+    """Require a current request and a fresh native report before refreshing."""
+    if not isinstance(token, list) or len(token) != 2 or token[1] != name:
+        return False
+    request = str(token[0])
+    active = read('active.json', {})
+    if active.get('name') != name or active.get('request') != request:
+        return False
+    if read('native-dismissed.json', {}).get('request') == request:
+        return False
+    try:
+        status = json.loads((STATE.parent / 'status.json').read_text())
+        if not 0 <= time.time()-status['updated'] < 3:
+            return False
+        # The native status sample is written once a second. A key pressed
+        # immediately after opening must not be lost to the preceding sample.
+        if status['updated'] < active['time']:
+            return True
+        return status['controls']['visible'] is True and status['controls']['name'] == name
+    except (OSError, ValueError, KeyError, TypeError):
+        return False
+
+
+def refresh_open(name):
+    """System change events update only an open pane; latest request/event wins."""
+    if name not in ('volume', 'brightness'):
+        return False
+    with interaction():
+        token = read('hover.json')
+        if not visible_control(name, token):
+            return False
+        event = [time.time_ns(), name, str(token[0])]
+        store('device-refresh.json', event)
+    try:
+        rows = panel_rows(name)
+    except (OSError, subprocess.SubprocessError, ValueError, KeyError):
+        return False  # Retain the last good slider during transient read failures.
+    with interaction():
+        if (read('hover.json') != token or read('device-refresh.json') != event
+                or not visible_control(name, token)):
+            return False
+        store(name + '.cache.json', {'time': time.time(), 'rows': rows})
+        _render_rows(name, rows)
+        return True
+
+
 def render_rows(name, rows, token=None):
     with interaction():
         if token is not None and read('hover.json') != token:
@@ -412,6 +458,8 @@ def main():
         show(name)
     elif kind == 'click' and name in PANELS:
         show(name, clicked=True)
+    elif kind == 'changed':
+        refresh_open(name)
     elif kind == 'leave' and name.split('.', 1)[0] in PANELS:
         leave(name)
     elif kind == 'access':

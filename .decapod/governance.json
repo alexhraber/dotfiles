@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "baseline": {
-    "accepted_commit": "4f7f167a0a794608ab9201075cd645be049e5805",
+    "accepted_commit": "f255e869db8f6622977d63df5c32a3bea307bbc9",
     "unresolved": {
       "claim:actual-app-menus": {
         "falsifier": "Native action guards permit stale/disabled/submenu leaf execution, or the UI claims menus work without Accessibility.",
@@ -17,35 +17,44 @@
     }
   },
   "change": {
-    "id": "change_01M55AQXZE75W93RGRV9D40V70",
-    "base_commit": "4f7f167a0a794608ab9201075cd645be049e5805",
+    "id": "change_01M55E18SCMGTABD1QHEF6KPJ6",
+    "base_commit": "f255e869db8f6622977d63df5c32a3bea307bbc9",
     "target_base": "origin/main"
   },
   "claims": {
-    "hourly-starts-next-hour": {
-      "statement": "The six hourly cards exclude the current in-progress hour and start with the next forecast hour while current readings and daily tiles are preserved.",
-      "falsifier": "Current or expired start timestamps appear, six available future hours are truncated, or the current temperature header changes to the next hour.",
+    "live-keyboard-level-refresh": {
+      "statement": "Visible brightness and sound sliders/readouts follow system level-change events without pointer reentry, preserving the active request, pin and anchor; closed or superseded events cannot replace the interaction.",
+      "falsifier": "Actual system-level changes do not update an open pane, require pointer reentry, change request/anchor/pin, or a delayed event refreshes a newer or closed pane.",
       "status": "supported",
       "proof_refs": [
-        "/private/tmp/dotfiles-hourly-host-check.txt",
-        "/private/tmp/dotfiles-hourly-live-cache-proof.json"
+        "/private/tmp/dotfiles-controls-host-check.txt",
+        "/private/tmp/dotfiles-controls-live-proof.json"
+      ]
+    },
+    "native-apple-click-menu": {
+      "statement": "Apple icon hover only highlights; clicking opens a native menu with information/settings and fixed system actions without requiring AX access for core entries.",
+      "falsifier": "Hover opens a permission placeholder, click fails with AX0, native menu is misplaced under the notch inset, or safe information/settings bundle targets cannot launch.",
+      "status": "supported",
+      "proof_refs": [
+        "/private/tmp/dotfiles-apple-installed.png",
+        "/private/tmp/dotfiles-apple-live-proof.json"
       ]
     }
   },
   "checkpoints": [
     {
-      "id": "hourly-next-hour",
-      "summary": "Filter cached hourly cards strictly after now, preserve current header and daily tiles, and verify boundary/midnight/refill behavior. Host80 checks and canonical prerequisites pass.",
-      "input_digest": "sha256:efac883f20842fd9353e36e3869b4fa88df0ecce3b077ef37c4b5766387fdb41",
+      "id": "controls-and-native-apple",
+      "summary": "Synchronize visible level controls via native system events and provide a native Apple click menu with fixed info/settings/system actions. Host86 checks, actual hover update proof, installed click-menu capture and safe app launches pass; original device levels restored and calendar access3 verified.",
+      "input_digest": "sha256:e5d5d3af16fba4ee47144d417fd4e402634e5d26f59211b1a4bed9662a03b1b9",
       "proof_refs": [
-        "/private/tmp/dotfiles-hourly-host-check.txt",
-        "/private/tmp/dotfiles-hourly-live-cache-proof.json",
-        "target/hourly-container-project-check.txt"
+        "/private/tmp/dotfiles-apple-live-proof.json",
+        "/private/tmp/dotfiles-controls-host-check.txt",
+        "/private/tmp/dotfiles-controls-live-proof.json"
       ]
     }
   ],
   "intents": {
-    "intent:change_01M55AQXZE75W93RGRV9D40V70": {
+    "intent:change_01M55E18SCMGTABD1QHEF6KPJ6": {
       "acceptance_criteria": [],
       "assumptions": [],
       "boundaries": [
@@ -55,60 +64,13 @@
         "root"
       ],
       "created_sequence": 1,
-      "id": "intent:change_01M55AQXZE75W93RGRV9D40V70",
+      "id": "intent:change_01M55E18SCMGTABD1QHEF6KPJ6",
       "out_of_scope": [],
       "proof_requirements": [],
-      "raw_intent": "Start weather hourly cards at next hour",
-      "refined_intent": "Start weather hourly cards at next hour",
+      "raw_intent": "Refresh open sound and brightness controls after keyboard changes",
+      "refined_intent": "Refresh open sound and brightness controls after keyboard changes",
       "status": "refined",
       "updated_sequence": 3
-    }
-  },
-  "epochs": {
-    "ve_459227846fdc19c3": {
-      "constitution_hash": "sha256:0c260556aaaf5fffd2a672f8e1a71df2d77fdb09fb3db03db2ef5d68bec87edf",
-      "constitution_version": "embedded-docs@0.118.0",
-      "epoch_id": "ve_459227846fdc19c3",
-      "evaluator_identity": "decapod-validate@0.118.0",
-      "evaluator_set_hash": "sha256:bd601f7712526e22dda29e70d40449ad27f9a36a3f11bdfa83081c1485039b86",
-      "generated_specs_fingerprint": "91499f5aa1fd514d566d20a2035f6536e27bd313f811bfce537728e375048e47",
-      "generated_specs_manifest_hash": "sha256:06f297b5eb9348ed28d811a80de87059884b2b6b70f4262f31eab330c203cbc2",
-      "material_hashes": {
-        "constitution:core/DECAPOD": "sha256:0c260556aaaf5fffd2a672f8e1a71df2d77fdb09fb3db03db2ef5d68bec87edf",
-        "generated_spec:.decapod/managed/specs/ARCHITECTURE.md": "sha256:e38abdc9083d0f01c731371947e7d75738a75f73d0bc78bdd20d8578f37baaab",
-        "generated_spec:.decapod/managed/specs/INTENT.md": "sha256:7afce2ea0e00d58f0564e8fc8fe81cc270518f59fd09138e5b2ca7ca78e7b1a2",
-        "generated_spec:.decapod/managed/specs/INTERFACES.md": "sha256:477a8922371965639ed7bf17ad1b7672a752d385126472d27a4bcd0800290fd4",
-        "generated_spec:.decapod/managed/specs/OPERATIONS.md": "sha256:9e857a53a8cd42b97e70aa3baeea03d71842d5ffb7a5fc9e8c7e3357bdca6567",
-        "generated_spec:.decapod/managed/specs/README.md": "sha256:74a28d257d7b01410f94af4a9a76707dc3cf0330367ce9a5cdda78f925b23156",
-        "generated_spec:.decapod/managed/specs/SECURITY.md": "sha256:399c5ad8a975469454750859e14db161ee33597c442100e89b6824bff4b48f3f",
-        "generated_spec:.decapod/managed/specs/SEMANTICS.md": "sha256:c4ff0afb3f9fcb485503442194b4109eec32efe81a20b88b9b562b6391c14ffd",
-        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:8b790097f6ec78ae65d6652e9caba39900e1ce2a8a1363161b05715ef6879646",
-        "generated_specs_fingerprint": "91499f5aa1fd514d566d20a2035f6536e27bd313f811bfce537728e375048e47",
-        "generated_specs_manifest": "sha256:06f297b5eb9348ed28d811a80de87059884b2b6b70f4262f31eab330c203cbc2",
-        "governance_context": "sha256:cbefbad6d2563fd9e5c41eb2bdf6c9614052bf637618abf2743b5ba384059286",
-        "governance_material:.decapod/managed/Dockerfile.decapod": "sha256:ca95e9a3a295fda5b4de847d89f7eb57826fc0fa1b027f4f5d7ddd5acef20c1a",
-        "governance_material:AGENTS.md": "sha256:daa01102a96768fbd1c1682129012aba9a034761e84dfb8509a5c72723868ebd",
-        "governance_material:CLAUDE.md": "sha256:4fc36feb8830f46192b0df498e2d32f8e7c3337278b6de91d481259eed4b7fc3",
-        "governance_material:CODEX.md": "sha256:3a9ad61952b38cbcbb4bac9c8a3c84ccf6d72a347125f84dce4d0ce3f3986cae",
-        "governance_material:GEMINI.md": "sha256:36c79133cfa256421c753a5ca67896e7aa39192afe7ccb01cae8f9baa1261618",
-        "governance_section:claims": "sha256:954230aaf3fb15df35a6417b4580571405080b09f7720edecac6f453f8a699c1",
-        "governance_section:plan": "sha256:5e005e00b72bcebaf456655c4b7ca0d61e0257ec915425384a9ecb4dac1d0150",
-        "living_spec_material:.decapod/managed/specs/ARCHITECTURE.md": "sha256:c6e6741fe22fd2092f910ed83f4653cc20b673e0f5fefb03d513866f5dfead89",
-        "living_spec_material:.decapod/managed/specs/INTENT.md": "sha256:1c0645a617aefc32c530f28d78198dcc5a5f8c399f32b0ad3cb382baf60cc5ff",
-        "living_spec_material:.decapod/managed/specs/INTERFACES.md": "sha256:5d18d76813b14a8dfe2e2ebe6e52171bb95dc1506c78e19f4cdd68071c8a5e6e",
-        "living_spec_material:.decapod/managed/specs/OPERATIONS.md": "sha256:b43e9fa0eef9fb3e28d84cc5386c79f64f1f3cb9a37a1b8834bbb84e24dbea17",
-        "living_spec_material:.decapod/managed/specs/README.md": "sha256:0988c85d6c05f02d52684c9aafae50e95fd5d5576739d3e9d995af682697fd99",
-        "living_spec_material:.decapod/managed/specs/SECURITY.md": "sha256:f066f700a05495cbde5fee7a702b244a6f446c21acfa5ee33c59765ade424fcd",
-        "living_spec_material:.decapod/managed/specs/SEMANTICS.md": "sha256:92bbe2607c6f8f94191a95ea977d9785f3472a0fae2835520dd86eae73130d5c",
-        "living_spec_material:.decapod/managed/specs/VALIDATION.md": "sha256:3ed2505c3604b443682cf693410e9f29f3ed0702b06ba4bbb44d85d7f0edaeea",
-        "proof_rubric": "sha256:99e8ef25629da391e9b479db9fff52b82f340224f7a69d8a88d2992ae8e90466",
-        "validation_profile": "sha256:37a8eec1ce19687d132fe29051dca629d164e2c4958ba141d5f4133a33f0688f"
-      },
-      "proof_rubric": "decapod-validate/current-proof-v1",
-      "proof_rubric_hash": "sha256:99e8ef25629da391e9b479db9fff52b82f340224f7a69d8a88d2992ae8e90466",
-      "schema_version": "1.0.0",
-      "validation_profile": "default",
-      "validation_profile_hash": "sha256:37a8eec1ce19687d132fe29051dca629d164e2c4958ba141d5f4133a33f0688f"
     }
   },
   "sections": {
@@ -119,54 +81,62 @@
       },
       "deferred_questions": [],
       "human_questions": [],
-      "intent": "Six hourly weather cards begin with the next hour, excluding the in-progress current hour by checking forecast start timestamps. Keep the current temperature header, six daily cards, icons and Fahrenheit units. No native helper rebuild or calendar consent reset. Verify mid-hour, exact-boundary and midnight behavior; apply with backup and merge/push to main.",
+      "intent": "Keep the verified event-driven brightness/sound refresh. Add a native AppKit NSMenu on Apple-icon click, with About This Mac, System Settings, App Store, System Information, Force Quit chooser, Sleep, confirmation-based Restart/Shut Down/Log Out and Lock Screen when supported. Hover highlights Apple but does not open it. Fixed trusted action mappings, no arbitrary shell or global key emulation. Current-app File/View menus remain AX-based. The added menu may require one final native rebuild; do not weaken signing identity or bypass OS consent. Test native action mappings without invoking session/power actions, inspect the actual menu and verify safe About/Settings launches; preserve/reverify the keyboard-refresh proof and publish to main.",
       "phases": [],
       "proof_hooks": [
-        "Timestamp-filter regression and full repository check owner",
-        "Live cache read verifies first card starts after now and six cards remain"
+        "Apple native menu content, click-only routing and safe fixed action/confirmation mapping guards",
+        "Actual Apple menu capture and About/System Settings launches; no automated power/session/force-termination tests"
       ],
       "schema_version": "1.1.0",
       "spec_reviews": [
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/ARCHITECTURE.md",
-          "reason": "Reviewed startTime filtering before the six-card limit; current header continues using unexpired periods and native helper is unchanged.",
-          "reviewed_code_fingerprint": "91499f5aa1fd514d566d20a2035f6536e27bd313f811bfce537728e375048e47",
-          "spec_material_hash": "c6e6741fe22fd2092f910ed83f4653cc20b673e0f5fefb03d513866f5dfead89"
+          "reason": "Reviewed final click-only native Apple menu, direct placement under the bar, fixed actions and live level refresh. No source behavior changed after native checks and installed Apple UI proof.",
+          "reviewed_code_fingerprint": "bde504472bcaa4b7a44bc3f0560daca7711523d692569bb034cdcbc42e648a46",
+          "spec_material_hash": "bc28e249ff92f8862ec3bcf835ba685a45eae5f87610bcd040f3db71bdec81a9"
         },
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/INTERFACES.md",
-          "reason": "The hourly strip now starts next hour; no payload shape, daily date contract, icon mapping or action changes.",
-          "reviewed_code_fingerprint": "91499f5aa1fd514d566d20a2035f6536e27bd313f811bfce537728e375048e47",
-          "spec_material_hash": "5d18d76813b14a8dfe2e2ebe6e52171bb95dc1506c78e19f4cdd68071c8a5e6e"
+          "reason": "Apple click opens10 native system entries without AX for information/settings; hover highlights. App menu AX and fixed changed callbacks remain explicit interfaces.",
+          "reviewed_code_fingerprint": "bde504472bcaa4b7a44bc3f0560daca7711523d692569bb034cdcbc42e648a46",
+          "spec_material_hash": "5f70a8a9c06182148cfcce8deb16913b9b94cf68b1f22c47edf94fbdb3082db5"
         },
         {
-          "disposition": "unchanged_with_reason",
+          "disposition": "updated",
           "path": ".decapod/managed/specs/SECURITY.md",
-          "reason": "Only cached forecast selection changes. Same bounded descriptor, trusted NWS source, local state and permissions; no new native code or security boundary.",
-          "reviewed_code_fingerprint": "91499f5aa1fd514d566d20a2035f6536e27bd313f811bfce537728e375048e47",
-          "spec_material_hash": "f066f700a05495cbde5fee7a702b244a6f446c21acfa5ee33c59765ade424fcd"
+          "reason": "Fixed action targets and confirmation-only session events; explicit Cancel-default Force Quit chooser; dynamic private lock capability only on selection. No permission bypass. Event refresh remains bounded to current visible request.",
+          "reviewed_code_fingerprint": "bde504472bcaa4b7a44bc3f0560daca7711523d692569bb034cdcbc42e648a46",
+          "spec_material_hash": "98918c53fbe7d865ebf853309c5410151abee6ec9f74c919a4f6e7b695ed2a81"
         }
       ],
       "state": "APPROVED",
       "stop_conditions": [],
-      "title": "Start weather hourly cards at next hour",
+      "title": "Synchronize system controls and restore the Apple click menu",
       "todo_ids": [
-        "code_01m55aq9k002k6n1"
+        "code_01m55e0n7a4egzg6"
       ],
       "unknowns": [],
       "unresolved_contradictions": [],
-      "updated_at": "1792254299Z"
+      "updated_at": "1792263531Z"
     },
     "trajectory": {
       "active_boundaries": [
         "Current claimed task and isolated work branch"
       ],
-      "artifact_hash": "sha256:550d93efecc33c5983fbc4451aaa689e60011b2967c1f804625285f949172471",
+      "artifact_hash": "sha256:d6cd7d4a2261e4407e3f2dd69ee56ded094c72e7035d193179a50f27e90b2859",
       "checks": [
         {
-          "name": "decapod validate",
+          "name": "apple_click_menu",
+          "status": "passed"
+        },
+        {
+          "name": "apple_safe_launches",
+          "status": "passed"
+        },
+        {
+          "name": "calendar_access",
           "status": "passed"
         },
         {
@@ -174,7 +144,7 @@
           "status": "passed"
         },
         {
-          "name": "live_cache",
+          "name": "live_level_refresh",
           "status": "passed"
         }
       ],
@@ -183,34 +153,34 @@
         "events": [
           {
             "event_id": "event:2",
-            "intent_id": "intent:change_01M55AQXZE75W93RGRV9D40V70",
+            "intent_id": "intent:change_01M55E18SCMGTABD1QHEF6KPJ6",
             "kind": "created",
             "sequence": 2
           },
           {
             "event_id": "event:3",
-            "intent_id": "intent:change_01M55AQXZE75W93RGRV9D40V70",
+            "intent_id": "intent:change_01M55E18SCMGTABD1QHEF6KPJ6",
             "kind": "refined",
             "sequence": 3
           },
           {
-            "detail": "trajectory:branch_01M55AQY28S9BRSX0YYPQNR0FC",
+            "detail": "trajectory:branch_01M55E18WHM8T23T84MRF98F7Z",
             "event_id": "event:4",
-            "intent_id": "intent:change_01M55AQXZE75W93RGRV9D40V70",
+            "intent_id": "intent:change_01M55E18SCMGTABD1QHEF6KPJ6",
             "kind": "trajectory_step_recorded",
             "sequence": 4
           },
           {
-            "detail": "trajectory:branch_01M55AQY28S9BRSX0YYPQNR0FC",
+            "detail": "trajectory:branch_01M55E18WHM8T23T84MRF98F7Z",
             "event_id": "event:5",
-            "intent_id": "intent:change_01M55AQXZE75W93RGRV9D40V70",
+            "intent_id": "intent:change_01M55E18SCMGTABD1QHEF6KPJ6",
             "kind": "trajectory_step_recorded",
             "sequence": 5
           },
           {
-            "detail": "trajectory:branch_01M55AQY28S9BRSX0YYPQNR0FC",
+            "detail": "trajectory:branch_01M55E18WHM8T23T84MRF98F7Z",
             "event_id": "event:6",
-            "intent_id": "intent:change_01M55AQXZE75W93RGRV9D40V70",
+            "intent_id": "intent:change_01M55E18SCMGTABD1QHEF6KPJ6",
             "kind": "trajectory_step_recorded",
             "sequence": 6
           }
@@ -219,18 +189,20 @@
         "next_sequence": 6,
         "schema_version": "1.0.0",
         "trajectories": {
-          "branch_01M55AQY28S9BRSX0YYPQNR0FC": {
+          "branch_01M55E18WHM8T23T84MRF98F7Z": {
             "evidence_only": true,
-            "id": "branch_01M55AQY28S9BRSX0YYPQNR0FC",
-            "intent_id": "intent:change_01M55AQXZE75W93RGRV9D40V70",
+            "id": "branch_01M55E18WHM8T23T84MRF98F7Z",
+            "intent_id": "intent:change_01M55E18SCMGTABD1QHEF6KPJ6",
             "steps": [
               {
                 "action": "implementation",
                 "custody_event_id": "event:4",
                 "observations": [
-                  ".config/sketchybar/plugins/weather.py",
-                  "tests/test_weather.py",
-                  "outlook currently chooses periods by endTime and includes the ongoing hour; current-temperature header uses the same periods function and must remain unchanged."
+                  ".config/sketchybar/sketchybarrc",
+                  ".config/sketchybar/plugins/status.sh",
+                  ".config/sketchybar/plugins/controls.py",
+                  "scripts/control-panel.m",
+                  "Official SketchyBar event docs and installed2.24.1 query events confirm brightness_change and volume_change. Sound event currently changes only a hidden bar label; brightness has no subscription. Native render already preserves geometry and defers updates during slider dragging."
                 ],
                 "proof_refs": [],
                 "scope": [
@@ -243,15 +215,23 @@
                 "action": "verification",
                 "custody_event_id": "event:5",
                 "observations": [
-                  ".config/sketchybar/plugins/weather.py",
-                  "tests/test_weather.py",
-                  "/private/tmp/dotfiles-hourly-host-check.txt",
-                  "/private/tmp/dotfiles-hourly-live-cache-proof.json",
-                  "80 host tests and native checks pass; at09:25 local live cache cards are10am through3pm and daily count remains6. Only weather.py selection logic changes executable source."
+                  ".config/sketchybar/plugins/controls.py",
+                  ".config/sketchybar/plugins/status.sh",
+                  ".config/sketchybar/sketchybarrc",
+                  "scripts/app-menu.m",
+                  "scripts/desktop-edge-info.plist",
+                  "tests/test_desktop.py",
+                  "/private/tmp/dotfiles-controls-host-check.txt",
+                  "/private/tmp/dotfiles-controls-live-proof.json",
+                  "/private/tmp/dotfiles-apple-live-proof.json",
+                  "/private/tmp/dotfiles-apple-installed.png",
+                  "86 host checks pass including native menu confirmation guards. Installed Apple hover does not open; click opens10 native entries directly under the bar with AX0. About This Mac and Settings native launches succeeded. Final helper healthy and Calendar access3 with7 synced calendars. Session/power/force-termination actions are deliberately not executed during verification."
                 ],
                 "proof_refs": [
                   "host_checks",
-                  "live_cache"
+                  "apple_click_menu",
+                  "apple_safe_launches",
+                  "calendar_access"
                 ],
                 "scope": [
                   "root"
@@ -261,15 +241,13 @@
               },
               {
                 "action": "validation",
-                "command": "decapod validate",
                 "custody_event_id": "event:6",
                 "observations": [
-                  ".decapod/governance.json",
-                  ".decapod/governance.json",
-                  "validation epoch ve_459227846fdc19c3 completed with zero failures"
+                  "/private/tmp/dotfiles-controls-live-proof.json",
+                  "Final installed native build repeats the real OS level-change proof: both unpinned panes update within the same hover request and original levels are restored."
                 ],
                 "proof_refs": [
-                  "decapod validate"
+                  "live_level_refresh"
                 ],
                 "scope": [
                   "root"
@@ -281,301 +259,44 @@
           }
         }
       },
-      "declared_commands": [
-        "decapod validate"
-      ],
+      "declared_commands": [],
       "destination": "pull request",
       "evidence": [
-        "/private/tmp/dotfiles-hourly-host-check.txt",
-        "/private/tmp/dotfiles-hourly-live-cache-proof.json",
-        "80 host tests and native checks pass; at09:25 local live cache cards are10am through3pm and daily count remains6. Only weather.py selection logic changes executable source.",
-        "outlook currently chooses periods by endTime and includes the ongoing hour; current-temperature header uses the same periods function and must remain unchanged.",
-        "validation epoch ve_459227846fdc19c3 completed with zero failures"
+        "/private/tmp/dotfiles-apple-installed.png",
+        "/private/tmp/dotfiles-apple-live-proof.json",
+        "/private/tmp/dotfiles-controls-host-check.txt",
+        "/private/tmp/dotfiles-controls-live-proof.json",
+        "86 host checks pass including native menu confirmation guards. Installed Apple hover does not open; click opens10 native entries directly under the bar with AX0. About This Mac and Settings native launches succeeded. Final helper healthy and Calendar access3 with7 synced calendars. Session/power/force-termination actions are deliberately not executed during verification.",
+        "Final installed native build repeats the real OS level-change proof: both unpinned panes update within the same hover request and original levels are restored.",
+        "Official SketchyBar event docs and installed2.24.1 query events confirm brightness_change and volume_change. Sound event currently changes only a hidden bar label; brightness has no subscription. Native render already preserves geometry and defers updates during slider dragging."
       ],
       "inspected_files": [
-        ".config/sketchybar/plugins/weather.py",
-        "tests/test_weather.py"
+        ".config/sketchybar/plugins/controls.py",
+        ".config/sketchybar/plugins/status.sh",
+        ".config/sketchybar/sketchybarrc",
+        "scripts/control-panel.m"
       ],
-      "intent_id": "intent:change_01M55AQXZE75W93RGRV9D40V70",
+      "intent_id": "intent:change_01M55E18SCMGTABD1QHEF6KPJ6",
       "modified_files": [
-        ".config/sketchybar/plugins/weather.py",
-        ".decapod/governance.json",
-        "tests/test_weather.py"
+        ".config/sketchybar/plugins/controls.py",
+        ".config/sketchybar/plugins/status.sh",
+        ".config/sketchybar/sketchybarrc",
+        "scripts/app-menu.m",
+        "scripts/desktop-edge-info.plist",
+        "tests/test_desktop.py"
       ],
       "next_transitions": [
-        "Refine plan and declare falsifiable checks",
-        "publish"
+        "Refine plan and declare falsifiable checks"
       ],
       "repo_scope": [
         "root"
       ],
-      "run_id": "branch_01M55AQY28S9BRSX0YYPQNR0FC",
+      "run_id": "branch_01M55E18WHM8T23T84MRF98F7Z",
       "schema_version": "1.1.0",
       "shortcut_risk_signals": [],
-      "task_id": "code_01m55aq9k002k6n1",
+      "task_id": "code_01m55e0n7a4egzg6",
       "tool_calls": [],
       "unresolved_assumptions": []
-    },
-    "validation": {
-      "ci_prediction": {
-        "confidence": "medium",
-        "recommendations": [
-          "Review the reported validation warnings before relying on the CI result.",
-          "Use `decapod validate -v --format json` to inspect the affected gate output."
-        ],
-        "result": "review"
-      },
-      "decapod_release": "0.118.0",
-      "drift_findings": [],
-      "elapsed_ms": 2193,
-      "epoch_ref": "ve_459227846fdc19c3",
-      "fail_count": 0,
-      "failures": [],
-      "gate_timings": [
-        {
-          "elapsed_ms": 391,
-          "name": "validate_project_specs_docs"
-        },
-        {
-          "elapsed_ms": 369,
-          "name": "validate_markdown_primitives_roundtrip_gate"
-        },
-        {
-          "elapsed_ms": 369,
-          "name": "validate_machine_contract"
-        },
-        {
-          "elapsed_ms": 278,
-          "name": "validate_stale_workspaces"
-        },
-        {
-          "elapsed_ms": 190,
-          "name": "validate_git_workspace_context"
-        },
-        {
-          "elapsed_ms": 118,
-          "name": "validate_obligations"
-        },
-        {
-          "elapsed_ms": 75,
-          "name": "validate_legacy_jsonl_retired"
-        },
-        {
-          "elapsed_ms": 41,
-          "name": "validate_archive_integrity"
-        },
-        {
-          "elapsed_ms": 23,
-          "name": "validate_repomap_determinism"
-        },
-        {
-          "elapsed_ms": 19,
-          "name": "validate_schema_determinism"
-        },
-        {
-          "elapsed_ms": 17,
-          "name": "validate_control_plane_contract"
-        },
-        {
-          "elapsed_ms": 17,
-          "name": "validate_federation_gates"
-        },
-        {
-          "elapsed_ms": 14,
-          "name": "validate_git_push_pr_gate"
-        },
-        {
-          "elapsed_ms": 12,
-          "name": "validate_git_protected_branch"
-        },
-        {
-          "elapsed_ms": 12,
-          "name": "validate_no_legacy_namespaces"
-        },
-        {
-          "elapsed_ms": 9,
-          "name": "validate_lineage_hard_gate"
-        },
-        {
-          "elapsed_ms": 7,
-          "name": "validate_gatekeeper_gate"
-        },
-        {
-          "elapsed_ms": 4,
-          "name": "validate_generated_artifact_whitelist"
-        },
-        {
-          "elapsed_ms": 4,
-          "name": "validate_watcher_audit"
-        },
-        {
-          "elapsed_ms": 3,
-          "name": "validate_lcm_immutability"
-        },
-        {
-          "elapsed_ms": 3,
-          "name": "validate_knowledge_promotions_if_present"
-        },
-        {
-          "elapsed_ms": 3,
-          "name": "validate_lcm_rebuild_gate"
-        },
-        {
-          "elapsed_ms": 3,
-          "name": "validate_knowledge_integrity"
-        },
-        {
-          "elapsed_ms": 3,
-          "name": "validate_plan_governed_execution_gate"
-        },
-        {
-          "elapsed_ms": 2,
-          "name": "validate_entrypoint_invariants"
-        },
-        {
-          "elapsed_ms": 2,
-          "name": "validate_policy_integrity"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_health_purity"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_database_schema_versions"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_trajectory_artifacts_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_override_authority"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_research_claims_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_jev_history_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_validation_receipt_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_recursive_improvement_passes_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_workunit_manifests_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_canon_mutation"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_health_cache_integrity"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_watcher_purity"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_risk_map_violations"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_project_config_toml"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_spec_drift"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_heartbeat_invocation_gate"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_project_scoped_state"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_context_capsule_policy_contract"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_docs_templates_bucket"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_repo_map"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_internalization_artifacts_if_present"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_embedded_self_contained"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_interface_contract_bootstrap"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_context_capsules_if_present"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_state_commit_gate"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_root_dockerfile_seed_detection"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_eval_gate_if_required"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_risk_map"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_coplayer_policy_tightening"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_tooling_gate"
-        }
-      ],
-      "git_revision": "4f7f167a0a794608ab9201075cd645be049e5805",
-      "kind": "validation_receipt",
-      "parallelism": 1,
-      "pass_count": 184,
-      "prediction_uses_warnings": true,
-      "receipt_hash": "sha256:7cfd1c17cdeea43055e54f4532a054876145af20968e0809f36d1958069e0a1c",
-      "repo_signal_fingerprint": "91499f5aa1fd514d566d20a2035f6536e27bd313f811bfce537728e375048e47",
-      "schema_version": "1.0.0",
-      "status": "ok",
-      "temporary_artifacts_cleaned": 0,
-      "trajectory_artifact_hash": "sha256:550d93efecc33c5983fbc4451aaa689e60011b2967c1f804625285f949172471",
-      "trajectory_run_id": "branch_01M55AQY28S9BRSX0YYPQNR0FC",
-      "warn_count": 4,
-      "warnings": [
-        "Risk map missing (run `decapod riskmap init`)",
-        "Stale workspaces preserved for explicit review: <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (current_workspace: workspace contains the current process; rerun prune from the host checkout after leaving this workspace so Git can release the branch), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.)",
-        "Watcher audit trail missing (run `decapod govern watcher run`)",
-        "Workspace branch 'agent/unknown/code_01m55aq9k002k6n1' has unpushed commits or does not exist on origin. Branch pushes and iteration are allowed before preflight; hold PR creation until intent is converged, the branch is mergeable, and full `decapod validate` succeeds against the exact current candidate and accepted target."
-      ]
     }
   }
 }

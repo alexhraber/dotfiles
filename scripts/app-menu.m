@@ -2,6 +2,7 @@
 #import "control-panel.h"
 #import "calendar-panel.h"
 #import <ApplicationServices/ApplicationServices.h>
+#include <dlfcn.h>
 
 // AX objects and all menu titles stay in memory. Read/press the owning app's
 // real menu; never emulate a menu command with a keystroke or shell snippet.
@@ -18,6 +19,134 @@ static double nextMenuRead, menuAway;
 static NSUInteger menuRevision;
 static NSRect menuAnchor;
 static NSMutableArray<NSPanel *> *menuPanels;
+static NSMenu *appleMenu;
+static BOOL appleTracking;
+
+typedef NS_ENUM(NSInteger, AppleAction) {
+    AppleAbout=1, AppleSettings, AppleStore, AppleInformation, AppleForceQuit,
+    AppleSleep, AppleRestart, AppleShutdown, AppleLock, AppleLogout
+};
+static NSString *appleBundle(NSInteger action) {
+    return @{@(AppleAbout):@"com.apple.AboutThisMacLauncher", @(AppleSettings):@"com.apple.systempreferences",
+             @(AppleStore):@"com.apple.AppStore", @(AppleInformation):@"com.apple.SystemProfiler"}[@(action)];
+}
+static AEEventID applePowerEvent(NSInteger action) {
+    switch (action) {
+        case AppleSleep: return kAESleep;
+        case AppleRestart: return kAEShowRestartDialog;
+        case AppleShutdown: return kAEShowShutdownDialog;
+        case AppleLogout: return kAELogOut;
+        default: return 0;
+    }
+}
+static int (*screenLock(void))(void) {
+    static void *library; static int (*function)(void); static dispatch_once_t once;
+    dispatch_once(&once,^{
+        library=dlopen("/System/Library/PrivateFrameworks/login.framework/login",RTLD_LAZY|RTLD_LOCAL);
+        if (library) function=dlsym(library,"SACLockScreenImmediate");
+    });
+    return function;
+}
+static NSURL *appleApplication(NSInteger action) {
+    NSString *bundle=appleBundle(action);
+    NSURL *url=bundle ? [NSWorkspace.sharedWorkspace URLForApplicationWithBundleIdentifier:bundle] : nil;
+    // About This Mac can be absent from the LaunchServices index until first use.
+    if (!url && action==AppleAbout) {
+        NSString *path=@"/System/Library/CoreServices/Applications/About This Mac.app";
+        if ([NSFileManager.defaultManager fileExistsAtPath:path]) url=[NSURL fileURLWithPath:path];
+    }
+    return url;
+}
+static void appleError(NSString *message) {
+    NSAlert *alert=[NSAlert new]; alert.messageText=message; [alert addButtonWithTitle:@"OK"];
+    alert.window.collectionBehavior=NSWindowCollectionBehaviorCanJoinAllSpaces|NSWindowCollectionBehaviorFullScreenAuxiliary;
+    [NSApp activate]; [alert runModal];
+}
+static void forceQuitChooser(void) {
+    NSMutableArray<NSRunningApplication *> *apps=[NSMutableArray array];
+    for (NSRunningApplication *app in NSWorkspace.sharedWorkspace.runningApplications)
+        if (app.activationPolicy==NSApplicationActivationPolicyRegular && !app.terminated
+            && app.processIdentifier!=NSProcessInfo.processInfo.processIdentifier) [apps addObject:app];
+    [apps sortUsingComparator:^NSComparisonResult(NSRunningApplication *a, NSRunningApplication *b) {
+        return [a.localizedName ?: @"" localizedCaseInsensitiveCompare:b.localizedName ?: @""];
+    }];
+    if (!apps.count) return;
+    NSAlert *alert=[NSAlert new]; alert.messageText=@"Force Quit Applications";
+    alert.informativeText=@"Choose an app. Unsaved changes in that app may be lost.";
+    [alert addButtonWithTitle:@"Cancel"]; [alert addButtonWithTitle:@"Force Quit"];
+    NSPopUpButton *picker=[[NSPopUpButton alloc] initWithFrame:NSMakeRect(0,0,300,28) pullsDown:NO];
+    for (NSRunningApplication *app in apps) {
+        [picker addItemWithTitle:app.localizedName ?: @"Application"];
+        NSImage *icon=app.icon.copy; icon.size=NSMakeSize(16,16); picker.lastItem.image=icon;
+    }
+    alert.accessoryView=picker;
+    alert.window.collectionBehavior=NSWindowCollectionBehaviorCanJoinAllSpaces|NSWindowCollectionBehaviorFullScreenAuxiliary;
+    [NSApp activate];
+    if ([alert runModal]!=NSAlertSecondButtonReturn) return;
+    NSInteger index=picker.indexOfSelectedItem;
+    if (index<0 || index>=(NSInteger)apps.count) return;
+    NSRunningApplication *app=apps[index];
+    if (!app.terminated && ![app forceTerminate]) appleError(@"This app could not be force quit.");
+}
+static void runAppleAction(NSInteger action) {
+    NSURL *url=appleApplication(action);
+    if (url) {
+        [NSWorkspace.sharedWorkspace openApplicationAtURL:url configuration:NSWorkspaceOpenConfiguration.configuration completionHandler:^(__unused NSRunningApplication *app,NSError *error) {
+            if (error) dispatch_async(dispatch_get_main_queue(),^{ appleError(@"This system application could not be opened."); });
+        }];
+        return;
+    }
+    if (action==AppleForceQuit) { forceQuitChooser(); return; }
+    if (action==AppleLock) {
+        int (*lock)(void)=screenLock();
+        if (!lock || lock()!=0) appleError(@"Lock Screen is unavailable on this macOS version.");
+        return;
+    }
+    AEEventID eventID=applePowerEvent(action);
+    if (!eventID) return;
+    // Request the OS's confirmation dialogs; never send immediate restart,
+    // shutdown or forced-logout events. This runs only after an explicit click.
+    NSAppleEventDescriptor *target=[NSAppleEventDescriptor descriptorWithBundleIdentifier:@"com.apple.loginwindow"];
+    NSAppleEventDescriptor *event=[NSAppleEventDescriptor appleEventWithEventClass:kCoreEventClass eventID:eventID targetDescriptor:target returnID:kAutoGenerateReturnID transactionID:kAnyTransactionID];
+    [NSApp activate]; NSError *error=nil;
+    [event sendEventWithOptions:NSAppleEventSendNoReply|NSAppleEventSendCanInteract|NSAppleEventSendCanSwitchLayer timeout:2 error:&error];
+    if (error) appleError(@"The system action could not be opened. Check macOS Automation permissions for Desktop Controls.");
+}
+
+@interface AppleMenuController : NSObject <NSMenuDelegate>
+@end
+@implementation AppleMenuController
+- (void)menuWillOpen:(__unused NSMenu *)menu { appleTracking=YES; }
+- (void)menuDidClose:(__unused NSMenu *)menu { appleTracking=NO; }
+- (void)selected:(NSMenuItem *)item {
+    NSInteger action=item.tag;
+    dispatch_async(dispatch_get_main_queue(),^{ runAppleAction(action); });
+}
+@end
+static AppleMenuController *appleController;
+static NSArray *appleEntries(void) {
+    return @[@[@"About This Mac",@(AppleAbout)], @[@"System Settings…",@(AppleSettings)], @[@"App Store…",@(AppleStore)],
+             @[@"",@0], @[@"System Information…",@(AppleInformation)], @[@"Force Quit…",@(AppleForceQuit)],
+             @[@"",@0], @[@"Sleep",@(AppleSleep)], @[@"Restart…",@(AppleRestart)], @[@"Shut Down…",@(AppleShutdown)],
+             @[@"",@0], @[@"Lock Screen",@(AppleLock)], @[@"Log Out…",@(AppleLogout)]];
+}
+static void showAppleMenu(NSPoint origin) {
+    if (!appleController) appleController=[AppleMenuController new];
+    appleMenu=[[NSMenu alloc] initWithTitle:@"Apple"]; appleMenu.autoenablesItems=NO;
+    appleMenu.delegate=appleController; appleMenu.font=[NSFont systemFontOfSize:13];
+    appleMenu.appearance=[NSAppearance appearanceNamed:NSAppearanceNameDarkAqua]; appleMenu.minimumWidth=244;
+    for (NSArray *entry in appleEntries()) {
+        if (![entry[0] length]) { [appleMenu addItem:NSMenuItem.separatorItem]; continue; }
+        NSInteger action=[entry[1] integerValue];
+        NSMenuItem *item=[[NSMenuItem alloc] initWithTitle:entry[0] action:@selector(selected:) keyEquivalent:@""];
+        item.tag=action; item.target=appleController;
+        item.enabled=appleBundle(action) ? appleApplication(action)!=nil : action!=AppleLock || screenLock()!=NULL;
+        [appleMenu addItem:item];
+    }
+    appleTracking=YES;
+    [appleMenu popUpMenuPositioningItem:nil atLocation:origin inView:nil];
+    appleTracking=NO;
+}
 
 static id attribute(id element, CFStringRef name) {
     CFTypeRef value=NULL;
@@ -219,12 +348,19 @@ void DFMenusInitialize(NSString *sketchybar) {
             AXIsProcessTrustedWithOptions((__bridge CFDictionaryRef)@{(__bridge NSString *)kAXTrustedCheckOptionPrompt:@YES}); return;
         }
         NSInteger index; if (!menuIndex(note.object,&index)) return;
+        if (index==0 && appleTracking) { [appleMenu cancelTracking]; return; }
         DFCalendarHide(); DFControlsHide(); DFMenusHide();
         NSPoint pointer=NSEvent.mouseLocation; NSScreen *screen=NSScreen.mainScreen;
         for (NSScreen *candidate in NSScreen.screens) if (NSPointInRect(pointer,candidate.frame)) screen=candidate;
         CGFloat top=NSMaxY(screen.frame)-screen.safeAreaInsets.top-44;
         menuAnchor=NSMakeRect(pointer.x-44,top,88,NSMaxY(screen.frame)-top);
         NSPoint origin=NSMakePoint(pointer.x-16,top); pid_t pid=NSWorkspace.sharedWorkspace.frontmostApplication.processIdentifier;
+        if (index==0) {
+            // SketchyBar is explicitly at y=4 with a maximum 40-point height;
+            // its menu sits beneath that bar, not beneath the notch safe area.
+            origin.y=NSMaxY(screen.frame)-52;
+            showAppleMenu(origin); return;
+        }
         if (!AXIsProcessTrusted() || pid!=menuPID || index>=(NSInteger)topMenus.count) {
             showEntries(@[],index==0 ? @"Apple" : @"Application menu",0,origin); nextMenuRead=0; return;
         }
@@ -242,14 +378,16 @@ void DFMenusInitialize(NSString *sketchybar) {
 void DFMenusNotify(NSString *command) {
     [NSDistributedNotificationCenter.defaultCenter postNotificationName:menuNotification object:command userInfo:nil deliverImmediately:YES];
 }
-void DFMenusHide(void) { ++menuRevision; dismissAfter(0); menuAway=0; }
+void DFMenusHide(void) { if (appleTracking) [appleMenu cancelTracking]; ++menuRevision; dismissAfter(0); menuAway=0; }
 BOOL DFMenusContainsPointer(NSPoint pointer) {
+    if (appleTracking) return YES;
     if (!menuPanels.count) return NO;
     if (NSPointInRect(pointer,menuAnchor)) return YES;
     for (NSPanel *panel in menuPanels) if (NSPointInRect(pointer,NSInsetRect(panel.frame,-6,-6))) return YES;
     return NO;
 }
 void DFMenusTick(double now, NSPoint pointer, BOOL barVisible) {
+    if (appleTracking) return;
     BOOL revealed=barVisible && !menuWasVisible; menuWasVisible=barVisible;
     if (menuPanels.count) {
         if (DFMenusContainsPointer(pointer)) menuAway=0;
@@ -272,10 +410,14 @@ void DFMenusTick(double now, NSPoint pointer, BOOL barVisible) {
         dispatch_async(dispatch_get_main_queue(),^{ menuReading=NO; });
     });
 }
-NSDictionary *DFMenusStatus(void) { return @{@"accessibility":@(AXIsProcessTrusted()),@"visible":@(menuPanels.count>0),@"menus":@(topMenus.count)}; }
+NSDictionary *DFMenusStatus(void) { return @{@"accessibility":@(AXIsProcessTrusted()),@"visible":@(appleTracking || menuPanels.count>0),@"menus":@(topMenus.count),@"apple_items":@(appleEntries().count-3)}; }
 int DFMenusSelfTest(void) {
     NSInteger index=-1;
     if (!menuIndex(@"0",&index) || index!=0 || !menuIndex(@"13",&index) || menuIndex(@"14",&index) || menuIndex(@"-1",&index) || menuIndex(@"1;open",&index)) return 1;
     if (!canInvoke(42,42,YES,NO) || canInvoke(42,43,YES,NO) || canInvoke(42,42,NO,NO) || canInvoke(42,42,YES,YES) || canInvoke(0,0,YES,NO)) return 1;
-    puts("Application menu guards: index bounds, current app, disabled items and submenu dispatch passed."); return 0;
+    if (appleEntries().count!=13 || ![appleBundle(AppleAbout) isEqual:@"com.apple.AboutThisMacLauncher"] || ![appleBundle(AppleSettings) isEqual:@"com.apple.systempreferences"] || appleBundle(-1)) return 1;
+    if (applePowerEvent(AppleRestart)!=kAEShowRestartDialog || applePowerEvent(AppleShutdown)!=kAEShowShutdownDialog
+        || applePowerEvent(AppleLogout)!=kAELogOut || applePowerEvent(AppleSettings) || applePowerEvent(-1)) return 1;
+    if (applePowerEvent(AppleRestart)==kAERestart || applePowerEvent(AppleShutdown)==kAEShutDown || applePowerEvent(AppleLogout)==kAEReallyLogOut) return 1;
+    puts("Menu guards: app ownership, native Apple entries, fixed application targets and confirmation-only session actions passed."); return 0;
 }

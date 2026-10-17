@@ -94,9 +94,15 @@ paired Bluetooth devices, battery and Fahrenheit CPU/GPU telemetry. Notification
 are furthest right; hardware warnings are not an unread notification count.
 From that right edge inward, clock and weather come immediately after
 notifications. The Apple logo and actual foreground-app menu headings occupy
-the left. Hover reads real menu contents; clicking enabled leaf commands uses
+the left. Apple opens a native system menu only on click, with About This Mac,
+System Settings, App Store, System Information, Force Quit and session/power
+entries. Native tracking supports selection, outside-click dismissal and Escape.
+Information/settings entries do not require AX access. Force Quit is a native
+app chooser; restart/shutdown/logout request the OS confirmation dialogs.
+Hovering application headings reads real menu contents; clicking enabled leaf commands uses
 AXPress, with submenus, disabled states and shortcut labels retained. This
 requires Desktop Controls Accessibility approval. No app-menu data is persisted.
+The private helper status adds app_menus.apple_items for the fixed menu's count.
 Clock labels use local 12-hour hours/minutes and AM/PM with seconds hidden, sourced from macOS once
 per second while shown or hidden. Reveal and wake also request a fresh value.
 The calendar hover/click interface is unchanged; no new service, time-setting
@@ -112,6 +118,12 @@ Sound and brightness are icons alone. Heat and swap warning colors remain.
 The bar reveals in place at y_offset=4. A 120ms hover dwell is canceled by exit;
 native window/anchor geometry and 320ms grace support crossing into panels.
 Reentering an open panel does not close/reopen it. Only actions highlight.
+The internal controls.py changed volume|brightness callback refreshes an
+already-open matching pane after the corresponding SketchyBar system event.
+It reads the actual level rather than trusting event text, retains the hover
+request/anchor/pin, and rejects hidden, stale, dismissed or superseded work.
+Keyboard and other system level changes update the slider and numeric reading
+without pointer reentry; closed panes add no device polling.
 
 The dock renders only app icons over fully transparent pixels. It has no shelf,
 blur, border, shadow, text, badges or active markers. Autohide, magnification,
@@ -180,7 +192,7 @@ can leave partial state; the backup manifest remains the recovery input.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `91499f5aa1fd514d566d20a2035f6536e27bd313f811bfce537728e375048e47`
+- Repository signal fingerprint: `bde504472bcaa4b7a44bc3f0560daca7711523d692569bb034cdcbc42e648a46`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
