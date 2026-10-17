@@ -118,7 +118,8 @@ blur, border, shadow, text, badges or active markers. Autohide, magnification,
 one icon per application and right-click Show windows/Hide/Quit are retained;
 blank transparent space passes clicks through.
 Native control descriptors may include subtitle text (160 characters), a finite
-0–1 meter for CPU/GPU/memory/battery, six hourly weather forecast cards and six
+0–1 meter for CPU/GPU/memory/battery, six hourly weather forecast cards beginning
+next hour (start timestamp strictly after now), and six
 daily cards. Daily fields are day, ISO date, high, low and condition, each at
 most 16 characters. Daily dates start tomorrow in the pinned forecast timezone.
 The daily strip sits directly below the hourly strip and uses the same icons;
@@ -179,7 +180,7 @@ can leave partial state; the backup manifest remains the recovery input.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `e37e9030f45408ff1b224492d7006b3bc2061d50cad55c179425677d35e6b8a5`
+- Repository signal fingerprint: `91499f5aa1fd514d566d20a2035f6536e27bd313f811bfce537728e375048e47`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

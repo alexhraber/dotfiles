@@ -2,6 +2,15 @@
 
 ## Proof Surfaces
 
+The next-hour correction is covered at mid-hour, exactly on the hour and across
+midnight with explicit-offset timestamps. Expired and in-progress periods are
+excluded from the six-card hourly strip, invalid starts do not consume its
+capacity, and missing future hours never fall back to relabeling the current
+hour. Separate assertions retain the current temperature in the bar/header.
+The sequential-hour fixture models actual forecast windows; all 80 host tests
+and native compiler/self-tests pass. This Python-only change leaves the native
+helper bytes and its local permission identity unchanged.
+
 The current composition pass adds six future-day cached forecast regressions,
 Mitchell-local date boundaries, daytime icons with night lows and fourteen-period
 retention. Native weather rows are checked to omit the old Tonight/day/night
@@ -220,7 +229,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `e37e9030f45408ff1b224492d7006b3bc2061d50cad55c179425677d35e6b8a5`
+- Repository signal fingerprint: `91499f5aa1fd514d566d20a2035f6536e27bd313f811bfce537728e375048e47`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

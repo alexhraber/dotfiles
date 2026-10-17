@@ -269,7 +269,7 @@ current readings, a violet accent rule and cyan detail graphs. CPU, GPU, memory
 and battery use capacity meters and two-column detail cards. Sound and display
 use accent-colored native sliders; hardware graphs show a 0–100% scale and latest
 sample, share a bounded private history and refresh while open. Weather adds six
-cached hourly cards with conditions, Fahrenheit temperatures and precipitation
+cached hourly cards starting next hour, with conditions, Fahrenheit temperatures and precipitation
 chance. A second matching row immediately below it shows **tomorrow and the next
 five days**, with condition icons and Fahrenheit highs/lows. Dates use Mitchell's
 America/Los_Angeles timezone; the cache keeps the full 14 day/night forecast periods.

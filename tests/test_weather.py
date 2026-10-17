@@ -19,11 +19,48 @@ def forecast():
           'probabilityOfPrecipitation':{'value':20},
           'startTime':datetime.fromtimestamp(now,timezone.utc).isoformat(),
           'endTime':datetime.fromtimestamp(now+3600,timezone.utc).isoformat()}
-    return {'time':now,'hourly':[hour.copy() for _ in range(24)],
+    start=datetime.fromtimestamp(now,timezone.utc).replace(minute=0,second=0,microsecond=0)
+    hourly=[dict(hour,startTime=(start+timedelta(hours=i)).isoformat(),
+                 endTime=(start+timedelta(hours=i+1)).isoformat()) for i in range(24)]
+    return {'time':now,'hourly':hourly,
             'daily':[dict(hour,name='Tonight') for _ in range(8)]}
 
 
 class WeatherTests(unittest.TestCase):
+    def test_hourly_cards_start_next_hour_mid_hour_at_boundary_and_across_midnight(self):
+        for stamp, expected in (
+            ('2026-10-17T10:30:00-07:00',['11am','12pm','1pm','2pm','3pm','4pm']),
+            ('2026-10-17T11:00:00-07:00',['12pm','1pm','2pm','3pm','4pm','5pm']),
+            ('2026-10-17T23:50:00-07:00',['12am','1am','2am','3am','4am','5am'])):
+            with self.subTest(stamp=stamp), tempfile.TemporaryDirectory() as temp, \
+                 patch.object(weather,'STATE',Path(temp)), \
+                 patch.object(weather.time,'time',return_value=datetime.fromisoformat(stamp).timestamp()), \
+                 patch.object(weather,'fetch',side_effect=AssertionError('network on hover')):
+                current=datetime.fromisoformat(stamp).replace(minute=0,second=0,microsecond=0)
+                data=forecast(); data['location']=json.loads(weather.CONFIG.read_text())
+                # Include an expired hour as well as the ongoing one: dropping a
+                # fixed first item is insufficient, especially with stale caches.
+                for i, period in enumerate(data['hourly']):
+                    period.update(startTime=(current+timedelta(hours=i-1)).isoformat(),
+                                  endTime=(current+timedelta(hours=i)).isoformat(),temperature=40+i)
+                weather.save('weather-data.json',data)
+                cards=weather.outlook()
+                self.assertEqual([x['hour'] for x in cards],expected)
+                self.assertEqual(cards[0]['temperature'],'42°F')
+                self.assertEqual(weather.bar_values(data)[1],'41°F')
+                self.assertEqual(weather.rows(include_hours=False,include_days=False)[1][0],'Hourly forecast · 41°F')
+
+    def test_hourly_cards_fill_six_after_bad_start_and_do_not_relabel_current_as_future(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(weather,'STATE',Path(temp)), \
+             patch.object(weather,'fetch',side_effect=AssertionError('network on hover')):
+            data=forecast(); data['location']=json.loads(weather.CONFIG.read_text())
+            data['hourly'][1]['startTime']='invalid'
+            weather.save('weather-data.json',data)
+            self.assertEqual(len(weather.outlook()),6)
+            data['hourly']=data['hourly'][:1]
+            weather.save('weather-data.json',data)
+            self.assertEqual(weather.outlook(),[])
+
     def test_six_daily_cards_start_tomorrow_in_forecast_timezone_with_day_icons_and_lows(self):
         # UTC Saturday is still Friday evening at the pinned forecast point.
         now=datetime(2026,10,17,2,tzinfo=timezone.utc).timestamp()
