@@ -3,5 +3,6 @@
   "label": "97750 · Mitchell area",
   "latitude": 44.662,
   "longitude": -119.788,
+  "timezone": "America/Los_Angeles",
   "source": "https://forecast.weather.gov/zipcity.php?inputstring=97750"
 }

@@ -96,7 +96,7 @@ def alerts(metrics, battery=''):
 def panel_rows(name):
     """Each row is text plus an optional argv action, never interpolated shell."""
     if name == 'weather':
-        return weather.rows(include_hours=False)
+        return weather.rows(include_hours=False, include_days=False)
     if name == 'clock':
         return [('Calendar', None), ('Native month grid and synced agenda', None)]
     if name == 'brightness':
@@ -185,12 +185,49 @@ def panel_rows(name):
     ] + [(f'Fan {i + 1} · {fan["rpm"]:.0f} RPM', None) for i, fan in enumerate(metrics.get('fans', []))]
 
 
-def show(name):
+def item_anchors(name):
+    """Snapshot real bar rectangles only in SketchyBar's item event context."""
+    if not os.environ.get('NAME'):
+        return []
+    try:
+        rectangles = json.loads(command('sketchybar', '--query', name, timeout=1))['bounding_rects']
+        result = []
+        for rectangle in list(rectangles.values())[:8]:
+            x, y = rectangle['origin']
+            width, height = rectangle['size']
+            values = (x, y, width, height)
+            if not all(isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v) and abs(v) <= 100000 for v in values):
+                continue
+            if (x, y) == (-9999, -9999) or not (0 < width <= 1024 and 0 < height <= 256):
+                continue
+            result.append(dict(x=x, y=y, width=width, height=height))
+        return result
+    except (OSError, subprocess.SubprocessError, ValueError, KeyError, TypeError):
+        return []
+
+
+def show(name, clicked=False):
     token = [time.time_ns(), name]
     with interaction():
+        active = read('active.json', {})
+        if active.get('request') and active['request'] == read('native-dismissed.json', {}).get('request'):
+            active = {}
+            store('active.json', active)
+        if active.get('pinned') and not clicked:
+            return
+        if clicked and active.get('name') == name and active.get('pinned'):
+            store('hover.json', [time.time_ns(), None])
+            close_panels()
+            return
         store('hover.json', token)
-        already_open = read('active.json', {}).get('name') == name
-    if not already_open:
+        store('pin.json', {'request': str(token[0]), 'pinned': clicked and name != 'clock'})
+        already_open = active.get('name') == name
+    anchors = item_anchors(name) if name != 'clock' else []
+    with interaction():
+        if read('hover.json') != token:
+            return
+        store('anchor.json', {'request': str(token[0]), 'anchors': anchors})
+    if not already_open and not clicked:
         time.sleep(0.12)
     with interaction():
         if read('hover.json') != token:
@@ -246,10 +283,16 @@ def _render_rows(name, rows):
     store(name + '.json', [action for _, action in rows])
     document = {'name': name, 'revision': str(time.time_ns()), 'request': str(read('hover.json', [0])[0]),
                 'rows': [{'text': str(label)[:512], 'action': bool(action)} for label, action in rows]}
+    request = document['request']
+    anchor = read('anchor.json', {})
+    pin = read('pin.json', {})
+    document['anchors'] = anchor.get('anchors', []) if anchor.get('request') == request else []
+    document['pinned'] = bool(pin.get('pinned')) if pin.get('request') == request else False
     if name == 'weather' and len(rows) > 1 and rows[1][0].startswith('Hourly forecast · '):
         document['rows'][0]['text'] = 'Weather · ' + rows[1][0].split(' · ', 1)[1]
         document['rows'][1]['text'] = rows[0][0]
         document['forecast'] = weather.outlook()
+        document['daily'] = weather.daily_outlook()
         document['subtitle'] = str(rows[2][0])[:160] if len(rows) > 2 else ''
     elif name == 'alerts':
         document['rows'][0]['text'] = 'Notifications · Quick controls'
@@ -273,7 +316,7 @@ def _render_rows(name, rows):
             document['meter'] = max(0, min(1, used / total))
     store('native-panel.json', document)
     native_controls()
-    store('active.json', {'name': name, 'time': time.time()})
+    store('active.json', {'name': name, 'time': time.time(), 'request': request, 'pinned': document['pinned']})
 
 
 def native_item(title):
@@ -367,6 +410,8 @@ def main():
     kind, name, *extra = sys.argv[1:]
     if kind == 'hover' and name in PANELS:
         show(name)
+    elif kind == 'click' and name in PANELS:
+        show(name, clicked=True)
     elif kind == 'leave' and name.split('.', 1)[0] in PANELS:
         leave(name)
     elif kind == 'access':

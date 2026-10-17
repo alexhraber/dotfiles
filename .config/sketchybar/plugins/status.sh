@@ -7,6 +7,10 @@ if [[ -r $appearance ]]; then
   # shellcheck source=/dev/null
   source "$appearance"
 fi
+case "${SENDER:-}" in
+  mouse.entered) sketchybar --set "$NAME" background.drawing=on background.color="${UI_HOVER:-0xff29313b}" ;;
+  mouse.exited) sketchybar --set "$NAME" background.drawing=off ;;
+esac
 if [[ ${SENDER:-} == mouse.entered || ${SENDER:-} == mouse.clicked ]]; then
   menu_index=''
   case "${NAME:-}" in
@@ -27,7 +31,7 @@ case "${SENDER:-}" in
     exec python3 -B "$plugin_dir/controls.py" leave "$NAME"
     ;;
   mouse.clicked)
-    exec python3 -B "$plugin_dir/controls.py" hover "$NAME"
+    exec python3 -B "$plugin_dir/controls.py" click "$NAME"
     ;;
   mouse.scrolled)
     exec python3 -B "$plugin_dir/controls.py" scroll "$NAME"

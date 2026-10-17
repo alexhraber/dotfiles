@@ -87,8 +87,9 @@ the view; the existing app-list refresh still redraws artwork periodically.
 Reduce Motion snaps zoom and pointer tracking directly to their targets.
 
 .config/sketchybar contains rounded control groups and Python hover plugins.
-The default islands layout draws five separate right-side section backgrounds.
-Four eight-point empty items separate their bounds; bracket background padding
+The default islands layout draws four separate right-side section backgrounds:
+hardware, devices/power, clock/weather and notifications. Three eight-point
+empty items separate their bounds; bracket background padding
 is zero so backgrounds cannot expand into the gaps. appearance.apply toggles
 the gaps on for islands and off for optional ribbon in the same live IPC update.
 Bracket and background drawing are both set directly, without interpolation
@@ -101,17 +102,36 @@ The clock has update_freq=1 and explicit updates=on, with desktop_revealed and
 system_woke subscriptions. status.sh formats current /bin/date output as
 hours/minutes and AM/PM on every event; hiding seconds does not reduce refresh
 cadence or retain a previous value. A fixed 74-point label contains the compact
-readout without moving adjacent pills. The native
-helper is unchanged, retaining its binary identity and existing OS consent.
-Nocturne uses charcoal surfaces, violet clock/Apple/notification accents and
-cyan hardware/weather icons. Native panels are opaque and blur-free.
-themes.json and plugins/appearance.py own four validated palettes and the
+readout without moving adjacent pills. Graphite is the fresh default, combining
+charcoal with champagne and ice-blue accents. Nocturne remains available with
+violet and cyan accents. Native panels are opaque and blur-free.
+themes.json and plugins/appearance.py own five validated palettes and the
 ribbon/islands layout. A single live IPC update restyles existing items and
 toggles bracket backgrounds, preserving visibility and popovers. The native
 helper reloads the selected palette on SIGUSR1 or its health interval; native
 controls/calendar restyle and menus close for a coherent next open.
 The dock uses application artwork with a transparent background,
 so palette changes affect the bar and popovers without recoloring app icons.
+
+controls.item_anchors snapshots up to eight finite visible SketchyBar item
+rectangles when an item event opens a panel. control-panel.m converts these
+CoreGraphics coordinates to AppKit, aligns the panel beneath its item and
+clamps it to its display. Device panels use 320 points, hardware/power 344,
+and the existing weather composition retains 380 points. Content identity
+excludes request metadata; equal refreshes avoid rebuilding views, same-panel
+updates preserve scrolling and tracking defers disruptive readout changes.
+Hover previews use exit hysteresis. Clicking pins a native control until the
+same item, Escape or an outside mouse-down dismisses it; local panel handling
+uses no global event tap or navigation shortcut. A private request-bound
+dismissal acknowledgement permits future hover without reviving an old pin.
+
+weather.daily_outlook groups the cached NWS day/night periods by the declared
+America/Los_Angeles date and returns tomorrow through six days ahead. The cache
+retains fourteen periods, and the verification image includes tzdata. Below
+the existing six hourly cards, control-panel.m draws six daily cards using the
+same weatherSymbol mapping, tile geometry and colors, with Fahrenheit highs
+and lows. Native weather rows omit the former Tonight/day/night list. No
+additional network request occurs while rendering either forecast strip.
 
 DockView.drawRect clears its pixels and draws only application icons. There
 is no visual-effect background view, fill, outline, window shadow, badge,
@@ -254,7 +274,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `e6d3a1aa54f0e646abd9c791efc056f7ddba4cb28a935b3c3486c1c643040fc6`
+- Repository signal fingerprint: `e37e9030f45408ff1b224492d7006b3bc2061d50cad55c179425677d35e6b8a5`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

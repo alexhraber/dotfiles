@@ -69,13 +69,25 @@ downloads, account setup, VM startup troubleshooting and modifying Decapod itsel
 
 ## Fullscreen desktop and on-demand inference
 
-The refined desktop uses Nocturne charcoal/violet/cyan styling across native
+The refined desktop offers Graphite slate/champagne/ice-blue styling across native
 controls. From the far right inward: notifications, clock, weather, then all
 other controls. The left side replaces the decorative workspace affordance
 with the Apple logo and the active application's real app/File/Edit/View/etc.
 menus. Accessibility reads and presses the owning app's actual commands;
 disabled commands and submenus are retained, with no invented per-app actions.
 Local macOS consent is required and remains a user action.
+The right-hand composition has four separated groups: hardware, device/power
+controls, clock/weather and notifications. A fifth battery-only pill is folded
+into device controls. Hover highlights communicate targeting immediately.
+Graphite is the fresh-install default; the other four palettes remain selectable.
+Selection colors are explicit palette values with readable foreground contrast.
+Native descriptors carry real bar anchors and pin intent, with request-bound
+dismissal acknowledgments. Hover previews; click pins; Escape, an outside click
+or clicking the same control dismisses. Compact panels retain their top edge
+and scroll position on refresh, without global keyboard or desktop shortcuts.
+The owner explicitly approves the weather pane's current layout: preserve its
+header and hourly strip. Add six matching daily icon cards immediately below,
+starting tomorrow, with Fahrenheit highs/lows and forecast-local day boundaries.
 
 The clock is a native Sunday-first month grid and selected-day agenda, with
 today/month navigation, event dots and per-calendar source selection. EventKit
@@ -149,7 +161,7 @@ These declarations select authoring and proof obligations; they do not attest im
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `e6d3a1aa54f0e646abd9c791efc056f7ddba4cb28a935b3c3486c1c643040fc6`
+- Repository signal fingerprint: `e37e9030f45408ff1b224492d7006b3bc2061d50cad55c179425677d35e6b8a5`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
