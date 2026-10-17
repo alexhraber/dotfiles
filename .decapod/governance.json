@@ -55,6 +55,14 @@
       "proof_refs": [
         "/private/tmp/dotfiles-composition-project-check.txt"
       ]
+    },
+    {
+      "id": "composition-proof-ready",
+      "summary": "Official matching release image is available; live weather verified and calendar access restored. Checkpoint final source for canonical proof.",
+      "input_digest": "sha256:e834da5553aa9514cd6d00150357128063cb5131d9401ce688738739b3e9c3aa",
+      "proof_refs": [
+        "/private/tmp/dotfiles-composition-host-check.txt"
+      ]
     }
   ],
   "intents": {
@@ -130,10 +138,7 @@
       "active_boundaries": [
         "Current claimed task and isolated work branch"
       ],
-      "artifact_hash": "sha256:5fba6d1b43c4874abcb972c6ab94b5e348065fabf17b13448fa556e737cfd5ec",
-      "blockers": [
-        "Upstream same-release v0.118.0-debian manifest is not published; official Release run39007560864 GHCR jobs still in progress."
-      ],
+      "artifact_hash": "sha256:4fda0d4760a5404e87b1fcd26fad53d5e1979cec1a752f632a7b1400785d10f8",
       "checks": [
         {
           "name": "accessibility",
@@ -158,9 +163,13 @@
         {
           "name": "live_weather",
           "status": "passed"
+        },
+        {
+          "name": "release_image",
+          "status": "passed"
         }
       ],
-      "current_phase": "verification",
+      "current_phase": "validation",
       "custody": {
         "events": [
           {
@@ -195,10 +204,17 @@
             "intent_id": "intent:change_01M546MM3HRFRW3XD7NRJXFR9C",
             "kind": "trajectory_step_recorded",
             "sequence": 6
+          },
+          {
+            "detail": "trajectory:branch_01M546MM6HK361R024N1F6PETT",
+            "event_id": "event:7",
+            "intent_id": "intent:change_01M546MM3HRFRW3XD7NRJXFR9C",
+            "kind": "trajectory_step_recorded",
+            "sequence": 7
           }
         ],
         "knowledge_candidates": [],
-        "next_sequence": 6,
+        "next_sequence": 7,
         "schema_version": "1.0.0",
         "trajectories": {
           "branch_01M546MM6HK361R024N1F6PETT": {
@@ -270,6 +286,21 @@
                 "validation_findings": [
                   "Accessibility approval for the exact current app remains unavailable; no menu click parity claim."
                 ]
+              },
+              {
+                "action": "validation",
+                "custody_event_id": "event:7",
+                "observations": [
+                  "Official release run39007560864 glibc and musl GHCR publication jobs completed successfully."
+                ],
+                "proof_refs": [
+                  "release_image"
+                ],
+                "scope": [
+                  "desktop"
+                ],
+                "sequence": 7,
+                "validation_findings": []
               }
             ]
           }
@@ -282,7 +313,8 @@
         "/private/tmp/dotfiles-composition-host-check.txt",
         "/private/tmp/dotfiles-composition-weather-live.png",
         "29 desktop regressions pass including Graphite text/selection contrast and four-group IPC state. Native anchor/pin implementation is still in progress and no live changes are applied.",
-        "Actual top-bar region captured and inspected. Current status groups are five separate boxes; native popovers use pointer-relative x and a fixed 380-point width. No valid local code-signing identities available; current native calendar access=3, Accessibility=0. No signing identity or OS consent bypass will be introduced."
+        "Actual top-bar region captured and inspected. Current status groups are five separate boxes; native popovers use pointer-relative x and a fixed 380-point width. No valid local code-signing identities available; current native calendar access=3, Accessibility=0. No signing identity or OS consent bypass will be introduced.",
+        "Official release run39007560864 glibc and musl GHCR publication jobs completed successfully."
       ],
       "inspected_files": [
         ".config/sketchybar/plugins/controls.py",

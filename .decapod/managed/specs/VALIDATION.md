@@ -9,10 +9,11 @@ list. Daily and hourly tiles share the native weatherSymbol mapping. The host
 suite has 78 tests; native warnings-as-errors compilation, pure placement and
 payload/pin self-tests and ten deterministic panel previews passed. Real ZIP
 97750 data returned six hours and six tomorrow-onward daily cards. The new
-healthy Graphite process is active, but its Calendar and Accessibility access
-are currently unavailable and require local OS consent. Publication still
-requires exact-candidate canonical validation and hosted checks; the upstream
-0.118.0 Debian image is still being published at the time of this check.
+healthy Graphite process is active with Full Calendar Access, seven synced
+calendars and six selected-grid events. Accessibility remains unavailable;
+the prior enabled-setting report does not prove approval for this exact binary.
+Publication still requires exact-candidate canonical validation and hosted
+checks, using the official matching 0.118.0 Debian image now published upstream.
 
 scripts/check delegates to scripts/check.py, which runs ShellCheck, parses each zsh file, and executes the
 standard-library unittest suite. .github/workflows/check.yml runs the same
