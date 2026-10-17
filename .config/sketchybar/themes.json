@@ -1,29 +1,35 @@
 {
-  "default": "nocturne",
+  "default": "graphite",
   "layout": "islands",
   "themes": {
+    "graphite": {
+      "surface": "15191F", "popup": "15191F", "border": "343B45",
+      "foreground": "F3F1EC", "muted": "A3ADB8", "accent": "D5B589",
+      "secondary": "8BCAD9", "highlight": "29313B", "selection": "5C4831",
+      "success": "A9CBA7", "warning": "F3CB8C", "danger": "EEA3A5"
+    },
     "nocturne": {
       "surface": "11151D", "popup": "11151D", "border": "2A3447",
       "foreground": "E6EDF7", "muted": "94A3B8", "accent": "B8A6FF",
-      "secondary": "42C7FF", "highlight": "202735", "success": "9DD8AE",
+      "secondary": "42C7FF", "highlight": "202735", "selection": "55417D", "success": "9DD8AE",
       "warning": "F3CB8C", "danger": "FF91A4"
     },
     "tidal": {
       "surface": "132630", "popup": "142730", "border": "355361",
       "foreground": "E8F5F7", "muted": "A0BBC4", "accent": "80D9D1",
-      "secondary": "E4B98A", "highlight": "294956", "success": "9DD8AE",
+      "secondary": "E4B98A", "highlight": "294956", "selection": "225659", "success": "9DD8AE",
       "warning": "F3CB8C", "danger": "FF91A4"
     },
     "ember": {
       "surface": "2A211D", "popup": "2D2420", "border": "574338",
       "foreground": "FFF1E7", "muted": "C4ACA0", "accent": "EDBD91",
-      "secondary": "E2A6B6", "highlight": "4B3830", "success": "BCD4A7",
+      "secondary": "E2A6B6", "highlight": "4B3830", "selection": "6A4634", "success": "BCD4A7",
       "warning": "F5CE87", "danger": "FFA1A3"
     },
     "iris": {
       "surface": "242035", "popup": "272239", "border": "4B4164",
       "foreground": "F3EEFF", "muted": "BCB0D3", "accent": "C1A4F5",
-      "secondary": "83D9D0", "highlight": "443956", "success": "A8DDBB",
+      "secondary": "83D9D0", "highlight": "443956", "selection": "5D437D", "success": "A8DDBB",
       "warning": "F3CB8C", "danger": "FF9BAE"
     }
   }

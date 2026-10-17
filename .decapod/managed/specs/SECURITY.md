@@ -63,13 +63,21 @@ Native control descriptors are private bounded JSON read from one fixed path;
 the helper rejects symlinks, wrong owner/mode, nonregular files and malformed
 types/ranges. Descriptors contain display text and action booleans, not shell
 commands. Callbacks use fixed executable/script paths and literal arguments;
-Extended forecast cards are capped at six, text is bounded, condition names
+Hourly and daily forecast arrays are each capped at six, text is bounded, condition names
 come from an allowlist, and hardware/battery meters reject nonfinite/out-of-range
 values. The weather strip reads cached declared-location data without new
 network requests, account state or location permission. Deterministic preview
 fixtures contain no actual calendar events, device identifiers or network names.
 backend revision/panel/index checks select previously generated argv actions.
 This is local-user tooling, not isolation from a compromised same-user process.
+
+Item anchors are capped at eight finite bounded rectangles; hidden/offscreen
+sentinels and invalid sizes are rejected. Pinning accepts only a boolean and
+native dismissal writes a request-only 0600 file with exclusive no-follow
+creation and atomic replacement. A stale acknowledgement cannot dismiss a
+new request. Escape/outside-click handling is local to the panel loop, without
+a global event tap. This native build changes the ad-hoc identity, so prior
+Calendar or Accessibility consent does not prove access for the new build.
 
 Desktop activation is explicit. The helper uses private SkyLight menu calls,
 DisplayServices brightness and a Mission Control notification with SIP enabled;
@@ -101,7 +109,7 @@ loads a model. Ollama remains manually started and is not enabled at login.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `e6d3a1aa54f0e646abd9c791efc056f7ddba4cb28a935b3c3486c1c643040fc6`
+- Repository signal fingerprint: `e37e9030f45408ff1b224492d7006b3bc2061d50cad55c179425677d35e6b8a5`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

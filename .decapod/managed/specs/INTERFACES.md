@@ -118,7 +118,11 @@ blur, border, shadow, text, badges or active markers. Autohide, magnification,
 one icon per application and right-click Show windows/Hide/Quit are retained;
 blank transparent space passes clicks through.
 Native control descriptors may include subtitle text (160 characters), a finite
-0–1 meter for CPU/GPU/memory/battery, and up to six weather forecast cards.
+0–1 meter for CPU/GPU/memory/battery, six hourly weather forecast cards and six
+daily cards. Daily fields are day, ISO date, high, low and condition, each at
+most 16 characters. Daily dates start tomorrow in the pinned forecast timezone.
+The daily strip sits directly below the hourly strip and uses the same icons;
+the old day/night textual periods are omitted from native weather rows.
 Each card contains hour, temperature, condition and precipitation strings of
 at most 16 characters. Condition is one of clear, night, cloudy, rain, snow,
 storm or fog; it maps to a fixed SF Symbol inside the helper. These fields
@@ -130,9 +134,9 @@ its smoothing is time-based and its timer follows the target display up to 120 H
 The private desktop status record includes controls.backend_available, true
 when a supported installed Python executable can launch native callbacks.
 
-Nocturne/Islands is the fresh-machine default, with eight-point gaps between section pills
+Graphite/Islands is the fresh-machine default, with eight-point gaps between section pills
 and the connecting ribbon background off. Optional ribbon hides those spacers.
-desktop theme --theme nocturne|tidal|ember|iris --layout ribbon|islands restyles existing
+desktop theme --theme graphite|nocturne|tidal|ember|iris --layout ribbon|islands restyles existing
 bar items without reloading, changing wallpaper or restarting the helper.
 themes.json declares the reproducible default; private state retains local
 selections across apply. The current-app control now opens its real app menu.
@@ -150,6 +154,11 @@ declared ZIP97750 NWS lookup point is44.662,-119.788; no location tracking or
 API credential is used. The bar shows hourly forecast temperature; hover adds
 wind in mph, precipitation chance, upcoming hours and extended periods. Refresh
 is explicit or on reveal when due, with private cache and stale/offline labels.
+
+Native descriptors carry an optional pinned boolean and up to eight bounded
+item-anchor rectangles (x/y/width/height). A click pins the control; a repeated
+click, Escape or outside press dismisses it. Hover cannot replace a pinned
+control. Request-bound private dismissal records do not contain device data.
 
 scripts/dotfiles ai prepare validates the Apple Silicon platform, retains a
 matching MLX environment or prepares the declared Python/package pins before
@@ -170,7 +179,7 @@ can leave partial state; the backup manifest remains the recovery input.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `e6d3a1aa54f0e646abd9c791efc056f7ddba4cb28a935b3c3486c1c643040fc6`
+- Repository signal fingerprint: `e37e9030f45408ff1b224492d7006b3bc2061d50cad55c179425677d35e6b8a5`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

@@ -1,6 +1,6 @@
 """Cached NWS forecast for the declared ZIP point; never tracks the machine."""
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime
+from datetime import datetime, timedelta
 import fcntl
 import json
 import math
@@ -9,6 +9,7 @@ from pathlib import Path
 import subprocess
 import sys
 import time
+from zoneinfo import ZoneInfo
 from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 import appearance
@@ -76,7 +77,7 @@ def refresh(force=False):
             daily = daily['properties']['periods']
             if not hourly or not daily:
                 raise ValueError('NWS forecast is empty')
-            result = {'location':config, 'time':now, 'hourly':hourly[:24], 'daily':daily[:8]}
+            result = {'location':config, 'time':now, 'hourly':hourly[:24], 'daily':daily[:14]}
             save('weather-data.json', result)
             return result
         except (OSError, ValueError, KeyError, TypeError):
@@ -127,16 +128,44 @@ def bar_values(data):
     return icon(period), label, appearance.color('warning' if stale else 'secondary')
 
 
+def forecast_condition(period):
+    description = period.get('shortForecast', '').lower()
+    return next((kind for word, kind in (
+        ('thunder', 'storm'), ('snow', 'snow'), ('rain', 'rain'),
+        ('shower', 'rain'), ('fog', 'fog'), ('cloud', 'cloudy'))
+        if word in description), 'clear' if period.get('isDaytime', True) else 'night')
+
+
+def daily_outlook():
+    """Tomorrow through six days ahead, using the declared forecast timezone."""
+    config = json.loads(CONFIG.read_text())
+    zone = ZoneInfo(config.get('timezone', 'America/Los_Angeles'))
+    today = datetime.fromtimestamp(time.time(), zone).date()
+    grouped = {}
+    for period in cached(config).get('daily', []):
+        try:
+            day = datetime.fromisoformat(period['startTime']).astimezone(zone).date()
+        except (KeyError, TypeError, ValueError):
+            continue
+        if not today < day <= today + timedelta(days=6):
+            continue
+        grouped.setdefault(day, {})['day' if period.get('isDaytime') else 'night'] = period
+    result = []
+    for day in sorted(grouped):
+        day_period = grouped[day].get('day', {})
+        night_period = grouped[day].get('night', {})
+        result.append({'day': day.strftime('%a'), 'date': day.isoformat(),
+                       'high': temperature(day_period), 'low': temperature(night_period),
+                       'condition': forecast_condition(day_period or night_period)})
+    return result
+
+
 def outlook():
     """Six cached hours for the native panel; hover never fetches the network."""
     config = json.loads(CONFIG.read_text())
     result = []
     for period in periods(cached(config))[:6]:
-        description = period.get('shortForecast', '').lower()
-        condition = next((kind for word, kind in (
-            ('thunder', 'storm'), ('snow', 'snow'), ('rain', 'rain'),
-            ('shower', 'rain'), ('fog', 'fog'), ('cloud', 'cloudy'))
-            if word in description), 'clear' if period.get('isDaytime', True) else 'night')
+        condition = forecast_condition(period)
         probability = period.get('probabilityOfPrecipitation', {}).get('value')
         precipitation = f'{probability:.0f}%' if isinstance(probability, (int, float)) and math.isfinite(probability) and 0 <= probability <= 100 else '—'
         try:
@@ -148,7 +177,7 @@ def outlook():
     return result
 
 
-def rows(include_hours=True):
+def rows(include_hours=True, include_days=True):
     config = json.loads(CONFIG.read_text())
     data = cached(config)
     available = periods(data)
@@ -164,7 +193,7 @@ def rows(include_hours=True):
     for upcoming in available[1:8:3] if include_hours else []:
         hour = datetime.fromisoformat(upcoming['startTime']).strftime('%-I %p')
         result.append((hour+' · '+temperature(upcoming)+' · '+upcoming.get('shortForecast',''),None))
-    for upcoming in data['daily'][:4]:
+    for upcoming in data['daily'][:4] if include_days else []:
         result.append((upcoming['name']+' · '+temperature(upcoming)+' · '+upcoming.get('shortForecast',''),None))
     age = max(0,int((time.time()-data['time'])/60))
     result += [('Cached · '+str(age)+' min old' if age>=30 or not available else 'NWS · updated '+str(age)+' min ago',None),
@@ -179,7 +208,7 @@ def main():
     hover = read('hover.json', [])
     if len(hover)==2 and hover[1]=='weather':
         import controls
-        controls.render_rows('weather', rows(include_hours=False), hover)
+        controls.render_rows('weather', rows(include_hours=False, include_days=False), hover)
 
 
 if __name__ == '__main__':

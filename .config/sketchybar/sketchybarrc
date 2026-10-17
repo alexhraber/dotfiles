@@ -9,8 +9,8 @@ sketchybar --bar position=top height=34 notch_display_height=40 margin=12 y_offs
   corner_radius=0 border_width=0 \
   color=0x00000000 blur_radius=0 padding_left=6 padding_right=6 \
   topmost=on shadow=off show_in_fullscreen=on hidden=on
-sketchybar --default icon.font='JetBrainsMono Nerd Font:Regular:15.0' icon.width=18 icon.align=center \
-  label.font='SF Pro:Medium:11.5' \
+sketchybar --default icon.font='JetBrainsMono Nerd Font:Regular:14.0' icon.width=18 icon.align=center \
+  label.font='SF Pro:Medium:12.0' \
   icon.color="$UI_MUTED" label.color="$UI_FOREGROUND" \
   padding_left=6 padding_right=6 label.padding_left=3 label.padding_right=3 \
   background.corner_radius=8 background.height=26
@@ -50,7 +50,7 @@ for sensor in memory gpu cpu; do
     memory) glyph='󰍛' ;;
   esac
   sketchybar --add item "$sensor" right --set "$sensor" icon="$glyph" \
-    label.color="$UI_MUTED" label.font='SF Pro:Medium:11.5' label.width=44 label.align=right \
+    label.color="$UI_MUTED" label.font='SF Pro:Medium:12.0' label.width=32 label.align=right \
     label='—' script="\"$plugin\""
 done
 sketchybar --set cpu update_freq=5 \
@@ -77,7 +77,7 @@ sketchybar --add bracket context apple front_app '/app_menu\..*/'
 sketchybar --add bracket chronicle clock weather
 sketchybar --add bracket ribbon cpu gpu memory bluetooth wifi brightness volume battery weather clock alerts \
   --add bracket hardware cpu gpu memory \
-    --add bracket connections bluetooth wifi brightness volume \
+    --add bracket connections bluetooth wifi brightness volume battery \
     --add bracket session battery \
     --add bracket notifications alerts
 for group in context chronicle ribbon hardware connections session notifications; do
@@ -88,8 +88,8 @@ for group in context chronicle ribbon hardware connections session notifications
 done
 sketchybar --set cpu padding_left=12 --set memory padding_right=12 \
   --set alerts padding_left=10 padding_right=12 icon.color="$UI_ACCENT" \
-  --set bluetooth padding_left=10 --set volume padding_right=10 \
-  --set battery padding_left=10 padding_right=10 --set clock padding_left=10 \
+  --set bluetooth padding_left=10 --set volume padding_right=6 \
+  --set battery padding_left=4 padding_right=10 --set clock padding_left=10 \
   --set weather padding_right=10 \
   --set apple padding_left=12 --set front_app padding_right=8
 python3 -B "$config_dir/plugins/appearance.py" apply

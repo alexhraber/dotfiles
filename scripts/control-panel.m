@@ -8,13 +8,29 @@
 static NSPanel *controlPanel;
 static NSString *controlDirectory;
 static NSRect controlAnchor;
+static NSRect controlItemAnchor;
 static double controlAway;
 static BOOL controlBusy;
+static NSUInteger controlButtons;
+static BOOL renderPending;
 static NSDictionary *controlDocument, *controlPalette;
 static NSString *dismissedRequest;
 static BOOL colorsChanged;
 static NSString *const controlNotification=@"local.dotfiles.desktop.controls";
-static const CGFloat panelWidth=380;
+static CGFloat panelWidth(NSDictionary *document) {
+    return [document[@"name"] isEqual:@"weather"] ? 380 :
+        [@[@"cpu",@"gpu",@"memory",@"battery"] containsObject:document[@"name"]] ? 344 : 320;
+}
+static NSRect panelFrame(NSRect screen, NSRect anchor, CGFloat width, CGFloat height) {
+    width=MIN(width,screen.size.width-24);
+    CGFloat top=MIN(NSMinY(anchor)-8,NSMaxY(screen)-12);
+    height=MIN(height,MAX(48,top-NSMinY(screen)-12));
+    return NSMakeRect(MAX(NSMinX(screen)+12,MIN(NSMaxX(anchor)-width,NSMaxX(screen)-width-12)),
+                      MAX(NSMinY(screen)+12,top-height),width,height);
+}
+static BOOL outsidePress(NSUInteger previous, NSUInteger current, NSPoint point, NSRect panel, NSRect bridge) {
+    return current && !previous && !NSPointInRect(point,panel) && !NSPointInRect(point,bridge);
+}
 
 static NSString *controlPython(BOOL (^executable)(NSString *)) {
     // Homebrew's versioned formula provides python3.14, not necessarily python3.
@@ -86,6 +102,23 @@ static BOOL validDocument(id value) {
             if (![hour[key] isKindOfClass:NSString.class] || [hour[key] length]>16) return NO;
         if (!weatherSymbol(hour[@"condition"])) return NO;
     }
+    id daily=value[@"daily"];
+    if (daily && (![value[@"name"] isEqual:@"weather"] || ![daily isKindOfClass:NSArray.class] || [daily count]>6)) return NO;
+    for (id day in daily) {
+        if (![day isKindOfClass:NSDictionary.class]) return NO;
+        for (NSString *key in @[@"day",@"date",@"high",@"low",@"condition"])
+            if (![day[key] isKindOfClass:NSString.class] || [day[key] length]>16) return NO;
+        if (!weatherSymbol(day[@"condition"])) return NO;
+    }
+    id pinned=value[@"pinned"], anchors=value[@"anchors"];
+    if (pinned && (![pinned isKindOfClass:NSNumber.class] || ![@[@NO,@YES] containsObject:pinned])) return NO;
+    if (anchors && (![anchors isKindOfClass:NSArray.class] || [anchors count]>8)) return NO;
+    for (id anchor in anchors) {
+        if (![anchor isKindOfClass:NSDictionary.class]) return NO;
+        for (NSString *key in @[@"x",@"y",@"width",@"height"])
+            if (![anchor[key] isKindOfClass:NSNumber.class] || !isfinite([anchor[key] doubleValue]) || fabs([anchor[key] doubleValue])>100000) return NO;
+        if ([anchor[@"width"] doubleValue]<=0 || [anchor[@"width"] doubleValue]>1024 || [anchor[@"height"] doubleValue]<=0 || [anchor[@"height"] doubleValue]>256) return NO;
+    }
     return YES;
 }
 static NSDictionary *readDocument(void) {
@@ -102,6 +135,7 @@ static NSDictionary *readDocument(void) {
 }
 
 @interface ControlSurface : NSView
+@property CGFloat anchorX;
 @end
 @implementation ControlSurface
 - (BOOL)isFlipped { return YES; }
@@ -110,7 +144,8 @@ static NSDictionary *readDocument(void) {
     [DFPanelColor(0x11151d) setFill]; [shape fill]; [DFPanelColor(0x2a3447) setStroke]; shape.lineWidth=1; [shape stroke];
     // A short accent rule gives every panel the same restrained signature.
     [[DFPanelColor(0xb8a6ff) colorWithAlphaComponent:0.65] setFill];
-    [[NSBezierPath bezierPathWithRoundedRect:NSMakeRect(24,0,42,2) xRadius:1 yRadius:1] fill];
+    CGFloat center=MAX(22,MIN(self.anchorX ?: self.bounds.size.width-32,self.bounds.size.width-22));
+    [[NSBezierPath bezierPathWithRoundedRect:NSMakeRect(center-12,0,24,2) xRadius:1 yRadius:1] fill];
 }
 @end
 
@@ -199,15 +234,16 @@ static NSDictionary *readDocument(void) {
 @end
 
 @interface ControlView : ControlSurface
+@property NSString *documentName;
 - (void)render;
 - (void)clicked:(NSButton *)sender;
 - (void)slid:(NSSlider *)sender;
 @end
 static ControlView *controlView;
-static void text(NSView *parent, NSString *value, NSRect rect, CGFloat size, NSColor *color, NSFontWeight weight) {
+static NSTextField *text(NSView *parent, NSString *value, NSRect rect, CGFloat size, NSColor *color, NSFontWeight weight) {
     NSTextField *label=[NSTextField labelWithString:value]; label.frame=rect; label.textColor=color;
     label.font=[NSFont systemFontOfSize:size weight:weight]; label.lineBreakMode=NSLineBreakByTruncatingTail;
-    [parent addSubview:label];
+    [parent addSubview:label]; return label;
 }
 static void symbol(NSView *parent, NSString *name, NSRect rect, NSColor *color) {
     NSImageView *image=[[NSImageView alloc] initWithFrame:rect];
@@ -222,14 +258,15 @@ static CGFloat rowsHeight(NSArray *rows) {
 }
 static CGFloat bodyHeight(NSDictionary *document) {
     NSUInteger count=[document[@"rows"] count]-1;
-    CGFloat height=statPanel(document) ? ceil(count/2.0)*74 : rowsHeight(document[@"rows"]);
+    CGFloat height=statPanel(document) ? ceil(count/2.0)*64 : rowsHeight(document[@"rows"]);
     NSArray *rows=document[@"rows"];
     if ([document[@"name"] isEqual:@"weather"] && rows.count>2 && [rows[2][@"text"] isEqual:document[@"subtitle"]]) height-=rowHeight(rows[2]);
     return height;
 }
 static CGFloat headerHeight(NSDictionary *document) {
-    return 110+(document[@"slider"] ? 54 : 0)+([document[@"history"] count] ? 96 : 0)
-        +(document[@"meter"] ? 18 : 0)+([document[@"forecast"] count] ? 108 : 0);
+    if ([document[@"name"] isEqual:@"weather"]) return 110+([document[@"forecast"] count] ? 108 : 0)+([document[@"daily"] count] ? 124 : 0);
+    return 74+(document[@"slider"] ? 48 : 0)+([document[@"history"] count] ? 88 : 0)
+        +(document[@"meter"] ? 14 : 0)+([document[@"forecast"] count] ? 100 : 0);
 }
 static void runControl(NSString *kind, NSString *argument) {
     if (controlBusy || !controlDocument) return;
@@ -248,39 +285,55 @@ static void runControl(NSString *kind, NSString *argument) {
 - (void)clicked:(NSButton *)sender { runControl(@"native-action",[@(sender.tag) stringValue]); }
 - (void)slid:(NSSlider *)sender { runControl(@"native-slider",[NSString stringWithFormat:@"%.0f",sender.doubleValue]); }
 - (void)render {
+    CGFloat oldScroll=0;
+    if ([self.documentName isEqual:controlDocument[@"name"]])
+        for (NSView *view in self.subviews) if ([view isKindOfClass:NSScrollView.class]) oldScroll=[(NSScrollView *)view contentView].bounds.origin.y;
+    self.documentName=controlDocument[@"name"];
     for (NSView *view in self.subviews.copy) [view removeFromSuperview];
+    BOOL isWeather=[controlDocument[@"name"] isEqual:@"weather"];
+    CGFloat width=self.bounds.size.width, contentWidth=width-(isWeather ? 48 : 40), documentWidth=width-24;
     NSArray *rows=controlDocument[@"rows"];
     NSString *title=rows.firstObject[@"text"];
     NSArray *hero=[title componentsSeparatedByString:@" · "];
-    symbol(self,panelSymbol(controlDocument[@"name"]),NSMakeRect(24,20,16,16),DFPanelColor(0xb8a6ff));
-    text(self,[hero.firstObject uppercaseString],NSMakeRect(48,21,230,16),10,DFPanelColor(0x94a3b8),NSFontWeightSemibold);
-    text(self,hero.count>1 ? [[hero subarrayWithRange:NSMakeRange(1,hero.count-1)] componentsJoinedByString:@" · "] : title,
-         NSMakeRect(22,42,336,40),30,DFPanelColor(0xe6edf7),NSFontWeightSemibold);
+    if (isWeather) {
+        symbol(self,panelSymbol(@"weather"),NSMakeRect(24,20,16,16),DFPanelColor(0xb8a6ff));
+        text(self,[hero.firstObject uppercaseString],NSMakeRect(48,21,230,16),10,DFPanelColor(0x94a3b8),NSFontWeightSemibold);
+        text(self,hero.count>1 ? [[hero subarrayWithRange:NSMakeRange(1,hero.count-1)] componentsJoinedByString:@" · "] : title,
+             NSMakeRect(22,42,336,40),30,DFPanelColor(0xe6edf7),NSFontWeightSemibold);
+    } else {
+    symbol(self,panelSymbol(controlDocument[@"name"]),NSMakeRect(20,20,18,18),DFPanelColor(0xb8a6ff));
+    text(self,[hero.firstObject uppercaseString],NSMakeRect(46,22,width-222,18),11,DFPanelColor(0x94a3b8),NSFontWeightSemibold);
+    NSTextField *primary=text(self,hero.count>1 ? [[hero subarrayWithRange:NSMakeRange(1,hero.count-1)] componentsJoinedByString:@" · "] : @"",
+         NSMakeRect(width-174,14,154,34),statPanel(controlDocument) || [controlDocument[@"name"] isEqual:@"weather"] ? 24 : 20,DFPanelColor(0xe6edf7),NSFontWeightSemibold);
+    primary.alignment=NSTextAlignmentRight;
+    }
     NSString *subtitle=controlDocument[@"subtitle"];
     if (!subtitle.length) subtitle=@{@"volume":@"Output level & devices", @"brightness":@"Built-in display",
         @"wifi":@"Wireless connection", @"bluetooth":@"Paired devices", @"battery":@"Power & battery health",
         @"alerts":@"Notifications & system health", @"weather":@"Local forecast"}[controlDocument[@"name"]] ?: @"";
-    text(self,subtitle,NSMakeRect(24,84,332,17),11,DFPanelColor(0x94a3b8),NSFontWeightRegular);
-    CGFloat y=110;
+    BOOL pinned=[controlDocument[@"pinned"] boolValue];
+    text(self,subtitle,NSMakeRect(isWeather ? 24 : 20,isWeather ? 84 : 49,contentWidth-(pinned ? 24 : 0),17),isWeather ? 11 : 10.5,DFPanelColor(0x94a3b8),NSFontWeightRegular);
+    if (pinned) symbol(self,@"pin.fill",NSMakeRect(width-34,isWeather ? 84 : 49,12,12),DFPanelColor(0xb8a6ff));
+    CGFloat y=isWeather ? 110 : 74;
     if (controlDocument[@"meter"]) {
-        ControlMeter *meter=[[ControlMeter alloc] initWithFrame:NSMakeRect(24,y,332,5)];
-        meter.value=[controlDocument[@"meter"] doubleValue]; [self addSubview:meter]; y+=18;
+        ControlMeter *meter=[[ControlMeter alloc] initWithFrame:NSMakeRect(20,y,contentWidth,4)];
+        meter.value=[controlDocument[@"meter"] doubleValue]; [self addSubview:meter]; y+=14;
     }
     if (controlDocument[@"slider"]) {
         NSSlider *slider=[NSSlider sliderWithValue:[controlDocument[@"slider"] doubleValue] minValue:0 maxValue:100 target:self action:@selector(slid:)];
-        slider.frame=NSMakeRect(22,y,336,26); slider.continuous=NO; slider.controlSize=NSControlSizeRegular;
+        slider.frame=NSMakeRect(18,y,contentWidth+4,24); slider.continuous=NO; slider.controlSize=NSControlSizeRegular;
         slider.trackFillColor=DFPanelColor(0xb8a6ff);
         slider.accessibilityLabel=[controlDocument[@"name"] isEqual:@"volume"] ? @"Output volume" : @"Display brightness";
         [self addSubview:slider];
-        text(self,@"0%",NSMakeRect(24,y+29,40,14),9,DFPanelColor(0x94a3b8),NSFontWeightMedium);
-        text(self,@"100%",NSMakeRect(326,y+29,34,14),9,DFPanelColor(0x94a3b8),NSFontWeightMedium); y+=54;
+        text(self,@"0%",NSMakeRect(20,y+27,40,14),9,DFPanelColor(0x94a3b8),NSFontWeightMedium);
+        text(self,@"100%",NSMakeRect(width-54,y+27,34,14),9,DFPanelColor(0x94a3b8),NSFontWeightMedium); y+=48;
     }
     if ([controlDocument[@"history"] count]) {
-        ControlGraph *graph=[[ControlGraph alloc] initWithFrame:NSMakeRect(24,y,332,82)]; graph.samples=controlDocument[@"history"]; [self addSubview:graph]; y+=96;
+        ControlGraph *graph=[[ControlGraph alloc] initWithFrame:NSMakeRect(20,y,contentWidth,74)]; graph.samples=controlDocument[@"history"]; [self addSubview:graph]; y+=88;
     }
     NSArray *forecast=controlDocument[@"forecast"];
     if (forecast.count) {
-        CGFloat width=(332-5*4)/6.0;
+        CGFloat width=(contentWidth-5*4)/6.0;
         for (NSUInteger i=0;i<forecast.count;i++) {
             NSDictionary *hour=forecast[i];
             ControlTile *tile=[[ControlTile alloc] initWithFrame:NSMakeRect(24+i*(width+4),y,width,94)];
@@ -292,62 +345,117 @@ static void runControl(NSString *kind, NSString *argument) {
         }
         y+=108;
     }
+    NSArray *daily=controlDocument[@"daily"];
+    if (daily.count) {
+        text(self,@"NEXT 6 DAYS · HIGH / LOW",NSMakeRect(24,y,332,14),9,DFPanelColor(0x94a3b8),NSFontWeightSemibold);
+        CGFloat tileWidth=(332-5*4)/6.0;
+        for (NSUInteger i=0;i<daily.count;i++) {
+            NSDictionary *day=daily[i];
+            ControlTile *tile=[[ControlTile alloc] initWithFrame:NSMakeRect(24+i*(tileWidth+4),y+22,tileWidth,94)];
+            text(tile,day[@"day"],NSMakeRect(7,8,tileWidth-10,14),10,DFPanelColor(0x94a3b8),NSFontWeightMedium);
+            symbol(tile,weatherSymbol(day[@"condition"]),NSMakeRect((tileWidth-20)/2,27,20,20),DFPanelColor(0x42c7ff));
+            text(tile,day[@"high"],NSMakeRect(6,52,tileWidth-8,18),12,DFPanelColor(0xe6edf7),NSFontWeightSemibold);
+            text(tile,day[@"low"],NSMakeRect(8,75,tileWidth-10,12),9,DFPanelColor(0x94a3b8),NSFontWeightMedium);
+            [self addSubview:tile];
+        }
+        y+=124;
+    }
     CGFloat contentHeight=MAX(1,bodyHeight(controlDocument));
-    NSScrollView *scroll=[[NSScrollView alloc] initWithFrame:NSMakeRect(12,y,356,MIN(contentHeight,360))];
+    NSScrollView *scroll=[[NSScrollView alloc] initWithFrame:NSMakeRect(12,y,documentWidth,MIN(contentHeight,MAX(24,self.bounds.size.height-y-16)))];
     scroll.drawsBackground=NO; scroll.hasVerticalScroller=YES; scroll.autohidesScrollers=YES; scroll.scrollerStyle=NSScrollerStyleOverlay; scroll.borderType=NSNoBorder;
     // The document is flipped, but has no second surface behind the rows.
-    NSView *document=[[ControlDocument alloc] initWithFrame:NSMakeRect(0,0,356,contentHeight)];
+    NSView *document=[[ControlDocument alloc] initWithFrame:NSMakeRect(0,0,documentWidth,contentHeight)];
     CGFloat rowY=0;
     for (NSUInteger i=1;i<rows.count;i++) {
         if ([controlDocument[@"name"] isEqual:@"weather"] && i==2 && [rows[i][@"text"] isEqual:controlDocument[@"subtitle"]]) continue;
-        NSDictionary *row=rows[i]; CGFloat height=rowHeight(row); NSRect rect=NSMakeRect(0,rowY,356,height-2); rowY+=height;
+        NSDictionary *row=rows[i]; CGFloat height=rowHeight(row); NSRect rect=NSMakeRect(0,rowY,documentWidth,height-2); rowY+=height;
         if ([row[@"action"] boolValue]) {
             ControlRow *button=[[ControlRow alloc] initWithFrame:rect]; button.title=row[@"text"]; button.bordered=NO; button.tag=i;
             button.target=self; button.action=@selector(clicked:); [document addSubview:button];
         } else if (statPanel(controlDocument)) {
             NSUInteger index=i-1;
             NSArray *parts=[row[@"text"] componentsSeparatedByString:@" · "];
-            ControlTile *tile=[[ControlTile alloc] initWithFrame:NSMakeRect(10+(index%2)*172,(index/2)*74,164,66)];
-            text(tile,parts.count>1 ? parts.firstObject : @"STATUS",NSMakeRect(12,9,140,14),10,DFPanelColor(0x94a3b8),NSFontWeightMedium);
+            CGFloat tileWidth=(documentWidth-28)/2;
+            ControlTile *tile=[[ControlTile alloc] initWithFrame:NSMakeRect(10+(index%2)*(tileWidth+8),(index/2)*64,tileWidth,56)];
+            text(tile,parts.count>1 ? parts.firstObject : @"STATUS",NSMakeRect(10,7,tileWidth-20,14),10,DFPanelColor(0x94a3b8),NSFontWeightMedium);
             NSString *value=parts.count>1 ? [[parts subarrayWithRange:NSMakeRange(1,parts.count-1)] componentsJoinedByString:@" · "] : parts.firstObject;
-            text(tile,value,NSMakeRect(12,29,140,24),16,DFPanelColor(0xe6edf7),NSFontWeightSemibold);
+            text(tile,value,NSMakeRect(10,26,tileWidth-20,24),15,DFPanelColor(0xe6edf7),NSFontWeightSemibold);
             [document addSubview:tile];
         } else {
             NSArray *parts=[row[@"text"] componentsSeparatedByString:@" · "];
-            text(document,parts.firstObject,NSMakeRect(10,rect.origin.y+9,parts.count>1 ? 142 : 334,18),12,DFPanelColor(0x94a3b8),NSFontWeightRegular);
+            CGFloat labelWidth=floor((documentWidth-24)*0.4);
+            text(document,parts.firstObject,NSMakeRect(10,rect.origin.y+9,parts.count>1 ? labelWidth : documentWidth-20,18),12,DFPanelColor(0x94a3b8),NSFontWeightRegular);
             if (parts.count>1) {
                 NSTextField *value=[NSTextField labelWithString:[[parts subarrayWithRange:NSMakeRange(1,parts.count-1)] componentsJoinedByString:@" · "]];
-                value.frame=NSMakeRect(146,rect.origin.y+9,198,height-12); value.alignment=NSTextAlignmentRight;
+                value.frame=NSMakeRect(labelWidth+12,rect.origin.y+9,documentWidth-labelWidth-24,height-12); value.alignment=NSTextAlignmentRight;
                 value.font=[NSFont monospacedDigitSystemFontOfSize:12 weight:NSFontWeightMedium]; value.textColor=DFPanelColor(0xe6edf7);
                 value.lineBreakMode=NSLineBreakByWordWrapping; value.maximumNumberOfLines=2; [document addSubview:value];
             }
         }
     }
     scroll.documentView=document; [self addSubview:scroll];
+    [scroll.contentView scrollToPoint:NSMakePoint(0,MIN(oldScroll,MAX(0,contentHeight-scroll.frame.size.height)))]; [scroll reflectScrolledClipView:scroll.contentView];
     self.needsDisplay=YES;
 }
 @end
 
+@interface ControlPanel : NSPanel
+@end
+@implementation ControlPanel
+- (BOOL)canBecomeKeyWindow { return YES; }
+- (BOOL)canBecomeMainWindow { return NO; }
+- (void)keyDown:(NSEvent *)event {
+    if (event.keyCode==53) DFControlsHide(); else [super keyDown:event];
+}
+@end
+
+static NSDictionary *renderIdentity(NSDictionary *document) {
+    NSMutableDictionary *identity=document.mutableCopy;
+    for (NSString *key in @[@"revision",@"request",@"anchors"]) [identity removeObjectForKey:key];
+    return identity;
+}
 static void showControls(void) {
     NSDictionary *document=readDocument(); if (!document) return;
     if ([document[@"request"] isEqual:dismissedRequest]) return;
     BOOL same=[controlDocument[@"name"] isEqual:document[@"name"]] && controlPanel.visible;
+    BOOL redraw=!same || ![renderIdentity(controlDocument) isEqual:renderIdentity(document)];
     controlDocument=document; DFCalendarHide(); DFMenusHide();
+    CGFloat width=panelWidth(document);
     if (!controlPanel) {
-        controlPanel=[[NSPanel alloc] initWithContentRect:NSMakeRect(0,0,panelWidth,200) styleMask:NSWindowStyleMaskBorderless|NSWindowStyleMaskNonactivatingPanel backing:NSBackingStoreBuffered defer:NO];
+        controlPanel=[[ControlPanel alloc] initWithContentRect:NSMakeRect(0,0,width,200) styleMask:NSWindowStyleMaskBorderless|NSWindowStyleMaskNonactivatingPanel backing:NSBackingStoreBuffered defer:NO];
         controlPanel.level=CGWindowLevelForKey(kCGStatusWindowLevelKey)+2;
         controlPanel.collectionBehavior=NSWindowCollectionBehaviorCanJoinAllSpaces|NSWindowCollectionBehaviorFullScreenAuxiliary|NSWindowCollectionBehaviorStationary;
         controlPanel.opaque=NO; controlPanel.backgroundColor=NSColor.clearColor; controlPanel.hasShadow=YES; controlPanel.hidesOnDeactivate=NO;
-        controlView=[[ControlView alloc] initWithFrame:NSMakeRect(0,0,panelWidth,200)]; controlPanel.contentView=controlView;
+        controlView=[[ControlView alloc] initWithFrame:NSMakeRect(0,0,width,200)]; controlPanel.contentView=controlView;
     }
-    CGFloat height=headerHeight(document)+MIN(bodyHeight(document),360)+16;
-    NSPoint pointer=NSEvent.mouseLocation; NSScreen *screen=NSScreen.mainScreen;
-    for (NSScreen *candidate in NSScreen.screens) if (NSPointInRect(pointer,candidate.frame)) screen=candidate;
-    NSRect frame=screen.frame; CGFloat top=NSMaxY(frame)-screen.safeAreaInsets.top-44;
-    CGFloat x=same ? controlPanel.frame.origin.x : MAX(NSMinX(frame)+12,MIN(pointer.x-panelWidth/2,NSMaxX(frame)-panelWidth-12));
-    if (!same) controlAnchor=NSMakeRect(pointer.x-44,top,88,NSMaxY(frame)-top);
-    [controlPanel setFrame:NSMakeRect(x,MAX(NSMinY(frame)+12,top-height),panelWidth,height) display:NO];
-    controlView.frame=NSMakeRect(0,0,panelWidth,height); [controlView render]; controlAway=0; [controlPanel orderFrontRegardless];
+    NSPoint pointer=NSEvent.mouseLocation; NSScreen *screen=same ? controlPanel.screen : NSScreen.mainScreen;
+    if (!screen) screen=NSScreen.mainScreen;
+    if (!same) for (NSScreen *candidate in NSScreen.screens) if (NSPointInRect(pointer,candidate.frame)) screen=candidate;
+    NSRect screenFrame=screen.frame;
+    NSRect anchor=same ? controlItemAnchor : NSMakeRect(pointer.x-44,NSMaxY(screenFrame)-screen.safeAreaInsets.top-36,88,32);
+    if (!same) {
+        CGFloat distance=CGFLOAT_MAX, mainTop=NSMaxY(NSScreen.screens.firstObject.frame);
+        for (NSDictionary *value in document[@"anchors"]) {
+            NSRect candidate=NSMakeRect([value[@"x"] doubleValue],mainTop-[value[@"y"] doubleValue]-[value[@"height"] doubleValue],
+                                       [value[@"width"] doubleValue],[value[@"height"] doubleValue]);
+            if (!NSPointInRect(NSMakePoint(NSMidX(candidate),NSMidY(candidate)),screenFrame)) continue;
+            CGFloat delta=fabs(NSMidX(candidate)-pointer.x);
+            if (delta<distance) { anchor=candidate; distance=delta; }
+        }
+    }
+    controlItemAnchor=anchor;
+    CGFloat height=headerHeight(document)+MIN(bodyHeight(document),336)+16;
+    NSRect frame=panelFrame(screenFrame,anchor,width,height);
+    controlAnchor=NSMakeRect(NSMinX(anchor)-6,NSMaxY(frame),anchor.size.width+12,MAX(1,NSMaxY(anchor)-NSMaxY(frame)));
+    if (!NSEqualRects(frame,controlPanel.frame)) { [controlPanel setFrame:frame display:NO]; redraw=YES; }
+    controlView.frame=NSMakeRect(0,0,frame.size.width,frame.size.height);
+    controlView.anchorX=NSMidX(anchor)-frame.origin.x;
+    BOOL tracking=same && (NSEvent.pressedMouseButtons&1) && NSPointInRect(pointer,frame);
+    if (redraw && !tracking) [controlView render];
+    renderPending=redraw && tracking;
+    controlAway=0; controlButtons=NSEvent.pressedMouseButtons;
+    if (!same) [controlPanel orderFrontRegardless];
+    if ([document[@"pinned"] boolValue]) [controlPanel makeKeyWindow];
 }
 void DFControlsInitialize(NSString *directory) {
     controlDirectory=directory;
@@ -358,19 +466,56 @@ void DFControlsInitialize(NSString *directory) {
 void DFControlsNotify(NSString *action) {
     [NSDistributedNotificationCenter.defaultCenter postNotificationName:controlNotification object:action userInfo:nil deliverImmediately:YES];
 }
-void DFControlsHide(void) { if (controlPanel.visible) dismissedRequest=controlDocument[@"request"]; [controlPanel orderOut:nil]; controlAway=0; }
+static void acknowledgeDismissal(NSString *request) {
+    if (!request.length) return;
+    NSData *data=[NSJSONSerialization dataWithJSONObject:@{@"request":request} options:0 error:nil];
+    NSString *directory=[controlDirectory stringByAppendingPathComponent:@"bar"];
+    NSString *temporary=[directory stringByAppendingPathComponent:[@".dismiss-" stringByAppendingString:NSUUID.UUID.UUIDString]];
+    int fd=open(temporary.fileSystemRepresentation,O_WRONLY|O_CREAT|O_EXCL|O_NOFOLLOW,0600);
+    if (fd<0) return;
+    BOOL written=write(fd,data.bytes,data.length)==(ssize_t)data.length;
+    close(fd);
+    if (written) rename(temporary.fileSystemRepresentation,[directory stringByAppendingPathComponent:@"native-dismissed.json"].fileSystemRepresentation);
+    unlink(temporary.fileSystemRepresentation);
+}
+void DFControlsHide(void) {
+    if (controlPanel.visible) {
+        dismissedRequest=controlDocument[@"request"];
+        if ([controlDocument[@"pinned"] boolValue]) acknowledgeDismissal(dismissedRequest);
+    }
+    [controlPanel orderOut:nil]; controlAway=0; renderPending=NO;
+}
 BOOL DFControlsContainsPointer(NSPoint pointer) {
-    return controlPanel.visible && (NSPointInRect(pointer,NSInsetRect(controlPanel.frame,-4,-4)) || NSPointInRect(pointer,controlAnchor));
+    return controlPanel.visible && ([controlDocument[@"pinned"] boolValue] || NSPointInRect(pointer,NSInsetRect(controlPanel.frame,-4,-4)) || NSPointInRect(pointer,controlAnchor));
 }
 void DFControlsTick(double now, NSPoint pointer) {
     if (colorsChanged) { colorsChanged=NO; DFCalendarAppearance(); if (controlPanel.visible) [controlView render]; DFMenusHide(); }
     if (!controlPanel.visible) return;
+    NSUInteger buttons=NSEvent.pressedMouseButtons;
+    if (renderPending && !(buttons&1)) { renderPending=NO; [controlView render]; }
+    if ([controlDocument[@"pinned"] boolValue]) {
+        if (outsidePress(controlButtons,buttons,pointer,controlPanel.frame,controlAnchor)) DFControlsHide();
+        controlButtons=buttons; return;
+    }
     if (DFControlsContainsPointer(pointer)) controlAway=0;
     else if (!controlAway) controlAway=now;
     else if (now-controlAway>0.32) DFControlsHide();
 }
-NSDictionary *DFControlsStatus(void) { return @{@"visible":@(controlPanel.visible),@"name":controlDocument[@"name"] ?: @"",@"backend_available":@(installedPython()!=nil)}; }
+NSDictionary *DFControlsStatus(void) {
+    NSRect frame=controlPanel.frame;
+    return @{@"visible":@(controlPanel.visible),@"name":controlDocument[@"name"] ?: @"",@"backend_available":@(installedPython()!=nil),
+             @"pinned":@([controlDocument[@"pinned"] boolValue]),@"frame":@[@(frame.origin.x),@(frame.origin.y),@(frame.size.width),@(frame.size.height)]};
+}
 int DFControlsSelfTest(void) {
+    for (int offset=-1440;offset<=1440;offset+=1440) for (int edge=0;edge<3;edge++) {
+        NSRect screen=NSMakeRect(offset,offset,1440,900), anchor=NSMakeRect(offset+edge*700,offset+860,60,30);
+        NSRect frame=panelFrame(screen,anchor,344,320);
+        if (NSMinX(frame)<NSMinX(screen)+12 || NSMaxX(frame)>NSMaxX(screen)-12 || NSMinY(frame)<NSMinY(screen)+12 || fabs(NSMaxY(frame)-(NSMinY(anchor)-8))>0.001) return 1;
+    }
+    NSRect panel=NSMakeRect(100,100,320,250), bridge=NSMakeRect(380,350,40,40);
+    if (!outsidePress(0,1,NSMakePoint(0,0),panel,bridge) || outsidePress(1,1,NSMakePoint(0,0),panel,bridge)
+        || outsidePress(0,1,NSMakePoint(120,120),panel,bridge) || outsidePress(0,1,NSMakePoint(400,370),panel,bridge)) return 1;
+    if (panelWidth(@{@"name":@"weather"})!=380 || panelWidth(@{@"name":@"cpu"})!=344 || panelWidth(@{@"name":@"volume"})!=320) return 1;
     NSString *python=controlPython(^BOOL(NSString *path) { return [path hasSuffix:@"python3.14"]; });
     if (![python isEqual:@"/opt/homebrew/bin/python3.14"]) return 1;
     python=controlPython(^BOOL(NSString *path) { return [path hasPrefix:@"/usr/local/"]; });
@@ -395,7 +540,14 @@ int DFControlsSelfTest(void) {
     }
     bad=hour.mutableCopy; bad[@"condition"]=@"arbitrary.symbol";
     weather[@"forecast"]=@[bad]; if (validDocument(weather)) return 1;
-    puts("Native control payload: types, allowlists, bounded sliders/meters, malformed history and forecast cards passed."); return 0;
+    NSDictionary *day=@{@"day":@"Sat",@"date":@"2026-10-17",@"high":@"62°F",@"low":@"41°F",@"condition":@"clear"};
+    weather=@{@"name":@"weather",@"revision":@"1",@"request":@"1",@"rows":valid[@"rows"],@"daily":@[day]}.mutableCopy;
+    if (!validDocument(weather)) return 1;
+    weather[@"daily"]=@[day,day,day,day,day,day,day]; if (validDocument(weather)) return 1;
+    bad=valid.mutableCopy; bad[@"pinned"]=@0.5; if (validDocument(bad)) return 1;
+    bad=valid.mutableCopy; bad[@"anchors"]=@[@{@"x":@1,@"y":@(NAN),@"width":@50,@"height":@40}]; if (validDocument(bad)) return 1;
+    bad[@"anchors"]=@[@{@"x":@1,@"y":@4,@"width":@(-1),@"height":@40}]; if (validDocument(bad)) return 1;
+    puts("Native controls: payload bounds, forecast rows, anchored screen placement, compact widths and pinned outside-click guards passed."); return 0;
 }
 BOOL DFControlsPreview(NSString *path, NSString *kind) {
     // A deterministic UI fixture, never personal device or account data.
@@ -404,7 +556,7 @@ BOOL DFControlsPreview(NSString *path, NSString *kind) {
         @"gpu":@[@"GPU · 38%",@"Temperature · 109°F",@"Power · 12.6 W",@"System power · 29.4 W",@"Fan 1 · 0 RPM"],
         @"memory":@[@"Memory · 18.2 GiB",@"Used · 18.20 GiB",@"Total · 64.00 GiB",@"Swap used · 0.00 GiB",@"Swap capacity · 0.00 GiB"],
         @"battery":@[@"Battery · 84%",@"State · Charging",@"Estimate · 1:22 remaining",@"Cycles · 142",@"Temperature · 88°F"],
-        @"weather":@[@"Weather · 54°F",@"Mitchell, OR · 97750",@"Partly cloudy",@"Wind · W 5 to 10 mph",@"Precipitation · 10%",@"Tonight · 41°F · Mostly clear",@"Saturday · 62°F · Sunny",@"NWS · updated 4 min ago",@"Refresh forecast"],
+        @"weather":@[@"Weather · 54°F",@"Mitchell, OR · 97750",@"Partly cloudy",@"Wind · W 5 to 10 mph",@"Precipitation · 10%",@"NWS · updated 4 min ago",@"Refresh forecast"],
         @"volume":@[@"Sound · 42%",@"Mute",@"● MacBook Pro Speakers",@"○ Studio Display"],
         @"brightness":@[@"Display · 68%",@"Built-in display brightness"],
         @"wifi":@[@"Wi-Fi · On",@"Turn Wi-Fi off",@"Address · 192.0.2.24",@"Studio network",@"Native Wi-Fi controls"],
@@ -434,11 +586,18 @@ BOOL DFControlsPreview(NSString *path, NSString *kind) {
             @"temperature":@[@"54°F",@"56°F",@"59°F",@"61°F",@"62°F",@"60°F"][i],
             @"condition":i<2 ? @"cloudy" : @"clear",@"precipitation":i<2 ? @"10%" : @"0%"}];
         fixture[@"forecast"]=hours;
+        NSMutableArray *days=NSMutableArray.new;
+        for (NSUInteger i=0;i<6;i++) [days addObject:@{@"day":@[@"Sat",@"Sun",@"Mon",@"Tue",@"Wed",@"Thu"][i],
+            @"date":[NSString stringWithFormat:@"2026-10-%lu",(unsigned long)i+17],
+            @"high":@[@"62°F",@"59°F",@"55°F",@"58°F",@"61°F",@"63°F"][i],
+            @"low":@[@"41°F",@"39°F",@"38°F",@"40°F",@"42°F",@"43°F"][i],
+            @"condition":@[@"clear",@"cloudy",@"rain",@"cloudy",@"clear",@"clear"][i]}];
+        fixture[@"daily"]=days;
     }
     if (!validDocument(fixture)) return NO;
     controlDocument=fixture;
     CGFloat height=headerHeight(fixture)+MIN(bodyHeight(fixture),360)+16;
-    controlView=[[ControlView alloc] initWithFrame:NSMakeRect(0,0,panelWidth,height)]; [controlView render];
+    controlView=[[ControlView alloc] initWithFrame:NSMakeRect(0,0,panelWidth(fixture),height)]; [controlView render];
     NSBitmapImageRep *bitmap=[controlView bitmapImageRepForCachingDisplayInRect:controlView.bounds];
     [controlView cacheDisplayInRect:controlView.bounds toBitmapImageRep:bitmap];
     return [[bitmap representationUsingType:NSBitmapImageFileTypePNG properties:@{}] writeToFile:path atomically:YES];

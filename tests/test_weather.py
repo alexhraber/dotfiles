@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import json
 from pathlib import Path
 import sys
@@ -24,6 +24,46 @@ def forecast():
 
 
 class WeatherTests(unittest.TestCase):
+    def test_six_daily_cards_start_tomorrow_in_forecast_timezone_with_day_icons_and_lows(self):
+        # UTC Saturday is still Friday evening at the pinned forecast point.
+        now=datetime(2026,10,17,2,tzinfo=timezone.utc).timestamp()
+        local=datetime.fromisoformat('2026-10-16T06:00:00-07:00')
+        with tempfile.TemporaryDirectory() as temp, patch.object(weather,'STATE',Path(temp)), \
+             patch.object(weather.time,'time',return_value=now), \
+             patch.object(weather,'fetch',side_effect=AssertionError('network on hover')):
+            data=forecast(); data['location']=json.loads(weather.CONFIG.read_text())
+            data['daily']=[]
+            for day in range(8):
+                for daytime in (True,False):
+                    start=local+timedelta(days=day,hours=0 if daytime else 12)
+                    data['daily'].append(dict(startTime=start.isoformat(),isDaytime=daytime,
+                        temperature=60+day if daytime else 40+day,temperatureUnit='F',
+                        shortForecast='Sunny' if daytime else 'Rain'))
+            weather.save('weather-data.json',data)
+            cards=weather.daily_outlook()
+        self.assertEqual([x['date'] for x in cards],[(local+timedelta(days=i)).date().isoformat() for i in range(1,7)])
+        self.assertEqual(cards[0],dict(day='Sat',date='2026-10-17',high='61°F',low='41°F',condition='clear'))
+        self.assertEqual(cards[-1]['day'],'Thu')
+
+    def test_daily_cards_do_not_invent_missing_low_or_use_expired_today(self):
+        now=datetime(2026,10,17,2,tzinfo=timezone.utc).timestamp()
+        with tempfile.TemporaryDirectory() as temp, patch.object(weather,'STATE',Path(temp)), patch.object(weather.time,'time',return_value=now):
+            data=forecast(); data['location']=json.loads(weather.CONFIG.read_text())
+            data['daily']=[dict(startTime='invalid'),dict(startTime='2026-10-16T06:00:00-07:00',isDaytime=True,temperature=80),
+                          dict(startTime='2026-10-17T06:00:00-07:00',isDaytime=True,temperature=10,temperatureUnit='C',shortForecast='Snow')]
+            weather.save('weather-data.json',data)
+            self.assertEqual(weather.daily_outlook(),[dict(day='Sat',date='2026-10-17',high='50°F',low='—',condition='snow')])
+
+    def test_refresh_retains_fourteen_day_night_periods_for_six_future_days(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(weather,'STATE',Path(temp)):
+            config=json.loads(weather.CONFIG.read_text()); data=forecast()
+            weather.save('weather-point.json',dict(location=config,time=time.time(),hourly='https://api.weather.gov/hourly',daily='https://api.weather.gov/daily'))
+            daily=[dict(data['daily'][0],number=i) for i in range(14)]
+            def fetch(url):
+                return {'properties':{'periods':data['hourly'] if '/hourly' in url else daily}}
+            with patch.object(weather,'fetch',side_effect=fetch):
+                self.assertEqual(len(weather.refresh()['daily']),14)
+
     def test_native_outlook_is_bounded_imperial_cached_and_excludes_expired_hours(self):
         with tempfile.TemporaryDirectory() as temp, patch.object(weather,'STATE',Path(temp)), \
              patch.object(weather,'fetch',side_effect=AssertionError('network on hover')):
@@ -42,6 +82,9 @@ class WeatherTests(unittest.TestCase):
             rows=weather.rows(include_hours=False)
             self.assertEqual(rows[-1][1],['weather-refresh'])
             self.assertEqual(len(rows),11)
+            native_rows=weather.rows(include_hours=False,include_days=False)
+            self.assertEqual(len(native_rows),7)
+            self.assertFalse(any('Tonight' in row[0] for row in native_rows))
             self.assertEqual(weather.outlook(),cards)
 
     def test_native_outlook_handles_missing_cache_and_bad_hour_without_fetch(self):

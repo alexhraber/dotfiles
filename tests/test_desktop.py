@@ -23,6 +23,41 @@ spec.loader.exec_module(metrics)
 
 
 class DesktopTests(unittest.TestCase):
+    def test_item_anchors_use_real_rectangles_and_reject_hidden_or_nonfinite_geometry(self):
+        response={'bounding_rects':{'display-1':{'origin':[1400,4],'size':[56,40]},
+            'hidden':{'origin':[-9999,-9999],'size':[1,1]},'bad':{'origin':[float('nan'),4],'size':[50,40]}}}
+        with patch.dict(os.environ,NAME='cpu'), patch.object(controls,'command',return_value=json.dumps(response)):
+            self.assertEqual(controls.item_anchors('cpu'),[dict(x=1400,y=4,width=56,height=40)])
+
+    def test_click_pins_without_dwell_hover_cannot_steal_it_and_second_click_closes(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(controls,'STATE',Path(temp)), \
+             patch.object(controls,'native_controls') as native, patch.object(controls,'native_calendar'), \
+             patch.object(controls,'fresh_rows',return_value=[('Sound · 50%',None)]), patch.object(controls.time,'sleep') as sleep:
+            controls.show('volume',clicked=True)
+            self.assertTrue(controls.read('native-panel.json')['pinned'])
+            request=controls.read('native-panel.json')['request']
+            sleep.assert_not_called()
+            controls.show('gpu')
+            self.assertEqual(controls.read('native-panel.json')['request'],request)
+            controls.show('volume',clicked=True)
+            self.assertEqual(controls.read('active.json'),{})
+            self.assertEqual(controls.read('hover.json')[1],None)
+            self.assertIn(unittest.mock.call('hide'),native.call_args_list)
+
+    def test_native_dismissal_ack_is_request_bound_and_allows_new_hover(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(controls,'STATE',Path(temp)), \
+             patch.object(controls,'native_controls'), patch.object(controls,'fresh_rows',return_value=[('Sound · 50%',None)]), \
+             patch.object(controls.time,'sleep'):
+            controls.show('volume',clicked=True)
+            request=controls.read('native-panel.json')['request']
+            controls.store('native-dismissed.json',{'request':'older-request'})
+            controls.show('gpu')
+            self.assertEqual(controls.read('native-panel.json')['name'],'volume')
+            controls.store('native-dismissed.json',{'request':request})
+            controls.show('gpu')
+            self.assertEqual(controls.read('native-panel.json')['name'],'gpu')
+            self.assertFalse(controls.read('native-panel.json')['pinned'])
+
     def test_native_capacity_meters_are_bounded_and_missing_capacity_is_omitted(self):
         with tempfile.TemporaryDirectory() as temp, patch.object(controls,'STATE',Path(temp)), \
              patch.object(controls,'native_controls'):
@@ -74,12 +109,14 @@ class DesktopTests(unittest.TestCase):
             values = [int(hex_color[i:i+2],16)/255 for i in (0,2,4)]
             values = [v/12.92 if v<=0.04045 else ((v+0.055)/1.055)**2.4 for v in values]
             return sum(a*b for a,b in zip(values,(0.2126,0.7152,0.0722)))
-        for theme in ('nocturne','tidal','ember','iris'):
+        for theme in ('graphite','nocturne','tidal','ember','iris'):
             palette = appearance.resolve(theme,'ribbon')
             for foreground in ('foreground','muted','accent','secondary','warning','danger'):
                 for background in ('surface','popup'):
                     ratio = (luminance(palette[foreground])+0.05)/(luminance(palette[background])+0.05)
                     self.assertGreaterEqual(ratio,4.5,(theme,foreground,background,ratio))
+            selected=(luminance(palette['foreground'])+0.05)/(luminance(palette['selection'])+0.05)
+            self.assertGreaterEqual(selected,4.5,(theme,'selection',selected))
 
     def test_invalid_theme_cannot_become_shell_configuration(self):
         with self.assertRaises(ValueError):
@@ -94,13 +131,13 @@ class DesktopTests(unittest.TestCase):
             appearance.apply()
         run.assert_called_once()
         argv = run.call_args.args[0]
-        for group, drawing in (('ribbon','off'),('hardware','on'),('notifications','on')):
+        for group, drawing in (('ribbon','off'),('hardware','on'),('notifications','on'),('session','off')):
             at = argv.index(group)
             self.assertEqual(argv[at+1],'background.drawing='+drawing)
             self.assertEqual(argv[at+2], 'drawing='+drawing)
         for boundary in ('hardware', 'session', 'chronicle', 'notifications'):
             at = argv.index('gap_' + boundary)
-            self.assertEqual(argv[at+1], 'drawing=on')
+            self.assertEqual(argv[at+1], 'drawing='+('off' if boundary=='session' else 'on'))
         self.assertNotIn('--reload',argv)
         self.assertNotIn('--remove',argv)
 

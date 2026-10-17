@@ -169,14 +169,14 @@ permissions and browser profiles remain locally managed.
 
 The desktop follows the fullscreen workflow: content fills the screen, and
 controls appear at the edges only when needed. Tokyo Night Storm grounds the
-terminal and editor; the desktop defaults to Nocturne charcoal, violet and cyan.
-Three alternate palettes remain available. Tidal
+terminal and editor; the desktop defaults to Graphite with champagne and ice-blue accents.
+Four alternate palettes remain available. Nocturne uses charcoal, violet and cyan. Tidal
 pairs deep petrol with seafoam and brass; Ember uses warm charcoal, copper and
 rose; Iris combines plum, lavender and mint. SF Pro gives system controls a native feel, while monospaced
 text is reserved for code and telemetry. The unbranded
 wallpaper keeps most of the screen quiet.
 
-The default islands layout separates hardware, connections, battery, clock/weather and
+The default islands layout separates hardware, device/power controls, clock/weather and
 notifications into individual pills, with an eight-point empty gap between
 sections and no connecting background. Application context stays at the left;
 notifications sit furthest right. The optional ribbon layout joins the right
@@ -251,29 +251,37 @@ redacted without Location permission; private network/device names are never
 stored in Git. Hardware alerts do not count unread app notifications: macOS
 offers no supported API for reading all other apps' notification content.
 
-Nocturne uses charcoal surfaces, readable violet accents and cyan hardware
+Graphite uses slate surfaces, champagne accents and ice-blue hardware
 icons, inspired by the owner's NixOS Waybar. From the far right inward, the
 order is notifications, clock, weather, then battery, controls and hardware.
 Eight-point gaps separate the section pills; the outer bar is transparent.
 The left side holds the Apple logo, active app and its actual menu headings.
 
-Use `desktop theme --theme nocturne|tidal|ember|iris --layout islands|ribbon`
+Use `desktop theme --theme graphite|nocturne|tidal|ember|iris --layout islands|ribbon`
 to change the live appearance. The dock always renders only application artwork,
 independent of the bar theme. Text/control contrast is checked against the declared surfaces.
 `themes.json` declares the fresh-machine default; local selections stay in
 private state and survive apply. `desktop theme` changes only appearance,
 without resetting wallpaper or desktop preferences.
 
-All hover controls use native AppKit panels with SF Symbol headings, large
+All hover controls use native AppKit panels with SF Symbol headings, clear
 current readings, a violet accent rule and cyan detail graphs. CPU, GPU, memory
 and battery use capacity meters and two-column detail cards. Sound and display
 use accent-colored native sliders; hardware graphs show a 0–100% scale and latest
 sample, share a bounded private history and refresh while open. Weather adds six
 cached hourly cards with conditions, Fahrenheit temperatures and precipitation
-chance above the extended outlook. Device actions have distinct hover targets
+chance. A second matching row immediately below it shows **tomorrow and the next
+five days**, with condition icons and Fahrenheit highs/lows. Dates use Mitchell's
+America/Los_Angeles timezone; the cache keeps the full 14 day/night forecast periods.
+Device actions have distinct hover targets
 and connected-device indicators; longer panels scroll without a second background.
 Native pointer geometry keeps panels open through the anchor-to-panel crossing.
 Late refreshes cannot reopen a dismissed request or replace a newer panel.
+Native controls align to real bar item bounds, retain their top edge and scroll
+position across refreshes, and use 320-point device panels, 344-point hardware
+panels and the existing 380-point weather layout. Hover previews; click pins.
+Escape, an outside click or clicking the same bar control closes the panel.
+Pinned panels ignore unrelated control hovers. No global shortcut is added.
 Native actions select the installed versioned Homebrew Python first, with Intel
 Homebrew and system-Python fallbacks; a missing unversioned `python3` link does
 not silently disable buttons. Desktop status reports backend availability.

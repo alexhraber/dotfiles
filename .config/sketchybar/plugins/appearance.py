@@ -11,7 +11,7 @@ CATALOG = Path(__file__).resolve().parents[1] / 'themes.json'
 STATE = Path(os.environ.get('XDG_STATE_HOME', Path.home() / '.local/state')) / 'dotfiles/desktop'
 LAYOUTS = ('ribbon', 'islands')
 TOKENS = ('surface', 'popup', 'border', 'foreground', 'muted', 'accent',
-          'secondary', 'highlight', 'success', 'warning', 'danger')
+          'secondary', 'highlight', 'selection', 'success', 'warning', 'danger')
 PANELS = ('clock', 'weather', 'volume', 'brightness', 'wifi', 'bluetooth', 'alerts', 'battery', 'cpu', 'gpu', 'memory')
 
 
@@ -24,7 +24,7 @@ def resolve(name=None, layout=None):
     name = name or saved.get('name', catalog['default'])
     layout = layout or saved.get('layout', catalog['layout'])
     if name not in catalog['themes'] or layout not in LAYOUTS:
-        raise ValueError('Choose nocturne, tidal, ember or iris; layout ribbon or islands')
+        raise ValueError('Choose graphite, nocturne, tidal, ember or iris; layout ribbon or islands')
     palette = catalog['themes'][name]
     if any(not re.fullmatch(r'[0-9a-fA-F]{6}', palette.get(key, '')) for key in TOKENS):
         raise ValueError('Palette colors must be six hexadecimal digits')
@@ -39,7 +39,7 @@ def shell(palette):
     values = {'UI_' + key.upper(): '0xff' + palette[key] for key in TOKENS}
     values['UI_GLASS'] = '0xeb' + palette['surface']
     values['UI_POPUP_GLASS'] = '0xff' + palette['popup']
-    values['UI_HOVER'] = '0x66' + palette['highlight']
+    values['UI_HOVER'] = '0xff' + palette['highlight']
     values['UI_LAYOUT'] = palette['layout']
     return '\n'.join(key + '=' + shlex.quote(value) for key, value in values.items()) + '\n'
 
@@ -63,13 +63,14 @@ def apply():
     # leave overlapping bracket backgrounds enabled after a layout switch.
     args = ['sketchybar']
     for group in ('context', 'chronicle', 'ribbon', 'hardware', 'connections', 'session', 'notifications'):
-        active = group == 'context' or (group == 'ribbon') == (palette['layout'] == 'ribbon')
+        active = group == 'context' or (group == 'ribbon' and palette['layout'] == 'ribbon') or (
+            palette['layout'] == 'islands' and group in ('hardware','connections','chronicle','notifications'))
         args += ['--set', group, 'background.drawing=' + ('on' if active else 'off'),
                  'drawing=' + ('on' if active else 'off'),
                  'background.color=' + c('surface', 'eb'), 'background.border_color=' + c('border')]
     for boundary in ('hardware', 'session', 'chronicle', 'notifications'):
         args += ['--set', 'gap_' + boundary,
-                 'drawing=' + ('on' if palette['layout']=='islands' else 'off')]
+                 'drawing=' + ('on' if palette['layout']=='islands' and boundary!='session' else 'off')]
     for panel in PANELS:
         args += ['--set', panel, 'icon.color=' + c('muted'), 'label.color=' + c('foreground')]
     for panel in ('cpu', 'gpu', 'memory'):
