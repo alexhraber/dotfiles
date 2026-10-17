@@ -23,6 +23,26 @@ spec.loader.exec_module(metrics)
 
 
 class DesktopTests(unittest.TestCase):
+    def test_apple_and_app_name_open_native_menus_only_on_click(self):
+        with tempfile.TemporaryDirectory() as temp:
+            directory=Path(temp); log=directory/'menu-calls'
+            hook=directory/'shell-hook'
+            hook.write_text('sketchybar() { :; }\npython3() { :; }\n')
+            edge=directory/'dotfiles/desktop/desktop-edge'; edge.parent.mkdir(parents=True)
+            edge.write_text('#!/bin/sh\nprintf "%s\\n" "$*" >> "$MENU_LOG"\n')
+            edge.chmod(0o700)
+            for name,index in (('apple',0),('front_app',1)):
+                for event in ('mouse.entered','mouse.exited'):
+                    subprocess.run(['bash',str(ROOT/'.config/sketchybar/plugins/status.sh')],
+                        env=dict(os.environ,BASH_ENV=str(hook),MENU_LOG=str(log),
+                                 XDG_STATE_HOME=temp,NAME=name,SENDER=event),check=True,timeout=3)
+                self.assertFalse(log.exists())
+                subprocess.run(['bash',str(ROOT/'.config/sketchybar/plugins/status.sh')],
+                    env=dict(os.environ,BASH_ENV=str(hook),MENU_LOG=str(log),
+                             XDG_STATE_HOME=temp,NAME=name,SENDER='mouse.clicked'),check=True,timeout=3)
+                self.assertEqual(log.read_text(),f'--app-menu {index}\n')
+                log.unlink()
+
     def open_level_control(self, root, name, pinned=False):
         controls.store('hover.json', [1, name])
         controls.store('pin.json', {'request':'1', 'pinned':pinned})

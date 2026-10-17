@@ -52,12 +52,17 @@ team, certificate or account. They are ad-hoc signed locally; binary updates
 may require fresh OS consent. Dotfiles never writes TCC databases or bypasses
 OS permission prompts.
 
-The current-app/File/Edit/View menus require Accessibility for Desktop Controls. Actual
+The click-open current-app pane and its File/Edit/View/etc. hover submenus
+require Accessibility for Desktop Controls. Actual
 AX menu elements are read on a bounded background queue and retained in memory.
 Enabled leaf actions are pressed once only if the same app is still foreground;
 an action timeout is never automatically retried because a modal command may
 already be executing. Hover only reads/opens custom menus. Disabled commands
-remain disabled. No menu titles or command data are committed to Git.
+remain disabled. Root wrapping preserves the original AX elements and order,
+and expands headings without pressing them. Fresh click-time reads and submenu
+responses are rejected after dismissal or foreground-PID changes. Mouse/key
+event monitors dismiss open menus only; Escape is not consumed and other keys
+do nothing. No menu titles or command data are committed to Git.
 
 The Apple icon uses fixed native menu actions rather than another app's AX
 tree. Application launches resolve four allowlisted bundle identifiers, with
@@ -131,7 +136,7 @@ loads a model. Ollama remains manually started and is not enabled at login.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `bde504472bcaa4b7a44bc3f0560daca7711523d692569bb034cdcbc42e648a46`
+- Repository signal fingerprint: `c90d7a78288a21050213593e790c937dd8687f29e3dc5391cf1bb2eba8f0d425`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

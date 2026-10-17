@@ -225,7 +225,7 @@ strip, extra native menu row, or dock divider.
 | Control | Hover / interaction |
 | --- | --- |
 | Apple | Click for a native system menu: About This Mac, System Settings, App Store, System Information, Force Quit and session/power actions |
-| Active app / File / Edit / View / … | The active application's actual menu commands, disabled states, shortcuts and submenus |
+| Active app | Click for the app’s menu headings; hover File, Edit, View, Window, Help or another heading for its real commands |
 | Clock | Current macOS time; native month grid, date selection, previous/next month, today and synced calendar agenda |
 | Weather | ZIP 97750 forecast, wind in mph, precipitation chance, upcoming hours and extended outlook |
 | Sound | Volume slider, mute, output selection; scroll the bar item for volume |
@@ -255,7 +255,8 @@ Graphite uses slate surfaces, champagne accents and ice-blue hardware
 icons, inspired by the owner's NixOS Waybar. From the far right inward, the
 order is notifications, clock, weather, then battery, controls and hardware.
 Eight-point gaps separate the section pills; the outer bar is transparent.
-The left side holds the Apple logo, active app and its actual menu headings.
+The left side holds only the Apple logo and active app. Click the app name to
+open its menu headings in one pane; hover a heading to open its commands.
 
 Use `desktop theme --theme graphite|nocturne|tidal|ember|iris --layout islands|ribbon`
 to change the live appearance. The dock always renders only application artwork,
@@ -309,8 +310,12 @@ Log Out request macOS confirmation dialogs; Force Quit opens a native app choose
 Lock Screen uses the installed macOS login service when supported. These session
 actions run only when selected, and macOS may ask for Automation approval.
 
-Active-app/File/Edit/View menus require Accessibility approval for **Desktop Controls**.
-Hover the active-app control and choose **Enable Accessibility…** if needed. The helper
+Click the app name for a pane containing its own menu plus File, Edit, View,
+Window, Help and any other menus the app exposes, in their original order.
+Hover a row for its contents and nested submenus. Click a command to run it.
+Click the app name again, click outside or press Escape to dismiss.
+These menus require Accessibility approval for **Desktop Controls**.
+Choose **Enable Accessibility…** from that pane if needed. The helper
 reads that app's Accessibility menu tree and presses the selected real
 command exactly once. Disabled items remain disabled, and a changed foreground
 app invalidates a pending command. Apps that do not expose a menu through

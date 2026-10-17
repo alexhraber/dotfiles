@@ -18,8 +18,10 @@ if [[ ${SENDER:-} == mouse.entered || ${SENDER:-} == mouse.clicked ]]; then
       [[ ${SENDER:-} == mouse.entered ]] && exit 0
       menu_index=0
       ;;
-    front_app) menu_index=1 ;;
-    app_menu.*) menu_index=$(( ${NAME#app_menu.} + 2 )) ;;
+    front_app)
+      [[ ${SENDER:-} == mouse.entered ]] && exit 0
+      menu_index=1
+      ;;
   esac
   if [[ -n $menu_index ]]; then
     python3 -B "$plugin_dir/controls.py" cancel all

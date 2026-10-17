@@ -11,6 +11,13 @@ through SketchyBar events; inspected native captures show the new value and
 thumb. The original levels and pointer were restored. Private proof artifacts
 remain outside Git; canonical validation and hosted checks gate publication.
 
+All 87 host tests pass, including a shell event regression proving that Apple
+and the app-name control open native menus only on click. Native menu compilation
+passes with warnings as errors. Nested app-menu self-tests cover the two-index command allowlist, preserving
+the app menu and all other headings in order while excluding Apple, empty
+menu trees and inventories larger than the previous flat-slot capacity. Real
+AX hover behavior still requires final-build OS consent and installed proof.
+
 The Apple menu's native self-tests cover its fixed entries/application targets
 and confirm that restart/shutdown/logout map to the OS confirmation events,
 excluding immediate/forced variants. Host native compilation passes with
@@ -248,7 +255,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `bde504472bcaa4b7a44bc3f0560daca7711523d692569bb034cdcbc42e648a46`
+- Repository signal fingerprint: `c90d7a78288a21050213593e790c937dd8687f29e3dc5391cf1bb2eba8f0d425`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

@@ -93,14 +93,16 @@ include calendar, sound/output/mute, built-in brightness, Wi-Fi power/details,
 paired Bluetooth devices, battery and Fahrenheit CPU/GPU telemetry. Notifications
 are furthest right; hardware warnings are not an unread notification count.
 From that right edge inward, clock and weather come immediately after
-notifications. The Apple logo and actual foreground-app menu headings occupy
-the left. Apple opens a native system menu only on click, with About This Mac,
+notifications. Only the Apple logo and foreground-app name occupy the left. Apple opens a native system menu only on click, with About This Mac,
 System Settings, App Store, System Information, Force Quit and session/power
 entries. Native tracking supports selection, outside-click dismissal and Escape.
 Information/settings entries do not require AX access. Force Quit is a native
 app chooser; restart/shutdown/logout request the OS confirmation dialogs.
-Hovering application headings reads real menu contents; clicking enabled leaf commands uses
-AXPress, with submenus, disabled states and shortcut labels retained. This
+Clicking the app name opens a pane listing all actual top-level menus except
+Apple, including the app’s own menu. Hovering each row reads and opens its real
+contents; clicking enabled leaf commands uses AXPress, with submenus, disabled
+states, marks and shortcut labels retained. App-name hover only highlights.
+The pane supports second-click toggle, outside-click dismissal and Escape. This
 requires Desktop Controls Accessibility approval. No app-menu data is persisted.
 The private helper status adds app_menus.apple_items for the fixed menu's count.
 Clock labels use local 12-hour hours/minutes and AM/PM with seconds hidden, sourced from macOS once
@@ -152,7 +154,7 @@ and the connecting ribbon background off. Optional ribbon hides those spacers.
 desktop theme --theme graphite|nocturne|tidal|ember|iris --layout ribbon|islands restyles existing
 bar items without reloading, changing wallpaper or restarting the helper.
 themes.json declares the reproducible default; private state retains local
-selections across apply. The current-app control now opens its real app menu.
+selections across apply. The current-app control opens the nested menu-heading pane.
 
 Clock opens a native 42-cell Sunday-first month grid with month/today navigation,
 selected-day agenda, event dots and Calendars source selection. The helper
@@ -192,7 +194,7 @@ can leave partial state; the backup manifest remains the recovery input.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `bde504472bcaa4b7a44bc3f0560daca7711523d692569bb034cdcbc42e648a46`
+- Repository signal fingerprint: `c90d7a78288a21050213593e790c937dd8687f29e3dc5391cf1bb2eba8f0d425`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

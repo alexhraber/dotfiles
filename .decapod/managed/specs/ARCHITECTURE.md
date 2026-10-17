@@ -199,9 +199,17 @@ login framework's SACLockScreenImmediate symbol; unavailable support disables
 the item. Sleep and confirmation-based restart/shutdown/logout use fixed Apple
 events to loginwindow. Native menu tracking keeps the bar open until selection
 or dismissal; Apple hover only highlights and does not read the AX tree.
-The same source reads the frontmost app's AX menu bar on a background queue,
-mirrors headings into bounded SketchyBar slots with an overflow menu, and draws
-native themed dropdowns/submenus. Menu rows retain actual AX elements, enabled
+The same source reads the frontmost app’s AX menu bar on a background queue.
+The bar contains only Apple and front_app; status.sh opens the app menu on click,
+not hover. Index 1 reads a fresh menu tree for the current PID and renders every
+top-level heading except Apple in a themed root pane, preserving order and AX
+objects. Hovering a root row opens its actual contents; further submenus retain
+a bounded extra depth for the new wrapper. No flat heading slots or overflow
+heading are created. Root placement shares the Apple menu’s explicit bar offset.
+Click-open panes stay open while the pointer moves away; outside mouse clicks,
+Escape, a second app-name click, app/Space changes or another control dismiss.
+Local/global NSEvent monitors only dismiss an already-open menu; keys are not
+consumed and no desktop shortcut is registered. Menu rows retain actual AX elements, enabled
 states, marks and shortcut labels. Only a selected enabled leaf in the same
 foreground app receives one AXPress. Queries have messaging timeouts and
 bounded item/depth limits; commands are never executed on hover. App/Space
@@ -302,7 +310,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `bde504472bcaa4b7a44bc3f0560daca7711523d692569bb034cdcbc42e648a46`
+- Repository signal fingerprint: `c90d7a78288a21050213593e790c937dd8687f29e3dc5391cf1bb2eba8f0d425`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
