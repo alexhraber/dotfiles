@@ -97,7 +97,7 @@ stay in memory. Hardware, sound, display, connectivity, battery, notifications
 and weather share native panels with usable hover bridges and explicit actions.
 Their visual hierarchy uses symbol headings, large current readings, bounded
 capacity meters, telemetry detail cards and readable trend graphs. Weather
-offers a six-hour cached outlook with imperial units for the declared ZIP;
+offers a six-hour cached outlook beginning next hour, with imperial units for the declared ZIP;
 hovering never initiates a forecast fetch. Dock motion should follow the
 display refresh rate, settle without continual animation redraws, and respect
 Reduce Motion while retaining its entirely transparent icons-only appearance.
@@ -161,7 +161,7 @@ These declarations select authoring and proof obligations; they do not attest im
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `e37e9030f45408ff1b224492d7006b3bc2061d50cad55c179425677d35e6b8a5`
+- Repository signal fingerprint: `91499f5aa1fd514d566d20a2035f6536e27bd313f811bfce537728e375048e47`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

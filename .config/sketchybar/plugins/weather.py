@@ -161,19 +161,25 @@ def daily_outlook():
 
 
 def outlook():
-    """Six cached hours for the native panel; hover never fetches the network."""
+    """Next six hours, starting after the current hour; hover stays cache-only."""
     config = json.loads(CONFIG.read_text())
+    now = time.time()
     result = []
-    for period in periods(cached(config))[:6]:
+    for period in periods(cached(config)):
+        try:
+            start = datetime.fromisoformat(period['startTime'])
+            if start.timestamp() <= now:
+                continue
+            hour = start.strftime('%-I%p').lower()
+        except (KeyError, TypeError, ValueError):
+            continue
         condition = forecast_condition(period)
         probability = period.get('probabilityOfPrecipitation', {}).get('value')
         precipitation = f'{probability:.0f}%' if isinstance(probability, (int, float)) and math.isfinite(probability) and 0 <= probability <= 100 else '—'
-        try:
-            hour = datetime.fromisoformat(period['startTime']).strftime('%-I%p').lower()
-        except (KeyError, TypeError, ValueError):
-            continue
         result.append({'hour': hour, 'temperature': temperature(period),
                        'condition': condition, 'precipitation': precipitation})
+        if len(result) == 6:
+            break
     return result
 
 
