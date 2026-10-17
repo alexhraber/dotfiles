@@ -17,6 +17,13 @@ passes with warnings as errors. Nested app-menu self-tests cover the two-index c
 the app menu and all other headings in order while excluding Apple, empty
 menu trees and inventories larger than the previous flat-slot capacity. Real
 AX hover behavior still requires final-build OS consent and installed proof.
+On the final installed helper, the app-name click opens the permission pane
+directly under the custom bar; hover does not open it, leaving the pointer
+outside keeps it open, and a second click closes it. The bar inventory contains
+no standalone application headings. Fresh helper health and Calendar access
+were confirmed. Real app commands and hover contents remain unverified while
+macOS reports Accessibility off. The final live slider check also passes and
+restores brightness, volume and mute state.
 
 The Apple menu's native self-tests cover its fixed entries/application targets
 and confirm that restart/shutdown/logout map to the OS confirmation events,

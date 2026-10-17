@@ -69,65 +69,75 @@
       "proof_refs": [
         "/private/tmp/dotfiles-nested-host-check.txt"
       ]
+    },
+    {
+      "id": "nested-installed-proof",
+      "summary": "Record final installed click-pane fallback, persistence and toggle; live slider and Apple proofs; 87 host tests. Actual AX submenu consent remains pending. Fresh trajectory repairs stale project-prerequisite epoch without fabricating readiness.",
+      "input_digest": "sha256:e0eac699cac7f08b083eee8675c70e5b7846c10cb4d71ca543bdd319c4e9bd72",
+      "proof_refs": [
+        "target/dotfiles-controls-live-proof.json",
+        "target/dotfiles-nested-host-check.txt",
+        "target/dotfiles-nested-live-proof.json"
+      ]
     }
   ],
   "intents": {
-    "intent:change_01M55E18SCMGTABD1QHEF6KPJ6": {
+    "intent:nested-controls-20261017": {
       "acceptance_criteria": [],
       "assumptions": [],
       "boundaries": [
-        "Current claimed task and isolated work branch"
+        "Own claimed worktree; OS consent remains user-controlled; no session actions in tests"
       ],
       "constraints": [
-        "root"
+        "SketchyBar config, native menu bridge, tests, living specs"
       ],
       "created_sequence": 1,
-      "id": "intent:change_01M55E18SCMGTABD1QHEF6KPJ6",
+      "id": "intent:nested-controls-20261017",
       "out_of_scope": [],
       "proof_requirements": [],
-      "raw_intent": "Refresh open sound and brightness controls after keyboard changes",
-      "refined_intent": "Refresh open sound and brightness controls after keyboard changes",
+      "raw_intent": "Live keyboard levels, native Apple menu and nested actual app menus",
+      "refined_intent": "Click active app name for real menu headings, hover for commands; native Apple click menu and live sound/display controls",
       "status": "refined",
       "updated_sequence": 3
     }
   },
   "epochs": {
-    "ve_b0196568bb455383": {
+    "ve_a3d30fa9a96c75ba": {
       "constitution_hash": "sha256:0c260556aaaf5fffd2a672f8e1a71df2d77fdb09fb3db03db2ef5d68bec87edf",
       "constitution_version": "embedded-docs@0.118.0",
-      "epoch_id": "ve_b0196568bb455383",
+      "epoch_id": "ve_a3d30fa9a96c75ba",
       "evaluator_identity": "decapod-validate@0.118.0",
       "evaluator_set_hash": "sha256:bd601f7712526e22dda29e70d40449ad27f9a36a3f11bdfa83081c1485039b86",
-      "generated_specs_fingerprint": "bde504472bcaa4b7a44bc3f0560daca7711523d692569bb034cdcbc42e648a46",
-      "generated_specs_manifest_hash": "sha256:cd452e2bee0347d557bba0ff0649d0eeabd91fcd155e2342a10e326fc4a989f6",
+      "generated_specs_fingerprint": "c90d7a78288a21050213593e790c937dd8687f29e3dc5391cf1bb2eba8f0d425",
+      "generated_specs_manifest_hash": "sha256:db4e0974a723a1c44bab7167abfb90d95ac0a7f03a06ecf613d22f23895b3f23",
       "material_hashes": {
         "constitution:core/DECAPOD": "sha256:0c260556aaaf5fffd2a672f8e1a71df2d77fdb09fb3db03db2ef5d68bec87edf",
-        "generated_spec:.decapod/managed/specs/ARCHITECTURE.md": "sha256:842b42e0cf030f5d0252bfd13cc2fa2b798708feb6f8b79f682d4ad1dd6d6196",
-        "generated_spec:.decapod/managed/specs/INTENT.md": "sha256:0db333959fdb92035f4566cbebb6ca9a9d213e9dd1b186afc357d3be0dfe89ae",
-        "generated_spec:.decapod/managed/specs/INTERFACES.md": "sha256:cfc10bb87c5db8e42ef9568d6ae1274fa09beb2dee83a861cee360ae085dc715",
-        "generated_spec:.decapod/managed/specs/OPERATIONS.md": "sha256:769c733068196506f3ea70c17eea99dd8bc35cd3901f3e2ad4cd538a371fcf22",
-        "generated_spec:.decapod/managed/specs/README.md": "sha256:bb3026b185a55a1fcd84d917fc919c3654bf3aaa717b462db26bacc05bda2947",
-        "generated_spec:.decapod/managed/specs/SECURITY.md": "sha256:e9fddfbf3ccacb276ffaacdec5a0ba2792fa293a36664b1e877db4a0e06d2905",
-        "generated_spec:.decapod/managed/specs/SEMANTICS.md": "sha256:5ee53e25098cc7c362bcf0f72bed19c0eab5f0a5f617719196319b71e7dcdcdb",
-        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:ad2c7f4c8b55274a489489615c3bc8ecc7dc698a3dc38cc07c97894d3a9f59d2",
-        "generated_specs_fingerprint": "bde504472bcaa4b7a44bc3f0560daca7711523d692569bb034cdcbc42e648a46",
-        "generated_specs_manifest": "sha256:cd452e2bee0347d557bba0ff0649d0eeabd91fcd155e2342a10e326fc4a989f6",
+        "generated_spec:.decapod/managed/specs/ARCHITECTURE.md": "sha256:8cb0f302d666b676dac2d56f77f2828f97e94527d46e50429396f69f226d4b89",
+        "generated_spec:.decapod/managed/specs/INTENT.md": "sha256:b65c7cfe37e7ee8f2909553ed128811b6a181e7f9037d483906a35817a58419b",
+        "generated_spec:.decapod/managed/specs/INTERFACES.md": "sha256:7aec9d49c5c58d02c74c89faea674104b2894eb758836a226327d2e9b43f21ed",
+        "generated_spec:.decapod/managed/specs/OPERATIONS.md": "sha256:1917c236002a61f0b1b6f1fad10bd4cec7cc7265dcfa102539a30349adba3408",
+        "generated_spec:.decapod/managed/specs/README.md": "sha256:26f51e22c8fe9577b099826374d6d8d3332d27c33bd2783e21ebf5994854e09e",
+        "generated_spec:.decapod/managed/specs/SECURITY.md": "sha256:5b61febe063b0eab0e00d09550ddaa3466a2dfd478bb82a4cff22ac7b23d37c9",
+        "generated_spec:.decapod/managed/specs/SEMANTICS.md": "sha256:1efb819a009db4cd4fc4528024daebcf773f713862280d7f266f48ac89a56d63",
+        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:b6125cf67e6f76acf269588edeaaea40db95a64379c8ba8c52a8b8b59a2ee2d4",
+        "generated_specs_fingerprint": "c90d7a78288a21050213593e790c937dd8687f29e3dc5391cf1bb2eba8f0d425",
+        "generated_specs_manifest": "sha256:db4e0974a723a1c44bab7167abfb90d95ac0a7f03a06ecf613d22f23895b3f23",
         "governance_context": "sha256:2afafac673cf4d6e62c551652fc95680e6f0e60475ad915922957b6cb027ed51",
         "governance_material:.decapod/managed/Dockerfile.decapod": "sha256:ca95e9a3a295fda5b4de847d89f7eb57826fc0fa1b027f4f5d7ddd5acef20c1a",
         "governance_material:AGENTS.md": "sha256:daa01102a96768fbd1c1682129012aba9a034761e84dfb8509a5c72723868ebd",
         "governance_material:CLAUDE.md": "sha256:4fc36feb8830f46192b0df498e2d32f8e7c3337278b6de91d481259eed4b7fc3",
         "governance_material:CODEX.md": "sha256:3a9ad61952b38cbcbb4bac9c8a3c84ccf6d72a347125f84dce4d0ce3f3986cae",
         "governance_material:GEMINI.md": "sha256:36c79133cfa256421c753a5ca67896e7aa39192afe7ccb01cae8f9baa1261618",
-        "governance_section:claims": "sha256:b0caf0725dbd1a815022929d83cdbc58b716636d606f5412532c8fad57592793",
-        "governance_section:plan": "sha256:895ebfff94894151e78c9b8276d7097beec40ef29b2240aff172039da4ea9394",
-        "living_spec_material:.decapod/managed/specs/ARCHITECTURE.md": "sha256:bc28e249ff92f8862ec3bcf835ba685a45eae5f87610bcd040f3db71bdec81a9",
-        "living_spec_material:.decapod/managed/specs/INTENT.md": "sha256:4f6a7cd5a97e741f8f20484fd7f71b464164e875f113e60edb47859ebbdffffd",
-        "living_spec_material:.decapod/managed/specs/INTERFACES.md": "sha256:5f70a8a9c06182148cfcce8deb16913b9b94cf68b1f22c47edf94fbdb3082db5",
+        "governance_section:claims": "sha256:1086379fb92379c1df8933a631694a44aa9405761fc5aa4de67eaff311aed229",
+        "governance_section:plan": "sha256:614c7d475ae5ec5efdd4b48274843c7c9075f6552f630a2c1a22c1d34a962985",
+        "living_spec_material:.decapod/managed/specs/ARCHITECTURE.md": "sha256:61a50f8d1b0671d8062fa9e19b0408f64f8d3184d3f65d7913bc0fcf782faab0",
+        "living_spec_material:.decapod/managed/specs/INTENT.md": "sha256:1cbe510641581ad8367521760c3dea580825ca49458eef0a5e4463e51e17198f",
+        "living_spec_material:.decapod/managed/specs/INTERFACES.md": "sha256:cdcc2ef823ff389e582ad088fcc795944ad1ab74e8cf1e576edfa88bda72e204",
         "living_spec_material:.decapod/managed/specs/OPERATIONS.md": "sha256:b43e9fa0eef9fb3e28d84cc5386c79f64f1f3cb9a37a1b8834bbb84e24dbea17",
         "living_spec_material:.decapod/managed/specs/README.md": "sha256:0988c85d6c05f02d52684c9aafae50e95fd5d5576739d3e9d995af682697fd99",
-        "living_spec_material:.decapod/managed/specs/SECURITY.md": "sha256:98918c53fbe7d865ebf853309c5410151abee6ec9f74c919a4f6e7b695ed2a81",
+        "living_spec_material:.decapod/managed/specs/SECURITY.md": "sha256:353381255fd9d218b8003db4aa442158ba62ce252a087c03ea3c08cfb730a5ad",
         "living_spec_material:.decapod/managed/specs/SEMANTICS.md": "sha256:92bbe2607c6f8f94191a95ea977d9785f3472a0fae2835520dd86eae73130d5c",
-        "living_spec_material:.decapod/managed/specs/VALIDATION.md": "sha256:0d5858776a914dffec043ba62f60db01ae40889ee91daf27181a90598169dffc",
+        "living_spec_material:.decapod/managed/specs/VALIDATION.md": "sha256:ec2f8da4c3984431b40e7f2d007c55ac7e9d5e54f3a253f649921e2b85df6602",
         "proof_rubric": "sha256:99e8ef25629da391e9b479db9fff52b82f340224f7a69d8a88d2992ae8e90466",
         "validation_profile": "sha256:37a8eec1ce19687d132fe29051dca629d164e2c4958ba141d5f4133a33f0688f"
       },
@@ -187,257 +197,159 @@
     },
     "trajectory": {
       "active_boundaries": [
-        "Current claimed task and isolated work branch"
+        "Own claimed worktree; OS consent remains user-controlled; no session actions in tests"
       ],
-      "artifact_hash": "sha256:8090d86b787492e9962b16898cf7db533db22ed432cd397875a31a3ed079d0d0",
+      "artifact_hash": "sha256:8dfdc33ddb3c624827f23bfc02b8ee71b4a98f572afdcbb27bc38c45e0f009a6",
       "checks": [
         {
-          "name": "apple_click_menu",
-          "status": "passed"
-        },
-        {
-          "name": "apple_safe_launches",
-          "status": "passed"
-        },
-        {
-          "name": "calendar_access",
-          "status": "passed"
+          "name": "actual-AX-submenus",
+          "status": "unavailable"
         },
         {
           "name": "decapod validate",
           "status": "passed"
         },
         {
-          "name": "host_checks",
+          "name": "host-suite",
           "status": "passed"
         },
         {
-          "name": "live_level_refresh",
+          "name": "installed-app-pane",
           "status": "passed"
         },
         {
-          "name": "nested-actual-AX",
-          "status": "unavailable"
+          "name": "installed-apple",
+          "status": "passed"
         },
         {
-          "name": "nested-host-suite",
+          "name": "installed-live-levels",
           "status": "passed"
         }
       ],
-      "current_phase": "verification",
+      "current_phase": "validation",
       "custody": {
         "events": [
           {
             "event_id": "event:2",
-            "intent_id": "intent:change_01M55E18SCMGTABD1QHEF6KPJ6",
+            "intent_id": "intent:nested-controls-20261017",
             "kind": "created",
             "sequence": 2
           },
           {
             "event_id": "event:3",
-            "intent_id": "intent:change_01M55E18SCMGTABD1QHEF6KPJ6",
+            "intent_id": "intent:nested-controls-20261017",
             "kind": "refined",
             "sequence": 3
           },
           {
-            "detail": "trajectory:branch_01M55E18WHM8T23T84MRF98F7Z",
+            "detail": "trajectory:nested-controls-20261017",
             "event_id": "event:4",
-            "intent_id": "intent:change_01M55E18SCMGTABD1QHEF6KPJ6",
+            "intent_id": "intent:nested-controls-20261017",
             "kind": "trajectory_step_recorded",
             "sequence": 4
           },
           {
-            "detail": "trajectory:branch_01M55E18WHM8T23T84MRF98F7Z",
+            "detail": "trajectory:nested-controls-20261017",
             "event_id": "event:5",
-            "intent_id": "intent:change_01M55E18SCMGTABD1QHEF6KPJ6",
+            "intent_id": "intent:nested-controls-20261017",
             "kind": "trajectory_step_recorded",
             "sequence": 5
-          },
-          {
-            "detail": "trajectory:branch_01M55E18WHM8T23T84MRF98F7Z",
-            "event_id": "event:6",
-            "intent_id": "intent:change_01M55E18SCMGTABD1QHEF6KPJ6",
-            "kind": "trajectory_step_recorded",
-            "sequence": 6
-          },
-          {
-            "detail": "trajectory:branch_01M55E18WHM8T23T84MRF98F7Z",
-            "event_id": "event:7",
-            "intent_id": "intent:change_01M55E18SCMGTABD1QHEF6KPJ6",
-            "kind": "trajectory_step_recorded",
-            "sequence": 7
-          },
-          {
-            "detail": "trajectory:branch_01M55E18WHM8T23T84MRF98F7Z",
-            "event_id": "event:8",
-            "intent_id": "intent:change_01M55E18SCMGTABD1QHEF6KPJ6",
-            "kind": "trajectory_step_recorded",
-            "sequence": 8
           }
         ],
         "knowledge_candidates": [],
-        "next_sequence": 8,
+        "next_sequence": 5,
         "schema_version": "1.0.0",
         "trajectories": {
-          "branch_01M55E18WHM8T23T84MRF98F7Z": {
+          "nested-controls-20261017": {
             "evidence_only": true,
-            "id": "branch_01M55E18WHM8T23T84MRF98F7Z",
-            "intent_id": "intent:change_01M55E18SCMGTABD1QHEF6KPJ6",
+            "id": "nested-controls-20261017",
+            "intent_id": "intent:nested-controls-20261017",
             "steps": [
               {
-                "action": "implementation",
+                "action": "verification",
                 "custody_event_id": "event:4",
                 "observations": [
+                  "scripts/app-menu.m",
+                  "scripts/app-menu.m",
                   ".config/sketchybar/sketchybarrc",
                   ".config/sketchybar/plugins/status.sh",
-                  ".config/sketchybar/plugins/controls.py",
-                  "scripts/control-panel.m",
-                  "Official SketchyBar event docs and installed2.24.1 query events confirm brightness_change and volume_change. Sound event currently changes only a hidden bar label; brightness has no subscription. Native render already preserves geometry and defers updates during slider dragging."
+                  "tests/test_desktop.py",
+                  "target/dotfiles-nested-host-check.txt",
+                  "target/dotfiles-nested-live-proof.json",
+                  "target/dotfiles-controls-live-proof.json",
+                  "target/dotfiles-apple-live-proof.json"
                 ],
-                "proof_refs": [],
+                "proof_refs": [
+                  "host-suite",
+                  "installed-apple",
+                  "installed-live-levels",
+                  "installed-app-pane",
+                  "actual-AX-submenus"
+                ],
                 "scope": [
-                  "root"
+                  "SketchyBar config, native menu bridge, tests, living specs"
                 ],
                 "sequence": 4,
-                "validation_findings": []
-              },
-              {
-                "action": "verification",
-                "custody_event_id": "event:5",
-                "observations": [
-                  ".config/sketchybar/plugins/controls.py",
-                  ".config/sketchybar/plugins/status.sh",
-                  ".config/sketchybar/sketchybarrc",
-                  "scripts/app-menu.m",
-                  "scripts/desktop-edge-info.plist",
-                  "tests/test_desktop.py",
-                  "/private/tmp/dotfiles-controls-host-check.txt",
-                  "/private/tmp/dotfiles-controls-live-proof.json",
-                  "/private/tmp/dotfiles-apple-live-proof.json",
-                  "/private/tmp/dotfiles-apple-installed.png",
-                  "86 host checks pass including native menu confirmation guards. Installed Apple hover does not open; click opens10 native entries directly under the bar with AX0. About This Mac and Settings native launches succeeded. Final helper healthy and Calendar access3 with7 synced calendars. Session/power/force-termination actions are deliberately not executed during verification."
-                ],
-                "proof_refs": [
-                  "host_checks",
-                  "apple_click_menu",
-                  "apple_safe_launches",
-                  "calendar_access"
-                ],
-                "scope": [
-                  "root"
-                ],
-                "sequence": 5,
-                "validation_findings": []
-              },
-              {
-                "action": "validation",
-                "custody_event_id": "event:6",
-                "observations": [
-                  "/private/tmp/dotfiles-controls-live-proof.json",
-                  "Final installed native build repeats the real OS level-change proof: both unpinned panes update within the same hover request and original levels are restored."
-                ],
-                "proof_refs": [
-                  "live_level_refresh"
-                ],
-                "scope": [
-                  "root"
-                ],
-                "sequence": 6,
-                "validation_findings": []
+                "validation_findings": [
+                  "Final helper is healthy with Calendar access3. App pane consent fallback and click-only/toggle/persistence verified; actual AX submenu contents and commands remain unverified until user grants Accessibility to the exact current app. No sleep/power/lock/logout/force-quit action executed."
+                ]
               },
               {
                 "action": "validation",
                 "command": "decapod validate",
-                "custody_event_id": "event:7",
+                "custody_event_id": "event:5",
                 "observations": [
                   ".decapod/governance.json",
                   ".decapod/governance.json",
-                  "validation epoch ve_b0196568bb455383 completed with zero failures"
+                  "validation epoch ve_a3d30fa9a96c75ba completed with zero failures"
                 ],
                 "proof_refs": [
                   "decapod validate"
                 ],
                 "scope": [
-                  "root"
+                  "SketchyBar config, native menu bridge, tests, living specs"
                 ],
-                "sequence": 7,
+                "sequence": 5,
                 "validation_findings": []
-              },
-              {
-                "action": "verification",
-                "command": "python3.14 scripts/check.py",
-                "custody_event_id": "event:8",
-                "observations": [
-                  "scripts/app-menu.m",
-                  ".config/sketchybar/sketchybarrc",
-                  ".config/sketchybar/plugins/status.sh",
-                  "tests/test_desktop.py",
-                  "/private/tmp/dotfiles-nested-host-check.txt",
-                  "/private/tmp/dotfiles-nested-init-clean.json"
-                ],
-                "proof_refs": [
-                  "nested-host-suite",
-                  "nested-actual-AX"
-                ],
-                "scope": [
-                  "root"
-                ],
-                "sequence": 8,
-                "validation_findings": [
-                  "Final helper Calendar is authorized; Accessibility remains off and actual AX hover menus must be verified after OS consent. Reviewed full source inventory against accepted base; only authored desktop changes differ; command contract and workflow remain unchanged."
-                ]
               }
             ]
           }
         }
       },
       "declared_commands": [
-        "decapod validate",
-        "python3.14 scripts/check.py"
+        "decapod validate"
       ],
-      "destination": "pull request",
       "evidence": [
-        "/private/tmp/dotfiles-apple-installed.png",
-        "/private/tmp/dotfiles-apple-live-proof.json",
-        "/private/tmp/dotfiles-controls-host-check.txt",
-        "/private/tmp/dotfiles-controls-live-proof.json",
-        "/private/tmp/dotfiles-nested-host-check.txt",
-        "/private/tmp/dotfiles-nested-init-clean.json",
-        "86 host checks pass including native menu confirmation guards. Installed Apple hover does not open; click opens10 native entries directly under the bar with AX0. About This Mac and Settings native launches succeeded. Final helper healthy and Calendar access3 with7 synced calendars. Session/power/force-termination actions are deliberately not executed during verification.",
-        "Final installed native build repeats the real OS level-change proof: both unpinned panes update within the same hover request and original levels are restored.",
-        "Official SketchyBar event docs and installed2.24.1 query events confirm brightness_change and volume_change. Sound event currently changes only a hidden bar label; brightness has no subscription. Native render already preserves geometry and defers updates during slider dragging.",
-        "validation epoch ve_b0196568bb455383 completed with zero failures"
+        "target/dotfiles-apple-live-proof.json",
+        "target/dotfiles-controls-live-proof.json",
+        "target/dotfiles-nested-host-check.txt",
+        "target/dotfiles-nested-live-proof.json",
+        "validation epoch ve_a3d30fa9a96c75ba completed with zero failures"
       ],
       "inspected_files": [
-        ".config/sketchybar/plugins/controls.py",
-        ".config/sketchybar/plugins/status.sh",
-        ".config/sketchybar/sketchybarrc",
-        "scripts/control-panel.m"
+        "scripts/app-menu.m"
       ],
-      "intent_id": "intent:change_01M55E18SCMGTABD1QHEF6KPJ6",
+      "intent_id": "intent:nested-controls-20261017",
       "modified_files": [
-        ".config/sketchybar/plugins/controls.py",
         ".config/sketchybar/plugins/status.sh",
         ".config/sketchybar/sketchybarrc",
         ".decapod/governance.json",
         "scripts/app-menu.m",
-        "scripts/desktop-edge-info.plist",
         "tests/test_desktop.py"
       ],
       "next_transitions": [
-        "Refine plan and declare falsifiable checks",
         "publish"
       ],
       "repo_scope": [
-        "root"
+        "SketchyBar config, native menu bridge, tests, living specs"
       ],
-      "run_id": "branch_01M55E18WHM8T23T84MRF98F7Z",
+      "run_id": "nested-controls-20261017",
       "schema_version": "1.1.0",
       "shortcut_risk_signals": [],
       "task_id": "code_01m55e0n7a4egzg6",
       "tool_calls": [],
       "unresolved_assumptions": [
-        "Final helper Calendar is authorized; Accessibility remains off and actual AX hover menus must be verified after OS consent. Reviewed full source inventory against accepted base; only authored desktop changes differ; command contract and workflow remain unchanged."
+        "Final helper is healthy with Calendar access3. App pane consent fallback and click-only/toggle/persistence verified; actual AX submenu contents and commands remain unverified until user grants Accessibility to the exact current app. No sleep/power/lock/logout/force-quit action executed."
       ]
     },
     "validation": {
@@ -451,142 +363,114 @@
       },
       "decapod_release": "0.118.0",
       "drift_findings": [],
-      "elapsed_ms": 4932,
-      "epoch_ref": "ve_b0196568bb455383",
+      "elapsed_ms": 2243,
+      "epoch_ref": "ve_a3d30fa9a96c75ba",
       "fail_count": 0,
       "failures": [],
       "gate_timings": [
         {
-          "elapsed_ms": 1639,
+          "elapsed_ms": 693,
           "name": "validate_project_specs_docs"
         },
         {
-          "elapsed_ms": 854,
+          "elapsed_ms": 323,
           "name": "validate_stale_workspaces"
         },
         {
-          "elapsed_ms": 624,
+          "elapsed_ms": 318,
           "name": "validate_markdown_primitives_roundtrip_gate"
         },
         {
-          "elapsed_ms": 488,
-          "name": "validate_git_workspace_context"
-        },
-        {
-          "elapsed_ms": 182,
+          "elapsed_ms": 143,
           "name": "validate_machine_contract"
         },
         {
-          "elapsed_ms": 168,
-          "name": "validate_no_legacy_namespaces"
+          "elapsed_ms": 141,
+          "name": "validate_git_workspace_context"
         },
         {
-          "elapsed_ms": 127,
+          "elapsed_ms": 113,
           "name": "validate_obligations"
         },
         {
-          "elapsed_ms": 81,
-          "name": "validate_entrypoint_invariants"
-        },
-        {
-          "elapsed_ms": 69,
+          "elapsed_ms": 65,
           "name": "validate_legacy_jsonl_retired"
         },
         {
-          "elapsed_ms": 44,
+          "elapsed_ms": 38,
           "name": "validate_archive_integrity"
         },
         {
-          "elapsed_ms": 42,
+          "elapsed_ms": 33,
           "name": "validate_repomap_determinism"
         },
         {
-          "elapsed_ms": 38,
-          "name": "validate_control_plane_contract"
-        },
-        {
-          "elapsed_ms": 29,
-          "name": "validate_gatekeeper_gate"
-        },
-        {
-          "elapsed_ms": 29,
-          "name": "validate_generated_artifact_whitelist"
-        },
-        {
-          "elapsed_ms": 28,
-          "name": "validate_git_push_pr_gate"
-        },
-        {
-          "elapsed_ms": 26,
-          "name": "validate_federation_gates"
-        },
-        {
-          "elapsed_ms": 24,
-          "name": "validate_git_protected_branch"
-        },
-        {
-          "elapsed_ms": 19,
-          "name": "validate_lineage_hard_gate"
-        },
-        {
-          "elapsed_ms": 19,
+          "elapsed_ms": 18,
           "name": "validate_schema_determinism"
         },
         {
           "elapsed_ms": 17,
-          "name": "validate_health_purity"
+          "name": "validate_git_protected_branch"
+        },
+        {
+          "elapsed_ms": 16,
+          "name": "validate_control_plane_contract"
+        },
+        {
+          "elapsed_ms": 15,
+          "name": "validate_trajectory_artifacts_if_present"
+        },
+        {
+          "elapsed_ms": 13,
+          "name": "validate_git_push_pr_gate"
+        },
+        {
+          "elapsed_ms": 12,
+          "name": "validate_jev_history_if_present"
+        },
+        {
+          "elapsed_ms": 12,
+          "name": "validate_no_legacy_namespaces"
+        },
+        {
+          "elapsed_ms": 12,
+          "name": "validate_federation_gates"
+        },
+        {
+          "elapsed_ms": 11,
+          "name": "validate_validation_receipt_if_present"
+        },
+        {
+          "elapsed_ms": 11,
+          "name": "validate_lineage_hard_gate"
         },
         {
           "elapsed_ms": 9,
-          "name": "validate_project_config_toml"
-        },
-        {
-          "elapsed_ms": 7,
-          "name": "validate_override_authority"
+          "name": "validate_gatekeeper_gate"
         },
         {
           "elapsed_ms": 6,
-          "name": "validate_trajectory_artifacts_if_present"
+          "name": "validate_research_claims_if_present"
         },
         {
           "elapsed_ms": 6,
           "name": "validate_plan_governed_execution_gate"
         },
         {
-          "elapsed_ms": 5,
-          "name": "validate_validation_receipt_if_present"
-        },
-        {
-          "elapsed_ms": 5,
-          "name": "validate_research_claims_if_present"
-        },
-        {
-          "elapsed_ms": 5,
-          "name": "validate_watcher_audit"
-        },
-        {
           "elapsed_ms": 4,
-          "name": "validate_jev_history_if_present"
-        },
-        {
-          "elapsed_ms": 4,
-          "name": "validate_spec_drift"
-        },
-        {
-          "elapsed_ms": 4,
-          "name": "validate_recursive_improvement_passes_if_present"
+          "name": "validate_generated_artifact_whitelist"
         },
         {
           "elapsed_ms": 4,
           "name": "validate_knowledge_promotions_if_present"
         },
         {
-          "elapsed_ms": 3,
-          "name": "validate_knowledge_integrity"
+          "elapsed_ms": 4,
+          "name": "validate_watcher_audit"
         },
         {
           "elapsed_ms": 3,
-          "name": "validate_lcm_rebuild_gate"
+          "name": "validate_recursive_improvement_passes_if_present"
         },
         {
           "elapsed_ms": 3,
@@ -594,6 +478,22 @@
         },
         {
           "elapsed_ms": 2,
+          "name": "validate_knowledge_integrity"
+        },
+        {
+          "elapsed_ms": 2,
+          "name": "validate_lcm_rebuild_gate"
+        },
+        {
+          "elapsed_ms": 2,
+          "name": "validate_entrypoint_invariants"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_health_purity"
+        },
+        {
+          "elapsed_ms": 1,
           "name": "validate_policy_integrity"
         },
         {
@@ -602,7 +502,15 @@
         },
         {
           "elapsed_ms": 1,
+          "name": "validate_override_authority"
+        },
+        {
+          "elapsed_ms": 1,
           "name": "validate_canon_mutation"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_spec_drift"
         },
         {
           "elapsed_ms": 1,
@@ -613,32 +521,12 @@
           "name": "validate_health_cache_integrity"
         },
         {
-          "elapsed_ms": 1,
+          "elapsed_ms": 0,
           "name": "validate_risk_map_violations"
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_project_scoped_state"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_docs_templates_bucket"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_context_capsule_policy_contract"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_heartbeat_invocation_gate"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_repo_map"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_embedded_self_contained"
+          "name": "validate_project_config_toml"
         },
         {
           "elapsed_ms": 0,
@@ -646,15 +534,39 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_internalization_artifacts_if_present"
+          "name": "validate_context_capsule_policy_contract"
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_interface_contract_bootstrap"
+          "name": "validate_project_scoped_state"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_heartbeat_invocation_gate"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_docs_templates_bucket"
         },
         {
           "elapsed_ms": 0,
           "name": "validate_context_capsules_if_present"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_repo_map"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_internalization_artifacts_if_present"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_embedded_self_contained"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_interface_contract_bootstrap"
         },
         {
           "elapsed_ms": 0,
@@ -681,18 +593,18 @@
           "name": "validate_tooling_gate"
         }
       ],
-      "git_revision": "22432065ee5fd0c014a8199a773ad0f03fba5673",
+      "git_revision": "04b06c39c04b8c80bf7aa958f9c4103433b1d278",
       "kind": "validation_receipt",
       "parallelism": 1,
-      "pass_count": 187,
+      "pass_count": 188,
       "prediction_uses_warnings": true,
-      "receipt_hash": "sha256:5dbef5485a48ae1157b2a9cf8f3d92705a35db935a25d387f87a18811618032f",
-      "repo_signal_fingerprint": "bde504472bcaa4b7a44bc3f0560daca7711523d692569bb034cdcbc42e648a46",
+      "receipt_hash": "sha256:4de34e73ceb2ebbc925664b40fa4f3f469bbeb79bcec4128322ffb9d2cd403c6",
+      "repo_signal_fingerprint": "c90d7a78288a21050213593e790c937dd8687f29e3dc5391cf1bb2eba8f0d425",
       "schema_version": "1.0.0",
       "status": "ok",
       "temporary_artifacts_cleaned": 0,
-      "trajectory_artifact_hash": "sha256:aa879d2312c24c2fa87ca444253465daaacec7b1882531f7a0278eff194ea0c0",
-      "trajectory_run_id": "branch_01M55E18WHM8T23T84MRF98F7Z",
+      "trajectory_artifact_hash": "sha256:8dfdc33ddb3c624827f23bfc02b8ee71b4a98f572afdcbb27bc38c45e0f009a6",
+      "trajectory_run_id": "nested-controls-20261017",
       "warn_count": 4,
       "warnings": [
         "Risk map missing (run `decapod riskmap init`)",
