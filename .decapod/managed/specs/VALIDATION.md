@@ -37,6 +37,10 @@ A nonactivating observer verified Ghostty stayed fullscreen throughout. The live
 Sound and Bluetooth captures were inspected privately. Exact-candidate readiness
 and hosted CI remain separate gates before publication.
 
+Network notification installation and visible-only refresh routing are verified;
+no real Wi-Fi disconnect or network change was induced for testing. Fullscreen
+pane proof does not close the earlier Mission Control detector compatibility gap.
+
 The earlier privacy and interaction pass ran 92 host tests, native compilation
 with warnings as errors and native self-tests. Wi-Fi tests cover top-three
 saved-profile ordering, invalid history, duplicate/malformed SSIDs, literal
