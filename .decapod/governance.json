@@ -76,6 +76,14 @@
         "target/apple-wifi-project-check-final.json",
         "target/apple-wifi-runtime-proof/dotfiles-no-location-proof.json"
       ]
+    },
+    {
+      "id": "apple-wifi-current-trajectory-receipt",
+      "summary": "Bind successful project prerequisites to final unchanged trajectory after history repair; all required source checks retained.",
+      "input_digest": "sha256:da98db6c0b51aa3bcdbb1dd87be8426acc0ed9071e3a23c33a0b37abd2487e66",
+      "proof_refs": [
+        "target/apple-wifi-final-bound-project-check.json"
+      ]
     }
   ],
   "intents": {
@@ -397,126 +405,106 @@
       },
       "decapod_release": "0.119.0",
       "drift_findings": [],
-      "elapsed_ms": 3555,
+      "elapsed_ms": 2136,
       "epoch_ref": "ve_2a8abd576c45b505",
       "fail_count": 0,
       "failures": [],
       "gate_timings": [
         {
-          "elapsed_ms": 1254,
+          "elapsed_ms": 644,
           "name": "validate_project_specs_docs"
         },
         {
-          "elapsed_ms": 562,
+          "elapsed_ms": 347,
           "name": "validate_stale_workspaces"
         },
         {
-          "elapsed_ms": 441,
+          "elapsed_ms": 319,
           "name": "validate_markdown_primitives_roundtrip_gate"
         },
         {
-          "elapsed_ms": 204,
-          "name": "validate_git_workspace_context"
-        },
-        {
-          "elapsed_ms": 150,
+          "elapsed_ms": 138,
           "name": "validate_machine_contract"
         },
         {
-          "elapsed_ms": 137,
-          "name": "validate_legacy_jsonl_retired"
+          "elapsed_ms": 102,
+          "name": "validate_git_workspace_context"
         },
         {
-          "elapsed_ms": 118,
+          "elapsed_ms": 102,
           "name": "validate_obligations"
         },
         {
-          "elapsed_ms": 114,
-          "name": "validate_gatekeeper_gate"
+          "elapsed_ms": 65,
+          "name": "validate_legacy_jsonl_retired"
         },
         {
-          "elapsed_ms": 72,
+          "elapsed_ms": 35,
           "name": "validate_archive_integrity"
         },
         {
-          "elapsed_ms": 54,
-          "name": "validate_repomap_determinism"
-        },
-        {
-          "elapsed_ms": 29,
-          "name": "validate_schema_determinism"
-        },
-        {
-          "elapsed_ms": 27,
-          "name": "validate_federation_gates"
-        },
-        {
-          "elapsed_ms": 23,
-          "name": "validate_git_push_pr_gate"
-        },
-        {
-          "elapsed_ms": 23,
+          "elapsed_ms": 22,
           "name": "validate_git_protected_branch"
         },
         {
+          "elapsed_ms": 20,
+          "name": "validate_repomap_determinism"
+        },
+        {
           "elapsed_ms": 18,
+          "name": "validate_schema_determinism"
+        },
+        {
+          "elapsed_ms": 15,
           "name": "validate_control_plane_contract"
         },
         {
-          "elapsed_ms": 14,
-          "name": "validate_lineage_hard_gate"
+          "elapsed_ms": 13,
+          "name": "validate_federation_gates"
         },
         {
-          "elapsed_ms": 12,
+          "elapsed_ms": 11,
+          "name": "validate_git_push_pr_gate"
+        },
+        {
+          "elapsed_ms": 11,
           "name": "validate_no_legacy_namespaces"
         },
         {
-          "elapsed_ms": 10,
-          "name": "validate_plan_governed_execution_gate"
+          "elapsed_ms": 9,
+          "name": "validate_lineage_hard_gate"
         },
         {
-          "elapsed_ms": 8,
-          "name": "validate_knowledge_promotions_if_present"
+          "elapsed_ms": 7,
+          "name": "validate_gatekeeper_gate"
         },
         {
-          "elapsed_ms": 6,
-          "name": "validate_lcm_rebuild_gate"
-        },
-        {
-          "elapsed_ms": 4,
-          "name": "validate_watcher_audit"
-        },
-        {
-          "elapsed_ms": 4,
+          "elapsed_ms": 3,
           "name": "validate_generated_artifact_whitelist"
         },
         {
-          "elapsed_ms": 4,
-          "name": "validate_research_claims_if_present"
+          "elapsed_ms": 3,
+          "name": "validate_plan_governed_execution_gate"
         },
         {
-          "elapsed_ms": 4,
-          "name": "validate_validation_receipt_if_present"
+          "elapsed_ms": 3,
+          "name": "validate_watcher_audit"
         },
         {
-          "elapsed_ms": 4,
+          "elapsed_ms": 3,
           "name": "validate_lcm_immutability"
         },
         {
-          "elapsed_ms": 4,
+          "elapsed_ms": 3,
+          "name": "validate_knowledge_promotions_if_present"
+        },
+        {
+          "elapsed_ms": 3,
           "name": "validate_knowledge_integrity"
         },
         {
           "elapsed_ms": 3,
-          "name": "validate_context_capsule_policy_contract"
-        },
-        {
-          "elapsed_ms": 3,
-          "name": "validate_recursive_improvement_passes_if_present"
-        },
-        {
-          "elapsed_ms": 2,
-          "name": "validate_trajectory_artifacts_if_present"
+          "name": "validate_lcm_rebuild_gate"
         },
         {
           "elapsed_ms": 2,
@@ -524,15 +512,27 @@
         },
         {
           "elapsed_ms": 2,
+          "name": "validate_trajectory_artifacts_if_present"
+        },
+        {
+          "elapsed_ms": 2,
           "name": "validate_policy_integrity"
         },
         {
           "elapsed_ms": 2,
-          "name": "validate_database_schema_versions"
+          "name": "validate_research_claims_if_present"
         },
         {
-          "elapsed_ms": 2,
+          "elapsed_ms": 1,
+          "name": "validate_validation_receipt_if_present"
+        },
+        {
+          "elapsed_ms": 1,
           "name": "validate_jev_history_if_present"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_database_schema_versions"
         },
         {
           "elapsed_ms": 1,
@@ -540,7 +540,15 @@
         },
         {
           "elapsed_ms": 1,
+          "name": "validate_recursive_improvement_passes_if_present"
+        },
+        {
+          "elapsed_ms": 1,
           "name": "validate_health_purity"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_canon_mutation"
         },
         {
           "elapsed_ms": 1,
@@ -549,14 +557,6 @@
         {
           "elapsed_ms": 1,
           "name": "validate_spec_drift"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_canon_mutation"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_internalization_artifacts_if_present"
         },
         {
           "elapsed_ms": 1,
@@ -572,7 +572,7 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_workunit_manifests_if_present"
+          "name": "validate_heartbeat_invocation_gate"
         },
         {
           "elapsed_ms": 0,
@@ -580,7 +580,7 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_heartbeat_invocation_gate"
+          "name": "validate_context_capsule_policy_contract"
         },
         {
           "elapsed_ms": 0,
@@ -592,15 +592,7 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_state_commit_gate"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_interface_contract_bootstrap"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_context_capsules_if_present"
+          "name": "validate_workunit_manifests_if_present"
         },
         {
           "elapsed_ms": 0,
@@ -608,7 +600,23 @@
         },
         {
           "elapsed_ms": 0,
+          "name": "validate_internalization_artifacts_if_present"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_state_commit_gate"
+        },
+        {
+          "elapsed_ms": 0,
           "name": "validate_root_dockerfile_seed_detection"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_context_capsules_if_present"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_interface_contract_bootstrap"
         },
         {
           "elapsed_ms": 0,
@@ -620,31 +628,31 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_tooling_gate"
+          "name": "validate_coplayer_policy_tightening"
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_coplayer_policy_tightening"
+          "name": "validate_tooling_gate"
         }
       ],
-      "git_revision": "f5c1ec4756785eb3a5448bda6c30ec18f3908eee",
+      "git_revision": "5ad921d29ae72fc94082d1092b202c756455cf74",
       "kind": "validation_receipt",
       "parallelism": 1,
       "pass_count": 188,
       "prediction_uses_warnings": true,
-      "receipt_hash": "sha256:291451a473d8f75920e9f919915a13511d6078995b4eef2dc627bee4428fcbfa",
+      "receipt_hash": "sha256:1d503bcc086a5d3395441adb4dd5d17b1a291e71408ef12a86259bd20c447c86",
       "repo_signal_fingerprint": "9c8d674dac16b4e6d6f39748f6fb5faaf48fe8a8e08adf63ae276d06db50866a",
       "schema_version": "1.0.0",
       "status": "ok",
       "temporary_artifacts_cleaned": 0,
-      "trajectory_artifact_hash": "sha256:628bcc5ece7c833a380f3d9319c108d037e08f5487b2d52a1389806b63ba4c87",
+      "trajectory_artifact_hash": "sha256:f6927b561e6a4afad67b9862bc7209b7e5865bb9c984d1d5181daa8bdfa72828",
       "trajectory_run_id": "apple-wifi-119-final",
       "warn_count": 4,
       "warnings": [
+        "No open pull request found on GitHub for branch 'agent/unknown/code_01m566mvej5yhp01'. Create a PR only after intent is converged, the branch is mergeable, and full exact-candidate validation succeeds against the accepted target.",
         "Risk map missing (run `decapod riskmap init`)",
         "Stale workspaces preserved for explicit review: <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (current_workspace: workspace contains the current process; rerun prune from the host checkout after leaving this workspace so Git can release the branch), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.)",
-        "Watcher audit trail missing (run `decapod govern watcher run`)",
-        "Workspace branch 'agent/unknown/code_01m566mvej5yhp01' has unpushed commits or does not exist on origin. Branch pushes and iteration are allowed before preflight; hold PR creation until intent is converged, the branch is mergeable, and full `decapod validate` succeeds against the exact current candidate and accepted target."
+        "Watcher audit trail missing (run `decapod govern watcher run`)"
       ]
     }
   }
