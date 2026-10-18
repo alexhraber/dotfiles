@@ -2,6 +2,7 @@
 from contextlib import contextmanager
 import fcntl
 import json
+import ipaddress
 import math
 import os
 from pathlib import Path
@@ -76,54 +77,11 @@ def valid_ssid(value):
             and not any(ord(c) < 32 or ord(c) == 127 for c in value))
 
 
-def saved_wifi(device):
-    # Saved profiles need no Location access. Preserve literal SSID whitespace.
-    result = command('/usr/sbin/networksetup', '-listpreferredwirelessnetworks', device, strip=False)
-    lines = result.splitlines()
-    if not lines or lines[0] != f'Preferred networks on {device}:':
-        return []
-    return list(dict.fromkeys(line[1:] for line in lines[1:257]
-                             if line.startswith('\t') and valid_ssid(line[1:])))
-
-
 def current_wifi(device):
     result = command('/usr/sbin/networksetup', '-getairportnetwork', device, strip=False).removesuffix('\n')
     prefix = 'Current Wi-Fi Network: '
     name = result[len(prefix):] if result.startswith(prefix) else ''
     return name if valid_ssid(name) else ''
-
-
-def wifi_choices(names, history=None, now=None):
-    names = list(dict.fromkeys(name for name in names[:256] if valid_ssid(name)))
-    history = read('wifi-recent.json', {}) if history is None else history
-    if not isinstance(history, dict):
-        history = {}
-    def used(name):
-        stamp = history.get(name, 0)
-        return stamp if (isinstance(stamp, (int, float)) and not isinstance(stamp, bool)
-                         and math.isfinite(stamp) and 0 <= stamp <= (time.time() if now is None else now)) else 0
-    return sorted(names, key=lambda name: -used(name))[:3]
-
-
-def connect_wifi(name):
-    device = wifi_device()
-    if name not in wifi_choices(saved_wifi(device)):
-        raise ValueError('Saved network choices changed; reopen Wi-Fi')
-    if name == current_wifi(device):
-        return
-    # macOS handles saved credentials; never read passwords or put them in argv.
-    result = command('/usr/sbin/networksetup', '-setairportnetwork', device, name, timeout=20)
-    if result and not result.startswith('You have joined'):
-        raise ValueError('macOS could not join this network')
-    with interaction():
-        history = read('wifi-recent.json', {})
-        if not isinstance(history, dict):
-            history = {}
-        history = {key: value for key, value in history.items() if valid_ssid(key)
-                   and isinstance(value, (int, float)) and not isinstance(value, bool)
-                   and math.isfinite(value) and 0 <= value <= time.time()}
-        history[name] = time.time()
-        store('wifi-recent.json', dict(sorted(history.items(), key=lambda item: -item[1])[:256]))
 
 
 def sample():
@@ -166,6 +124,7 @@ def panel_rows(name):
         try:
             outputs = [json.loads(line) for line in command('SwitchAudioSource', '-a', '-t', 'output', '-f', 'json').splitlines() if line]
             current = command('SwitchAudioSource', '-c', '-t', 'output')
+            rows.append(('Output devices', None))
             rows += [(('● ' if item['name'] == current else '○ ') + item['name'],
                       ['output', item['name']]) for item in outputs]
         except (subprocess.SubprocessError, ValueError, KeyError):
@@ -174,30 +133,35 @@ def panel_rows(name):
     if name == 'wifi':
         device = wifi_device()
         powered = command('networksetup', '-getairportpower', device).endswith('On')
-        rows = [('Wi-Fi · ' + ('On' if powered else 'Off'), None),
-                ('Turn Wi-Fi ' + ('off' if powered else 'on'), ['wifi', device, 'off' if powered else 'on'])]
+        rows = []
         if powered:
             current = current_wifi(device)
-            if current:
-                rows.append(('Connected · ' + current, None))
-            choices = wifi_choices(saved_wifi(device))
-            rows.append(('Recent saved networks', None))
-            rows += [(('● ' if name == current else '○ ') + name,
-                      None if name == current else ['wifi-network', name]) for name in choices]
-            if not choices:
-                rows.append(('No saved networks', None))
+            link = command('/sbin/ifconfig', device)
+            linked = bool(re.search(r'^\s*status:\s+active\s*$', link, re.MULTILINE))
+            address = None
             try:
-                rows.append(('Address · ' + command('ipconfig', 'getifaddr', device), None))
-            except subprocess.SubprocessError:
-                rows.append(('No IPv4 connection', None))
-        rows.append(('Native Wi-Fi controls', ['native', 'Wi-Fi']))
+                address = ipaddress.IPv4Address(command('ipconfig', 'getifaddr', device))
+            except (subprocess.SubprocessError, ValueError):
+                pass
+            if linked and address:
+                connection = 'Limited' if address.is_link_local else 'Connected'
+            else:
+                connection = 'Link active' if linked else 'Not connected'
+            rows += [('Wi-Fi · ' + connection, None),
+                     ('Current network · ' + current if current else 'Current network · Shown in Wi-Fi controls', None),
+                     ('Address · ' + str(address) if address else 'No IPv4 address', None)]
+        else:
+            rows.append(('Wi-Fi · Off', None))
+        rows += [('Available networks & connection…', ['native', 'Wi-Fi']),
+                 ('Turn Wi-Fi ' + ('off' if powered else 'on'), ['wifi', device, 'off' if powered else 'on'])]
         return rows
     if name == 'bluetooth':
         powered = command('blueutil', '--power') == '1'
         rows = [('Bluetooth · ' + ('On' if powered else 'Off'), None),
                 ('Turn Bluetooth ' + ('off' if powered else 'on'), ['bluetooth-power', 'off' if powered else 'on'])]
         devices = json.loads(command('blueutil', '--paired', '--format', 'json')) if powered else []
-        rows += [(('● ' if device.get('connected') else '○ ') + device.get('name', 'Device'),
+        devices.sort(key=lambda device: (not bool(device.get('connected')), device.get('name', '').casefold()))
+        rows += [(('Disconnect ' if device.get('connected') else 'Connect ') + device.get('name', 'Device'),
                   ['bluetooth-device', '--disconnect' if device.get('connected') else '--connect', device['address']])
                  for device in devices]
         if powered and not devices:
@@ -272,6 +236,9 @@ def show(name, clicked=False):
         if active.get('request') and active['request'] == read('native-dismissed.json', {}).get('request'):
             active = {}
             store('active.json', active)
+        if hidden_pin(active):
+            active = {}
+            store('active.json', active)
         if active.get('pinned') and not clicked:
             return
         if clicked and active.get('name') == name and active.get('pinned'):
@@ -297,11 +264,11 @@ def show(name, clicked=False):
             native_calendar('')
             store('active.json', {'name': name, 'time': time.time()})
             return
-    cached = read(name + '.cache.json', {})
+    cached = {} if name == 'wifi' else read(name + '.cache.json', {})
     if cached.get('rows'):
         if not render_rows(name, cached['rows'], token):
             return
-        ttl = 0 if name in ('cpu','gpu','memory','alerts','weather') else 2 if name in ('volume','brightness') else 0 if name == 'wifi' else 15
+        ttl = 0 if name in ('cpu','gpu','memory','alerts','weather') else 2 if name in ('volume','brightness') else 15
         if time.time()-cached.get('time', 0)<ttl:
             return
     else:
@@ -309,6 +276,20 @@ def show(name, clicked=False):
             return
     rows = fresh_rows(name)
     render_rows(name, rows, token)
+
+
+def hidden_pin(active):
+    """A fresh native hidden report releases a pin after a Space transition."""
+    if not active.get('pinned'):
+        return False
+    try:
+        status = json.loads((STATE.parent / 'status.json').read_text())
+        stamp = status['updated']
+        # A preceding sample must not cancel a pin still being opened.
+        return (status.get('healthy') is True and 0 <= time.time()-stamp < 3
+                and stamp >= active['time'] and status['controls']['visible'] is False)
+    except (OSError, ValueError, KeyError, TypeError):
+        return False
 
 
 def leave(item):
@@ -354,7 +335,7 @@ def visible_control(name, token):
 
 def refresh_open(name):
     """System change events update only an open pane; latest request/event wins."""
-    if name not in ('volume', 'brightness'):
+    if name not in ('volume', 'brightness', 'wifi'):
         return False
     with interaction():
         token = read('hover.json')
@@ -388,6 +369,20 @@ def _render_rows(name, rows):
     store(name + '.json', [action for _, action in rows])
     document = {'name': name, 'revision': str(time.time_ns()), 'request': str(read('hover.json', [0])[0]),
                 'rows': [{'text': str(label)[:512], 'action': bool(action)} for label, action in rows]}
+    for row, (label, action) in zip(document['rows'], rows):
+        if name == 'volume' and label == 'Output devices' and not action:
+            row['section'] = True
+        elif action and action[0] == 'output':
+            row['text'] = str(action[1])[:512]
+            row['selected'] = label.startswith('● ')
+            row['detail'] = 'Current output' if row['selected'] else ''
+            row['hint'] = 'Use output'
+        elif action and action[0] == 'bluetooth-device':
+            connected = action[1] == '--disconnect'
+            row['text'] = label.removeprefix('Disconnect ' if connected else 'Connect ')[:512]
+            row['selected'] = connected
+            row['detail'] = 'Connected' if connected else 'Not connected'
+            row['hint'] = 'Disconnect' if connected else 'Connect'
     request = document['request']
     anchor = read('anchor.json', {})
     pin = read('pin.json', {})
@@ -424,11 +419,37 @@ def _render_rows(name, rows):
     store('active.json', {'name': name, 'time': time.time(), 'request': request, 'pinned': document['pinned']})
 
 
-def native_item(title):
-    # AXPress opens the native quick panel, not a settings application.
-    # TCC requires local Accessibility/Automation approval for SketchyBar.
+def native_item(title, press=True):
+    # macOS 27 hosts status extras below MenuBarAgent's hosting views.
+    # Earlier systems expose them directly through ControlCenter's menu bar.
+    # Only fixed item identifiers are matched; no network list is read here.
     selector = {'Clock':'clock', 'Wi-Fi':'wifi', 'Control Center':'controlcenter'}[title]
-    applescript = '''
+    applescript = """
+property remaining : 120
+on findItem(nodes, wanted, depth, shouldPress)
+  if depth > 6 then return false
+  tell application "System Events"
+    repeat with target in nodes
+      set remaining to remaining - 1
+      if remaining < 0 then return false
+      try
+        if (value of attribute "AXIdentifier" of target) is wanted then
+          if shouldPress then perform action "AXPress" of target
+          return true
+        end if
+      end try
+      try
+        if my findItem(UI elements of target, wanted, depth + 1, shouldPress) then return true
+      end try
+    end repeat
+  end tell
+  return false
+end findItem
+tell application "System Events"
+  set nodes to {}
+  if exists process "MenuBarAgent" then set nodes to UI elements of process "MenuBarAgent"
+end tell
+if findItem(nodes, %s, 0, %s) then return
 tell application "System Events"
   tell process "ControlCenter"
     set targets to every menu bar item of menu bar 1
@@ -439,15 +460,16 @@ tell application "System Events"
           set identifier to value of attribute "AXIdentifier" of target
         end try
         if identifier contains %s or description of target contains %s then
-          click target
+          if %s then click target
           return
         end if
       end try
     end repeat
-    error "Control Center item unavailable"
+    error "System menu item unavailable"
   end tell
 end tell
-''' % (json.dumps(selector), json.dumps(title))
+""" % (json.dumps('com.apple.menuextra.' + selector), 'true' if press else 'false',
+       json.dumps(selector), json.dumps(title), 'true' if press else 'false')
     command('osascript', '-e', applescript)
 
 
@@ -477,12 +499,33 @@ def native_action(kind, name, value, revision):
                 return
             selected = actions[index]
     try:
+        handoff = selected[0] == 'native'
+        if handoff:
+            with interaction():
+                if read('hover.json') != token:
+                    return
+                close_panels()
         action(selected)
+        if handoff:
+            with interaction():
+                if read('hover.json') == token:
+                    store('hover.json', [time.time_ns(), None])
+            return
         rows = fresh_rows(name)
     except (OSError, subprocess.SubprocessError, ValueError):
-        if name == 'wifi':
+        if handoff:
+            # The hidden request was acknowledged by native code. A failure
+            # needs a fresh request, but must never replace a newer interaction.
+            with interaction():
+                if read('hover.json') != token:
+                    return
+                previous = read('anchor.json', {})
+                token = [time.time_ns(), name]
+                store('hover.json', token)
+                store('pin.json', {'request': str(token[0]), 'pinned': True})
+                store('anchor.json', {'request': str(token[0]), 'anchors': previous.get('anchors', [])})
             rows = fresh_rows(name)
-            rows.insert(1, ('Could not connect · refresh or use native Wi-Fi controls', None))
+            rows.insert(1, ('System controls unavailable · check Accessibility', None))
         else:
             rows = [(name.title(), None), ('Action unavailable · check local permissions', None)]
     render_rows(name, rows, token)
@@ -500,8 +543,6 @@ def action(args):
         fresh_rows('brightness')
     elif kind == 'output':
         command('SwitchAudioSource', '-t', 'output', '-s', values[0])
-    elif kind == 'wifi-network':
-        connect_wifi(values[0])
     elif kind == 'wifi':
         command('networksetup', '-setairportpower', *values)
     elif kind == 'bluetooth-power':
@@ -531,10 +572,8 @@ def main():
         if os.environ.get('SENDER')!='desktop_access_check':
             return
         try:
-            result = command('osascript', '-e',
-                'tell application "System Events" to tell process "ControlCenter" to get value of attribute "AXIdentifier" of every menu bar item of menu bar 1',
-                timeout=30)
-            store('access.json', {'available': True, 'identifiers': result, 'time': time.time()})
+            native_item('Control Center', press=False)
+            store('access.json', {'available': True, 'time': time.time()})
         except (OSError, subprocess.SubprocessError):
             store('access.json', {'available': False, 'time': time.time()})
     elif kind == 'warm':
@@ -556,6 +595,8 @@ def main():
             bar('--set', name, 'icon.color=' + appearance.color('accent' if powered else 'muted'))
         except (OSError, subprocess.SubprocessError, ValueError):
             bar('--set', name, 'icon.color=' + appearance.color('warning'))
+        if name == 'wifi':
+            refresh_open('wifi')
     elif kind == 'scroll':
         if name not in ('volume', 'brightness'):
             return

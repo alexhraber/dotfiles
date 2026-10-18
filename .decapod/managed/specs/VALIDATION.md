@@ -2,7 +2,42 @@
 
 ## Proof Surfaces
 
-The current privacy and interaction pass runs 92 host tests, native compilation
+The current pane revision passes 103 host tests, warnings-as-errors native
+compilation and native self-tests. Regressions cover hidden-pin recovery without
+canceling visible/new pins, no saved profiles or stale saved-list cache in Wi-Fi,
+local link/address labels without an Internet claim, request-safe native handoff
+and failure recovery, visible-only network refresh, connected-device ordering,
+and state metadata retaining literal device actions. The native hidden-pin test
+checks acknowledgement even when AppKit already hid the panel.
+
+Sound and Bluetooth fixture previews were rendered and visually inspected:
+quiet shared Apple/app hover treatment, one current-device check, explicit state
+and action labels, and no duplicate arrows or permanent button boxes. The
+installed helper is healthy with network_events active. Calendar and renewed
+Device Control and Data Access approval are verified on the current build,
+along with the native Dock guard. Restarting that approved helper after consent
+restored actual fullscreen pane rendering; an alternative overlay-mode candidate
+and the restored approved build both passed the same live Sound check. The
+alternative was discarded, preserving the approved native identity. The desktop
+permissions command now requests the actual helper and performs this restart
+only after fresh, healthy, PID-bound native status confirms approval. Tests
+reject stale/old/unhealthy/missing or unapproved reports and preserve manual OS
+approval as the boundary.
+
+A bounded public AX probe found macOS 27's fixed Wi-Fi menu-extra identifier
+inside MenuBarAgent hosting views; the compatible installed native_item action
+opened Apple's real picker without Location or a network switch. Its current
+SSID and known/other-network grouping were visually inspected privately. This
+is system-picker evidence, not proof of a custom scanned SSID list. The owner explicitly reconfirmed that Location stays off, so that custom
+scanned list is outside the authorized implementation. The installed Wi-Fi action was clicked through the actual bar and pane over
+fullscreen: Apple’s picker became visible, the custom pane closed and its
+backend active record cleared. No network was switched. All twelve actual bar routes passed over the real Ghostty fullscreen Space:
+ten controls opened on hover and click; Apple and app menus remained click-only.
+A nonactivating observer verified Ghostty stayed fullscreen throughout. The live
+Sound and Bluetooth captures were inspected privately. Exact-candidate readiness
+and hosted CI remain separate gates before publication.
+
+The earlier privacy and interaction pass ran 92 host tests, native compilation
 with warnings as errors and native self-tests. Wi-Fi tests cover top-three
 saved-profile ordering, invalid history, duplicate/malformed SSIDs, literal
 argv without passwords, stale selections and CLI failures (including exit-zero
@@ -12,7 +47,7 @@ It does not switch the owner's network. The running helper's themed Apple pane
 was captured and inspected; click, repeated click and Escape behave correctly.
 A disposable windowless app was clicked through the actual custom dock: its
 reopen callback ran once, created a visible window and retained the same PID.
-The no-Location rebuild has fresh Calendar and Accessibility access. Real
+That earlier no-Location build had fresh Calendar and Accessibility access. Real
 Ghostty headings and File hover contents were captured and inspected on this
 identity. A temporary fullscreen app, with no event tap of its own, applied
 bottom-edge pressure: the installed helper blocked 56 Dock motion events and
@@ -285,7 +320,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `9c8d674dac16b4e6d6f39748f6fb5faaf48fe8a8e08adf63ae276d06db50866a`
+- Repository signal fingerprint: `7d7f25497510f0c7a0dc709ffbb32a71dd310a6341a72794c157f617e25cce77`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

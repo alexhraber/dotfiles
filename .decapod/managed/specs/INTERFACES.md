@@ -73,15 +73,16 @@ assets and command-line build overrides; no team or signing identity is tracked.
 Homebrew, GitHub Git transport, rustup/Cargo, Ollama, MLX and Podman remain
 independently managed. Native Neovim package installation fetches pinned plugin
 commits on first startup. The optional desktop profile authors a local user
-LaunchAgent and SketchyBar events; it introduces no network API.
+LaunchAgent and SketchyBar events; it exposes no network service API.
 
 ## Desktop and inference lifecycle
 
 scripts/dotfiles desktop apply explicitly starts SketchyBar and the native
 edge helper, sets backed-up menu/Dock defaults and wallpaper, then requires
-fresh PID-bound health. status reports runtime health. permissions probes
-Accessibility from SketchyBar's context and opens local macOS approval settings
-if unavailable. undo restores the native menu first, then guarded preferences,
+fresh PID-bound health. status reports runtime health. permissions requests
+Device Control and Data Access from Desktop Controls, accepts only fresh status
+from its current healthy PID, and restarts the owned helper after approval to
+refresh fullscreen windows. If unavailable, it opens local OS approval settings. undo restores the native menu first, then guarded preferences,
 wallpaper and prior service state. It retains configuration and packages.
 
 The top three pixels reveal the bar; the bottom-center resting icon footprint
@@ -89,7 +90,7 @@ The top three pixels reveal the bar; the bottom-center resting icon footprint
 the screen bottom, with no 26-point gap to chase. Resting size stays 40 points;
 unconstrained peak hover size is 77.5 points, 25% above the previous 62 points.
 Crowded layouts scale to fit. Exit hysteresis is 320 ms. Hover controls
-include calendar, sound/output/mute, built-in brightness, Wi-Fi power/details and three recent saved-network choices,
+include calendar, sound/output/mute, built-in brightness, Wi-Fi power/link/address status and a native network picker,
 paired Bluetooth devices, battery and Fahrenheit CPU/GPU telemetry. Notifications
 are furthest right; hardware warnings are not an unread notification count.
 From that right edge inward, clock and weather come immediately after
@@ -128,10 +129,18 @@ Keyboard and other system level changes update the slider and numeric reading
 without pointer reentry; closed panes add no device polling.
 
 Clicking a running app uses the macOS reopen request without requesting a new
-instance. Wi-Fi selections revalidate against the current top-three saved
-profiles and call networksetup with a literal SSID and no password argument;
-a reported connection error retains the network list. Saved profiles are not
-claimed to be nearby. No Location access is requested.
+instance. Wi-Fi offers no saved-network choices. Native picker handoff owns
+SSID availability, known-network priority and connecting state, closes the
+custom pane first, and preserves newer interactions on failure. Native action
+rows optionally carry bounded detail/hint strings and selected/section booleans;
+these are presentation only and never become executable arguments. Sound marks
+the current output; Bluetooth sorts connected devices first and distinguishes
+state from its hover action. No Location access is requested.
+
+The desktop_network_changed event carries no network values. Wi-Fi refreshes an
+already-visible matching pane with its request/anchor/pin intact, and never
+reopens a hidden pane. network_events in private native status reports whether
+the public SystemConfiguration run-loop source is installed.
 
 The dock renders only app icons over fully transparent pixels. It has no shelf,
 blur, border, shadow, text, badges or active markers. Autohide, magnification,
@@ -200,7 +209,7 @@ can leave partial state; the backup manifest remains the recovery input.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `9c8d674dac16b4e6d6f39748f6fb5faaf48fe8a8e08adf63ae276d06db50866a`
+- Repository signal fingerprint: `7d7f25497510f0c7a0dc709ffbb32a71dd310a6341a72794c157f617e25cce77`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

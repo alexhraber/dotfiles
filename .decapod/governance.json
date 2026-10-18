@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "baseline": {
-    "accepted_commit": "f167cb1414197377b5e6371a13720abc6ebe03c1",
+    "accepted_commit": "3f18ce12d24d0e6596a583ff641a7262ab72a81e",
     "unresolved": {
       "claim:actual-app-menus": {
         "falsifier": "Native action guards permit stale/disabled/submenu leaf execution, or the UI claims menus work without Accessibility.",
@@ -11,146 +11,71 @@
         "statement": "The custom Apple/application menus mirror AX commands and require local Accessibility approval; actual command execution remains unverified until that approval is granted.",
         "status": "open"
       },
+      "trajectory:20ee859f4dc5a1ed": "Official 0.119.0 image is still publishing. Proof runtime uses Ubuntu 24.04 and checksum-verified official aarch64 Linux release binary sha256:752751f6eb87a3d6a443e432b3f01bfdf7e08d17b728951dd35f077277d592cc; earlier Debian runtime rejected its GLIBC_2.39 dependency.",
+      "trajectory:222b47dce3be7958": "Per-commit checkpoint failure on historical 53905f7 requires rebuilding this owned PR history; no required check is disabled.",
       "trajectory:3ad8d199dbb39b49": "Accessibility approval for the exact current app remains unavailable; no menu click parity claim.",
       "trajectory:69fd57cf486c104c": "Existing Reduce Motion show/hide support is retained; dock polish targets stationary redraw suppression and precise settlement rather than adding visual chrome.",
       "trajectory:ad62d461499896f7": "The prior calendar build returned seven synced calendars and eight events after OS consent; current ad-hoc build requires fresh permission. Provider identity has not been asserted from counts. Accessibility remains pending, so actual app-menu execution is not yet proven.",
+      "trajectory:b82ef2dafb2d2320": "Existing Mission Control detector expects Dock layer 18; this OS uses layer 20. Normal native entry/exit works, but helper flag/bar suppression there remains a documented compatibility gap outside this privacy/menu/dock-reopen correction.",
       "trajectory:b9df8a236176c502": "Final helper is healthy with Calendar access3. App pane consent fallback and click-only/toggle/persistence verified; actual AX submenu contents and commands remain unverified until user grants Accessibility to the exact current app. No sleep/power/lock/logout/force-quit action executed."
     }
   },
   "change": {
-    "id": "change_01M566N8T4PD3Z5A9RDFFNB64X",
-    "base_commit": "f167cb1414197377b5e6371a13720abc6ebe03c1",
+    "id": "change_01M56F50SBB43S0G99NVYXTYNG",
+    "base_commit": "3f18ce12d24d0e6596a583ff641a7262ab72a81e",
     "target_base": "origin/main"
   },
   "claims": {
-    "desktop-interaction-privacy": {
-      "statement": "Apple actions share the themed pane; Wi-Fi offers at most three recent saved profiles without requesting Location; dock clicks reopen a running windowless app.",
-      "falsifier": "Installed Apple pane is vanilla, Wi-Fi asks for Location or scans nearby networks, more than three choices are offered, or a real custom-dock click fails to reopen the fixture in the same PID.",
+    "fullscreen-pane-recovery": {
+      "statement": "The approved helper renders every bar pane over native fullscreen; hidden pinned controls cannot block a subsequent request, and post-consent permissions refresh the existing helper.",
+      "falsifier": "Any real fullscreen bar route stays hidden after approval/refresh, a stale hidden pin blocks a new pane, or unapproved/stale helper status triggers a restart.",
       "status": "supported",
       "proof_refs": [
-        "/private/tmp/dotfiles-apple-themed-proof.json",
-        "/private/tmp/dotfiles-dock-reopen-proof.json",
-        "/private/tmp/dotfiles-no-location-proof.json"
+        "/private/tmp/dotfiles-fullscreen-approved-final.json",
+        "/private/tmp/dotfiles-pane-host-check.txt"
+      ]
+    },
+    "honest-wifi-with-location-off": {
+      "statement": "Wi-Fi no longer advertises saved profiles as available; the custom pane shows link/address state and hands off to Apple for SSIDs and network choices without requesting Location.",
+      "falsifier": "The custom pane renders old saved profiles, requests Location or scrapes native SSIDs, or successful handoff leaves its custom pane open over the system picker.",
+      "status": "supported",
+      "proof_refs": [
+        ".config/sketchybar/plugins/controls.py",
+        "/private/tmp/dotfiles-wifi-handoff-final.json",
+        "tests/test_desktop.py"
       ]
     }
   },
   "checkpoints": [
     {
-      "id": "apple-wifi-dock-implementation",
-      "summary": "Themed Apple rows, no-Location saved Wi-Fi choices, normal dock reopen and scoped native-Dock reveal guard; 92 host checks and installed privacy/reopen/menu proofs pass, final AX consent pending.",
-      "input_digest": "sha256:a4e69d26d0548e9bfaa835e6a588b01a712756fb94952b5871c49fd6aa515750",
+      "id": "panes-location-off-source",
+      "summary": "Restore fullscreen pane requests and post-consent windows; unify Sound/Bluetooth actions and use an honest Wi-Fi native picker with Location off.",
+      "input_digest": "sha256:6eaa1c0bc4bdc273d819ec6e0383e34a5dbd236e7d542c40fa1c0472149ca531",
       "proof_refs": [
-        "/private/tmp/dotfiles-apple-wifi-host-check.txt"
-      ]
-    },
-    {
-      "id": "apple-wifi-final-proofs-119",
-      "summary": "Final no-Location live menu, reopen and fullscreen guard proofs pass; refresh release-bound artifacts to current Decapod 0.119.0, whose image publish is in progress.",
-      "input_digest": "sha256:44313c5db7b353773d6d6a611c888e21e6df30befe10aed7b1d2f199aa212cbb",
-      "proof_refs": [
-        "/private/tmp/dotfiles-nested-live-proof.json",
-        "/private/tmp/dotfiles-production-guard-proof.json"
-      ]
-    },
-    {
-      "id": "apple-wifi-119-final-candidate",
-      "summary": "Final installed interaction/privacy proofs, latest official binary runtime and existing Mission Control detection limit recorded; fresh validation run after supported stale-epoch recovery.",
-      "input_digest": "sha256:aca80c1fe5c75bb61dfe75d48a3386925ca9498df75f68cd597c6e4bdcdf1cd1",
-      "proof_refs": [
-        "target/apple-wifi-runtime-proof/dotfiles-no-location-proof.json"
-      ]
-    },
-    {
-      "id": "apple-wifi-119-readiness-receipt",
-      "summary": "Commit source and project-prerequisite receipt after fresh 0.119 validation epoch; preserve failed optional existing Mission Control detector check and passed current interaction/privacy proofs.",
-      "input_digest": "sha256:96b251f9d889e153ed9a760adc464ab88763899eaae44ed7237982ae1b285263",
-      "proof_refs": [
-        "target/apple-wifi-project-check-final.json"
-      ]
-    },
-    {
-      "id": "apple-wifi-119-squashed-candidate",
-      "summary": "Single final candidate after preserving original task history; all authored source/spec/release changes staged, existing prerequisite receipt retained, current governance inputs bound before commit.",
-      "input_digest": "sha256:da98db6c0b51aa3bcdbb1dd87be8426acc0ed9071e3a23c33a0b37abd2487e66",
-      "proof_refs": [
-        "target/apple-wifi-project-check-final.json",
-        "target/apple-wifi-runtime-proof/dotfiles-no-location-proof.json"
-      ]
-    },
-    {
-      "id": "apple-wifi-current-trajectory-receipt",
-      "summary": "Bind successful project prerequisites to final unchanged trajectory after history repair; all required source checks retained.",
-      "input_digest": "sha256:da98db6c0b51aa3bcdbb1dd87be8426acc0ed9071e3a23c33a0b37abd2487e66",
-      "proof_refs": [
-        "target/apple-wifi-final-bound-project-check.json"
+        "/private/tmp/dotfiles-fullscreen-approved-final.json",
+        "/private/tmp/dotfiles-pane-host-check.txt",
+        "/private/tmp/dotfiles-wifi-handoff-final.json"
       ]
     }
   ],
   "intents": {
-    "intent:apple-wifi-119-final": {
+    "intent:change_01M56F50SBB43S0G99NVYXTYNG": {
       "acceptance_criteria": [],
       "assumptions": [],
       "boundaries": [
-        "No Location consent or scanner, private SSIDs/history, no real Wi-Fi switch in tests, manual Calendar and Accessibility, existing Mission Control layer-detection gap preserved explicitly."
+        "Current claimed task and isolated work branch"
       ],
       "constraints": [
-        "dotfiles"
+        "root"
       ],
       "created_sequence": 1,
-      "id": "intent:apple-wifi-119-final",
+      "id": "intent:change_01M56F50SBB43S0G99NVYXTYNG",
       "out_of_scope": [],
       "proof_requirements": [],
-      "raw_intent": "Themed Apple menu, useful Wi-Fi choices and working custom dock; user declines Location.",
-      "refined_intent": "Shared Apple pane, three recent saved Wi-Fi choices without Location/scanning, normal running-app reopen and native-Dock bottom reveal suppression.",
+      "raw_intent": "Restore fullscreen bar panes and remove unavailable saved Wi-Fi choices\n\nUser regression after PR12: all section panes fail in native fullscreen; Wi-Fi saved profiles do not represent available networks. Preserve no Location, reproduce through actual bar interactions, fix root cause and use native availability picker.",
+      "refined_intent": "Restore fullscreen bar panes and remove unavailable saved Wi-Fi choices\n\nUser regression after PR12: all section panes fail in native fullscreen; Wi-Fi saved profiles do not represent available networks. Preserve no Location, reproduce through actual bar interactions, fix root cause and use native availability picker.",
       "status": "refined",
       "updated_sequence": 3
-    }
-  },
-  "epochs": {
-    "ve_2a8abd576c45b505": {
-      "constitution_hash": "sha256:5bf7743217f39273d7656a601de68f2fc7d66b507926dd5db7e1bb191a0ddbb8",
-      "constitution_version": "embedded-docs@0.119.0",
-      "epoch_id": "ve_2a8abd576c45b505",
-      "evaluator_identity": "decapod-validate@0.119.0",
-      "evaluator_set_hash": "sha256:6616b4917991d490a9a915bda7fdb05c18436517199038cb3ed40ac3781fb6d3",
-      "generated_specs_fingerprint": "9c8d674dac16b4e6d6f39748f6fb5faaf48fe8a8e08adf63ae276d06db50866a",
-      "generated_specs_manifest_hash": "sha256:6388e78029540346e857d056c2d340e4ad430610500eca10c7c9927ec2c7be68",
-      "material_hashes": {
-        "constitution:core/DECAPOD": "sha256:5bf7743217f39273d7656a601de68f2fc7d66b507926dd5db7e1bb191a0ddbb8",
-        "generated_spec:.decapod/managed/specs/ARCHITECTURE.md": "sha256:941c1aac0b320527bfdc8a6d6fbb0f783be6f154cb289dd9074eb3e0a2298183",
-        "generated_spec:.decapod/managed/specs/INTENT.md": "sha256:998f8690fdf42161a373782c09d8e7c58d3da32a4e69437025309aa087b39373",
-        "generated_spec:.decapod/managed/specs/INTERFACES.md": "sha256:6749a32cb886c9943804665d53b4e5f1f506e342ff60baefe44a231185126f18",
-        "generated_spec:.decapod/managed/specs/OPERATIONS.md": "sha256:8923834afafa9c0492d116d66d38d68d87a8f431572414123dec962021dd5095",
-        "generated_spec:.decapod/managed/specs/README.md": "sha256:449b9049a8393db671d9a45b748fa6f6d0f2e79222237bd70bab7cf9b5c2223e",
-        "generated_spec:.decapod/managed/specs/SECURITY.md": "sha256:41e2274435109126971fde106764a6ccfb666a496065e5e0d99e592a65ea853f",
-        "generated_spec:.decapod/managed/specs/SEMANTICS.md": "sha256:ffdab8ca4d189ebdc7a0100f65fd5e52ea25007837e61a9d1ca01b525aec5a9a",
-        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:9da78a500a391a857dc7a777f105a3eabd3676a9023ae1659638099f845fd417",
-        "generated_specs_fingerprint": "9c8d674dac16b4e6d6f39748f6fb5faaf48fe8a8e08adf63ae276d06db50866a",
-        "generated_specs_manifest": "sha256:6388e78029540346e857d056c2d340e4ad430610500eca10c7c9927ec2c7be68",
-        "governance_context": "sha256:1436e1b3c81c5d6a3296dea0a59df55c561a1e6863c3e80ba4666fdc18071b3c",
-        "governance_material:.decapod/managed/Dockerfile.decapod": "sha256:74d3941dbee69f95ef7c34715ad8b5f9120e10fe527fe8d5e745397e709d597e",
-        "governance_material:AGENTS.md": "sha256:9aa28458b37fe535bddac458395aa0d4f2eaa2a729316f729580823006389929",
-        "governance_material:CLAUDE.md": "sha256:20996c562acb474beb10176d77871e84b7604f2ce595d090ebcc31ce089c4d7a",
-        "governance_material:CODEX.md": "sha256:2a6fa954bdfdfc1cfb7a9b1d70022816b624f8d458833b0cc7d58dc795e45388",
-        "governance_material:GEMINI.md": "sha256:0588c8946f1ddc26fbe028727aa0d64bba48b15f52adcd4244bfc4bf48a83856",
-        "governance_section:claims": "sha256:3d1b94e726c48d62276fe1607f1eec523f74a8a896fb4aaf9fa8367a7bc29af5",
-        "governance_section:plan": "sha256:3d2c67d74e394a6e4e44748ea36e7537e7cf91ef7d87cb3a7f663c3146bfeca4",
-        "living_spec_material:.decapod/managed/specs/ARCHITECTURE.md": "sha256:5e94488af0462f9a590c8e4bb85af669648ae131c4910567d75c74f368b47a66",
-        "living_spec_material:.decapod/managed/specs/INTENT.md": "sha256:771d8fff2d139237a70aa2c755e6da7828a1d68837a5a6238dfa6efe871afd05",
-        "living_spec_material:.decapod/managed/specs/INTERFACES.md": "sha256:6a0e127fddc2f953332fba95d73ddc12a7f81fa1fa3463bf4ba453152e3a85af",
-        "living_spec_material:.decapod/managed/specs/OPERATIONS.md": "sha256:b43e9fa0eef9fb3e28d84cc5386c79f64f1f3cb9a37a1b8834bbb84e24dbea17",
-        "living_spec_material:.decapod/managed/specs/README.md": "sha256:0988c85d6c05f02d52684c9aafae50e95fd5d5576739d3e9d995af682697fd99",
-        "living_spec_material:.decapod/managed/specs/SECURITY.md": "sha256:fad25097cdc5021bc205363ad53bd1e8883457ca487f07bf57e15318d4df8d61",
-        "living_spec_material:.decapod/managed/specs/SEMANTICS.md": "sha256:92bbe2607c6f8f94191a95ea977d9785f3472a0fae2835520dd86eae73130d5c",
-        "living_spec_material:.decapod/managed/specs/VALIDATION.md": "sha256:748ac1432730fbbaa5cf6c06a18bd3bdcb0269ba5e899d728aa4d69a3465d17b",
-        "proof_rubric": "sha256:99e8ef25629da391e9b479db9fff52b82f340224f7a69d8a88d2992ae8e90466",
-        "validation_profile": "sha256:37a8eec1ce19687d132fe29051dca629d164e2c4958ba141d5f4133a33f0688f"
-      },
-      "proof_rubric": "decapod-validate/current-proof-v1",
-      "proof_rubric_hash": "sha256:99e8ef25629da391e9b479db9fff52b82f340224f7a69d8a88d2992ae8e90466",
-      "schema_version": "1.0.0",
-      "validation_profile": "default",
-      "validation_profile_hash": "sha256:37a8eec1ce19687d132fe29051dca629d164e2c4958ba141d5f4133a33f0688f"
     }
   },
   "sections": {
@@ -161,117 +86,121 @@
       },
       "deferred_questions": [],
       "human_questions": [],
-      "intent": "Themed Apple actions; three recent saved Wi-Fi choices and native Wi-Fi availability picker without Location access or custom scanning; normal dock reopen behavior and Dock-only bottom-edge reveal filtering with rollback.",
+      "intent": "Reliable fullscreen panes with hidden-pin recovery, a post-consent helper refresh, and the shared Apple/app menu visual language. Sound has explicit output grouping/current selection; Bluetooth sorts connected devices first with clear state and hover actions. The user reconfirmed Location stays off: no CoreLocation request, no CoreWLAN scan and no SSID extraction from native UI. Custom Wi-Fi shows truthful link/address state; Apple’s compatible native picker owns actual SSIDs, nearby/known choices and connecting progress.",
       "phases": [],
       "proof_hooks": [
-        "No CoreLocation dependency/purpose string/request remains; top-three saved-network ordering, argv and failure tests; native/host checks, installed Apple/app panes, disposable-app dock reopen and fullscreen native-Dock suppression proofs; exact-candidate full validation and macOS/Linux CI."
+        "103 host tests and native self-tests; live shared pane inspection; 12 actual fullscreen routes with continuous foreground/fullscreen observation; actual Wi-Fi handoff; native permission lifecycle; exact-candidate canonical validation and macOS/Linux CI."
       ],
       "schema_version": "1.1.0",
       "spec_reviews": [
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/ARCHITECTURE.md",
-          "reason": "Final full architecture review includes current conditional Mission Control detection and public bundle registration.",
-          "reviewed_code_fingerprint": "9c8d674dac16b4e6d6f39748f6fb5faaf48fe8a8e08adf63ae276d06db50866a",
-          "spec_material_hash": "5e94488af0462f9a590c8e4bb85af669648ae131c4910567d75c74f368b47a66"
+          "reason": "Reviewed current source and proof: fullscreen pin recovery, post-consent helper refresh, shared action rows, truthful Wi-Fi state and native picker with Location off.",
+          "reviewed_code_fingerprint": "7d7f25497510f0c7a0dc709ffbb32a71dd310a6341a72794c157f617e25cce77",
+          "spec_material_hash": "c828010cfb38260b82680d2faee4fb6c2f39b999a786841070572a799f724dc4"
         },
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/INTERFACES.md",
-          "reason": "Current interfaces retain scoped lifecycle, saved Wi-Fi choices, normal dock reopen and themed Apple actions.",
-          "reviewed_code_fingerprint": "9c8d674dac16b4e6d6f39748f6fb5faaf48fe8a8e08adf63ae276d06db50866a",
-          "spec_material_hash": "6a0e127fddc2f953332fba95d73ddc12a7f81fa1fa3463bf4ba453152e3a85af"
+          "reason": "Reviewed current source and proof: fullscreen pin recovery, post-consent helper refresh, shared action rows, truthful Wi-Fi state and native picker with Location off.",
+          "reviewed_code_fingerprint": "7d7f25497510f0c7a0dc709ffbb32a71dd310a6341a72794c157f617e25cce77",
+          "spec_material_hash": "0b3eb3e3dc9f2b9ee05ac6454f94b143456edf863e1e4c5d1e4522b17b9a0e23"
         },
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/SECURITY.md",
-          "reason": "No Location request or scanner; literal password-free Wi-Fi argv, private history, narrow process-targeted mouse-motion filter and explicit rollback.",
-          "reviewed_code_fingerprint": "9c8d674dac16b4e6d6f39748f6fb5faaf48fe8a8e08adf63ae276d06db50866a",
-          "spec_material_hash": "fad25097cdc5021bc205363ad53bd1e8883457ca487f07bf57e15318d4df8d61"
+          "reason": "Reviewed current source and proof: fullscreen pin recovery, post-consent helper refresh, shared action rows, truthful Wi-Fi state and native picker with Location off.",
+          "reviewed_code_fingerprint": "7d7f25497510f0c7a0dc709ffbb32a71dd310a6341a72794c157f617e25cce77",
+          "spec_material_hash": "0babde230d6a7ec1a8cf05c686764c82e0f2b6db20ca74b69155101833e4184d"
         }
       ],
       "state": "APPROVED",
       "stop_conditions": [],
-      "title": "Themed Apple pane, private saved Wi-Fi and reliable dock behavior",
+      "title": "Restore fullscreen bar panes and remove unavailable saved Wi-Fi choices",
       "todo_ids": [
-        "code_01m566mvej5yhp01"
+        "apis_01m56f458dwxfvky"
       ],
       "unknowns": [],
       "unresolved_contradictions": [],
-      "updated_at": "1792290665Z"
+      "updated_at": "1792301747Z"
     },
     "trajectory": {
       "active_boundaries": [
-        "No Location consent or scanner, private SSIDs/history, no real Wi-Fi switch in tests, manual Calendar and Accessibility, existing Mission Control layer-detection gap preserved explicitly."
+        "Current claimed task and isolated work branch"
       ],
-      "artifact_hash": "sha256:f6927b561e6a4afad67b9862bc7209b7e5865bb9c984d1d5181daa8bdfa72828",
+      "artifact_hash": "sha256:9ecb906bf160e9d88fdfe944f30f7f006c98aaa4e86d5589c7d6f60dc0359df8",
       "checks": [
         {
-          "name": "app-hover-submenus",
+          "name": "actual-fullscreen-12-routes",
           "status": "passed"
         },
         {
-          "name": "apple-pane",
+          "name": "actual-native-wifi-handoff",
           "status": "passed"
         },
         {
-          "name": "decapod validate",
+          "name": "custom-ssid-list",
+          "status": "unavailable"
+        },
+        {
+          "name": "custom-ssid-list-privacy-decision",
           "status": "passed"
         },
         {
-          "name": "dock-reopen",
+          "name": "host-100-tests-and-native-selftests",
           "status": "passed"
         },
         {
-          "name": "fullscreen-native-dock-suppression",
+          "name": "host-103-tests-and-native-selftests",
           "status": "passed"
         },
         {
-          "name": "host-92-tests",
+          "name": "native-permission-lifecycle",
           "status": "passed"
         },
         {
-          "name": "installed-no-location",
+          "name": "native-wifi-menu-host-compatibility",
           "status": "passed"
         },
         {
-          "name": "mission-control-detector",
-          "status": "failed"
+          "name": "renewed-accessibility-consent",
+          "status": "passed"
         }
       ],
-      "current_phase": "validation",
+      "current_phase": "verification",
       "custody": {
         "events": [
           {
             "event_id": "event:2",
-            "intent_id": "intent:apple-wifi-119-final",
+            "intent_id": "intent:change_01M56F50SBB43S0G99NVYXTYNG",
             "kind": "created",
             "sequence": 2
           },
           {
             "event_id": "event:3",
-            "intent_id": "intent:apple-wifi-119-final",
+            "intent_id": "intent:change_01M56F50SBB43S0G99NVYXTYNG",
             "kind": "refined",
             "sequence": 3
           },
           {
-            "detail": "trajectory:apple-wifi-119-final",
+            "detail": "trajectory:branch_01M56F50VVB8JXKRJS54AYFARK",
             "event_id": "event:4",
-            "intent_id": "intent:apple-wifi-119-final",
+            "intent_id": "intent:change_01M56F50SBB43S0G99NVYXTYNG",
             "kind": "trajectory_step_recorded",
             "sequence": 4
           },
           {
-            "detail": "trajectory:apple-wifi-119-final",
+            "detail": "trajectory:branch_01M56F50VVB8JXKRJS54AYFARK",
             "event_id": "event:5",
-            "intent_id": "intent:apple-wifi-119-final",
+            "intent_id": "intent:change_01M56F50SBB43S0G99NVYXTYNG",
             "kind": "trajectory_step_recorded",
             "sequence": 5
           },
           {
-            "detail": "trajectory:apple-wifi-119-final",
+            "detail": "trajectory:branch_01M56F50VVB8JXKRJS54AYFARK",
             "event_id": "event:6",
-            "intent_id": "intent:apple-wifi-119-final",
+            "intent_id": "intent:change_01M56F50SBB43S0G99NVYXTYNG",
             "kind": "trajectory_step_recorded",
             "sequence": 6
           }
@@ -280,379 +209,163 @@
         "next_sequence": 6,
         "schema_version": "1.0.0",
         "trajectories": {
-          "apple-wifi-119-final": {
+          "branch_01M56F50VVB8JXKRJS54AYFARK": {
             "evidence_only": true,
-            "id": "apple-wifi-119-final",
-            "intent_id": "intent:apple-wifi-119-final",
+            "id": "branch_01M56F50VVB8JXKRJS54AYFARK",
+            "intent_id": "intent:change_01M56F50SBB43S0G99NVYXTYNG",
             "steps": [
               {
-                "action": "trajectory.record",
+                "action": "verification",
                 "custody_event_id": "event:4",
                 "observations": [
-                  "scripts/app-menu.m",
-                  "scripts/desktop-edge.m",
-                  "scripts/desktop.py",
                   ".config/sketchybar/plugins/controls.py",
+                  "scripts/control-panel.m",
+                  "scripts/desktop-edge.m",
                   "tests/test_desktop.py",
-                  "/private/tmp/dotfiles-apple-wifi-host-check.txt",
-                  "/private/tmp/dotfiles-no-location-proof.json",
-                  "/private/tmp/dotfiles-production-guard-proof.json",
-                  "/private/tmp/dotfiles-dock-reopen-proof.json",
-                  "/private/tmp/dotfiles-nested-live-proof.json"
+                  "README.md",
+                  ".decapod/managed/specs/INTENT.md",
+                  ".decapod/managed/specs/ARCHITECTURE.md",
+                  ".decapod/managed/specs/INTERFACES.md",
+                  ".decapod/managed/specs/SECURITY.md",
+                  ".decapod/managed/specs/VALIDATION.md",
+                  "/private/tmp/dotfiles-pane-host-check.txt",
+                  "/private/tmp/dotfiles-pane-new-sound.png",
+                  "/private/tmp/dotfiles-pane-new-bluetooth.png",
+                  "/private/tmp/dotfiles-new-native-wifi.png"
                 ],
                 "proof_refs": [
-                  "host-92-tests",
-                  "installed-no-location",
-                  "apple-pane",
-                  "app-hover-submenus",
-                  "dock-reopen",
-                  "fullscreen-native-dock-suppression",
-                  "mission-control-detector"
+                  "host-100-tests-and-native-selftests",
+                  "native-wifi-menu-host-compatibility",
+                  "renewed-accessibility-consent",
+                  "custom-ssid-list-privacy-decision"
                 ],
                 "scope": [
-                  "dotfiles"
+                  "root"
                 ],
                 "sequence": 4,
                 "validation_findings": [
-                  "Existing Mission Control detector expects Dock layer 18; this OS uses layer 20. Normal native entry/exit works, but helper flag/bar suppression there remains a documented compatibility gap outside this privacy/menu/dock-reopen correction.",
-                  "Official 0.119.0 image is still publishing. Proof runtime uses Ubuntu 24.04 and checksum-verified official aarch64 Linux release binary sha256:752751f6eb87a3d6a443e432b3f01bfdf7e08d17b728951dd35f077277d592cc; earlier Debian runtime rejected its GLIBC_2.39 dependency."
+                  "Keep Location off until explicit user choice; no custom scanner or SSID extraction from native UI."
                 ]
               },
               {
-                "action": "validation",
-                "command": "decapod validate",
+                "action": "verification",
                 "custody_event_id": "event:5",
                 "observations": [
-                  ".decapod/governance.json",
-                  ".decapod/governance.json",
-                  "validation epoch ve_2a8abd576c45b505 completed with zero failures"
+                  "scripts/control-panel.m",
+                  "scripts/desktop.py",
+                  ".config/sketchybar/plugins/controls.py",
+                  "scripts/desktop.py",
+                  ".decapod/managed/specs/OPERATIONS.md",
+                  "/private/tmp/dotfiles-pane-host-check.txt",
+                  "/private/tmp/dotfiles-fullscreen-approved-final.json",
+                  "/private/tmp/dotfiles-wifi-handoff-final.json",
+                  "/private/tmp/dotfiles-live-volume-final.png",
+                  "/private/tmp/dotfiles-live-bluetooth-final.png"
                 ],
                 "proof_refs": [
-                  "decapod validate"
+                  "host-103-tests-and-native-selftests",
+                  "actual-fullscreen-12-routes",
+                  "actual-native-wifi-handoff",
+                  "renewed-accessibility-consent",
+                  "native-permission-lifecycle",
+                  "custom-ssid-list-privacy-decision",
+                  "custom-ssid-list"
                 ],
                 "scope": [
-                  "dotfiles"
+                  "root"
                 ],
                 "sequence": 5,
-                "validation_findings": []
+                "validation_findings": [
+                  "User explicitly corrected an initial allow response: Location stays off. System Profiler current and nearby SSIDs are all redacted. Native Apple picker provides names and choices; no custom scanned list is authorized."
+                ]
               },
               {
-                "action": "trajectory.record",
-                "command": "Preserved original task commits on local archive/code_01m566mvej5yhp01-before-checkpoint-repair and soft-reset only owned work branch to accepted f167cb1; all authored changes retained staged for one correctly checkpointed candidate.",
+                "action": "verification",
+                "command": "python3.14 -B scripts/check.py",
                 "custody_event_id": "event:6",
-                "observations": [],
+                "observations": [
+                  ".config/sketchybar/plugins/controls.py",
+                  ".config/sketchybar/sketchybarrc",
+                  "scripts/control-panel.m",
+                  "scripts/desktop-edge.m",
+                  "scripts/desktop.py",
+                  "scripts/check.py",
+                  "tests/test_desktop.py",
+                  ".github/workflows/check.yml",
+                  "/private/tmp/dotfiles-fullscreen-approved-final.json",
+                  "/private/tmp/dotfiles-wifi-handoff-final.json",
+                  "/private/tmp/dotfiles-pane-host-check.txt"
+                ],
                 "proof_refs": [],
                 "scope": [
-                  "dotfiles"
+                  "root"
                 ],
                 "sequence": 6,
-                "validation_findings": [
-                  "Per-commit checkpoint failure on historical 53905f7 requires rebuilding this owned PR history; no required check is disabled."
-                ]
+                "tool": "Actual mouse-driven fullscreen and native Wi-Fi handoff probes",
+                "validation_findings": []
               }
             ]
           }
         }
       },
       "declared_commands": [
-        "Preserved original task commits on local archive/code_01m566mvej5yhp01-before-checkpoint-repair and soft-reset only owned work branch to accepted f167cb1; all authored changes retained staged for one correctly checkpointed candidate.",
-        "decapod validate"
+        "python3.14 -B scripts/check.py"
       ],
+      "destination": "pull request",
       "evidence": [
-        "/private/tmp/dotfiles-apple-wifi-host-check.txt",
-        "/private/tmp/dotfiles-dock-reopen-proof.json",
-        "/private/tmp/dotfiles-nested-live-proof.json",
-        "/private/tmp/dotfiles-no-location-proof.json",
-        "/private/tmp/dotfiles-production-guard-proof.json",
-        "validation epoch ve_2a8abd576c45b505 completed with zero failures"
+        "/private/tmp/dotfiles-fullscreen-approved-final.json",
+        "/private/tmp/dotfiles-live-bluetooth-final.png",
+        "/private/tmp/dotfiles-live-volume-final.png",
+        "/private/tmp/dotfiles-new-native-wifi.png",
+        "/private/tmp/dotfiles-pane-host-check.txt",
+        "/private/tmp/dotfiles-pane-new-bluetooth.png",
+        "/private/tmp/dotfiles-pane-new-sound.png",
+        "/private/tmp/dotfiles-wifi-handoff-final.json"
       ],
       "inspected_files": [
         ".config/sketchybar/plugins/controls.py",
-        "scripts/app-menu.m",
+        ".config/sketchybar/sketchybarrc",
+        ".github/workflows/check.yml",
+        "scripts/check.py",
+        "scripts/control-panel.m",
         "scripts/desktop-edge.m",
         "scripts/desktop.py",
         "tests/test_desktop.py"
       ],
-      "intent_id": "intent:apple-wifi-119-final",
+      "intent_id": "intent:change_01M56F50SBB43S0G99NVYXTYNG",
       "modified_files": [
-        ".decapod/governance.json"
+        ".config/sketchybar/plugins/controls.py",
+        ".decapod/managed/specs/ARCHITECTURE.md",
+        ".decapod/managed/specs/INTENT.md",
+        ".decapod/managed/specs/INTERFACES.md",
+        ".decapod/managed/specs/OPERATIONS.md",
+        ".decapod/managed/specs/SECURITY.md",
+        ".decapod/managed/specs/VALIDATION.md",
+        "README.md",
+        "scripts/control-panel.m",
+        "scripts/desktop-edge.m",
+        "scripts/desktop.py",
+        "tests/test_desktop.py"
       ],
       "next_transitions": [
-        "publish"
+        "Finalize source/spec reviews and exact-candidate container validation before PR and merge.",
+        "Finish actual fullscreen and live pane proof, then wait for required user privacy/OS approval before final publication.",
+        "Refine plan and declare falsifiable checks",
+        "Source review complete; exact-candidate canonical validation, hosted CI, merge and configuration repoint remain."
       ],
       "repo_scope": [
-        "dotfiles"
+        "root"
       ],
-      "run_id": "apple-wifi-119-final",
+      "run_id": "branch_01M56F50VVB8JXKRJS54AYFARK",
       "schema_version": "1.1.0",
       "shortcut_risk_signals": [],
-      "task_id": "code_01m566mvej5yhp01",
-      "tool_calls": [],
-      "unresolved_assumptions": [
-        "Existing Mission Control detector expects Dock layer 18; this OS uses layer 20. Normal native entry/exit works, but helper flag/bar suppression there remains a documented compatibility gap outside this privacy/menu/dock-reopen correction.",
-        "Official 0.119.0 image is still publishing. Proof runtime uses Ubuntu 24.04 and checksum-verified official aarch64 Linux release binary sha256:752751f6eb87a3d6a443e432b3f01bfdf7e08d17b728951dd35f077277d592cc; earlier Debian runtime rejected its GLIBC_2.39 dependency.",
-        "Per-commit checkpoint failure on historical 53905f7 requires rebuilding this owned PR history; no required check is disabled."
-      ]
-    },
-    "validation": {
-      "ci_prediction": {
-        "confidence": "medium",
-        "recommendations": [
-          "Review the reported validation warnings before relying on the CI result.",
-          "Use `decapod validate -v --format json` to inspect the affected gate output."
-        ],
-        "result": "review"
-      },
-      "decapod_release": "0.119.0",
-      "drift_findings": [],
-      "elapsed_ms": 2136,
-      "epoch_ref": "ve_2a8abd576c45b505",
-      "fail_count": 0,
-      "failures": [],
-      "gate_timings": [
-        {
-          "elapsed_ms": 644,
-          "name": "validate_project_specs_docs"
-        },
-        {
-          "elapsed_ms": 347,
-          "name": "validate_stale_workspaces"
-        },
-        {
-          "elapsed_ms": 319,
-          "name": "validate_markdown_primitives_roundtrip_gate"
-        },
-        {
-          "elapsed_ms": 138,
-          "name": "validate_machine_contract"
-        },
-        {
-          "elapsed_ms": 102,
-          "name": "validate_git_workspace_context"
-        },
-        {
-          "elapsed_ms": 102,
-          "name": "validate_obligations"
-        },
-        {
-          "elapsed_ms": 65,
-          "name": "validate_legacy_jsonl_retired"
-        },
-        {
-          "elapsed_ms": 35,
-          "name": "validate_archive_integrity"
-        },
-        {
-          "elapsed_ms": 22,
-          "name": "validate_git_protected_branch"
-        },
-        {
-          "elapsed_ms": 20,
-          "name": "validate_repomap_determinism"
-        },
-        {
-          "elapsed_ms": 18,
-          "name": "validate_schema_determinism"
-        },
-        {
-          "elapsed_ms": 15,
-          "name": "validate_control_plane_contract"
-        },
-        {
-          "elapsed_ms": 13,
-          "name": "validate_federation_gates"
-        },
-        {
-          "elapsed_ms": 11,
-          "name": "validate_git_push_pr_gate"
-        },
-        {
-          "elapsed_ms": 11,
-          "name": "validate_no_legacy_namespaces"
-        },
-        {
-          "elapsed_ms": 9,
-          "name": "validate_lineage_hard_gate"
-        },
-        {
-          "elapsed_ms": 7,
-          "name": "validate_gatekeeper_gate"
-        },
-        {
-          "elapsed_ms": 3,
-          "name": "validate_generated_artifact_whitelist"
-        },
-        {
-          "elapsed_ms": 3,
-          "name": "validate_plan_governed_execution_gate"
-        },
-        {
-          "elapsed_ms": 3,
-          "name": "validate_watcher_audit"
-        },
-        {
-          "elapsed_ms": 3,
-          "name": "validate_lcm_immutability"
-        },
-        {
-          "elapsed_ms": 3,
-          "name": "validate_knowledge_promotions_if_present"
-        },
-        {
-          "elapsed_ms": 3,
-          "name": "validate_knowledge_integrity"
-        },
-        {
-          "elapsed_ms": 3,
-          "name": "validate_lcm_rebuild_gate"
-        },
-        {
-          "elapsed_ms": 2,
-          "name": "validate_entrypoint_invariants"
-        },
-        {
-          "elapsed_ms": 2,
-          "name": "validate_trajectory_artifacts_if_present"
-        },
-        {
-          "elapsed_ms": 2,
-          "name": "validate_policy_integrity"
-        },
-        {
-          "elapsed_ms": 2,
-          "name": "validate_research_claims_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_validation_receipt_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_jev_history_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_database_schema_versions"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_override_authority"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_recursive_improvement_passes_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_health_purity"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_canon_mutation"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_watcher_purity"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_spec_drift"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_risk_map_violations"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_health_cache_integrity"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_project_config_toml"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_heartbeat_invocation_gate"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_project_scoped_state"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_context_capsule_policy_contract"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_docs_templates_bucket"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_repo_map"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_workunit_manifests_if_present"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_embedded_self_contained"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_internalization_artifacts_if_present"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_state_commit_gate"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_root_dockerfile_seed_detection"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_context_capsules_if_present"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_interface_contract_bootstrap"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_eval_gate_if_required"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_risk_map"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_coplayer_policy_tightening"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_tooling_gate"
-        }
+      "task_id": "apis_01m56f458dwxfvky",
+      "tool_calls": [
+        "Actual mouse-driven fullscreen and native Wi-Fi handoff probes"
       ],
-      "git_revision": "5ad921d29ae72fc94082d1092b202c756455cf74",
-      "kind": "validation_receipt",
-      "parallelism": 1,
-      "pass_count": 188,
-      "prediction_uses_warnings": true,
-      "receipt_hash": "sha256:1d503bcc086a5d3395441adb4dd5d17b1a291e71408ef12a86259bd20c447c86",
-      "repo_signal_fingerprint": "9c8d674dac16b4e6d6f39748f6fb5faaf48fe8a8e08adf63ae276d06db50866a",
-      "schema_version": "1.0.0",
-      "status": "ok",
-      "temporary_artifacts_cleaned": 0,
-      "trajectory_artifact_hash": "sha256:f6927b561e6a4afad67b9862bc7209b7e5865bb9c984d1d5181daa8bdfa72828",
-      "trajectory_run_id": "apple-wifi-119-final",
-      "warn_count": 4,
-      "warnings": [
-        "No open pull request found on GitHub for branch 'agent/unknown/code_01m566mvej5yhp01'. Create a PR only after intent is converged, the branch is mergeable, and full exact-candidate validation succeeds against the accepted target.",
-        "Risk map missing (run `decapod riskmap init`)",
-        "Stale workspaces preserved for explicit review: <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (current_workspace: workspace contains the current process; rerun prune from the host checkout after leaving this workspace so Git can release the branch), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.)",
-        "Watcher audit trail missing (run `decapod govern watcher run`)"
+      "unresolved_assumptions": [
+        "Keep Location off until explicit user choice; no custom scanner or SSID extraction from native UI.",
+        "User explicitly corrected an initial allow response: Location stays off. System Profiler current and nearby SSIDs are all redacted. Native Apple picker provides names and choices; no custom scanned list is authorized."
       ]
     }
   }

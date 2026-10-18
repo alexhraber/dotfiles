@@ -210,10 +210,36 @@ DockView uses NSWorkspace openApplicationAtURL with activation enabled and
 createsNewApplicationInstance disabled, preserving normal reopen semantics.
 desktop.py registers the complete signed bundle through public LSRegisterURL
 before activation, including cached builds launched directly by launchd.
-controls.py reads saved Wi-Fi profiles through networksetup, preserves literal
-SSID arguments, limits choices to three and stores successful selection times
-in private bar/wifi-recent.json. It neither links CoreLocation nor scans nearby
-networks; availability belongs to the native Wi-Fi quick panel.
+controls.py reads Wi-Fi power through networksetup and local link/address state
+through ifconfig/ipconfig. A normal networksetup SSID response is preserved
+literally; redacted responses remain unnamed. Saved-profile choices and their
+recency history are no longer used. Native handoff closes the custom pane first,
+checks its request token, and never rerenders over a successful system picker.
+The bounded native_item lookup finds fixed status-item identifiers below macOS
+27 MenuBarAgent hosting views, with the older ControlCenter menu-bar fallback.
+It does not extract native network lists or SSIDs. Accessibility probes use the
+same lookup without pressing an item.
+
+desktop-edge.m observes public SystemConfiguration Link/IPv4/IPv6 changes and
+emits only the fixed desktop_network_changed SketchyBar event. It never reads or
+forwards dynamic-store values. The Wi-Fi handler rereads status only for the
+current visible request; hidden/stale/dismissed panes cannot reopen. The event
+source is released on restore, and status.json reports network_events health.
+
+desktop.py's permissions route requests access from the installed native helper.
+It accepts approval only from healthy, fresh status bound to the current
+LaunchAgent PID, then restarts that owned helper so windows do not retain their
+pre-consent Space membership. An unapproved request opens the OS privacy pane;
+it neither grants permission nor restarts the helper. No native rebuild or
+signing change is needed after approval.
+
+ControlRow uses the Apple/app menu's shared palette and quiet hover highlight,
+with optional selected/detail/hint metadata for output and Bluetooth state.
+Labels remain separate from literal device argv actions. DFControlsHide
+acknowledges pinned requests even if AppKit already hid their window. Python's
+hidden_pin reconciles a pin only against a fresh, healthy, subsequent native
+report that explicitly says the panel is hidden. Missing/stale samples preserve
+pins, avoiding a race with newly opening panels.
 
 The bar contains only Apple and front_app; status.sh opens the app menu on click,
 not hover. Index 1 reads a fresh menu tree for the current PID and renders every
@@ -325,7 +351,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `9c8d674dac16b4e6d6f39748f6fb5faaf48fe8a8e08adf63ae276d06db50866a`
+- Repository signal fingerprint: `7d7f25497510f0c7a0dc709ffbb32a71dd310a6341a72794c157f617e25cce77`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
