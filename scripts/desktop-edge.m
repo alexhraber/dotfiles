@@ -1,5 +1,6 @@
 #import <AppKit/AppKit.h>
 #import <QuartzCore/QuartzCore.h>
+#import <ApplicationServices/ApplicationServices.h>
 #import "calendar-panel.h"
 #import "control-panel.h"
 #import "app-menu.h"
@@ -11,7 +12,8 @@
 
 // Local, reversible SkyLight calls used by yabai's menubar_opacity:
 // https://github.com/asmvik/yabai/blob/master/src/misc/extern.h
-// No injection, root access, event tap, cursor warping, or SIP changes.
+// No injection, root access, cursor warping, or SIP changes. A separate
+// Dock-only mouse-motion tap blocks its bottom-edge reveal gesture.
 static int (*mainConnection)(void);
 static CGError (*setAlpha)(int, double, double, float);
 static void (*setOverride)(int, int, bool);
@@ -23,6 +25,12 @@ static dispatch_queue_t barQueue;
 static BOOL healthPending = NO, dockPresented = NO, dockMenuOpen = NO;
 static NSUInteger barRevision = 0, dockRevision = 0;
 static BOOL missionControl = NO;
+static CFMachPortRef nativeDockTap;
+static CFRunLoopSourceRef nativeDockSource;
+static pid_t nativeDockPID;
+static CGRect dockDisplays[16];
+static uint32_t dockDisplayCount;
+static NSUInteger nativeDockBlocked;
 static double missionControlSince = 0, nextMissionCheck = 0;
 static BOOL setVisible(BOOL show);
 static NSString *appearancePath, *themeName;
@@ -105,6 +113,46 @@ static CGFloat settle(CGFloat value, CGFloat target, double elapsed, double resp
     CGFloat next=value+(target-value)*(1-exp(-elapsed/response));
     return fabs(target-next)<tolerance ? target : next;
 }
+static BOOL nativeDockRevealPoint(CGPoint point, const CGRect *screens, NSUInteger count) {
+    for (NSUInteger i=0;i<count;i++) {
+        CGRect screen=screens[i];
+        if (point.x<CGRectGetMinX(screen) || point.x>=CGRectGetMaxX(screen)
+            || point.y<CGRectGetMaxY(screen)-2 || point.y>CGRectGetMaxY(screen)+1) continue;
+        CGPoint below=CGPointMake(point.x,CGRectGetMaxY(screen)+1);
+        for (NSUInteger j=0;j<count;j++) if (j!=i && CGRectContainsPoint(screens[j],below)) return NO;
+        return YES;
+    }
+    return NO;
+}
+static void releaseNativeDockGuard(void) {
+    if (nativeDockSource) { CFRunLoopRemoveSource(CFRunLoopGetMain(),nativeDockSource,kCFRunLoopCommonModes); CFRelease(nativeDockSource); nativeDockSource=NULL; }
+    if (nativeDockTap) { CFMachPortInvalidate(nativeDockTap); CFRelease(nativeDockTap); nativeDockTap=NULL; }
+    nativeDockPID=0;
+}
+static CGEventRef nativeDockMotion(__unused CGEventTapProxy proxy, CGEventType type, CGEventRef event, __unused void *context) {
+    if (type==kCGEventTapDisabledByTimeout) { if (nativeDockTap) CGEventTapEnable(nativeDockTap,true); return event; }
+    // This tap sees only motion routed to Dock. No key, button, wheel or
+    // drag events are subscribed; cursor motion in other apps is untouched.
+    if (type==kCGEventMouseMoved && healthy && !missionControl && nativeDockRevealPoint(CGEventGetLocation(event),dockDisplays,dockDisplayCount)) {
+        nativeDockBlocked++; return NULL;
+    }
+    return event;
+}
+static void ensureNativeDockGuard(void) {
+    CGDirectDisplayID identifiers[16]; uint32_t count=0;
+    if (CGGetActiveDisplayList(16,identifiers,&count)==kCGErrorSuccess) {
+        dockDisplayCount=count;
+        for (uint32_t i=0;i<count;i++) dockDisplays[i]=CGDisplayBounds(identifiers[i]);
+    }
+    pid_t pid=[[NSRunningApplication runningApplicationsWithBundleIdentifier:@"com.apple.dock"].firstObject processIdentifier];
+    if (!AXIsProcessTrusted() || !pid) { releaseNativeDockGuard(); return; }
+    if (nativeDockTap && nativeDockPID==pid) return;
+    releaseNativeDockGuard();
+    nativeDockTap=CGEventTapCreateForPid(pid,kCGHeadInsertEventTap,kCGEventTapOptionDefault,CGEventMaskBit(kCGEventMouseMoved),nativeDockMotion,NULL);
+    if (!nativeDockTap) return;
+    nativeDockPID=pid; nativeDockSource=CFMachPortCreateRunLoopSource(NULL,nativeDockTap,0);
+    CFRunLoopAddSource(CFRunLoopGetMain(),nativeDockSource,kCFRunLoopCommonModes);
+}
 
 static int layoutSelfTest(void) {
     for (NSUInteger count=1; count<=40; count++) for (int width=800; width<=2200; width+=200)
@@ -143,7 +191,33 @@ static int layoutSelfTest(void) {
     }
     puts("Dock geometry: bottom alignment, reveal footprint, 25% larger peak, bounds and non-overlap passed.");
     puts("Dock motion: elapsed-time smoothing is frame-rate independent and settles exactly.");
+    CGRect screens[]={CGRectMake(0,0,1440,900),CGRectMake(0,900,1440,900)};
+    if (nativeDockRevealPoint(CGPointMake(500,899),screens,2)
+        || !nativeDockRevealPoint(CGPointMake(500,1799),screens,2)
+        || nativeDockRevealPoint(CGPointMake(500,1750),screens,2)
+        || nativeDockRevealPoint(CGPointMake(-10,1799),screens,2)) return 1;
+    puts("Dock reveal guard: outer bottom edge only; connected-screen seams and other pointer positions pass.");
     return 0;
+}
+
+static NSWorkspaceOpenConfiguration *dockOpenConfiguration(void) {
+    NSWorkspaceOpenConfiguration *configuration=NSWorkspaceOpenConfiguration.configuration;
+    configuration.activates=YES; configuration.createsNewApplicationInstance=NO;
+    configuration.addsToRecentItems=NO; return configuration;
+}
+static int dockOpenSelfTest(void) {
+    NSWorkspaceOpenConfiguration *configuration=dockOpenConfiguration();
+    return !configuration.activates || configuration.createsNewApplicationInstance || configuration.addsToRecentItems;
+}
+static void reopenDockApp(NSRunningApplication *app) {
+    if (app.terminated) return;
+    NSURL *url=app.bundleURL;
+    if (!url) { [app activateWithOptions:NSApplicationActivateAllWindows]; return; }
+    // Opening the existing bundle delivers normal reopen behavior, including
+    // restoring/recreating a window. It does not launch a second app instance.
+    [NSWorkspace.sharedWorkspace openApplicationAtURL:url configuration:dockOpenConfiguration() completionHandler:^(__unused NSRunningApplication *opened,NSError *error) {
+        if (error) dispatch_async(dispatch_get_main_queue(),^{ [app activateWithOptions:NSApplicationActivateAllWindows]; });
+    }];
 }
 
 @interface DockView : NSView
@@ -196,7 +270,7 @@ static int layoutSelfTest(void) {
 }
 - (void)mouseDown:(NSEvent *)event {
     NSInteger index = [self indexAt:[self convertPoint:event.locationInWindow fromView:nil]];
-    if (index >= 0) [self.apps[index] activateWithOptions:0];
+    if (index >= 0) reopenDockApp(self.apps[index]);
 }
 - (void)dockAction:(NSMenuItem *)item {
     NSRunningApplication *app = item.representedObject;
@@ -361,7 +435,7 @@ static BOOL nativeMenu(BOOL hide) {
     if (setOverride) setOverride(mainConnection(), 0, hide);
     return setAlpha(mainConnection(), 0, 1, hide ? 0 : 1) == kCGErrorSuccess;
 }
-static void restore(void) { if (setAlpha) nativeMenu(NO); }
+static void restore(void) { releaseNativeDockGuard(); if (setAlpha) nativeMenu(NO); }
 
 // Only called on transitions and for a five-second health check.
 static NSDictionary *bar(NSArray<NSString *> *args) {
@@ -427,9 +501,10 @@ static void tick(void) {
                 loadAppearance();
                 healthy = state && [state[@"position"] isEqual:@"top"]
                     && [state[@"show_in_fullscreen"] isEqual:@"on"];
-                if (!healthy) { nativeMenu(NO); visible=NO; return; }
+                if (!healthy) { releaseNativeDockGuard(); nativeMenu(NO); visible=NO; return; }
                 if (![state[@"hidden"] isEqual:visible ? @"off" : @"on"]) setVisible(visible);
-                if (!nativeMenu(YES)) { healthy=NO; nativeMenu(NO); }
+                if (!nativeMenu(YES)) { healthy=NO; releaseNativeDockGuard(); nativeMenu(NO); }
+                else ensureNativeDockGuard();
             });
         });
     }
@@ -471,7 +546,7 @@ static void tick(void) {
 }
 
 int main(int argc, const char **argv) { @autoreleasepool {
-    if (argc==2 && strcmp(argv[1],"--self-test")==0) return layoutSelfTest() || DFCalendarSelfTest() || DFControlsSelfTest() || DFMenusSelfTest();
+    if (argc==2 && strcmp(argv[1],"--self-test")==0) return layoutSelfTest() || dockOpenSelfTest() || DFCalendarSelfTest() || DFControlsSelfTest() || DFMenusSelfTest();
     if (argc==3 && strcmp(argv[1],"--app-menu")==0) { DFMenusNotify([NSString stringWithUTF8String:argv[2]]); return 0; }
     if (argc==2 && (strcmp(argv[1],"--controls")==0 || strcmp(argv[1],"--controls-hide")==0)) {
         DFControlsNotify(strcmp(argv[1],"--controls")==0 ? @"show" : @"hide"); return 0;
@@ -568,6 +643,8 @@ int main(int argc, const char **argv) { @autoreleasepool {
             if (++count % 20 == 0) {
                 NSDictionary *state = @{@"healthy": @(healthy), @"visible": @(visible),
                     @"dock_visible": @(dockPanel.visible), @"open_apps": @(dockView.apps.count),
+                    @"native_dock_guard": @(nativeDockTap && CGEventTapIsEnabled(nativeDockTap)),
+                    @"native_dock_blocked": @(nativeDockBlocked),
                     @"mission_control": @(missionControl),
                     @"calendar": DFCalendarStatus(),
                     @"controls": DFControlsStatus(),

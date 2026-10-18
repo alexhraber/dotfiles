@@ -1,5 +1,6 @@
 """Explicit macOS desktop lifecycle; configuration installation starts nothing."""
 import fcntl
+import ctypes
 import hashlib
 import json
 import os
@@ -40,6 +41,28 @@ def save(path, value):
 
 def run(*args, **kwargs):
     return subprocess.run(list(map(str, args)), check=True, **kwargs)
+
+
+def register_bundle(executable):
+    """Register the complete helper bundle even when launchd starts its binary."""
+    bundle = Path(executable).parents[2]
+    cf = ctypes.CDLL('/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation')
+    ls = ctypes.CDLL('/System/Library/Frameworks/CoreServices.framework/CoreServices')
+    cf.CFURLCreateFromFileSystemRepresentation.argtypes = [ctypes.c_void_p, ctypes.c_char_p, ctypes.c_long, ctypes.c_bool]
+    cf.CFURLCreateFromFileSystemRepresentation.restype = ctypes.c_void_p
+    cf.CFRelease.argtypes = [ctypes.c_void_p]
+    ls.LSRegisterURL.argtypes = [ctypes.c_void_p, ctypes.c_bool]
+    ls.LSRegisterURL.restype = ctypes.c_int32
+    raw = os.fsencode(bundle)
+    url = cf.CFURLCreateFromFileSystemRepresentation(None, raw, len(raw), True)
+    if not url:
+        raise ValueError('Cannot identify Desktop Controls bundle')
+    try:
+        status = ls.LSRegisterURL(url, True)
+        if status:
+            raise ValueError(f'Cannot register Desktop Controls bundle: {status}')
+    finally:
+        cf.CFRelease(url)
 
 
 def compile_tools(directory):
@@ -252,6 +275,7 @@ def main(action, theme=None, layout=None):
                 print('Native menu restored; desktop profile is inactive.')
             return 0
         tools = compile_tools(directory)
+        register_bundle(tools['desktop-edge'])
         if not document or not document['active']:
             if agent_path().exists() or agent_loaded():
                 raise ValueError('An unowned desktop-edge LaunchAgent exists; refusing to replace it')

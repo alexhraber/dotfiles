@@ -23,6 +23,59 @@ spec.loader.exec_module(metrics)
 
 
 class DesktopTests(unittest.TestCase):
+    def test_wifi_top_three_saved_profiles_follow_successful_selection_history(self):
+        names=['Office','Home','Old hotel','Cafe','Guest','Home']
+        self.assertEqual(controls.wifi_choices(names,{'Home':900,'Cafe':700,'Office':800},1000),['Home','Office','Cafe'])
+        self.assertEqual(controls.wifi_choices(names,{},1000),['Office','Home','Old hotel'])
+        self.assertEqual(controls.wifi_choices(names,{'Cafe':float('inf'),'Office':1001,'Home':True},1000),['Office','Home','Old hotel'])
+
+    def test_wifi_saved_parser_preserves_literal_ssids_and_rejects_bad_rows(self):
+        text='Preferred networks on en0:\n\tCafe; $(whoami)\n\t space \n\tCafe; $(whoami)\n\t'+('x'*33)+'\n\tbad\x00name\nmalformed\n'
+        with patch.object(controls,'command',return_value=text) as command:
+            self.assertEqual(controls.saved_wifi('en0'),['Cafe; $(whoami)',' space '])
+            command.assert_called_once_with('/usr/sbin/networksetup','-listpreferredwirelessnetworks','en0',strip=False)
+            command.return_value='An error occurred\n\tFake\n'
+            self.assertEqual(controls.saved_wifi('en0'),[])
+
+    def test_wifi_select_uses_literal_ssid_without_password_and_records_success(self):
+        name='Cafe; $(whoami)'
+        with tempfile.TemporaryDirectory() as temp, patch.object(controls,'STATE',Path(temp)), \
+             patch.object(controls,'saved_wifi',return_value=[name]) as saved, \
+             patch.object(controls,'current_wifi',return_value='Other') as current, \
+             patch.object(controls,'wifi_device',return_value='en0'), \
+             patch.object(controls,'command',return_value='') as command:
+            controls.action(['wifi-network',name])
+            command.assert_called_once_with('/usr/sbin/networksetup','-setairportnetwork','en0',name,timeout=20)
+            self.assertIn(name,controls.read('wifi-recent.json'))
+            current.return_value=name; command.reset_mock()
+            controls.action(['wifi-network',name]); command.assert_not_called()
+            saved.return_value=[]
+            with self.assertRaises(ValueError): controls.action(['wifi-network',name])
+            command.assert_not_called()
+
+    def test_wifi_join_failure_never_updates_recent_history(self):
+        for failure in ('Could not find network Home.',subprocess.CalledProcessError(1,['networksetup'])):
+            with self.subTest(failure=str(failure)), tempfile.TemporaryDirectory() as temp, \
+                 patch.object(controls,'STATE',Path(temp)), \
+                 patch.object(controls,'saved_wifi',return_value=['Home']), \
+                 patch.object(controls,'current_wifi',return_value=''), \
+                 patch.object(controls,'wifi_device',return_value='en0'), \
+                 patch.object(controls,'command',side_effect=failure if isinstance(failure,Exception) else None,return_value=failure):
+                with self.assertRaises((ValueError,subprocess.SubprocessError)): controls.connect_wifi('Home')
+                self.assertIsNone(controls.read('wifi-recent.json'))
+
+    def test_wifi_pane_caps_saved_choices_without_location_or_nearby_claims(self):
+        with patch.object(controls,'wifi_device',return_value='en0'), \
+             patch.object(controls,'current_wifi',return_value=''), \
+             patch.object(controls,'saved_wifi',return_value=['Home','Office','Cafe','Hotel']), \
+             patch.object(controls,'read',return_value={}), \
+             patch.object(controls,'command',return_value='Wi-Fi Power (en0): On'):
+            rows=controls.panel_rows('wifi')
+            self.assertEqual([action[1] for _,action in rows if action and action[0]=='wifi-network'],['Home','Office','Cafe'])
+            self.assertIn(('Recent saved networks',None),rows)
+            self.assertIn(('Native Wi-Fi controls',['native','Wi-Fi']),rows)
+            self.assertFalse(any('nearby' in text.lower() or 'location' in text.lower() for text,_ in rows))
+
     def test_apple_and_app_name_open_native_menus_only_on_click(self):
         with tempfile.TemporaryDirectory() as temp:
             directory=Path(temp); log=directory/'menu-calls'

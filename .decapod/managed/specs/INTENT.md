@@ -89,14 +89,19 @@ and scroll position on refresh, without global keyboard or desktop shortcuts.
 Sound and display panes must follow system keyboard level changes while still
 hovered or pinned, without pointer reentry or idle device polling.
 The Apple icon should work like a normal system menu on click, with About This
-Mac, Settings and useful system/session entries. It uses native menu tracking,
-outside-click dismissal and Escape. Core information/settings actions must not
+Mac, Settings and useful system/session entries. It uses the same themed pane as the active-app menu, with click selection,
+outside-click dismissal, repeated-click dismissal and Escape. Core information/settings actions must not
 depend on Accessibility to another application's menu. Current-app menu headings
 are nested under the click-only app-name control and use the actual AX menu
 bridge and its local OS permission. No separate menu headings occupy the bar.
 The owner explicitly approves the weather pane's current layout: preserve its
 header and hourly strip. Add six matching daily icon cards immediately below,
 starting tomorrow, with Fahrenheit highs/lows and forecast-local day boundaries.
+
+Wi-Fi does not request Location or scan nearby networks. It offers up to three
+recent saved profiles, ordered by successful picker selections and then macOS
+preferred order. Native Wi-Fi controls remain the availability picker. Network
+names/history stay private; no password is read or passed by dotfiles.
 
 The clock is a native Sunday-first month grid and selected-day agenda, with
 today/month navigation, event dots and per-calendar source selection. EventKit
@@ -131,6 +136,10 @@ The dock is icons only: its background is fully transparent, with no glass,
 shelf, border, shadow, label, badge or active marker. Autohide, magnification,
 application grouping and right-click actions remain. Bar themes and pinned
 ZIP97750 weather are independent of this visual simplification.
+Clicks use the normal macOS reopen request for running apps, including apps
+without a visible window. A Dock-process-only mouse-motion filter suppresses
+the native bottom-edge reveal when Accessibility is available, except during
+Mission Control. Undo removes this filter.
 Icons sit at the screen bottom and reveal when the pointer reaches their
 future footprint, removing the extra upward movement. Resting size is preserved;
 peak hover magnification increases by 25% within the available screen width.
@@ -170,7 +179,7 @@ These declarations select authoring and proof obligations; they do not attest im
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `c90d7a78288a21050213593e790c937dd8687f29e3dc5391cf1bb2eba8f0d425`
+- Repository signal fingerprint: `9c8d674dac16b4e6d6f39748f6fb5faaf48fe8a8e08adf63ae276d06db50866a`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

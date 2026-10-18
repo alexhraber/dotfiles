@@ -19,8 +19,7 @@ static double nextMenuRead;
 static NSUInteger menuRevision;
 static NSRect menuAnchor;
 static NSMutableArray<NSPanel *> *menuPanels;
-static NSMenu *appleMenu;
-static BOOL appleTracking;
+static NSInteger openMenuIndex=-1;
 static id menuMouseMonitor, menuKeyMonitor, menuLocalMonitor;
 
 typedef NS_ENUM(NSInteger, AppleAction) {
@@ -114,39 +113,21 @@ static void runAppleAction(NSInteger action) {
     if (error) appleError(@"The system action could not be opened. Check macOS Automation permissions for Desktop Controls.");
 }
 
-@interface AppleMenuController : NSObject <NSMenuDelegate>
-@end
-@implementation AppleMenuController
-- (void)menuWillOpen:(__unused NSMenu *)menu { appleTracking=YES; }
-- (void)menuDidClose:(__unused NSMenu *)menu { appleTracking=NO; }
-- (void)selected:(NSMenuItem *)item {
-    NSInteger action=item.tag;
-    dispatch_async(dispatch_get_main_queue(),^{ runAppleAction(action); });
-}
-@end
-static AppleMenuController *appleController;
 static NSArray *appleEntries(void) {
     return @[@[@"About This Mac",@(AppleAbout)], @[@"System Settings…",@(AppleSettings)], @[@"App Store…",@(AppleStore)],
              @[@"",@0], @[@"System Information…",@(AppleInformation)], @[@"Force Quit…",@(AppleForceQuit)],
              @[@"",@0], @[@"Sleep",@(AppleSleep)], @[@"Restart…",@(AppleRestart)], @[@"Shut Down…",@(AppleShutdown)],
              @[@"",@0], @[@"Lock Screen",@(AppleLock)], @[@"Log Out…",@(AppleLogout)]];
 }
-static void showAppleMenu(NSPoint origin) {
-    if (!appleController) appleController=[AppleMenuController new];
-    appleMenu=[[NSMenu alloc] initWithTitle:@"Apple"]; appleMenu.autoenablesItems=NO;
-    appleMenu.delegate=appleController; appleMenu.font=[NSFont systemFontOfSize:13];
-    appleMenu.appearance=[NSAppearance appearanceNamed:NSAppearanceNameDarkAqua]; appleMenu.minimumWidth=244;
+static BOOL validAppleAction(NSInteger action) { return action>=AppleAbout && action<=AppleLogout; }
+static NSArray *appleRows(void) {
+    NSMutableArray *rows=[NSMutableArray array];
     for (NSArray *entry in appleEntries()) {
-        if (![entry[0] length]) { [appleMenu addItem:NSMenuItem.separatorItem]; continue; }
         NSInteger action=[entry[1] integerValue];
-        NSMenuItem *item=[[NSMenuItem alloc] initWithTitle:entry[0] action:@selector(selected:) keyEquivalent:@""];
-        item.tag=action; item.target=appleController;
-        item.enabled=appleBundle(action) ? appleApplication(action)!=nil : action!=AppleLock || screenLock()!=NULL;
-        [appleMenu addItem:item];
+        BOOL enabled=validAppleAction(action) && (appleBundle(action) ? appleApplication(action)!=nil : action!=AppleLock || screenLock()!=NULL);
+        [rows addObject:@{@"title":entry[0],@"apple_action":@(action),@"enabled":@(enabled),@"submenu":@NO}];
     }
-    appleTracking=YES;
-    [appleMenu popUpMenuPositioningItem:nil atLocation:origin inView:nil];
-    appleTracking=NO;
+    return rows;
 }
 
 static id attribute(id element, CFStringRef name) {
@@ -189,6 +170,15 @@ static NSArray *readMenus(pid_t pid) {
 
 @interface MenuSurface : NSView
 @end
+@interface MenuPanel : NSPanel
+@end
+@implementation MenuPanel
+- (BOOL)canBecomeKeyWindow { return YES; }
+- (BOOL)canBecomeMainWindow { return NO; }
+- (void)keyDown:(NSEvent *)event {
+    if (event.keyCode==53) DFMenusHide(); else [super keyDown:event];
+}
+@end
 @implementation MenuSurface
 - (BOOL)isFlipped { return YES; }
 - (void)drawRect:(__unused NSRect)dirty {
@@ -208,6 +198,7 @@ static NSArray *readMenus(pid_t pid) {
 @property NSUInteger depth;
 @property BOOL submenu;
 @property BOOL hovered;
+@property NSInteger appleAction;
 @property NSString *shortcut;
 @property NSString *mark;
 @end
@@ -258,6 +249,10 @@ static void dismissAfter(NSUInteger depth) {
     });
 }
 - (void)invoke:(__unused id)sender {
+    if (self.appleAction) {
+        if (!self.enabled || !self.window.visible || !validAppleAction(self.appleAction)) return;
+        NSInteger action=self.appleAction; DFMenusHide(); runAppleAction(action); return;
+    }
     if (self.tag==1) {
         AXIsProcessTrustedWithOptions((__bridge CFDictionaryRef)@{(__bridge NSString *)kAXTrustedCheckOptionPrompt:@YES});
         [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:@"x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"]];
@@ -297,7 +292,7 @@ static NSArray *menuRows(NSArray *items) {
 }
 static void showEntries(NSArray *items, NSString *heading, NSUInteger depth, NSPoint origin) {
     dismissAfter(depth);
-    NSPanel *panel=[[NSPanel alloc] initWithContentRect:NSMakeRect(0,0,310,100) styleMask:NSWindowStyleMaskBorderless|NSWindowStyleMaskNonactivatingPanel backing:NSBackingStoreBuffered defer:NO];
+    NSPanel *panel=[[MenuPanel alloc] initWithContentRect:NSMakeRect(0,0,310,100) styleMask:NSWindowStyleMaskBorderless|NSWindowStyleMaskNonactivatingPanel backing:NSBackingStoreBuffered defer:NO];
     panel.level=CGWindowLevelForKey(kCGStatusWindowLevelKey)+3;
     panel.collectionBehavior=NSWindowCollectionBehaviorCanJoinAllSpaces|NSWindowCollectionBehaviorFullScreenAuxiliary|NSWindowCollectionBehaviorStationary;
     panel.opaque=NO; panel.backgroundColor=NSColor.clearColor; panel.hasShadow=YES; panel.hidesOnDeactivate=NO;
@@ -313,7 +308,7 @@ static void showEntries(NSArray *items, NSString *heading, NSUInteger depth, NSP
         }
         MenuRow *row=[[MenuRow alloc] initWithFrame:NSMakeRect(0,y,294,32)]; row.title=name; row.element=item[@"element"]; row.pid=menuPID; row.depth=depth;
         row.enabled=[item[@"enabled"] boolValue]; row.submenu=[item[@"submenu"] boolValue];
-        row.shortcut=item[@"shortcut"]; row.mark=item[@"mark"];
+        row.shortcut=item[@"shortcut"]; row.mark=item[@"mark"]; row.appleAction=[item[@"apple_action"] integerValue];
         row.bordered=NO; row.target=row; row.action=@selector(invoke:); [document addSubview:row]; y+=32;
     }
     if (!items.count) {
@@ -329,6 +324,7 @@ static void showEntries(NSArray *items, NSString *heading, NSUInteger depth, NSP
     CGFloat x=origin.x; if (x+310>NSMaxX(screen.frame)-12) x=depth ? NSMinX(menuPanels.lastObject.frame)-307 : NSMaxX(screen.frame)-322;
     [panel setFrame:NSMakeRect(MAX(NSMinX(screen.frame)+12,x),MAX(NSMinY(screen.frame)+12,origin.y-height),310,height) display:NO];
     surface.frame=NSMakeRect(0,0,310,height); [menuPanels addObject:panel]; [panel orderFrontRegardless];
+    if (!depth) [panel makeKeyWindow];
 }
 static void updateBar(NSArray *menus, pid_t pid, BOOL force) {
     NSMutableArray *args=[NSMutableArray array];
@@ -368,19 +364,19 @@ void DFMenusInitialize(NSString *sketchybar) {
             AXIsProcessTrustedWithOptions((__bridge CFDictionaryRef)@{(__bridge NSString *)kAXTrustedCheckOptionPrompt:@YES}); return;
         }
         NSInteger index; if (!menuIndex(note.object,&index)) return;
-        if (index==0 && appleTracking) { [appleMenu cancelTracking]; return; }
-        if (index==1 && menuPanels.count) { DFMenusHide(); return; }
-        DFCalendarHide(); DFControlsHide(); DFMenusHide();
+        if (index==openMenuIndex && menuPanels.count) { DFMenusHide(); return; }
+        DFCalendarHide(); DFControlsHide(); DFMenusHide(); openMenuIndex=index;
         NSPoint pointer=NSEvent.mouseLocation; NSScreen *screen=NSScreen.mainScreen;
         for (NSScreen *candidate in NSScreen.screens) if (NSPointInRect(pointer,candidate.frame)) screen=candidate;
         CGFloat top=NSMaxY(screen.frame)-52;
         menuAnchor=NSMakeRect(pointer.x-44,top,88,NSMaxY(screen.frame)-top);
         NSPoint origin=NSMakePoint(pointer.x-16,top); pid_t pid=NSWorkspace.sharedWorkspace.frontmostApplication.processIdentifier;
+        menuPID=pid;
         if (index==0) {
             // SketchyBar is explicitly at y=4 with a maximum 40-point height;
             // its menu sits beneath that bar, not beneath the notch safe area.
             origin.y=NSMaxY(screen.frame)-52;
-            showAppleMenu(origin); return;
+            showEntries(appleRows(),@"Apple",0,origin); return;
         }
         NSString *application=NSWorkspace.sharedWorkspace.frontmostApplication.localizedName ?: @"Application";
         menuPID=pid;
@@ -407,14 +403,13 @@ void DFMenusInitialize(NSString *sketchybar) {
 void DFMenusNotify(NSString *command) {
     [NSDistributedNotificationCenter.defaultCenter postNotificationName:menuNotification object:command userInfo:nil deliverImmediately:YES];
 }
-void DFMenusHide(void) { if (appleTracking) [appleMenu cancelTracking]; ++menuRevision; dismissAfter(0); }
+void DFMenusHide(void) { ++menuRevision; dismissAfter(0); openMenuIndex=-1; }
 BOOL DFMenusContainsPointer(__unused NSPoint pointer) {
     // A click-open menu keeps the bar revealed until selection, outside click,
     // Escape or an application change, rather than disappearing on pointer exit.
-    return appleTracking || menuPanels.count>0;
+    return menuPanels.count>0;
 }
 void DFMenusTick(double now, __unused NSPoint pointer, BOOL barVisible) {
-    if (appleTracking) return;
     BOOL revealed=barVisible && !menuWasVisible; menuWasVisible=barVisible;
     pid_t pid=NSWorkspace.sharedWorkspace.frontmostApplication.processIdentifier;
     if (pid!=menuPID && menuPanels.count) DFMenusHide();
@@ -427,7 +422,7 @@ void DFMenusTick(double now, __unused NSPoint pointer, BOOL barVisible) {
         dispatch_async(dispatch_get_main_queue(),^{ menuReading=NO; });
     });
 }
-NSDictionary *DFMenusStatus(void) { return @{@"accessibility":@(AXIsProcessTrusted()),@"visible":@(appleTracking || menuPanels.count>0),@"menus":@(topMenus.count),@"apple_items":@(appleEntries().count-3)}; }
+NSDictionary *DFMenusStatus(void) { return @{@"accessibility":@(AXIsProcessTrusted()),@"visible":@(menuPanels.count>0),@"menus":@(topMenus.count),@"apple_items":@(appleEntries().count-3)}; }
 int DFMenusSelfTest(void) {
     NSInteger index=-1;
     if (!menuIndex(@"0",&index) || index!=0 || !menuIndex(@"1",&index) || index!=1 || menuIndex(@"2",&index) || menuIndex(@"13",&index) || menuIndex(@"-1",&index) || menuIndex(@"1;open",&index)) return 1;
@@ -437,9 +432,10 @@ int DFMenusSelfTest(void) {
     NSMutableArray *many=[fixture mutableCopy]; for (NSUInteger i=0;i<20;i++) [many addObject:@(i)];
     if (applicationMenus(many).count!=many.count-1 || applicationMenus(many).lastObject!=many.lastObject) return 1;
     if (!canInvoke(42,42,YES,NO) || canInvoke(42,43,YES,NO) || canInvoke(42,42,NO,NO) || canInvoke(42,42,YES,YES) || canInvoke(0,0,YES,NO)) return 1;
+    if (!validAppleAction(AppleAbout) || !validAppleAction(AppleLogout) || validAppleAction(0) || validAppleAction(AppleLogout+1)) return 1;
     if (appleEntries().count!=13 || ![appleBundle(AppleAbout) isEqual:@"com.apple.AboutThisMacLauncher"] || ![appleBundle(AppleSettings) isEqual:@"com.apple.systempreferences"] || appleBundle(-1)) return 1;
     if (applePowerEvent(AppleRestart)!=kAEShowRestartDialog || applePowerEvent(AppleShutdown)!=kAEShowShutdownDialog
         || applePowerEvent(AppleLogout)!=kAELogOut || applePowerEvent(AppleSettings) || applePowerEvent(-1)) return 1;
     if (applePowerEvent(AppleRestart)==kAERestart || applePowerEvent(AppleShutdown)==kAEShutDown || applePowerEvent(AppleLogout)==kAEReallyLogOut) return 1;
-    puts("Menu guards: nested app menu ordering, complete heading inventory, app ownership, native Apple entries, fixed application targets and confirmation-only session actions passed."); return 0;
+    puts("Menu guards: nested app menu ordering, complete heading inventory, app ownership, themed Apple fixed-action entries, fixed application targets and confirmation-only session actions passed."); return 0;
 }

@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "baseline": {
-    "accepted_commit": "f255e869db8f6622977d63df5c32a3bea307bbc9",
+    "accepted_commit": "f167cb1414197377b5e6371a13720abc6ebe03c1",
     "unresolved": {
       "claim:actual-app-menus": {
         "falsifier": "Native action guards permit stale/disabled/submenu leaf execution, or the UI claims menus work without Accessibility.",
@@ -13,131 +13,136 @@
       },
       "trajectory:3ad8d199dbb39b49": "Accessibility approval for the exact current app remains unavailable; no menu click parity claim.",
       "trajectory:69fd57cf486c104c": "Existing Reduce Motion show/hide support is retained; dock polish targets stationary redraw suppression and precise settlement rather than adding visual chrome.",
-      "trajectory:ad62d461499896f7": "The prior calendar build returned seven synced calendars and eight events after OS consent; current ad-hoc build requires fresh permission. Provider identity has not been asserted from counts. Accessibility remains pending, so actual app-menu execution is not yet proven."
+      "trajectory:ad62d461499896f7": "The prior calendar build returned seven synced calendars and eight events after OS consent; current ad-hoc build requires fresh permission. Provider identity has not been asserted from counts. Accessibility remains pending, so actual app-menu execution is not yet proven.",
+      "trajectory:b9df8a236176c502": "Final helper is healthy with Calendar access3. App pane consent fallback and click-only/toggle/persistence verified; actual AX submenu contents and commands remain unverified until user grants Accessibility to the exact current app. No sleep/power/lock/logout/force-quit action executed."
     }
   },
   "change": {
-    "id": "change_01M55E18SCMGTABD1QHEF6KPJ6",
-    "base_commit": "f255e869db8f6622977d63df5c32a3bea307bbc9",
+    "id": "change_01M566N8T4PD3Z5A9RDFFNB64X",
+    "base_commit": "f167cb1414197377b5e6371a13720abc6ebe03c1",
     "target_base": "origin/main"
   },
   "claims": {
-    "live-keyboard-level-refresh": {
-      "statement": "Visible brightness and sound sliders/readouts follow system level-change events without pointer reentry, preserving the active request, pin and anchor; closed or superseded events cannot replace the interaction.",
-      "falsifier": "Actual system-level changes do not update an open pane, require pointer reentry, change request/anchor/pin, or a delayed event refreshes a newer or closed pane.",
+    "desktop-interaction-privacy": {
+      "statement": "Apple actions share the themed pane; Wi-Fi offers at most three recent saved profiles without requesting Location; dock clicks reopen a running windowless app.",
+      "falsifier": "Installed Apple pane is vanilla, Wi-Fi asks for Location or scans nearby networks, more than three choices are offered, or a real custom-dock click fails to reopen the fixture in the same PID.",
       "status": "supported",
       "proof_refs": [
-        "/private/tmp/dotfiles-controls-host-check.txt",
-        "/private/tmp/dotfiles-controls-live-proof.json"
-      ]
-    },
-    "native-apple-click-menu": {
-      "statement": "Apple icon hover only highlights; clicking opens a native menu with information/settings and fixed system actions without requiring AX access for core entries.",
-      "falsifier": "Hover opens a permission placeholder, click fails with AX0, native menu is misplaced under the notch inset, or safe information/settings bundle targets cannot launch.",
-      "status": "supported",
-      "proof_refs": [
-        "/private/tmp/dotfiles-apple-installed.png",
-        "/private/tmp/dotfiles-apple-live-proof.json"
-      ]
-    },
-    "nested-app-menu-contract": {
-      "statement": "Only Apple and the app name occupy the left bar. The app-name click wraps every actual AX top-level menu except Apple, in order, with hover submenus and same-app enabled-leaf guards; hover alone does not open the root.",
-      "falsifier": "A top-level app heading remains on the bar, Apple appears in the app pane, a real heading is dropped/reordered, hover opens the root, or a disabled/stale-owner command executes.",
-      "status": "supported",
-      "proof_refs": [
-        "/private/tmp/dotfiles-nested-host-check.txt",
-        "scripts/app-menu.m",
-        "tests/test_desktop.py"
+        "/private/tmp/dotfiles-apple-themed-proof.json",
+        "/private/tmp/dotfiles-dock-reopen-proof.json",
+        "/private/tmp/dotfiles-no-location-proof.json"
       ]
     }
   },
   "checkpoints": [
     {
-      "id": "controls-and-native-apple",
-      "summary": "Synchronize visible level controls via native system events and provide a native Apple click menu with fixed info/settings/system actions. Host86 checks, actual hover update proof, installed click-menu capture and safe app launches pass; original device levels restored and calendar access3 verified.",
-      "input_digest": "sha256:e5d5d3af16fba4ee47144d417fd4e402634e5d26f59211b1a4bed9662a03b1b9",
+      "id": "apple-wifi-dock-implementation",
+      "summary": "Themed Apple rows, no-Location saved Wi-Fi choices, normal dock reopen and scoped native-Dock reveal guard; 92 host checks and installed privacy/reopen/menu proofs pass, final AX consent pending.",
+      "input_digest": "sha256:a4e69d26d0548e9bfaa835e6a588b01a712756fb94952b5871c49fd6aa515750",
       "proof_refs": [
-        "/private/tmp/dotfiles-apple-live-proof.json",
-        "/private/tmp/dotfiles-controls-host-check.txt",
-        "/private/tmp/dotfiles-controls-live-proof.json"
+        "/private/tmp/dotfiles-apple-wifi-host-check.txt"
       ]
     },
     {
-      "id": "nested-application-menus",
-      "summary": "Nest actual app menus under a click-only app-name pane; preserve hover submenus, ownership guards and native dismissal. Document pending final-build AX approval, with 87 host checks and restored Calendar consent.",
-      "input_digest": "sha256:403a52251eb22c10fb6a2e6411c55f99d9838af4beff5effd9773b743d84dc25",
+      "id": "apple-wifi-final-proofs-119",
+      "summary": "Final no-Location live menu, reopen and fullscreen guard proofs pass; refresh release-bound artifacts to current Decapod 0.119.0, whose image publish is in progress.",
+      "input_digest": "sha256:44313c5db7b353773d6d6a611c888e21e6df30befe10aed7b1d2f199aa212cbb",
       "proof_refs": [
-        "/private/tmp/dotfiles-nested-host-check.txt"
+        "/private/tmp/dotfiles-nested-live-proof.json",
+        "/private/tmp/dotfiles-production-guard-proof.json"
       ]
     },
     {
-      "id": "nested-installed-proof",
-      "summary": "Record final installed click-pane fallback, persistence and toggle; live slider and Apple proofs; 87 host tests. Actual AX submenu consent remains pending. Fresh trajectory repairs stale project-prerequisite epoch without fabricating readiness.",
-      "input_digest": "sha256:e0eac699cac7f08b083eee8675c70e5b7846c10cb4d71ca543bdd319c4e9bd72",
+      "id": "apple-wifi-119-final-candidate",
+      "summary": "Final installed interaction/privacy proofs, latest official binary runtime and existing Mission Control detection limit recorded; fresh validation run after supported stale-epoch recovery.",
+      "input_digest": "sha256:aca80c1fe5c75bb61dfe75d48a3386925ca9498df75f68cd597c6e4bdcdf1cd1",
       "proof_refs": [
-        "target/dotfiles-controls-live-proof.json",
-        "target/dotfiles-nested-host-check.txt",
-        "target/dotfiles-nested-live-proof.json"
+        "target/apple-wifi-runtime-proof/dotfiles-no-location-proof.json"
+      ]
+    },
+    {
+      "id": "apple-wifi-119-readiness-receipt",
+      "summary": "Commit source and project-prerequisite receipt after fresh 0.119 validation epoch; preserve failed optional existing Mission Control detector check and passed current interaction/privacy proofs.",
+      "input_digest": "sha256:96b251f9d889e153ed9a760adc464ab88763899eaae44ed7237982ae1b285263",
+      "proof_refs": [
+        "target/apple-wifi-project-check-final.json"
+      ]
+    },
+    {
+      "id": "apple-wifi-119-squashed-candidate",
+      "summary": "Single final candidate after preserving original task history; all authored source/spec/release changes staged, existing prerequisite receipt retained, current governance inputs bound before commit.",
+      "input_digest": "sha256:da98db6c0b51aa3bcdbb1dd87be8426acc0ed9071e3a23c33a0b37abd2487e66",
+      "proof_refs": [
+        "target/apple-wifi-project-check-final.json",
+        "target/apple-wifi-runtime-proof/dotfiles-no-location-proof.json"
+      ]
+    },
+    {
+      "id": "apple-wifi-current-trajectory-receipt",
+      "summary": "Bind successful project prerequisites to final unchanged trajectory after history repair; all required source checks retained.",
+      "input_digest": "sha256:da98db6c0b51aa3bcdbb1dd87be8426acc0ed9071e3a23c33a0b37abd2487e66",
+      "proof_refs": [
+        "target/apple-wifi-final-bound-project-check.json"
       ]
     }
   ],
   "intents": {
-    "intent:nested-controls-20261017": {
+    "intent:apple-wifi-119-final": {
       "acceptance_criteria": [],
       "assumptions": [],
       "boundaries": [
-        "Own claimed worktree; OS consent remains user-controlled; no session actions in tests"
+        "No Location consent or scanner, private SSIDs/history, no real Wi-Fi switch in tests, manual Calendar and Accessibility, existing Mission Control layer-detection gap preserved explicitly."
       ],
       "constraints": [
-        "SketchyBar config, native menu bridge, tests, living specs"
+        "dotfiles"
       ],
       "created_sequence": 1,
-      "id": "intent:nested-controls-20261017",
+      "id": "intent:apple-wifi-119-final",
       "out_of_scope": [],
       "proof_requirements": [],
-      "raw_intent": "Live keyboard levels, native Apple menu and nested actual app menus",
-      "refined_intent": "Click active app name for real menu headings, hover for commands; native Apple click menu and live sound/display controls",
+      "raw_intent": "Themed Apple menu, useful Wi-Fi choices and working custom dock; user declines Location.",
+      "refined_intent": "Shared Apple pane, three recent saved Wi-Fi choices without Location/scanning, normal running-app reopen and native-Dock bottom reveal suppression.",
       "status": "refined",
       "updated_sequence": 3
     }
   },
   "epochs": {
-    "ve_a3d30fa9a96c75ba": {
-      "constitution_hash": "sha256:0c260556aaaf5fffd2a672f8e1a71df2d77fdb09fb3db03db2ef5d68bec87edf",
-      "constitution_version": "embedded-docs@0.118.0",
-      "epoch_id": "ve_a3d30fa9a96c75ba",
-      "evaluator_identity": "decapod-validate@0.118.0",
-      "evaluator_set_hash": "sha256:bd601f7712526e22dda29e70d40449ad27f9a36a3f11bdfa83081c1485039b86",
-      "generated_specs_fingerprint": "c90d7a78288a21050213593e790c937dd8687f29e3dc5391cf1bb2eba8f0d425",
-      "generated_specs_manifest_hash": "sha256:db4e0974a723a1c44bab7167abfb90d95ac0a7f03a06ecf613d22f23895b3f23",
+    "ve_2a8abd576c45b505": {
+      "constitution_hash": "sha256:5bf7743217f39273d7656a601de68f2fc7d66b507926dd5db7e1bb191a0ddbb8",
+      "constitution_version": "embedded-docs@0.119.0",
+      "epoch_id": "ve_2a8abd576c45b505",
+      "evaluator_identity": "decapod-validate@0.119.0",
+      "evaluator_set_hash": "sha256:6616b4917991d490a9a915bda7fdb05c18436517199038cb3ed40ac3781fb6d3",
+      "generated_specs_fingerprint": "9c8d674dac16b4e6d6f39748f6fb5faaf48fe8a8e08adf63ae276d06db50866a",
+      "generated_specs_manifest_hash": "sha256:6388e78029540346e857d056c2d340e4ad430610500eca10c7c9927ec2c7be68",
       "material_hashes": {
-        "constitution:core/DECAPOD": "sha256:0c260556aaaf5fffd2a672f8e1a71df2d77fdb09fb3db03db2ef5d68bec87edf",
-        "generated_spec:.decapod/managed/specs/ARCHITECTURE.md": "sha256:8cb0f302d666b676dac2d56f77f2828f97e94527d46e50429396f69f226d4b89",
-        "generated_spec:.decapod/managed/specs/INTENT.md": "sha256:b65c7cfe37e7ee8f2909553ed128811b6a181e7f9037d483906a35817a58419b",
-        "generated_spec:.decapod/managed/specs/INTERFACES.md": "sha256:7aec9d49c5c58d02c74c89faea674104b2894eb758836a226327d2e9b43f21ed",
-        "generated_spec:.decapod/managed/specs/OPERATIONS.md": "sha256:1917c236002a61f0b1b6f1fad10bd4cec7cc7265dcfa102539a30349adba3408",
-        "generated_spec:.decapod/managed/specs/README.md": "sha256:26f51e22c8fe9577b099826374d6d8d3332d27c33bd2783e21ebf5994854e09e",
-        "generated_spec:.decapod/managed/specs/SECURITY.md": "sha256:5b61febe063b0eab0e00d09550ddaa3466a2dfd478bb82a4cff22ac7b23d37c9",
-        "generated_spec:.decapod/managed/specs/SEMANTICS.md": "sha256:1efb819a009db4cd4fc4528024daebcf773f713862280d7f266f48ac89a56d63",
-        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:b6125cf67e6f76acf269588edeaaea40db95a64379c8ba8c52a8b8b59a2ee2d4",
-        "generated_specs_fingerprint": "c90d7a78288a21050213593e790c937dd8687f29e3dc5391cf1bb2eba8f0d425",
-        "generated_specs_manifest": "sha256:db4e0974a723a1c44bab7167abfb90d95ac0a7f03a06ecf613d22f23895b3f23",
-        "governance_context": "sha256:2afafac673cf4d6e62c551652fc95680e6f0e60475ad915922957b6cb027ed51",
-        "governance_material:.decapod/managed/Dockerfile.decapod": "sha256:ca95e9a3a295fda5b4de847d89f7eb57826fc0fa1b027f4f5d7ddd5acef20c1a",
-        "governance_material:AGENTS.md": "sha256:daa01102a96768fbd1c1682129012aba9a034761e84dfb8509a5c72723868ebd",
-        "governance_material:CLAUDE.md": "sha256:4fc36feb8830f46192b0df498e2d32f8e7c3337278b6de91d481259eed4b7fc3",
-        "governance_material:CODEX.md": "sha256:3a9ad61952b38cbcbb4bac9c8a3c84ccf6d72a347125f84dce4d0ce3f3986cae",
-        "governance_material:GEMINI.md": "sha256:36c79133cfa256421c753a5ca67896e7aa39192afe7ccb01cae8f9baa1261618",
-        "governance_section:claims": "sha256:1086379fb92379c1df8933a631694a44aa9405761fc5aa4de67eaff311aed229",
-        "governance_section:plan": "sha256:614c7d475ae5ec5efdd4b48274843c7c9075f6552f630a2c1a22c1d34a962985",
-        "living_spec_material:.decapod/managed/specs/ARCHITECTURE.md": "sha256:61a50f8d1b0671d8062fa9e19b0408f64f8d3184d3f65d7913bc0fcf782faab0",
-        "living_spec_material:.decapod/managed/specs/INTENT.md": "sha256:1cbe510641581ad8367521760c3dea580825ca49458eef0a5e4463e51e17198f",
-        "living_spec_material:.decapod/managed/specs/INTERFACES.md": "sha256:cdcc2ef823ff389e582ad088fcc795944ad1ab74e8cf1e576edfa88bda72e204",
+        "constitution:core/DECAPOD": "sha256:5bf7743217f39273d7656a601de68f2fc7d66b507926dd5db7e1bb191a0ddbb8",
+        "generated_spec:.decapod/managed/specs/ARCHITECTURE.md": "sha256:941c1aac0b320527bfdc8a6d6fbb0f783be6f154cb289dd9074eb3e0a2298183",
+        "generated_spec:.decapod/managed/specs/INTENT.md": "sha256:998f8690fdf42161a373782c09d8e7c58d3da32a4e69437025309aa087b39373",
+        "generated_spec:.decapod/managed/specs/INTERFACES.md": "sha256:6749a32cb886c9943804665d53b4e5f1f506e342ff60baefe44a231185126f18",
+        "generated_spec:.decapod/managed/specs/OPERATIONS.md": "sha256:8923834afafa9c0492d116d66d38d68d87a8f431572414123dec962021dd5095",
+        "generated_spec:.decapod/managed/specs/README.md": "sha256:449b9049a8393db671d9a45b748fa6f6d0f2e79222237bd70bab7cf9b5c2223e",
+        "generated_spec:.decapod/managed/specs/SECURITY.md": "sha256:41e2274435109126971fde106764a6ccfb666a496065e5e0d99e592a65ea853f",
+        "generated_spec:.decapod/managed/specs/SEMANTICS.md": "sha256:ffdab8ca4d189ebdc7a0100f65fd5e52ea25007837e61a9d1ca01b525aec5a9a",
+        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:9da78a500a391a857dc7a777f105a3eabd3676a9023ae1659638099f845fd417",
+        "generated_specs_fingerprint": "9c8d674dac16b4e6d6f39748f6fb5faaf48fe8a8e08adf63ae276d06db50866a",
+        "generated_specs_manifest": "sha256:6388e78029540346e857d056c2d340e4ad430610500eca10c7c9927ec2c7be68",
+        "governance_context": "sha256:1436e1b3c81c5d6a3296dea0a59df55c561a1e6863c3e80ba4666fdc18071b3c",
+        "governance_material:.decapod/managed/Dockerfile.decapod": "sha256:74d3941dbee69f95ef7c34715ad8b5f9120e10fe527fe8d5e745397e709d597e",
+        "governance_material:AGENTS.md": "sha256:9aa28458b37fe535bddac458395aa0d4f2eaa2a729316f729580823006389929",
+        "governance_material:CLAUDE.md": "sha256:20996c562acb474beb10176d77871e84b7604f2ce595d090ebcc31ce089c4d7a",
+        "governance_material:CODEX.md": "sha256:2a6fa954bdfdfc1cfb7a9b1d70022816b624f8d458833b0cc7d58dc795e45388",
+        "governance_material:GEMINI.md": "sha256:0588c8946f1ddc26fbe028727aa0d64bba48b15f52adcd4244bfc4bf48a83856",
+        "governance_section:claims": "sha256:3d1b94e726c48d62276fe1607f1eec523f74a8a896fb4aaf9fa8367a7bc29af5",
+        "governance_section:plan": "sha256:3d2c67d74e394a6e4e44748ea36e7537e7cf91ef7d87cb3a7f663c3146bfeca4",
+        "living_spec_material:.decapod/managed/specs/ARCHITECTURE.md": "sha256:5e94488af0462f9a590c8e4bb85af669648ae131c4910567d75c74f368b47a66",
+        "living_spec_material:.decapod/managed/specs/INTENT.md": "sha256:771d8fff2d139237a70aa2c755e6da7828a1d68837a5a6238dfa6efe871afd05",
+        "living_spec_material:.decapod/managed/specs/INTERFACES.md": "sha256:6a0e127fddc2f953332fba95d73ddc12a7f81fa1fa3463bf4ba453152e3a85af",
         "living_spec_material:.decapod/managed/specs/OPERATIONS.md": "sha256:b43e9fa0eef9fb3e28d84cc5386c79f64f1f3cb9a37a1b8834bbb84e24dbea17",
         "living_spec_material:.decapod/managed/specs/README.md": "sha256:0988c85d6c05f02d52684c9aafae50e95fd5d5576739d3e9d995af682697fd99",
-        "living_spec_material:.decapod/managed/specs/SECURITY.md": "sha256:353381255fd9d218b8003db4aa442158ba62ce252a087c03ea3c08cfb730a5ad",
+        "living_spec_material:.decapod/managed/specs/SECURITY.md": "sha256:fad25097cdc5021bc205363ad53bd1e8883457ca487f07bf57e15318d4df8d61",
         "living_spec_material:.decapod/managed/specs/SEMANTICS.md": "sha256:92bbe2607c6f8f94191a95ea977d9785f3472a0fae2835520dd86eae73130d5c",
-        "living_spec_material:.decapod/managed/specs/VALIDATION.md": "sha256:ec2f8da4c3984431b40e7f2d007c55ac7e9d5e54f3a253f649921e2b85df6602",
+        "living_spec_material:.decapod/managed/specs/VALIDATION.md": "sha256:748ac1432730fbbaa5cf6c06a18bd3bdcb0269ba5e899d728aa4d69a3465d17b",
         "proof_rubric": "sha256:99e8ef25629da391e9b479db9fff52b82f340224f7a69d8a88d2992ae8e90466",
         "validation_profile": "sha256:37a8eec1ce19687d132fe29051dca629d164e2c4958ba141d5f4133a33f0688f"
       },
@@ -156,74 +161,82 @@
       },
       "deferred_questions": [],
       "human_questions": [],
-      "intent": "Keep keyboard-driven brightness and sound sliders live; give Apple a native click menu; show the active application only in the left bar and nest all actual application menu headings in a click-open pane with hover submenus, ownership checks, actual disabled states and shortcuts.",
+      "intent": "Themed Apple actions; three recent saved Wi-Fi choices and native Wi-Fi availability picker without Location access or custom scanning; normal dock reopen behavior and Dock-only bottom-edge reveal filtering with rollback.",
       "phases": [],
       "proof_hooks": [
-        "Native menu guards and configured checks; installed click-only root and actual hover submenu evidence after macOS Accessibility consent; retain live level and native Apple runtime proofs."
+        "No CoreLocation dependency/purpose string/request remains; top-three saved-network ordering, argv and failure tests; native/host checks, installed Apple/app panes, disposable-app dock reopen and fullscreen native-Dock suppression proofs; exact-candidate full validation and macOS/Linux CI."
       ],
       "schema_version": "1.1.0",
       "spec_reviews": [
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/ARCHITECTURE.md",
-          "reason": "Reviewed click-only app-name root, actual AX heading ownership/order, hover expansion, explicit dismissal and two-index allowlist. Native and shell checks pass; actual AX runtime verification awaits final-build OS consent.",
-          "reviewed_code_fingerprint": "c90d7a78288a21050213593e790c937dd8687f29e3dc5391cf1bb2eba8f0d425",
-          "spec_material_hash": "61a50f8d1b0671d8062fa9e19b0408f64f8d3184d3f65d7913bc0fcf782faab0"
+          "reason": "Final full architecture review includes current conditional Mission Control detection and public bundle registration.",
+          "reviewed_code_fingerprint": "9c8d674dac16b4e6d6f39748f6fb5faaf48fe8a8e08adf63ae276d06db50866a",
+          "spec_material_hash": "5e94488af0462f9a590c8e4bb85af669648ae131c4910567d75c74f368b47a66"
         },
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/INTERFACES.md",
-          "reason": "Reviewed click-only app-name root, actual AX heading ownership/order, hover expansion, explicit dismissal and two-index allowlist. Native and shell checks pass; actual AX runtime verification awaits final-build OS consent.",
-          "reviewed_code_fingerprint": "c90d7a78288a21050213593e790c937dd8687f29e3dc5391cf1bb2eba8f0d425",
-          "spec_material_hash": "cdcc2ef823ff389e582ad088fcc795944ad1ab74e8cf1e576edfa88bda72e204"
+          "reason": "Current interfaces retain scoped lifecycle, saved Wi-Fi choices, normal dock reopen and themed Apple actions.",
+          "reviewed_code_fingerprint": "9c8d674dac16b4e6d6f39748f6fb5faaf48fe8a8e08adf63ae276d06db50866a",
+          "spec_material_hash": "6a0e127fddc2f953332fba95d73ddc12a7f81fa1fa3463bf4ba453152e3a85af"
         },
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/SECURITY.md",
-          "reason": "Reviewed click-only app-name root, actual AX heading ownership/order, hover expansion, explicit dismissal and two-index allowlist. Native and shell checks pass; actual AX runtime verification awaits final-build OS consent.",
-          "reviewed_code_fingerprint": "c90d7a78288a21050213593e790c937dd8687f29e3dc5391cf1bb2eba8f0d425",
-          "spec_material_hash": "353381255fd9d218b8003db4aa442158ba62ce252a087c03ea3c08cfb730a5ad"
+          "reason": "No Location request or scanner; literal password-free Wi-Fi argv, private history, narrow process-targeted mouse-motion filter and explicit rollback.",
+          "reviewed_code_fingerprint": "9c8d674dac16b4e6d6f39748f6fb5faaf48fe8a8e08adf63ae276d06db50866a",
+          "spec_material_hash": "fad25097cdc5021bc205363ad53bd1e8883457ca487f07bf57e15318d4df8d61"
         }
       ],
       "state": "APPROVED",
       "stop_conditions": [],
-      "title": "Live controls and nested native application menus",
+      "title": "Themed Apple pane, private saved Wi-Fi and reliable dock behavior",
       "todo_ids": [
-        "code_01m55e0n7a4egzg6"
+        "code_01m566mvej5yhp01"
       ],
       "unknowns": [],
       "unresolved_contradictions": [],
-      "updated_at": "1792264645Z"
+      "updated_at": "1792290665Z"
     },
     "trajectory": {
       "active_boundaries": [
-        "Own claimed worktree; OS consent remains user-controlled; no session actions in tests"
+        "No Location consent or scanner, private SSIDs/history, no real Wi-Fi switch in tests, manual Calendar and Accessibility, existing Mission Control layer-detection gap preserved explicitly."
       ],
-      "artifact_hash": "sha256:8dfdc33ddb3c624827f23bfc02b8ee71b4a98f572afdcbb27bc38c45e0f009a6",
+      "artifact_hash": "sha256:f6927b561e6a4afad67b9862bc7209b7e5865bb9c984d1d5181daa8bdfa72828",
       "checks": [
         {
-          "name": "actual-AX-submenus",
-          "status": "unavailable"
+          "name": "app-hover-submenus",
+          "status": "passed"
+        },
+        {
+          "name": "apple-pane",
+          "status": "passed"
         },
         {
           "name": "decapod validate",
           "status": "passed"
         },
         {
-          "name": "host-suite",
+          "name": "dock-reopen",
           "status": "passed"
         },
         {
-          "name": "installed-app-pane",
+          "name": "fullscreen-native-dock-suppression",
           "status": "passed"
         },
         {
-          "name": "installed-apple",
+          "name": "host-92-tests",
           "status": "passed"
         },
         {
-          "name": "installed-live-levels",
+          "name": "installed-no-location",
           "status": "passed"
+        },
+        {
+          "name": "mission-control-detector",
+          "status": "failed"
         }
       ],
       "current_phase": "validation",
@@ -231,67 +244,78 @@
         "events": [
           {
             "event_id": "event:2",
-            "intent_id": "intent:nested-controls-20261017",
+            "intent_id": "intent:apple-wifi-119-final",
             "kind": "created",
             "sequence": 2
           },
           {
             "event_id": "event:3",
-            "intent_id": "intent:nested-controls-20261017",
+            "intent_id": "intent:apple-wifi-119-final",
             "kind": "refined",
             "sequence": 3
           },
           {
-            "detail": "trajectory:nested-controls-20261017",
+            "detail": "trajectory:apple-wifi-119-final",
             "event_id": "event:4",
-            "intent_id": "intent:nested-controls-20261017",
+            "intent_id": "intent:apple-wifi-119-final",
             "kind": "trajectory_step_recorded",
             "sequence": 4
           },
           {
-            "detail": "trajectory:nested-controls-20261017",
+            "detail": "trajectory:apple-wifi-119-final",
             "event_id": "event:5",
-            "intent_id": "intent:nested-controls-20261017",
+            "intent_id": "intent:apple-wifi-119-final",
             "kind": "trajectory_step_recorded",
             "sequence": 5
+          },
+          {
+            "detail": "trajectory:apple-wifi-119-final",
+            "event_id": "event:6",
+            "intent_id": "intent:apple-wifi-119-final",
+            "kind": "trajectory_step_recorded",
+            "sequence": 6
           }
         ],
         "knowledge_candidates": [],
-        "next_sequence": 5,
+        "next_sequence": 6,
         "schema_version": "1.0.0",
         "trajectories": {
-          "nested-controls-20261017": {
+          "apple-wifi-119-final": {
             "evidence_only": true,
-            "id": "nested-controls-20261017",
-            "intent_id": "intent:nested-controls-20261017",
+            "id": "apple-wifi-119-final",
+            "intent_id": "intent:apple-wifi-119-final",
             "steps": [
               {
-                "action": "verification",
+                "action": "trajectory.record",
                 "custody_event_id": "event:4",
                 "observations": [
                   "scripts/app-menu.m",
-                  "scripts/app-menu.m",
-                  ".config/sketchybar/sketchybarrc",
-                  ".config/sketchybar/plugins/status.sh",
+                  "scripts/desktop-edge.m",
+                  "scripts/desktop.py",
+                  ".config/sketchybar/plugins/controls.py",
                   "tests/test_desktop.py",
-                  "target/dotfiles-nested-host-check.txt",
-                  "target/dotfiles-nested-live-proof.json",
-                  "target/dotfiles-controls-live-proof.json",
-                  "target/dotfiles-apple-live-proof.json"
+                  "/private/tmp/dotfiles-apple-wifi-host-check.txt",
+                  "/private/tmp/dotfiles-no-location-proof.json",
+                  "/private/tmp/dotfiles-production-guard-proof.json",
+                  "/private/tmp/dotfiles-dock-reopen-proof.json",
+                  "/private/tmp/dotfiles-nested-live-proof.json"
                 ],
                 "proof_refs": [
-                  "host-suite",
-                  "installed-apple",
-                  "installed-live-levels",
-                  "installed-app-pane",
-                  "actual-AX-submenus"
+                  "host-92-tests",
+                  "installed-no-location",
+                  "apple-pane",
+                  "app-hover-submenus",
+                  "dock-reopen",
+                  "fullscreen-native-dock-suppression",
+                  "mission-control-detector"
                 ],
                 "scope": [
-                  "SketchyBar config, native menu bridge, tests, living specs"
+                  "dotfiles"
                 ],
                 "sequence": 4,
                 "validation_findings": [
-                  "Final helper is healthy with Calendar access3. App pane consent fallback and click-only/toggle/persistence verified; actual AX submenu contents and commands remain unverified until user grants Accessibility to the exact current app. No sleep/power/lock/logout/force-quit action executed."
+                  "Existing Mission Control detector expects Dock layer 18; this OS uses layer 20. Normal native entry/exit works, but helper flag/bar suppression there remains a documented compatibility gap outside this privacy/menu/dock-reopen correction.",
+                  "Official 0.119.0 image is still publishing. Proof runtime uses Ubuntu 24.04 and checksum-verified official aarch64 Linux release binary sha256:752751f6eb87a3d6a443e432b3f01bfdf7e08d17b728951dd35f077277d592cc; earlier Debian runtime rejected its GLIBC_2.39 dependency."
                 ]
               },
               {
@@ -301,55 +325,73 @@
                 "observations": [
                   ".decapod/governance.json",
                   ".decapod/governance.json",
-                  "validation epoch ve_a3d30fa9a96c75ba completed with zero failures"
+                  "validation epoch ve_2a8abd576c45b505 completed with zero failures"
                 ],
                 "proof_refs": [
                   "decapod validate"
                 ],
                 "scope": [
-                  "SketchyBar config, native menu bridge, tests, living specs"
+                  "dotfiles"
                 ],
                 "sequence": 5,
                 "validation_findings": []
+              },
+              {
+                "action": "trajectory.record",
+                "command": "Preserved original task commits on local archive/code_01m566mvej5yhp01-before-checkpoint-repair and soft-reset only owned work branch to accepted f167cb1; all authored changes retained staged for one correctly checkpointed candidate.",
+                "custody_event_id": "event:6",
+                "observations": [],
+                "proof_refs": [],
+                "scope": [
+                  "dotfiles"
+                ],
+                "sequence": 6,
+                "validation_findings": [
+                  "Per-commit checkpoint failure on historical 53905f7 requires rebuilding this owned PR history; no required check is disabled."
+                ]
               }
             ]
           }
         }
       },
       "declared_commands": [
+        "Preserved original task commits on local archive/code_01m566mvej5yhp01-before-checkpoint-repair and soft-reset only owned work branch to accepted f167cb1; all authored changes retained staged for one correctly checkpointed candidate.",
         "decapod validate"
       ],
       "evidence": [
-        "target/dotfiles-apple-live-proof.json",
-        "target/dotfiles-controls-live-proof.json",
-        "target/dotfiles-nested-host-check.txt",
-        "target/dotfiles-nested-live-proof.json",
-        "validation epoch ve_a3d30fa9a96c75ba completed with zero failures"
+        "/private/tmp/dotfiles-apple-wifi-host-check.txt",
+        "/private/tmp/dotfiles-dock-reopen-proof.json",
+        "/private/tmp/dotfiles-nested-live-proof.json",
+        "/private/tmp/dotfiles-no-location-proof.json",
+        "/private/tmp/dotfiles-production-guard-proof.json",
+        "validation epoch ve_2a8abd576c45b505 completed with zero failures"
       ],
       "inspected_files": [
-        "scripts/app-menu.m"
-      ],
-      "intent_id": "intent:nested-controls-20261017",
-      "modified_files": [
-        ".config/sketchybar/plugins/status.sh",
-        ".config/sketchybar/sketchybarrc",
-        ".decapod/governance.json",
+        ".config/sketchybar/plugins/controls.py",
         "scripts/app-menu.m",
+        "scripts/desktop-edge.m",
+        "scripts/desktop.py",
         "tests/test_desktop.py"
+      ],
+      "intent_id": "intent:apple-wifi-119-final",
+      "modified_files": [
+        ".decapod/governance.json"
       ],
       "next_transitions": [
         "publish"
       ],
       "repo_scope": [
-        "SketchyBar config, native menu bridge, tests, living specs"
+        "dotfiles"
       ],
-      "run_id": "nested-controls-20261017",
+      "run_id": "apple-wifi-119-final",
       "schema_version": "1.1.0",
       "shortcut_risk_signals": [],
-      "task_id": "code_01m55e0n7a4egzg6",
+      "task_id": "code_01m566mvej5yhp01",
       "tool_calls": [],
       "unresolved_assumptions": [
-        "Final helper is healthy with Calendar access3. App pane consent fallback and click-only/toggle/persistence verified; actual AX submenu contents and commands remain unverified until user grants Accessibility to the exact current app. No sleep/power/lock/logout/force-quit action executed."
+        "Existing Mission Control detector expects Dock layer 18; this OS uses layer 20. Normal native entry/exit works, but helper flag/bar suppression there remains a documented compatibility gap outside this privacy/menu/dock-reopen correction.",
+        "Official 0.119.0 image is still publishing. Proof runtime uses Ubuntu 24.04 and checksum-verified official aarch64 Linux release binary sha256:752751f6eb87a3d6a443e432b3f01bfdf7e08d17b728951dd35f077277d592cc; earlier Debian runtime rejected its GLIBC_2.39 dependency.",
+        "Per-commit checkpoint failure on historical 53905f7 requires rebuilding this owned PR history; no required check is disabled."
       ]
     },
     "validation": {
@@ -361,35 +403,35 @@
         ],
         "result": "review"
       },
-      "decapod_release": "0.118.0",
+      "decapod_release": "0.119.0",
       "drift_findings": [],
-      "elapsed_ms": 2243,
-      "epoch_ref": "ve_a3d30fa9a96c75ba",
+      "elapsed_ms": 2136,
+      "epoch_ref": "ve_2a8abd576c45b505",
       "fail_count": 0,
       "failures": [],
       "gate_timings": [
         {
-          "elapsed_ms": 693,
+          "elapsed_ms": 644,
           "name": "validate_project_specs_docs"
         },
         {
-          "elapsed_ms": 323,
+          "elapsed_ms": 347,
           "name": "validate_stale_workspaces"
         },
         {
-          "elapsed_ms": 318,
+          "elapsed_ms": 319,
           "name": "validate_markdown_primitives_roundtrip_gate"
         },
         {
-          "elapsed_ms": 143,
+          "elapsed_ms": 138,
           "name": "validate_machine_contract"
         },
         {
-          "elapsed_ms": 141,
+          "elapsed_ms": 102,
           "name": "validate_git_workspace_context"
         },
         {
-          "elapsed_ms": 113,
+          "elapsed_ms": 102,
           "name": "validate_obligations"
         },
         {
@@ -397,11 +439,15 @@
           "name": "validate_legacy_jsonl_retired"
         },
         {
-          "elapsed_ms": 38,
+          "elapsed_ms": 35,
           "name": "validate_archive_integrity"
         },
         {
-          "elapsed_ms": 33,
+          "elapsed_ms": 22,
+          "name": "validate_git_protected_branch"
+        },
+        {
+          "elapsed_ms": 20,
           "name": "validate_repomap_determinism"
         },
         {
@@ -409,79 +455,55 @@
           "name": "validate_schema_determinism"
         },
         {
-          "elapsed_ms": 17,
-          "name": "validate_git_protected_branch"
-        },
-        {
-          "elapsed_ms": 16,
+          "elapsed_ms": 15,
           "name": "validate_control_plane_contract"
         },
         {
-          "elapsed_ms": 15,
-          "name": "validate_trajectory_artifacts_if_present"
-        },
-        {
           "elapsed_ms": 13,
-          "name": "validate_git_push_pr_gate"
-        },
-        {
-          "elapsed_ms": 12,
-          "name": "validate_jev_history_if_present"
-        },
-        {
-          "elapsed_ms": 12,
-          "name": "validate_no_legacy_namespaces"
-        },
-        {
-          "elapsed_ms": 12,
           "name": "validate_federation_gates"
         },
         {
           "elapsed_ms": 11,
-          "name": "validate_validation_receipt_if_present"
+          "name": "validate_git_push_pr_gate"
         },
         {
           "elapsed_ms": 11,
-          "name": "validate_lineage_hard_gate"
+          "name": "validate_no_legacy_namespaces"
         },
         {
           "elapsed_ms": 9,
+          "name": "validate_lineage_hard_gate"
+        },
+        {
+          "elapsed_ms": 7,
           "name": "validate_gatekeeper_gate"
         },
         {
-          "elapsed_ms": 6,
-          "name": "validate_research_claims_if_present"
-        },
-        {
-          "elapsed_ms": 6,
-          "name": "validate_plan_governed_execution_gate"
-        },
-        {
-          "elapsed_ms": 4,
+          "elapsed_ms": 3,
           "name": "validate_generated_artifact_whitelist"
         },
         {
-          "elapsed_ms": 4,
-          "name": "validate_knowledge_promotions_if_present"
-        },
-        {
-          "elapsed_ms": 4,
-          "name": "validate_watcher_audit"
+          "elapsed_ms": 3,
+          "name": "validate_plan_governed_execution_gate"
         },
         {
           "elapsed_ms": 3,
-          "name": "validate_recursive_improvement_passes_if_present"
+          "name": "validate_watcher_audit"
         },
         {
           "elapsed_ms": 3,
           "name": "validate_lcm_immutability"
         },
         {
-          "elapsed_ms": 2,
+          "elapsed_ms": 3,
+          "name": "validate_knowledge_promotions_if_present"
+        },
+        {
+          "elapsed_ms": 3,
           "name": "validate_knowledge_integrity"
         },
         {
-          "elapsed_ms": 2,
+          "elapsed_ms": 3,
           "name": "validate_lcm_rebuild_gate"
         },
         {
@@ -489,12 +511,24 @@
           "name": "validate_entrypoint_invariants"
         },
         {
-          "elapsed_ms": 1,
-          "name": "validate_health_purity"
+          "elapsed_ms": 2,
+          "name": "validate_trajectory_artifacts_if_present"
+        },
+        {
+          "elapsed_ms": 2,
+          "name": "validate_policy_integrity"
+        },
+        {
+          "elapsed_ms": 2,
+          "name": "validate_research_claims_if_present"
         },
         {
           "elapsed_ms": 1,
-          "name": "validate_policy_integrity"
+          "name": "validate_validation_receipt_if_present"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_jev_history_if_present"
         },
         {
           "elapsed_ms": 1,
@@ -506,11 +540,15 @@
         },
         {
           "elapsed_ms": 1,
-          "name": "validate_canon_mutation"
+          "name": "validate_recursive_improvement_passes_if_present"
         },
         {
           "elapsed_ms": 1,
-          "name": "validate_spec_drift"
+          "name": "validate_health_purity"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_canon_mutation"
         },
         {
           "elapsed_ms": 1,
@@ -518,11 +556,15 @@
         },
         {
           "elapsed_ms": 1,
-          "name": "validate_health_cache_integrity"
+          "name": "validate_spec_drift"
         },
         {
-          "elapsed_ms": 0,
+          "elapsed_ms": 1,
           "name": "validate_risk_map_violations"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_health_cache_integrity"
         },
         {
           "elapsed_ms": 0,
@@ -530,11 +572,7 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_workunit_manifests_if_present"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_context_capsule_policy_contract"
+          "name": "validate_heartbeat_invocation_gate"
         },
         {
           "elapsed_ms": 0,
@@ -542,7 +580,7 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_heartbeat_invocation_gate"
+          "name": "validate_context_capsule_policy_contract"
         },
         {
           "elapsed_ms": 0,
@@ -550,15 +588,11 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_context_capsules_if_present"
-        },
-        {
-          "elapsed_ms": 0,
           "name": "validate_repo_map"
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_internalization_artifacts_if_present"
+          "name": "validate_workunit_manifests_if_present"
         },
         {
           "elapsed_ms": 0,
@@ -566,7 +600,7 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_interface_contract_bootstrap"
+          "name": "validate_internalization_artifacts_if_present"
         },
         {
           "elapsed_ms": 0,
@@ -578,11 +612,15 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_eval_gate_if_required"
+          "name": "validate_context_capsules_if_present"
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_coplayer_policy_tightening"
+          "name": "validate_interface_contract_bootstrap"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_eval_gate_if_required"
         },
         {
           "elapsed_ms": 0,
@@ -590,27 +628,31 @@
         },
         {
           "elapsed_ms": 0,
+          "name": "validate_coplayer_policy_tightening"
+        },
+        {
+          "elapsed_ms": 0,
           "name": "validate_tooling_gate"
         }
       ],
-      "git_revision": "04b06c39c04b8c80bf7aa958f9c4103433b1d278",
+      "git_revision": "5ad921d29ae72fc94082d1092b202c756455cf74",
       "kind": "validation_receipt",
       "parallelism": 1,
       "pass_count": 188,
       "prediction_uses_warnings": true,
-      "receipt_hash": "sha256:4de34e73ceb2ebbc925664b40fa4f3f469bbeb79bcec4128322ffb9d2cd403c6",
-      "repo_signal_fingerprint": "c90d7a78288a21050213593e790c937dd8687f29e3dc5391cf1bb2eba8f0d425",
+      "receipt_hash": "sha256:1d503bcc086a5d3395441adb4dd5d17b1a291e71408ef12a86259bd20c447c86",
+      "repo_signal_fingerprint": "9c8d674dac16b4e6d6f39748f6fb5faaf48fe8a8e08adf63ae276d06db50866a",
       "schema_version": "1.0.0",
       "status": "ok",
       "temporary_artifacts_cleaned": 0,
-      "trajectory_artifact_hash": "sha256:8dfdc33ddb3c624827f23bfc02b8ee71b4a98f572afdcbb27bc38c45e0f009a6",
-      "trajectory_run_id": "nested-controls-20261017",
+      "trajectory_artifact_hash": "sha256:f6927b561e6a4afad67b9862bc7209b7e5865bb9c984d1d5181daa8bdfa72828",
+      "trajectory_run_id": "apple-wifi-119-final",
       "warn_count": 4,
       "warnings": [
+        "No open pull request found on GitHub for branch 'agent/unknown/code_01m566mvej5yhp01'. Create a PR only after intent is converged, the branch is mergeable, and full exact-candidate validation succeeds against the accepted target.",
         "Risk map missing (run `decapod riskmap init`)",
-        "Stale workspaces preserved for explicit review: <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (current_workspace: workspace contains the current process; rerun prune from the host checkout after leaving this workspace so Git can release the branch)",
-        "Watcher audit trail missing (run `decapod govern watcher run`)",
-        "Workspace branch 'agent/unknown/code_01m55e0n7a4egzg6' has unpushed commits or does not exist on origin. Branch pushes and iteration are allowed before preflight; hold PR creation until intent is converged, the branch is mergeable, and full `decapod validate` succeeds against the exact current candidate and accepted target."
+        "Stale workspaces preserved for explicit review: <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (current_workspace: workspace contains the current process; rerun prune from the host checkout after leaving this workspace so Git can release the branch), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.)",
+        "Watcher audit trail missing (run `decapod govern watcher run`)"
       ]
     }
   }

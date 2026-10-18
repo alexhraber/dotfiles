@@ -79,7 +79,11 @@ Space and display changes. Serial background SketchyBar IPC avoids blocking
 animations. SkyLight menu suppression is health-guarded and restored on ordinary
 termination or bar failure. A Mission Control observer temporarily suppresses
 custom surfaces. Built-in brightness uses dynamically resolved DisplayServices.
-No injection, event tap, SIP change or cursor warping is required.
+No injection, SIP change or cursor warping is required. A CGEventTapCreateForPid
+filter targets only the native Dock’s mouse-motion events at the outer bottom
+two points. It requires Accessibility, excludes connected-display seams and
+detected Mission Control, reattaches after Dock restarts, and detaches on health failure
+or restore. Other event types pass unchanged.
 DockView.step uses elapsed-time exponential smoothing rather than per-frame
 increments, with exact settlement tolerances and an animation timer capped to
 the target display's 30–120 Hz range. Settled animation ticks do not invalidate
@@ -188,7 +192,7 @@ scripts/calendar-panel.m owns an EventKit store, 42-day grid and selected-day
 agenda. Calendar reads run on a serial queue and stale month responses are
 rejected by revision. Permission requests occur only on an explicit local
 connect action. Source selection is private; event content remains in memory.
-scripts/app-menu.m gives the Apple icon a click-only AppKit NSMenu. Its
+scripts/app-menu.m gives the Apple icon a click-only themed MenuPanel. Its
 placement uses the bar's explicit y=4 and maximum 40-point height, rather than
 adding a second notch-safe-area inset. Fixed enum
 actions resolve installed About This Mac, Settings, App Store and System
@@ -197,9 +201,20 @@ of running foreground apps with Cancel as the default and acts only after the
 user selects an app and confirms. Lock Screen dynamically resolves the installed
 login framework's SACLockScreenImmediate symbol; unavailable support disables
 the item. Sleep and confirmation-based restart/shutdown/logout use fixed Apple
-events to loginwindow. Native menu tracking keeps the bar open until selection
+events to loginwindow. The shared panel loop keeps the bar open until selection
 or dismissal; Apple hover only highlights and does not read the AX tree.
 The same source reads the frontmost app’s AX menu bar on a background queue.
+Apple entries use a validated fixed action enum and the shared MenuRow
+renderer; the key-capable MenuPanel supports Escape without AX permission.
+DockView uses NSWorkspace openApplicationAtURL with activation enabled and
+createsNewApplicationInstance disabled, preserving normal reopen semantics.
+desktop.py registers the complete signed bundle through public LSRegisterURL
+before activation, including cached builds launched directly by launchd.
+controls.py reads saved Wi-Fi profiles through networksetup, preserves literal
+SSID arguments, limits choices to three and stores successful selection times
+in private bar/wifi-recent.json. It neither links CoreLocation nor scans nearby
+networks; availability belongs to the native Wi-Fi quick panel.
+
 The bar contains only Apple and front_app; status.sh opens the app menu on click,
 not hover. Index 1 reads a fresh menu tree for the current PID and renders every
 top-level heading except Apple in a themed root pane, preserving order and AX
@@ -310,7 +325,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `c90d7a78288a21050213593e790c937dd8687f29e3dc5391cf1bb2eba8f0d425`
+- Repository signal fingerprint: `9c8d674dac16b4e6d6f39748f6fb5faaf48fe8a8e08adf63ae276d06db50866a`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
