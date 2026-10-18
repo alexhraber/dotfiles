@@ -86,6 +86,12 @@ static BOOL validDocument(id value) {
     if (![rows isKindOfClass:NSArray.class] || !rows.count || rows.count>14) return NO;
     for (id row in rows) if (![row isKindOfClass:NSDictionary.class] || ![row[@"text"] isKindOfClass:NSString.class]
         || [row[@"text"] length]>512 || ![row[@"action"] isKindOfClass:NSNumber.class]) return NO;
+    for (NSDictionary *row in rows) {
+        for (NSString *key in @[@"detail",@"hint"])
+            if (row[key] && (![row[key] isKindOfClass:NSString.class] || [row[key] length]>160)) return NO;
+        for (NSString *key in @[@"selected",@"section"])
+            if (row[key] && ![row[key] isKindOfClass:NSNumber.class]) return NO;
+    }
     id slider=value[@"slider"];
     if (slider && (![slider isKindOfClass:NSNumber.class] || !isfinite([slider doubleValue]) || [slider doubleValue]<0 || [slider doubleValue]>100
         || ![@[@"volume",@"brightness"] containsObject:value[@"name"]])) return NO;
@@ -157,6 +163,9 @@ static NSDictionary *readDocument(void) {
 
 @interface ControlRow : NSButton
 @property BOOL hovered;
+@property BOOL selected;
+@property NSString *detail;
+@property NSString *hint;
 @end
 @implementation ControlRow
 - (void)updateTrackingAreas {
@@ -168,19 +177,18 @@ static NSDictionary *readDocument(void) {
 - (void)mouseExited:(__unused NSEvent *)event { self.hovered=NO; self.needsDisplay=YES; }
 - (void)drawRect:(__unused NSRect)dirty {
     if (self.hovered || self.highlighted) {
-        [DFPanelColor(0x202735) setFill]; [[NSBezierPath bezierPathWithRoundedRect:NSInsetRect(self.bounds,0,1) xRadius:9 yRadius:9] fill];
+        [DFPanelColor(0x202735) setFill];
+        [[NSBezierPath bezierPathWithRoundedRect:NSInsetRect(self.bounds,2,1) xRadius:7 yRadius:7] fill];
     }
-    NSDictionary *style=@{NSFontAttributeName:[NSFont systemFontOfSize:12 weight:NSFontWeightMedium], NSForegroundColorAttributeName:DFPanelColor(0xb8a6ff)};
-    NSString *text=self.title;
+    NSDictionary *style=@{NSFontAttributeName:[NSFont systemFontOfSize:12 weight:NSFontWeightMedium], NSForegroundColorAttributeName:DFPanelColor(0xe6edf7)};
     NSMutableParagraphStyle *paragraph=[NSMutableParagraphStyle new]; paragraph.lineBreakMode=NSLineBreakByTruncatingTail;
     NSMutableDictionary *attributes=style.mutableCopy; attributes[NSParagraphStyleAttributeName]=paragraph;
-    [[DFPanelColor(0xb8a6ff) colorWithAlphaComponent:0.09] setFill];
-    [[NSBezierPath bezierPathWithRoundedRect:NSMakeRect(8,6,24,24) xRadius:7 yRadius:7] fill];
-    NSString *glyph=[text hasPrefix:@"●"] ? @"●" : @"›";
-    [glyph drawAtPoint:NSMakePoint(15,9) withAttributes:style];
-    if ([text hasPrefix:@"● "] || [text hasPrefix:@"○ "]) text=[text substringFromIndex:2];
-    [text drawInRect:NSMakeRect(42,9,self.bounds.size.width-70,18) withAttributes:attributes];
-    [@"›" drawAtPoint:NSMakePoint(self.bounds.size.width-21,7) withAttributes:style];
+    NSString *detail=self.hovered && self.hint.length ? self.hint : self.detail ?: @"";
+    NSDictionary *detailStyle=@{NSFontAttributeName:[NSFont systemFontOfSize:10 weight:NSFontWeightMedium], NSForegroundColorAttributeName:DFPanelColor(self.hovered || self.selected ? 0xb8a6ff : 0x94a3b8)};
+    CGFloat trailing=detail.length ? MIN(100,[detail sizeWithAttributes:detailStyle].width+12) : 0;
+    [self.title drawInRect:NSMakeRect(24,8,self.bounds.size.width-36-trailing,18) withAttributes:attributes];
+    if (self.selected) [@"✓" drawAtPoint:NSMakePoint(8,8) withAttributes:style];
+    if (detail.length) [detail drawInRect:NSMakeRect(self.bounds.size.width-trailing,9,trailing-8,16) withAttributes:detailStyle];
 }
 @end
 
@@ -371,7 +379,12 @@ static void runControl(NSString *kind, NSString *argument) {
         NSDictionary *row=rows[i]; CGFloat height=rowHeight(row); NSRect rect=NSMakeRect(0,rowY,documentWidth,height-2); rowY+=height;
         if ([row[@"action"] boolValue]) {
             ControlRow *button=[[ControlRow alloc] initWithFrame:rect]; button.title=row[@"text"]; button.bordered=NO; button.tag=i;
+            button.toolTip=button.title;
+            button.detail=row[@"detail"]; button.hint=row[@"hint"]; button.selected=[row[@"selected"] boolValue];
+            button.accessibilityLabel=[@[button.title,button.detail ?: @"",button.hint ?: @""] componentsJoinedByString:@", "];
             button.target=self; button.action=@selector(clicked:); [document addSubview:button];
+        } else if ([row[@"section"] boolValue]) {
+            text(document,[row[@"text"] uppercaseString],NSMakeRect(24,rect.origin.y+10,documentWidth-36,16),9,DFPanelColor(0x94a3b8),NSFontWeightSemibold);
         } else if (statPanel(controlDocument)) {
             NSUInteger index=i-1;
             NSArray *parts=[row[@"text"] componentsSeparatedByString:@" · "];
@@ -479,7 +492,9 @@ static void acknowledgeDismissal(NSString *request) {
     unlink(temporary.fileSystemRepresentation);
 }
 void DFControlsHide(void) {
-    if (controlPanel.visible) {
+    // AppKit can hide a panel before the Space-change callback arrives.
+    // Acknowledge the pinned request even when it has already become invisible.
+    if (controlDocument) {
         dismissedRequest=controlDocument[@"request"];
         if ([controlDocument[@"pinned"] boolValue]) acknowledgeDismissal(dismissedRequest);
     }
@@ -507,6 +522,23 @@ NSDictionary *DFControlsStatus(void) {
              @"pinned":@([controlDocument[@"pinned"] boolValue]),@"frame":@[@(frame.origin.x),@(frame.origin.y),@(frame.size.width),@(frame.size.height)]};
 }
 int DFControlsSelfTest(void) {
+    // A panel hidden by AppKit still needs to release its backend pin.
+    NSString *savedDirectory=controlDirectory; NSDictionary *savedDocument=controlDocument;
+    NSString *savedDismissed=dismissedRequest;
+    char *temporary=strdup([[NSTemporaryDirectory() stringByAppendingPathComponent:@"dotfiles-controls-test-XXXXXX"] fileSystemRepresentation]);
+    if (!mkdtemp(temporary)) { free(temporary); return 1; }
+    controlDirectory=[NSString stringWithUTF8String:temporary]; free(temporary);
+    NSString *barDirectory=[controlDirectory stringByAppendingPathComponent:@"bar"];
+    [NSFileManager.defaultManager createDirectoryAtPath:barDirectory withIntermediateDirectories:NO attributes:@{NSFilePosixPermissions:@0700} error:nil];
+    controlDocument=@{@"request":@"hidden-pin",@"pinned":@YES}; DFControlsHide();
+    NSData *ack=[NSData dataWithContentsOfFile:[barDirectory stringByAppendingPathComponent:@"native-dismissed.json"]];
+    NSDictionary *dismissal=ack ? [NSJSONSerialization JSONObjectWithData:ack options:0 error:nil] : nil;
+    BOOL released=[dismissal[@"request"] isEqual:@"hidden-pin"];
+    controlDocument=@{@"request":@"hover",@"pinned":@NO}; DFControlsHide();
+    BOOL kept=[ack isEqual:[NSData dataWithContentsOfFile:[barDirectory stringByAppendingPathComponent:@"native-dismissed.json"]]];
+    [NSFileManager.defaultManager removeItemAtPath:controlDirectory error:nil];
+    controlDirectory=savedDirectory; controlDocument=savedDocument; dismissedRequest=savedDismissed;
+    if (!released || !kept) return 1;
     for (int offset=-1440;offset<=1440;offset+=1440) for (int edge=0;edge<3;edge++) {
         NSRect screen=NSMakeRect(offset,offset,1440,900), anchor=NSMakeRect(offset+edge*700,offset+860,60,30);
         NSRect frame=panelFrame(screen,anchor,344,320);
@@ -547,7 +579,7 @@ int DFControlsSelfTest(void) {
     bad=valid.mutableCopy; bad[@"pinned"]=@0.5; if (validDocument(bad)) return 1;
     bad=valid.mutableCopy; bad[@"anchors"]=@[@{@"x":@1,@"y":@(NAN),@"width":@50,@"height":@40}]; if (validDocument(bad)) return 1;
     bad[@"anchors"]=@[@{@"x":@1,@"y":@4,@"width":@(-1),@"height":@40}]; if (validDocument(bad)) return 1;
-    puts("Native controls: payload bounds, forecast rows, anchored screen placement, compact widths and pinned outside-click guards passed."); return 0;
+    puts("Native controls: payload bounds, forecast rows, anchored placement, compact widths, hidden-pin acknowledgement and outside-click guards passed."); return 0;
 }
 BOOL DFControlsPreview(NSString *path, NSString *kind) {
     // A deterministic UI fixture, never personal device or account data.
@@ -557,18 +589,26 @@ BOOL DFControlsPreview(NSString *path, NSString *kind) {
         @"memory":@[@"Memory · 18.2 GiB",@"Used · 18.20 GiB",@"Total · 64.00 GiB",@"Swap used · 0.00 GiB",@"Swap capacity · 0.00 GiB"],
         @"battery":@[@"Battery · 84%",@"State · Charging",@"Estimate · 1:22 remaining",@"Cycles · 142",@"Temperature · 88°F"],
         @"weather":@[@"Weather · 54°F",@"Mitchell, OR · 97750",@"Partly cloudy",@"Wind · W 5 to 10 mph",@"Precipitation · 10%",@"NWS · updated 4 min ago",@"Refresh forecast"],
-        @"volume":@[@"Sound · 42%",@"Mute",@"● MacBook Pro Speakers",@"○ Studio Display"],
+        @"volume":@[@"Sound · 42%",@"Mute",@"Output devices",@"MacBook Pro Speakers",@"Studio Display"],
         @"brightness":@[@"Display · 68%",@"Built-in display brightness"],
-        @"wifi":@[@"Wi-Fi · On",@"Turn Wi-Fi off",@"Address · 192.0.2.24",@"Studio network",@"Native Wi-Fi controls"],
-        @"bluetooth":@[@"Bluetooth · On",@"Turn Bluetooth off",@"● Headphones",@"○ Keyboard"],
+        @"wifi":@[@"Wi-Fi · Connected",@"Current network · Shown in Wi-Fi controls",@"Address · 192.0.2.24",@"Available networks & connection…",@"Turn Wi-Fi off"],
+        @"bluetooth":@[@"Bluetooth · On",@"Turn Bluetooth off",@"Disconnect Headphones",@"Connect Keyboard"],
         @"alerts":@[@"Notifications · Quick controls",@"Notification Center",@"Focus / Control Center",@"System health",@"All clear"]};
     NSArray *labels=fixtures[kind]; if (!labels) return NO;
     NSMutableArray *rows=NSMutableArray.new;
     for (NSUInteger i=0;i<labels.count;i++) {
         BOOL action=i>0 && (([kind isEqual:@"volume"] || [kind isEqual:@"bluetooth"])
-            || ([kind isEqual:@"wifi"] && (i==1 || i==4)) || ([kind isEqual:@"alerts"] && i<3)
+            || ([kind isEqual:@"wifi"] && i>=3) || ([kind isEqual:@"alerts"] && i<3)
             || ([kind isEqual:@"weather"] && i==labels.count-1));
-        [rows addObject:@{@"text":labels[i],@"action":@(action)}];
+        NSMutableDictionary *row=@{@"text":labels[i],@"action":@(action)}.mutableCopy;
+        if ([kind isEqual:@"volume"]) {
+            if (i==2) { row[@"action"]=@NO; row[@"section"]=@YES; }
+            if (i>=3) { row[@"selected"]=@(i==3); row[@"detail"]=i==3 ? @"Current output" : @""; row[@"hint"]=@"Use output"; }
+        } else if ([kind isEqual:@"bluetooth"] && i>=2) {
+            row[@"text"]=i==2 ? @"Headphones" : @"Keyboard"; row[@"selected"]=@(i==2);
+            row[@"detail"]=i==2 ? @"Connected" : @"Not connected"; row[@"hint"]=i==2 ? @"Disconnect" : @"Connect";
+        }
+        [rows addObject:row];
     }
     NSMutableDictionary *fixture=@{@"name":kind,@"revision":@"preview",@"request":@"preview",@"rows":rows}.mutableCopy;
     if ([@[@"cpu",@"gpu",@"memory"] containsObject:kind]) {

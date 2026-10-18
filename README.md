@@ -236,8 +236,8 @@ reveal can return; `desktop undo` stops the helper and removes the filter.
 | Weather | ZIP 97750 forecast, wind in mph, precipitation chance, upcoming hours and extended outlook |
 | Sound | Volume slider, mute, output selection; scroll the bar item for volume |
 | Display | Built-in brightness slider; scroll the bar item to adjust |
-| Wi-Fi | Power, connection details and up to three recent saved networks; native quick panel for nearby networks |
-| Bluetooth | Power toggle and paired-device connect/disconnect |
+| Wi-Fi | Power and live link/address status; native picker for actual SSIDs, nearby networks and join progress |
+| Bluetooth | Connected devices first, explicit state and Connect/Disconnect hover actions |
 | CPU / GPU | Load graph, real average die temperature in °F, power and fans |
 | RAM | Usage graph, capacity and swap details |
 | Battery | Charge, charging state, time estimate, temperature and cycles |
@@ -250,15 +250,27 @@ and blur-free for predictable rendering and readability.
 
 Common controls work in the popovers instead of launching Settings. Native
 Wi-Fi, notification and Focus quick panels and App Exposé require local
-Accessibility/Automation approval for the responsible SketchyBar/osascript
-process. Bluetooth may request macOS Bluetooth permission. Approval is a local
+Device Control and Data Access (Accessibility on older macOS), plus any
+Automation approval macOS requests for the responsible process. The **desktop permissions** command requests access from the installed
+Desktop Controls app and restarts its owned helper after approval, refreshing
+fullscreen panes without rebuilding or signing it again. Bluetooth may request
+macOS Bluetooth permission. Approval is a local
 OS action and is not captured or bypassed by dotfiles. Network names can be
-redacted without Location permission. This helper never requests Location or
-scans nearby networks. Its **Recent saved networks** list uses up to three saved
-profiles; successful selections through this picker establish recency. Profiles
-without that history retain macOS preferred order. Saved does not mean nearby;
-use **Native Wi-Fi controls** to check availability. Passwords stay with macOS,
-and network names/selection history remain in private local state outside Git. Hardware alerts do not count unread app notifications: macOS
+redacted without Location permission. With Location off, the custom Wi-Fi pane
+shows radio, link and IPv4 state; it never presents saved profiles as available.
+**Available networks & connection…** hands off to Apple's real Wi-Fi picker for
+the connected SSID, nearby choices, known-network priority and connection
+progress. The custom pane closes before that handoff. macOS 27's MenuBarAgent
+hosting views and the older ControlCenter menu-bar layout are both supported.
+The helper does not request Location or read Wi-Fi passwords. A custom scanned
+SSID list would require a separately approved privacy change.
+
+Sound separates output selection from its level/mute controls and marks the
+current output once. Bluetooth lists connected devices first, shows connection
+state, and reveals the explicit action on hover. Both use the Apple/app menu's
+quiet highlight, shared colors and one whole-row click target, without duplicate
+arrows or permanent button boxes. Device names stay in private local state.
+Hardware alerts do not count unread app notifications: macOS
 offers no supported API for reading all other apps' notification content.
 
 Graphite uses slate surfaces, champagne accents and ice-blue hardware

@@ -68,7 +68,7 @@ def register_bundle(executable):
 def compile_tools(directory):
     tools = {}
     for source, name, command in (
-        ('desktop-edge.m', 'desktop-edge', ['xcrun', 'clang', '-fobjc-arc', '-Wall', '-Wextra', '-Werror', '-mmacosx-version-min=14.0', '-framework', 'AppKit', '-framework', 'QuartzCore', '-framework', 'EventKit', '-framework', 'ApplicationServices']),
+        ('desktop-edge.m', 'desktop-edge', ['xcrun', 'clang', '-fobjc-arc', '-Wall', '-Wextra', '-Werror', '-mmacosx-version-min=14.0', '-framework', 'AppKit', '-framework', 'QuartzCore', '-framework', 'EventKit', '-framework', 'ApplicationServices', '-framework', 'SystemConfiguration']),
         ('set-wallpaper.swift', 'wallpaper', ['xcrun', 'swiftc']),
     ):
         path = ROOT / 'scripts' / source
@@ -188,6 +188,17 @@ def wait_healthy(directory):
     raise ValueError('Desktop helper did not become healthy; see desktop status')
 
 
+def control_access_ready(directory):
+    """Approval belongs to the current helper, not an old status file or host."""
+    try:
+        status = json.loads((directory / 'status.json').read_text())
+        return (status['healthy'] and status['pid'] == agent_pid()
+                and 0 <= time.time() - status['updated'] < 3
+                and status['app_menus']['accessibility'] == 1)
+    except (OSError, ValueError, KeyError, TypeError):
+        return False
+
+
 def validate_preferences(document):
     for item in document['preferences']:
         if macos_preferences.current(item) not in (item['installed'], item['original']):
@@ -238,21 +249,23 @@ def main(action, theme=None, layout=None):
                 print('Desktop appearance: ' + palette['name'] + ' / ' + palette['layout'])
                 return 0
         if action == 'permissions':
-            run('sketchybar', '--trigger', 'desktop_access_check')
-            access = directory / 'bar/access.json'
-            started = time.time()
+            if not agent_loaded():
+                raise ValueError('Enable the desktop profile before requesting its permissions')
+            run(directory / 'desktop-edge', '--app-menu', 'access')
             deadline = time.monotonic()+35
             while time.monotonic()<deadline:
-                if access.exists():
-                    result = json.loads(access.read_text())
-                    if result['time']>=started-0.1:
-                        if result['available']:
-                            print('Native quick-panel Accessibility access is available.')
-                            return 0
-                        break
+                if control_access_ready(directory):
+                    # Existing windows can retain their pre-consent Space
+                    # membership. Recreate them after approval without a build.
+                    (directory / 'status.json').unlink(missing_ok=True)
+                    run('launchctl', 'kickstart', '-k', f'gui/{os.getuid()}/{LABEL}')
+                    wait_healthy(directory)
+                    print('Desktop Controls is approved; the desktop helper has been restarted.')
+                    return 0
                 time.sleep(0.2)
             run('open', 'x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility')
-            print('Enable Accessibility for SketchyBar in macOS, and allow System Events Automation when asked.')
+            print('Enable Desktop Controls in Device Control and Data Access (Accessibility on older macOS).')
+            print('Requested app: ' + str((directory / 'desktop-edge').resolve().parents[2]))
             print('These OS approvals stay local. Rerun desktop permissions to verify.')
             return 1
         if action == 'status':

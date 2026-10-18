@@ -1,6 +1,7 @@
 #import <AppKit/AppKit.h>
 #import <QuartzCore/QuartzCore.h>
 #import <ApplicationServices/ApplicationServices.h>
+#import <SystemConfiguration/SystemConfiguration.h>
 #import "calendar-panel.h"
 #import "control-panel.h"
 #import "app-menu.h"
@@ -31,6 +32,8 @@ static pid_t nativeDockPID;
 static CGRect dockDisplays[16];
 static uint32_t dockDisplayCount;
 static NSUInteger nativeDockBlocked;
+static SCDynamicStoreRef networkStore;
+static CFRunLoopSourceRef networkSource;
 static double missionControlSince = 0, nextMissionCheck = 0;
 static BOOL setVisible(BOOL show);
 static NSString *appearancePath, *themeName;
@@ -435,7 +438,11 @@ static BOOL nativeMenu(BOOL hide) {
     if (setOverride) setOverride(mainConnection(), 0, hide);
     return setAlpha(mainConnection(), 0, 1, hide ? 0 : 1) == kCGErrorSuccess;
 }
-static void restore(void) { releaseNativeDockGuard(); if (setAlpha) nativeMenu(NO); }
+static void releaseNetworkObserver(void) {
+    if (networkSource) { CFRunLoopRemoveSource(CFRunLoopGetMain(),networkSource,kCFRunLoopCommonModes); CFRelease(networkSource); networkSource=NULL; }
+    if (networkStore) { CFRelease(networkStore); networkStore=NULL; }
+}
+static void restore(void) { releaseNetworkObserver(); releaseNativeDockGuard(); if (setAlpha) nativeMenu(NO); }
 
 // Only called on transitions and for a five-second health check.
 static NSDictionary *bar(NSArray<NSString *> *args) {
@@ -455,6 +462,22 @@ static NSDictionary *bar(NSArray<NSString *> *args) {
         return [result isKindOfClass:NSDictionary.class] ? result : nil;
     }
     return @{};
+}
+
+static void networkChanged(__unused SCDynamicStoreRef store,__unused CFArrayRef changed,__unused void *context) {
+    if (!healthy) return;
+    // No SSIDs or values are read or forwarded. The backend refreshes only
+    // an already-open Wi-Fi pane; hidden panes stay hidden.
+    dispatch_async(barQueue,^{ bar(@[@"--trigger",@"desktop_network_changed"]); });
+}
+static void observeNetwork(void) {
+    networkStore=SCDynamicStoreCreate(NULL,CFSTR("Desktop Controls link changes"),networkChanged,NULL);
+    if (!networkStore) return;
+    NSArray *patterns=@[@"State:/Network/Interface/[^/]+/(Link|IPv4|IPv6)",@"State:/Network/Global/(IPv4|IPv6)"];
+    if (!SCDynamicStoreSetNotificationKeys(networkStore,NULL,(__bridge CFArrayRef)patterns)) { releaseNetworkObserver(); return; }
+    networkSource=SCDynamicStoreCreateRunLoopSource(NULL,networkStore,0);
+    if (!networkSource) { releaseNetworkObserver(); return; }
+    CFRunLoopAddSource(CFRunLoopGetMain(),networkSource,kCFRunLoopCommonModes);
 }
 
 static BOOL setVisible(BOOL show) {
@@ -593,6 +616,7 @@ int main(int argc, const char **argv) { @autoreleasepool {
         DFMenusInitialize(barPath);
     }
     barQueue = dispatch_queue_create("local.dotfiles.desktop.bar",DISPATCH_QUEUE_SERIAL);
+    observeNetwork();
     dockPanel = [[NSPanel alloc] initWithContentRect:NSMakeRect(0, 0, 300, 116)
         styleMask:NSWindowStyleMaskBorderless | NSWindowStyleMaskNonactivatingPanel
         backing:NSBackingStoreBuffered defer:NO];
@@ -645,6 +669,7 @@ int main(int argc, const char **argv) { @autoreleasepool {
                     @"dock_visible": @(dockPanel.visible), @"open_apps": @(dockView.apps.count),
                     @"native_dock_guard": @(nativeDockTap && CGEventTapIsEnabled(nativeDockTap)),
                     @"native_dock_blocked": @(nativeDockBlocked),
+                    @"network_events": @(networkSource!=NULL),
                     @"mission_control": @(missionControl),
                     @"calendar": DFCalendarStatus(),
                     @"controls": DFControlsStatus(),

@@ -17,6 +17,7 @@ sketchybar --default icon.font='JetBrainsMono Nerd Font:Regular:14.0' icon.width
 
 sketchybar --add event desktop_revealed
 sketchybar --add event desktop_concealed
+sketchybar --add event desktop_network_changed
 sketchybar --add event desktop_access_check
 sketchybar --add item apple left --set apple icon='' icon.font='SF Pro:Medium:19.0' label.drawing=off \
   icon.color="$UI_ACCENT" script="\"$plugin\"" --subscribe apple mouse.entered mouse.exited mouse.clicked
@@ -35,7 +36,7 @@ sketchybar --add item volume right --set volume icon='󰕾' label.drawing=off sc
 sketchybar --add item brightness right --set brightness icon='󰃠' label.drawing=off script="\"$plugin\"" \
   --subscribe brightness brightness_change
 sketchybar --add item wifi right --set wifi icon='󰖩' label='' script="\"$plugin\"" \
-  update_freq=60 --subscribe wifi desktop_revealed system_woke
+  update_freq=60 --subscribe wifi desktop_revealed system_woke desktop_network_changed
 sketchybar --add item bluetooth right --set bluetooth icon='󰂯' label='' script="\"$plugin\"" \
   update_freq=60 --subscribe bluetooth desktop_revealed system_woke
 sketchybar --add item alerts right --set alerts icon='󰂚' label='' script="\"$plugin\""

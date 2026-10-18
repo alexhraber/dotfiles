@@ -98,10 +98,14 @@ The owner explicitly approves the weather pane's current layout: preserve its
 header and hourly strip. Add six matching daily icon cards immediately below,
 starting tomorrow, with Fahrenheit highs/lows and forecast-local day boundaries.
 
-Wi-Fi does not request Location or scan nearby networks. It offers up to three
-recent saved profiles, ordered by successful picker selections and then macOS
-preferred order. Native Wi-Fi controls remain the availability picker. Network
-names/history stay private; no password is read or passed by dotfiles.
+With Location off, Wi-Fi shows truthful radio/link/address status and no saved
+profiles as available networks. Apple's native picker owns the current SSID,
+known/other nearby choices and join progress. A custom scanned list requires an
+explicit change to the owner's privacy preference. No password is read or
+passed by dotfiles. Sound and Bluetooth use the Apple/app menu visual language:
+one full-row target, quiet hover, current selection/state and clear action text.
+Connected Bluetooth devices precede disconnected ones. A hidden native pin must
+not block subsequent fullscreen hover or click interactions.
 
 The clock is a native Sunday-first month grid and selected-day agenda, with
 today/month navigation, event dots and per-calendar source selection. EventKit
@@ -179,7 +183,7 @@ These declarations select authoring and proof obligations; they do not attest im
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `9c8d674dac16b4e6d6f39748f6fb5faaf48fe8a8e08adf63ae276d06db50866a`
+- Repository signal fingerprint: `7d7f25497510f0c7a0dc709ffbb32a71dd310a6341a72794c157f617e25cce77`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
