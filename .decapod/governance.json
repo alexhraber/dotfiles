@@ -65,37 +65,47 @@
         ".decapod/managed/specs/VALIDATION.md",
         "target/panes-validation.json"
       ]
+    },
+    {
+      "id": "panes-current-epoch-proof",
+      "summary": "Bind current pane proof journal to the corrected exact task branch and validation epoch; retain prior source checkpoints and failed-readiness history.",
+      "input_digest": "sha256:4448fbf3bda924f9bff06ac7a60e31641a911731c316e06b0219bfe670827708",
+      "proof_refs": [
+        "/private/tmp/dotfiles-fullscreen-approved-final.json",
+        "/private/tmp/dotfiles-wifi-handoff-final.json",
+        "target/panes-current-project-check.json"
+      ]
     }
   ],
   "intents": {
-    "intent:change_01M56F50SBB43S0G99NVYXTYNG": {
+    "intent:panes_verified_apis_01m56f458dwxfvky": {
       "acceptance_criteria": [],
       "assumptions": [],
       "boundaries": [
-        "Current claimed task and isolated work branch"
+        "Owned task worktree; no Location request, no SSID scraping, no network switch, no new signing identity."
       ],
       "constraints": [
-        "root"
+        ".config/sketchybar and scripts desktop controls with tests and living specs"
       ],
       "created_sequence": 1,
-      "id": "intent:change_01M56F50SBB43S0G99NVYXTYNG",
+      "id": "intent:panes_verified_apis_01m56f458dwxfvky",
       "out_of_scope": [],
       "proof_requirements": [],
-      "raw_intent": "Restore fullscreen bar panes and remove unavailable saved Wi-Fi choices\n\nUser regression after PR12: all section panes fail in native fullscreen; Wi-Fi saved profiles do not represent available networks. Preserve no Location, reproduce through actual bar interactions, fix root cause and use native availability picker.",
-      "refined_intent": "Restore fullscreen bar panes and remove unavailable saved Wi-Fi choices\n\nUser regression after PR12: all section panes fail in native fullscreen; Wi-Fi saved profiles do not represent available networks. Preserve no Location, reproduce through actual bar interactions, fix root cause and use native availability picker.",
+      "raw_intent": "Restore reliable fullscreen panes, clarify Sound/Bluetooth and show available Wi-Fi without sharing location.",
+      "refined_intent": "Current approved helper passes actual fullscreen routes and native network handoff. Preserve Location off; Apple picker owns SSIDs. Validate exact task branch before publication.",
       "status": "refined",
       "updated_sequence": 3
     }
   },
   "epochs": {
-    "ve_fd02d1dfb0ad2de6": {
+    "ve_acddd5cab9be6616": {
       "constitution_hash": "sha256:62396c3f09acfeee97ea75e6b8a24bdd18de5e4152d01b922b625cc95b1d7fc3",
       "constitution_version": "embedded-docs@0.119.0",
-      "epoch_id": "ve_fd02d1dfb0ad2de6",
+      "epoch_id": "ve_acddd5cab9be6616",
       "evaluator_identity": "decapod-validate@0.119.0",
       "evaluator_set_hash": "sha256:6616b4917991d490a9a915bda7fdb05c18436517199038cb3ed40ac3781fb6d3",
       "generated_specs_fingerprint": "7d7f25497510f0c7a0dc709ffbb32a71dd310a6341a72794c157f617e25cce77",
-      "generated_specs_manifest_hash": "sha256:889cdd7ba08eed6e23d448da3f887e9ecc428727b65bb376bde419e976deb310",
+      "generated_specs_manifest_hash": "sha256:97826272ad22388b9df25f2148819f35c62460b6db6a01025dd58f46950eefce",
       "material_hashes": {
         "constitution:core/DECAPOD": "sha256:62396c3f09acfeee97ea75e6b8a24bdd18de5e4152d01b922b625cc95b1d7fc3",
         "generated_spec:.decapod/managed/specs/ARCHITECTURE.md": "sha256:e2ea248d8ba7202f1f39e5f8a0223ab69bc9ee67624a265fb5f2e739197b0b9b",
@@ -105,9 +115,9 @@
         "generated_spec:.decapod/managed/specs/README.md": "sha256:abf509788bb4fab7449c875dd3a995bfeccdb36e868bbc1eab4d8da812b73db3",
         "generated_spec:.decapod/managed/specs/SECURITY.md": "sha256:ba06b5089a910e30efab111305631595c0345b77e8e94c2ebc993654e0920fff",
         "generated_spec:.decapod/managed/specs/SEMANTICS.md": "sha256:a9bc00043f14ca7f679bcb225890094e3279bb71319c49a7a207c714e4d1e39e",
-        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:e492cb7112825c58dfe902114056e4dc1912ef34923984a61b88bea47a948bbc",
+        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:e68cb9f092f3c072bb730a57ae04afcefb3408d485ed60f35dfa6676be7971ac",
         "generated_specs_fingerprint": "7d7f25497510f0c7a0dc709ffbb32a71dd310a6341a72794c157f617e25cce77",
-        "generated_specs_manifest": "sha256:889cdd7ba08eed6e23d448da3f887e9ecc428727b65bb376bde419e976deb310",
+        "generated_specs_manifest": "sha256:97826272ad22388b9df25f2148819f35c62460b6db6a01025dd58f46950eefce",
         "governance_context": "sha256:cbf12c82eacf78ea928853b9354dc6423b01b8637d03bd1e3f40c47862ad2bf2",
         "governance_material:.decapod/managed/Dockerfile.decapod": "sha256:74d3941dbee69f95ef7c34715ad8b5f9120e10fe527fe8d5e745397e709d597e",
         "governance_material:AGENTS.md": "sha256:9aa28458b37fe535bddac458395aa0d4f2eaa2a729316f729580823006389929",
@@ -123,7 +133,7 @@
         "living_spec_material:.decapod/managed/specs/README.md": "sha256:0988c85d6c05f02d52684c9aafae50e95fd5d5576739d3e9d995af682697fd99",
         "living_spec_material:.decapod/managed/specs/SECURITY.md": "sha256:0babde230d6a7ec1a8cf05c686764c82e0f2b6db20ca74b69155101833e4184d",
         "living_spec_material:.decapod/managed/specs/SEMANTICS.md": "sha256:92bbe2607c6f8f94191a95ea977d9785f3472a0fae2835520dd86eae73130d5c",
-        "living_spec_material:.decapod/managed/specs/VALIDATION.md": "sha256:a2a935f23d511f1bd90ef95b64d7d5c67e9c4f04e00b18a4de0c7899b85d494d",
+        "living_spec_material:.decapod/managed/specs/VALIDATION.md": "sha256:eedd91abc0f7775a967fa490e9e84ae62bcba8d66e2bf854747e11a4d9ee8a5d",
         "proof_rubric": "sha256:99e8ef25629da391e9b479db9fff52b82f340224f7a69d8a88d2992ae8e90466",
         "validation_profile": "sha256:37a8eec1ce19687d132fe29051dca629d164e2c4958ba141d5f4133a33f0688f"
       },
@@ -183,9 +193,9 @@
     },
     "trajectory": {
       "active_boundaries": [
-        "Current claimed task and isolated work branch"
+        "Owned task worktree; no Location request, no SSID scraping, no network switch, no new signing identity."
       ],
-      "artifact_hash": "sha256:97e5f79dda225110c59bbf95168deae13ed69af83a294b5d1789a19566fd102a",
+      "artifact_hash": "sha256:c4ae515f45abf52c12d421eb1f2b72ee5b18ce70a333b61ba474eaccba4f638b",
       "checks": [
         {
           "name": "actual-fullscreen-12-routes",
@@ -200,19 +210,7 @@
           "status": "unavailable"
         },
         {
-          "name": "custom-ssid-list-privacy-decision",
-          "status": "passed"
-        },
-        {
           "name": "decapod validate",
-          "status": "passed"
-        },
-        {
-          "name": "exact-candidate-validation",
-          "status": "failed"
-        },
-        {
-          "name": "host-100-tests-and-native-selftests",
           "status": "passed"
         },
         {
@@ -222,118 +220,60 @@
         {
           "name": "native-permission-lifecycle",
           "status": "passed"
-        },
-        {
-          "name": "native-wifi-menu-host-compatibility",
-          "status": "passed"
-        },
-        {
-          "name": "renewed-accessibility-consent",
-          "status": "passed"
         }
       ],
-      "current_phase": "verification",
+      "current_phase": "validation",
       "custody": {
         "events": [
           {
             "event_id": "event:2",
-            "intent_id": "intent:change_01M56F50SBB43S0G99NVYXTYNG",
+            "intent_id": "intent:panes_verified_apis_01m56f458dwxfvky",
             "kind": "created",
             "sequence": 2
           },
           {
             "event_id": "event:3",
-            "intent_id": "intent:change_01M56F50SBB43S0G99NVYXTYNG",
+            "intent_id": "intent:panes_verified_apis_01m56f458dwxfvky",
             "kind": "refined",
             "sequence": 3
           },
           {
-            "detail": "trajectory:branch_01M56F50VVB8JXKRJS54AYFARK",
+            "detail": "trajectory:panes_verified_apis_01m56f458dwxfvky",
             "event_id": "event:4",
-            "intent_id": "intent:change_01M56F50SBB43S0G99NVYXTYNG",
+            "intent_id": "intent:panes_verified_apis_01m56f458dwxfvky",
             "kind": "trajectory_step_recorded",
             "sequence": 4
           },
           {
-            "detail": "trajectory:branch_01M56F50VVB8JXKRJS54AYFARK",
+            "detail": "trajectory:panes_verified_apis_01m56f458dwxfvky",
             "event_id": "event:5",
-            "intent_id": "intent:change_01M56F50SBB43S0G99NVYXTYNG",
+            "intent_id": "intent:panes_verified_apis_01m56f458dwxfvky",
             "kind": "trajectory_step_recorded",
             "sequence": 5
-          },
-          {
-            "detail": "trajectory:branch_01M56F50VVB8JXKRJS54AYFARK",
-            "event_id": "event:6",
-            "intent_id": "intent:change_01M56F50SBB43S0G99NVYXTYNG",
-            "kind": "trajectory_step_recorded",
-            "sequence": 6
-          },
-          {
-            "detail": "trajectory:branch_01M56F50VVB8JXKRJS54AYFARK",
-            "event_id": "event:7",
-            "intent_id": "intent:change_01M56F50SBB43S0G99NVYXTYNG",
-            "kind": "trajectory_step_recorded",
-            "sequence": 7
-          },
-          {
-            "detail": "trajectory:branch_01M56F50VVB8JXKRJS54AYFARK",
-            "event_id": "event:8",
-            "intent_id": "intent:change_01M56F50SBB43S0G99NVYXTYNG",
-            "kind": "trajectory_step_recorded",
-            "sequence": 8
           }
         ],
         "knowledge_candidates": [],
-        "next_sequence": 8,
+        "next_sequence": 5,
         "schema_version": "1.0.0",
         "trajectories": {
-          "branch_01M56F50VVB8JXKRJS54AYFARK": {
+          "panes_verified_apis_01m56f458dwxfvky": {
             "evidence_only": true,
-            "id": "branch_01M56F50VVB8JXKRJS54AYFARK",
-            "intent_id": "intent:change_01M56F50SBB43S0G99NVYXTYNG",
+            "id": "panes_verified_apis_01m56f458dwxfvky",
+            "intent_id": "intent:panes_verified_apis_01m56f458dwxfvky",
             "steps": [
               {
                 "action": "verification",
+                "command": "python3.14 -B scripts/check.py",
                 "custody_event_id": "event:4",
                 "observations": [
                   ".config/sketchybar/plugins/controls.py",
+                  ".config/sketchybar/sketchybarrc",
                   "scripts/control-panel.m",
                   "scripts/desktop-edge.m",
+                  "scripts/desktop.py",
+                  "scripts/check.py",
                   "tests/test_desktop.py",
-                  "README.md",
-                  ".decapod/managed/specs/INTENT.md",
-                  ".decapod/managed/specs/ARCHITECTURE.md",
-                  ".decapod/managed/specs/INTERFACES.md",
-                  ".decapod/managed/specs/SECURITY.md",
                   ".decapod/managed/specs/VALIDATION.md",
-                  "/private/tmp/dotfiles-pane-host-check.txt",
-                  "/private/tmp/dotfiles-pane-new-sound.png",
-                  "/private/tmp/dotfiles-pane-new-bluetooth.png",
-                  "/private/tmp/dotfiles-new-native-wifi.png"
-                ],
-                "proof_refs": [
-                  "host-100-tests-and-native-selftests",
-                  "native-wifi-menu-host-compatibility",
-                  "renewed-accessibility-consent",
-                  "custom-ssid-list-privacy-decision"
-                ],
-                "scope": [
-                  "root"
-                ],
-                "sequence": 4,
-                "validation_findings": [
-                  "Keep Location off until explicit user choice; no custom scanner or SSID extraction from native UI."
-                ]
-              },
-              {
-                "action": "verification",
-                "custody_event_id": "event:5",
-                "observations": [
-                  "scripts/control-panel.m",
-                  "scripts/desktop.py",
-                  ".config/sketchybar/plugins/controls.py",
-                  "scripts/desktop.py",
-                  ".decapod/managed/specs/OPERATIONS.md",
                   "/private/tmp/dotfiles-pane-host-check.txt",
                   "/private/tmp/dotfiles-fullscreen-approved-final.json",
                   "/private/tmp/dotfiles-wifi-handoff-final.json",
@@ -344,78 +284,34 @@
                   "host-103-tests-and-native-selftests",
                   "actual-fullscreen-12-routes",
                   "actual-native-wifi-handoff",
-                  "renewed-accessibility-consent",
                   "native-permission-lifecycle",
-                  "custom-ssid-list-privacy-decision",
                   "custom-ssid-list"
                 ],
                 "scope": [
-                  "root"
+                  ".config/sketchybar and scripts desktop controls with tests and living specs"
                 ],
-                "sequence": 5,
+                "sequence": 4,
                 "validation_findings": [
-                  "User explicitly corrected an initial allow response: Location stays off. System Profiler current and nearby SSIDs are all redacted. Native Apple picker provides names and choices; no custom scanned list is authorized."
+                  "Location remains off by explicit final user instruction. Custom SSID enumeration is redacted by macOS; Apple native picker shows actual names and owns joining. No native UI names are scraped. Prior failed branch-binding readiness remains preserved in committed journal."
                 ]
-              },
-              {
-                "action": "verification",
-                "command": "python3.14 -B scripts/check.py",
-                "custody_event_id": "event:6",
-                "observations": [
-                  ".config/sketchybar/plugins/controls.py",
-                  ".config/sketchybar/sketchybarrc",
-                  "scripts/control-panel.m",
-                  "scripts/desktop-edge.m",
-                  "scripts/desktop.py",
-                  "scripts/check.py",
-                  "tests/test_desktop.py",
-                  ".github/workflows/check.yml",
-                  "/private/tmp/dotfiles-fullscreen-approved-final.json",
-                  "/private/tmp/dotfiles-wifi-handoff-final.json",
-                  "/private/tmp/dotfiles-pane-host-check.txt"
-                ],
-                "proof_refs": [],
-                "scope": [
-                  "root"
-                ],
-                "sequence": 6,
-                "tool": "Actual mouse-driven fullscreen and native Wi-Fi handoff probes",
-                "validation_findings": []
               },
               {
                 "action": "validation",
                 "command": "decapod validate",
-                "custody_event_id": "event:7",
+                "custody_event_id": "event:5",
                 "observations": [
                   ".decapod/governance.json",
                   ".decapod/governance.json",
-                  "validation epoch ve_fd02d1dfb0ad2de6 completed with zero failures"
+                  "validation epoch ve_acddd5cab9be6616 completed with zero failures"
                 ],
                 "proof_refs": [
                   "decapod validate"
                 ],
                 "scope": [
-                  "root"
+                  ".config/sketchybar and scripts desktop controls with tests and living specs"
                 ],
-                "sequence": 7,
+                "sequence": 5,
                 "validation_findings": []
-              },
-              {
-                "action": "verification",
-                "custody_event_id": "event:8",
-                "observations": [
-                  "target/panes-validation.json"
-                ],
-                "proof_refs": [
-                  "exact-candidate-validation"
-                ],
-                "scope": [
-                  "root"
-                ],
-                "sequence": 8,
-                "validation_findings": [
-                  "Validation identified generated branch prefix todo-01m56f as a different task ID. Renamed only this owned branch to agent/unknown/apis_01m56f458dwxfvky; task and journal stay unchanged. Rerun exact-candidate proof before PR."
-                ]
               }
             ]
           }
@@ -425,66 +321,42 @@
         "decapod validate",
         "python3.14 -B scripts/check.py"
       ],
-      "destination": "pull request",
       "evidence": [
         "/private/tmp/dotfiles-fullscreen-approved-final.json",
         "/private/tmp/dotfiles-live-bluetooth-final.png",
         "/private/tmp/dotfiles-live-volume-final.png",
-        "/private/tmp/dotfiles-new-native-wifi.png",
         "/private/tmp/dotfiles-pane-host-check.txt",
-        "/private/tmp/dotfiles-pane-new-bluetooth.png",
-        "/private/tmp/dotfiles-pane-new-sound.png",
         "/private/tmp/dotfiles-wifi-handoff-final.json",
-        "target/panes-validation.json",
-        "validation epoch ve_fd02d1dfb0ad2de6 completed with zero failures"
+        "validation epoch ve_acddd5cab9be6616 completed with zero failures"
       ],
       "inspected_files": [
         ".config/sketchybar/plugins/controls.py",
         ".config/sketchybar/sketchybarrc",
-        ".github/workflows/check.yml",
+        ".decapod/managed/specs/VALIDATION.md",
         "scripts/check.py",
         "scripts/control-panel.m",
         "scripts/desktop-edge.m",
         "scripts/desktop.py",
         "tests/test_desktop.py"
       ],
-      "intent_id": "intent:change_01M56F50SBB43S0G99NVYXTYNG",
+      "intent_id": "intent:panes_verified_apis_01m56f458dwxfvky",
       "modified_files": [
-        ".config/sketchybar/plugins/controls.py",
-        ".decapod/governance.json",
-        ".decapod/managed/specs/ARCHITECTURE.md",
-        ".decapod/managed/specs/INTENT.md",
-        ".decapod/managed/specs/INTERFACES.md",
-        ".decapod/managed/specs/OPERATIONS.md",
-        ".decapod/managed/specs/SECURITY.md",
-        ".decapod/managed/specs/VALIDATION.md",
-        "README.md",
-        "scripts/control-panel.m",
-        "scripts/desktop-edge.m",
-        "scripts/desktop.py",
-        "tests/test_desktop.py"
+        ".decapod/governance.json"
       ],
       "next_transitions": [
-        "Finalize source/spec reviews and exact-candidate container validation before PR and merge.",
-        "Finish actual fullscreen and live pane proof, then wait for required user privacy/OS approval before final publication.",
-        "Refine plan and declare falsifiable checks",
-        "Source review complete; exact-candidate canonical validation, hosted CI, merge and configuration repoint remain.",
+        "Run current-epoch project checks, checkpoint candidate, validate, then PR/CI/merge.",
         "publish"
       ],
       "repo_scope": [
-        "root"
+        ".config/sketchybar and scripts desktop controls with tests and living specs"
       ],
-      "run_id": "branch_01M56F50VVB8JXKRJS54AYFARK",
+      "run_id": "panes_verified_apis_01m56f458dwxfvky",
       "schema_version": "1.1.0",
       "shortcut_risk_signals": [],
       "task_id": "apis_01m56f458dwxfvky",
-      "tool_calls": [
-        "Actual mouse-driven fullscreen and native Wi-Fi handoff probes"
-      ],
+      "tool_calls": [],
       "unresolved_assumptions": [
-        "Keep Location off until explicit user choice; no custom scanner or SSID extraction from native UI.",
-        "User explicitly corrected an initial allow response: Location stays off. System Profiler current and nearby SSIDs are all redacted. Native Apple picker provides names and choices; no custom scanned list is authorized.",
-        "Validation identified generated branch prefix todo-01m56f as a different task ID. Renamed only this owned branch to agent/unknown/apis_01m56f458dwxfvky; task and journal stay unchanged. Rerun exact-candidate proof before PR."
+        "Location remains off by explicit final user instruction. Custom SSID enumeration is redacted by macOS; Apple native picker shows actual names and owns joining. No native UI names are scraped. Prior failed branch-binding readiness remains preserved in committed journal."
       ]
     },
     "validation": {
@@ -498,90 +370,82 @@
       },
       "decapod_release": "0.119.0",
       "drift_findings": [],
-      "elapsed_ms": 2320,
-      "epoch_ref": "ve_fd02d1dfb0ad2de6",
+      "elapsed_ms": 1982,
+      "epoch_ref": "ve_acddd5cab9be6616",
       "fail_count": 0,
       "failures": [],
       "gate_timings": [
         {
-          "elapsed_ms": 558,
+          "elapsed_ms": 485,
           "name": "validate_project_specs_docs"
         },
         {
-          "elapsed_ms": 463,
+          "elapsed_ms": 382,
           "name": "validate_stale_workspaces"
         },
         {
-          "elapsed_ms": 370,
+          "elapsed_ms": 312,
           "name": "validate_markdown_primitives_roundtrip_gate"
         },
         {
-          "elapsed_ms": 162,
+          "elapsed_ms": 134,
           "name": "validate_git_workspace_context"
         },
         {
-          "elapsed_ms": 121,
+          "elapsed_ms": 128,
           "name": "validate_machine_contract"
         },
         {
-          "elapsed_ms": 118,
+          "elapsed_ms": 94,
           "name": "validate_obligations"
         },
         {
-          "elapsed_ms": 71,
+          "elapsed_ms": 61,
           "name": "validate_legacy_jsonl_retired"
         },
         {
-          "elapsed_ms": 40,
+          "elapsed_ms": 33,
           "name": "validate_archive_integrity"
         },
         {
-          "elapsed_ms": 25,
+          "elapsed_ms": 21,
           "name": "validate_git_protected_branch"
         },
         {
-          "elapsed_ms": 20,
+          "elapsed_ms": 19,
           "name": "validate_repomap_determinism"
         },
         {
-          "elapsed_ms": 18,
+          "elapsed_ms": 15,
           "name": "validate_schema_determinism"
         },
         {
-          "elapsed_ms": 17,
+          "elapsed_ms": 14,
           "name": "validate_control_plane_contract"
         },
         {
-          "elapsed_ms": 16,
+          "elapsed_ms": 13,
           "name": "validate_federation_gates"
         },
         {
-          "elapsed_ms": 12,
+          "elapsed_ms": 10,
           "name": "validate_git_push_pr_gate"
         },
         {
-          "elapsed_ms": 11,
+          "elapsed_ms": 9,
           "name": "validate_no_legacy_namespaces"
         },
         {
-          "elapsed_ms": 10,
+          "elapsed_ms": 8,
           "name": "validate_lineage_hard_gate"
         },
         {
-          "elapsed_ms": 7,
+          "elapsed_ms": 6,
           "name": "validate_gatekeeper_gate"
         },
         {
-          "elapsed_ms": 4,
-          "name": "validate_generated_artifact_whitelist"
-        },
-        {
-          "elapsed_ms": 4,
-          "name": "validate_watcher_audit"
-        },
-        {
           "elapsed_ms": 3,
-          "name": "validate_lcm_immutability"
+          "name": "validate_watcher_audit"
         },
         {
           "elapsed_ms": 3,
@@ -589,22 +453,30 @@
         },
         {
           "elapsed_ms": 3,
+          "name": "validate_lcm_rebuild_gate"
+        },
+        {
+          "elapsed_ms": 3,
+          "name": "validate_lcm_immutability"
+        },
+        {
+          "elapsed_ms": 3,
+          "name": "validate_generated_artifact_whitelist"
+        },
+        {
+          "elapsed_ms": 3,
           "name": "validate_knowledge_integrity"
         },
         {
-          "elapsed_ms": 3,
+          "elapsed_ms": 2,
           "name": "validate_plan_governed_execution_gate"
-        },
-        {
-          "elapsed_ms": 3,
-          "name": "validate_lcm_rebuild_gate"
         },
         {
           "elapsed_ms": 2,
           "name": "validate_entrypoint_invariants"
         },
         {
-          "elapsed_ms": 2,
+          "elapsed_ms": 1,
           "name": "validate_policy_integrity"
         },
         {
@@ -613,31 +485,7 @@
         },
         {
           "elapsed_ms": 1,
-          "name": "validate_override_authority"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_database_schema_versions"
-        },
-        {
-          "elapsed_ms": 1,
           "name": "validate_health_purity"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_canon_mutation"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_jev_history_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_watcher_purity"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_research_claims_if_present"
         },
         {
           "elapsed_ms": 1,
@@ -645,18 +493,42 @@
         },
         {
           "elapsed_ms": 1,
+          "name": "validate_override_authority"
+        },
+        {
+          "elapsed_ms": 1,
           "name": "validate_recursive_improvement_passes_if_present"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_research_claims_if_present"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_jev_history_if_present"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_canon_mutation"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_database_schema_versions"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_watcher_purity"
         },
         {
           "elapsed_ms": 1,
           "name": "validate_risk_map_violations"
         },
         {
-          "elapsed_ms": 1,
+          "elapsed_ms": 0,
           "name": "validate_health_cache_integrity"
         },
         {
-          "elapsed_ms": 1,
+          "elapsed_ms": 0,
           "name": "validate_spec_drift"
         },
         {
@@ -669,6 +541,10 @@
         },
         {
           "elapsed_ms": 0,
+          "name": "validate_docs_templates_bucket"
+        },
+        {
+          "elapsed_ms": 0,
           "name": "validate_heartbeat_invocation_gate"
         },
         {
@@ -677,39 +553,7 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_docs_templates_bucket"
-        },
-        {
-          "elapsed_ms": 0,
           "name": "validate_repo_map"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_internalization_artifacts_if_present"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_root_dockerfile_seed_detection"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_embedded_self_contained"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_state_commit_gate"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_context_capsules_if_present"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_interface_contract_bootstrap"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_eval_gate_if_required"
         },
         {
           "elapsed_ms": 0,
@@ -717,7 +561,35 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_coplayer_policy_tightening"
+          "name": "validate_embedded_self_contained"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_internalization_artifacts_if_present"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_interface_contract_bootstrap"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_state_commit_gate"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_root_dockerfile_seed_detection"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_context_capsules_if_present"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_eval_gate_if_required"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_tooling_gate"
         },
         {
           "elapsed_ms": 0,
@@ -725,27 +597,27 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_tooling_gate"
+          "name": "validate_coplayer_policy_tightening"
         }
       ],
-      "git_revision": "0bff3301a9c2fef7c8a4affa0dc26b498000466d",
+      "git_revision": "45a90b9018e10a6188c9532440c4de01ffaf1fa8",
       "kind": "validation_receipt",
       "parallelism": 1,
-      "pass_count": 187,
+      "pass_count": 188,
       "prediction_uses_warnings": true,
-      "receipt_hash": "sha256:bb7f9c1dca72f36173cf2d8c9bc052b7317e074ac85a58a8a8294d3519e0182e",
+      "receipt_hash": "sha256:c1ae4acda0b1a4b2d972252fc48e1559c33330863d69c23e0f361411add681f6",
       "repo_signal_fingerprint": "7d7f25497510f0c7a0dc709ffbb32a71dd310a6341a72794c157f617e25cce77",
       "schema_version": "1.0.0",
       "status": "ok",
       "temporary_artifacts_cleaned": 0,
-      "trajectory_artifact_hash": "sha256:8a65d974b255ac12f9e989f69637aed5bab1be68819c39027869443fbc5f12d4",
-      "trajectory_run_id": "branch_01M56F50VVB8JXKRJS54AYFARK",
+      "trajectory_artifact_hash": "sha256:c4ae515f45abf52c12d421eb1f2b72ee5b18ce70a333b61ba474eaccba4f638b",
+      "trajectory_run_id": "panes_verified_apis_01m56f458dwxfvky",
       "warn_count": 4,
       "warnings": [
-        "No open pull request found on GitHub for branch 'agent/unknown/todo-01m56f-apis_01m56f458dwxfvky-1792292322'. Create a PR only after intent is converged, the branch is mergeable, and full exact-candidate validation succeeds against the accepted target.",
         "Risk map missing (run `decapod riskmap init`)",
         "Stale workspaces preserved for explicit review: <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (current_workspace: workspace contains the current process; rerun prune from the host checkout after leaving this workspace so Git can release the branch), <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.)",
-        "Watcher audit trail missing (run `decapod govern watcher run`)"
+        "Watcher audit trail missing (run `decapod govern watcher run`)",
+        "Workspace branch 'agent/unknown/apis_01m56f458dwxfvky' has unpushed commits or does not exist on origin. Branch pushes and iteration are allowed before preflight; hold PR creation until intent is converged, the branch is mergeable, and full `decapod validate` succeeds against the exact current candidate and accepted target."
       ]
     }
   }
