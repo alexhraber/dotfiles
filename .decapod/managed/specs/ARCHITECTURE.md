@@ -210,33 +210,24 @@ DockView uses NSWorkspace openApplicationAtURL with activation enabled and
 createsNewApplicationInstance disabled, preserving normal reopen semantics.
 desktop.py registers the complete signed bundle through public LSRegisterURL
 before activation, including cached builds launched directly by launchd.
-controls.py reads Wi-Fi power through networksetup and local link/address state
-through ifconfig/ipconfig. scripts/wifi-access.m is a separate signed LSUIElement
-bundle using CoreWLAN for the current SSID and deduplicated scan results.
-CoreLocation is used only to inspect/request authorization, never coordinates.
-Only the explicit permission action invokes --request-access. wifi.py launches
-status/scan instances in the background through LaunchServices, validates their
-bounded JSON and removes private result files. A visible-request worker scans
-serially; it discards superseded/hidden results and stops when its pane closes.
-Scan identity, interface, timestamp and network-event invalidation gate every
-choice and join. Private observed-use history ranks only scan-confirmed names;
-known networks and signal break ties. Availability expires after eight seconds.
-The current SSID is shown separately from three alternatives. New secured
-networks use bounded native UI selection for Apple's credential entry.
-Native handoff closes the custom pane first,
-checks its request token, and never rerenders over a successful system picker.
-The bounded native_item lookup finds fixed status-item identifiers below macOS
-27 MenuBarAgent hosting views, with the older ControlCenter menu-bar fallback.
-The hover does not scrape native lists; the experimental offscreen bridge was
-rejected after compositor measurements found visible frames. Native join actions
-match the selected literal SSID only after an explicit click. Accessibility
-probes use the fixed menu-extra lookup without pressing an item.
+controls.py reads Wi-Fi power through networksetup for the bar icon only.
+show('wifi') uses the ordinary dwell/request cancellation, hides custom windows,
+then opens Apple's real Wi-Fi picker directly using native_item(ensure='open').
+A fixed wifi-header AX lookup makes opening idempotent and closing conditional:
+a different system panel is never toggled by Wi-Fi cleanup. No SSID is extracted,
+no saved-profile choices are synthesized and no scan/consent helper is installed.
+active.json marks native_wifi so level/network refresh cannot replace the picker.
+Bar conceal retains it while the pointer enters; another themed pane or explicit
+cancel closes only a visible Wi-Fi picker. Native outside-click/Escape behavior
+owns dismissal. The bounded status-item lookup supports MenuBarAgent hosting
+views on macOS 27 and the older ControlCenter menu bar.
 
-desktop-edge.m observes public SystemConfiguration Link/IPv4/IPv6 changes and
-emits only the fixed desktop_network_changed SketchyBar event. It never reads or
-forwards dynamic-store values. The Wi-Fi handler rereads status only for the
-current visible request; hidden/stale/dismissed panes cannot reopen. The event
-source is released on restore, and status.json reports network_events health.
+desktop-edge.m still emits the fixed desktop_network_changed event without
+reading or forwarding network values. Wi-Fi updates its radio icon only; Apple
+owns the visible native list. The desired themed top-three recency list remains
+unimplemented with Location off. Offscreen AX mirroring was rejected because
+compositor probes found visible frames. No change to the approved native binary
+or OS privacy settings is needed for this functional fallback.
 
 desktop.py's permissions route requests access from the installed native helper.
 It accepts approval only from healthy, fresh status bound to the current
@@ -363,7 +354,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `fe2c007ef63af40072574145bb42d051288c913b164cb6f22152a17df042ffb2`
-- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (7 files)
+- Repository signal fingerprint: `0b5828bb53eba4b63cedf3e162cbd15961dc1c131089bb4836e4e0a84c1cd27b`
+- Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

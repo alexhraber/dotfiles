@@ -98,15 +98,14 @@ The owner explicitly approves the weather pane's current layout: preserve its
 header and hourly strip. Add six matching daily icon cards immediately below,
 starting tomorrow, with Fahrenheit highs/lows and forecast-local day boundaries.
 
-Wi-Fi's target is a direct themed hover showing the connected SSID, up to three
-genuinely available choices prioritized by observed recent use, and connecting
-state. A separate Wi-Fi Access app implements CoreWLAN queries without changing
-Desktop Controls' approvals. macOS requires Location permission for names;
-installation/hover do not request it and the owner's Location-off preference
-stays authoritative until an explicit opt-in. With permission off, the pane
-retains truthful radio/link/address state and Apple's picker. No coordinates or
-location updates are requested. No password is read or passed by dotfiles;
-Apple owns new-network credential entry. Sound and Bluetooth use the Apple/app menu visual language:
+The owner's desired Wi-Fi result remains a themed hover with the connected
+SSID and up to three actual nearby networks ranked by recent use, with Location
+off. That complete result has not been achieved. The functional fallback opens
+Apple's actual Wi-Fi picker directly on hover, eliminating the rejected custom
+permission/setup wall and extra handoff click. Apple owns list styling, grouping,
+availability and connection progress; those are not claimed as a custom list.
+Location stays off, no authorization question is presented by hover, and no
+password is read or passed by dotfiles. Sound and Bluetooth use the Apple/app menu visual language:
 one full-row target, quiet hover, current selection/state and clear action text.
 Connected Bluetooth devices precede disconnected ones. A hidden native pin must
 not block subsequent fullscreen hover or click interactions.
@@ -187,7 +186,7 @@ These declarations select authoring and proof obligations; they do not attest im
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `fe2c007ef63af40072574145bb42d051288c913b164cb6f22152a17df042ffb2`
-- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (7 files)
+- Repository signal fingerprint: `0b5828bb53eba4b63cedf3e162cbd15961dc1c131089bb4836e4e0a84c1cd27b`
+- Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

@@ -90,8 +90,7 @@ The top three pixels reveal the bar; the bottom-center resting icon footprint
 the screen bottom, with no 26-point gap to chase. Resting size stays 40 points;
 unconstrained peak hover size is 77.5 points, 25% above the previous 62 points.
 Crowded layouts scale to fit. Exit hysteresis is 320 ms. Hover controls
-include calendar, sound/output/mute, built-in brightness, Wi-Fi power/link/address status,
-permission-gated direct SSIDs/available choices and a native network picker,
+include calendar, sound/output/mute, built-in brightness, a directly hovered native Wi-Fi picker,
 paired Bluetooth devices, battery and Fahrenheit CPU/GPU telemetry. Notifications
 are furthest right; hardware warnings are not an unread notification count.
 From that right edge inward, clock and weather come immediately after
@@ -130,24 +129,17 @@ Keyboard and other system level changes update the slider and numeric reading
 without pointer reentry; closed panes add no device polling.
 
 Clicking a running app uses the macOS reopen request without requesting a new
-instance. Wi-Fi names use the separate Wi-Fi Access bundle. desktop wifi-setup
-builds/registers it without requesting Location or rebuilding Desktop Controls.
-The pane offers explicit permission opt-in, then connected SSID, scan-confirmed
-recent/known choices, connecting state and literal network joins. No scan starts
-for hidden panes; results that finish after dismissal are discarded. Expired,
-invalidated or connection/interface-mismatched results cannot authorize actions.
-Native picker/credential handoff closes the custom pane first and preserves
-newer interactions on failure. Native action
-rows optionally carry bounded detail/hint strings and selected/section booleans;
-these are presentation only and never become executable arguments. Sound marks
-the current output; Bluetooth sorts connected devices first and distinguishes
-state from its hover action. Location is requested only by the explicit Wi-Fi
-permission action, never installation, warming, hover, status or scans.
-
-The desktop_network_changed event carries no network values. Wi-Fi refreshes an
-already-visible matching pane with its request/anchor/pin intact, and never
-reopens a hidden pane. network_events in private native status reports whether
-the public SystemConfiguration run-loop source is installed.
+instance. Wi-Fi hover/click opens the native picker directly, without custom
+loading, permission rows or a second handoff action. An open request is
+idempotent; closing checks the fixed wifi-header before pressing the item.
+Bar conceal retains a native Wi-Fi pane; explicit cancel and opening another
+themed pane close it. Apple owns its normal dismissal, actual network names,
+list order and connection state. No Location request, scan daemon, network-name
+cache, password read or credential write is part of this route. A custom themed
+top-three list is still an unfulfilled request, not a guarantee of this interface.
+Sound/Bluetooth rows retain bounded detail/hint/selected metadata and their
+literal device argv actions. Network change events carry no network values and
+never replace a native Wi-Fi picker with a custom pane.
 
 The dock renders only app icons over fully transparent pixels. It has no shelf,
 blur, border, shadow, text, badges or active markers. Autohide, magnification,
@@ -216,7 +208,7 @@ can leave partial state; the backup manifest remains the recovery input.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `fe2c007ef63af40072574145bb42d051288c913b164cb6f22152a17df042ffb2`
-- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (7 files)
+- Repository signal fingerprint: `0b5828bb53eba4b63cedf3e162cbd15961dc1c131089bb4836e4e0a84c1cd27b`
+- Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

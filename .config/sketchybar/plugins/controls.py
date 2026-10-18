@@ -2,7 +2,6 @@
 from contextlib import contextmanager
 import fcntl
 import json
-import ipaddress
 import math
 import os
 from pathlib import Path
@@ -13,7 +12,6 @@ import sys
 import time
 import appearance
 import weather
-import wifi
 
 PANELS = appearance.PANELS
 HERE = Path(__file__).resolve()
@@ -73,74 +71,6 @@ def wifi_device():
     return match[1]
 
 
-def valid_ssid(value):
-    return (isinstance(value, str) and 0 < len(value.encode('utf-8')) <= 32
-            and not any(ord(c) < 32 or ord(c) == 127 for c in value))
-
-
-def current_wifi(device):
-    result = command('/usr/sbin/networksetup', '-getairportnetwork', device, strip=False).removesuffix('\n')
-    prefix = 'Current Wi-Fi Network: '
-    name = result[len(prefix):] if result.startswith(prefix) else ''
-    return name if valid_ssid(name) else ''
-
-
-def remember_wifi(status):
-    current = status.get('ssid', '')
-    with interaction():
-        previous = read('wifi-observed.json', {}).get('ssid', '')
-        if current != previous:
-            recent = read('wifi-recent.json', {})
-            recent = recent if isinstance(recent, dict) else {}
-            now = time.time()
-            recent = {name: stamp for name, stamp in recent.items() if valid_ssid(name)
-                      and isinstance(stamp, (int, float)) and not isinstance(stamp, bool)
-                      and math.isfinite(stamp) and 0 <= stamp <= now}
-            if valid_ssid(current):
-                recent[current] = now
-            store('wifi-recent.json', dict(sorted(recent.items(), key=lambda item: -item[1])[:256]))
-            store('wifi-observed.json', {'ssid': current})
-
-
-def start_wifi_watch(request):
-    subprocess.Popen([sys.executable, '-B', str(HERE), 'wifi-watch', str(request)],
-                     stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
-
-def wifi_watch(request):
-    """Refresh scans only while this exact Wi-Fi pane remains visible."""
-    token = [int(request), 'wifi']
-    while visible_control('wifi', token):
-        with (STATE / 'wifi-scan.lock').open('a') as lock:
-            try:
-                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-            except BlockingIOError:
-                time.sleep(.2)
-                continue
-            if not visible_control('wifi', token):
-                return
-            try:
-                status = wifi.query(STATE, scan=True)
-                if status.get('authorization') != 'authorized' or status.get('services') is not True:
-                    return
-                if status.get('error'):
-                    raise ValueError('Wi-Fi scan unavailable')
-                with interaction():
-                    if not visible_control('wifi', token):
-                        return
-                    store('wifi-scan.json', status)
-            except (OSError, subprocess.SubprocessError, ValueError):
-                with interaction():
-                    if read('hover.json') == token:
-                        store('wifi-invalidated.json', {'time': time.time()})
-                        store('wifi-error.json', {'time': time.time(), 'text': 'Could not refresh nearby networks'})
-            refresh_open('wifi')
-        for _ in range(40):
-            time.sleep(.1)
-            if not visible_control('wifi', token):
-                return
-
-
 def sample():
     return read('metrics.json', {})
 
@@ -186,56 +116,6 @@ def panel_rows(name):
                       ['output', item['name']]) for item in outputs]
         except (subprocess.SubprocessError, ValueError, KeyError):
             rows.append(('Audio outputs unavailable', None))
-        return rows
-    if name == 'wifi':
-        device = wifi_device()
-        powered = command('networksetup', '-getairportpower', device).endswith('On')
-        rows = []
-        if powered:
-            status = wifi.query(STATE)
-            remember_wifi(status)
-            current = status.get('ssid') or current_wifi(device)
-            link = command('/sbin/ifconfig', device)
-            linked = bool(re.search(r'^\s*status:\s+active\s*$', link, re.MULTILINE))
-            address = None
-            try:
-                address = ipaddress.IPv4Address(command('ipconfig', 'getifaddr', device))
-            except (subprocess.SubprocessError, ValueError):
-                pass
-            if linked and address:
-                connection = 'Limited' if address.is_link_local else 'Connected'
-            else:
-                connection = 'Link active' if linked else 'Not connected'
-            rows += [('Wi-Fi · ' + connection, None),
-                     ('Current network · ' + current if current else 'Current network · Name unavailable', None),
-                     ('Address · ' + str(address) if address else 'No IPv4 address', None)]
-            if status.get('authorization') != 'authorized' or status.get('services') is not True:
-                rows += [('macOS requires Location permission for Wi-Fi names', None),
-                         ('Allow Wi-Fi names…', ['wifi-access'])]
-            else:
-                scan = read('wifi-scan.json', {})
-                invalidated = read('wifi-invalidated.json', {}).get('time', 0)
-                if wifi.current_scan(scan, status, invalidated):
-                    choices = wifi.choices(scan, read('wifi-recent.json', {}))
-                    rows.append(('Available networks', None))
-                    rows += [(item['ssid'], ['wifi-native-network' if item['secure'] and not item['known']
-                                             else 'wifi-network', item['ssid']]) for item in choices]
-                    if not choices:
-                        rows.append(('No other networks in range', None))
-                else:
-                    rows.append(('Looking for nearby networks…', None))
-                pending = read('wifi-pending.json', {})
-                if pending.get('ssid') == current:
-                    store('wifi-pending.json', {})
-                elif pending.get('ssid') and 0 <= time.time()-pending.get('time', 0) < 25:
-                    rows.insert(1, ('Connecting · ' + pending['ssid'], None))
-                error = read('wifi-error.json', {})
-                if 0 <= time.time()-error.get('time', 0) < 15:
-                    rows.append((error.get('text', 'Wi-Fi action unavailable'), None))
-        else:
-            rows.append(('Wi-Fi · Off', None))
-        rows += [('Available networks & connection…', ['native', 'Wi-Fi']),
-                 ('Turn Wi-Fi ' + ('off' if powered else 'on'), ['wifi', device, 'off' if powered else 'on'])]
         return rows
     if name == 'bluetooth':
         powered = command('blueutil', '--power') == '1'
@@ -340,6 +220,15 @@ def show(name, clicked=False):
     with interaction():
         if read('hover.json') != token:
             return
+        if name == 'wifi':
+            # Apple can display real SSIDs with Location off. Open that picker
+            # directly, without flashing a custom loading/permission pane first.
+            native_calendar('hide')
+            native_controls('hide')
+            native_item('Wi-Fi', ensure='open')
+            store('active.json', {'name': name, 'time': time.time(),
+                                  'request': str(token[0]), 'native_wifi': True})
+            return
         if name == 'clock':
             if not already_open:
                 close_panels()
@@ -357,8 +246,7 @@ def show(name, clicked=False):
         if not render_rows(name, [(name.replace('_', ' ').title(), None), ('Loading…', None)], token):
             return
     rows = fresh_rows(name)
-    if render_rows(name, rows, token) and name == 'wifi':
-        start_wifi_watch(token[0])
+    render_rows(name, rows, token)
 
 
 def hidden_pin(active):
@@ -401,6 +289,8 @@ def visible_control(name, token):
     active = read('active.json', {})
     if active.get('name') != name or active.get('request') != request:
         return False
+    if active.get('native_wifi'):
+        return False  # Apple owns updates; never replace it with a custom pane.
     if read('native-dismissed.json', {}).get('request') == request:
         return False
     try:
@@ -418,7 +308,7 @@ def visible_control(name, token):
 
 def refresh_open(name):
     """System change events update only an open pane; latest request/event wins."""
-    if name not in ('volume', 'brightness', 'wifi'):
+    if name not in ('volume', 'brightness'):
         return False
     with interaction():
         token = read('hover.json')
@@ -429,10 +319,7 @@ def refresh_open(name):
     try:
         rows = panel_rows(name)
     except (OSError, subprocess.SubprocessError, ValueError, KeyError):
-        if name != 'wifi':
-            return False  # Retain the last good slider during transient read failures.
-        rows = [('Wi-Fi', None), ('Could not refresh network names', None),
-                ('Available networks & connection…', ['native', 'Wi-Fi'])]
+        return False  # Retain the last good slider during transient read failures.
     with interaction():
         if (read('hover.json') != token or read('device-refresh.json') != event
                 or not visible_control(name, token)):
@@ -451,18 +338,14 @@ def render_rows(name, rows, token=None):
 
 
 def _render_rows(name, rows):
+    close_native_wifi()
     rows = rows[:14]
     store(name + '.json', [action for _, action in rows])
     document = {'name': name, 'revision': str(time.time_ns()), 'request': str(read('hover.json', [0])[0]),
                 'rows': [{'text': str(label)[:512], 'action': bool(action)} for label, action in rows]}
     for row, (label, action) in zip(document['rows'], rows):
-        if ((name == 'volume' and label == 'Output devices')
-                or (name == 'wifi' and label == 'Available networks')) and not action:
+        if name == 'volume' and label == 'Output devices' and not action:
             row['section'] = True
-        elif action and action[0] in ('wifi-network', 'wifi-native-network'):
-            pending = read('wifi-pending.json', {})
-            row['detail'] = 'Connecting…' if pending.get('ssid') == action[1] and 0 <= time.time()-pending.get('time', 0) < 25 else ''
-            row['hint'] = 'Connect'
         elif action and action[0] == 'output':
             row['text'] = str(action[1])[:512]
             row['selected'] = label.startswith('● ')
@@ -510,7 +393,7 @@ def _render_rows(name, rows):
     store('active.json', {'name': name, 'time': time.time(), 'request': request, 'pinned': document['pinned']})
 
 
-def native_item(title, press=True):
+def native_item(title, press=True, ensure=None):
     # macOS 27 hosts status extras below MenuBarAgent's hosting views.
     # Earlier systems expose them directly through ControlCenter's menu bar.
     # Only fixed item identifiers are matched; no network list is read here.
@@ -536,6 +419,7 @@ on findItem(nodes, wanted, depth, shouldPress)
   end tell
   return false
 end findItem
+%s
 tell application "System Events"
   set nodes to {}
   if exists process "MenuBarAgent" then set nodes to UI elements of process "MenuBarAgent"
@@ -559,69 +443,46 @@ tell application "System Events"
     error "System menu item unavailable"
   end tell
 end tell
-""" % (json.dumps('com.apple.menuextra.' + selector), 'true' if press else 'false',
+""" % (wifi_visibility_guard(ensure) if title == 'Wi-Fi' and ensure else '',
+       json.dumps('com.apple.menuextra.' + selector), 'true' if press else 'false',
        json.dumps(selector), json.dumps(title), 'true' if press else 'false')
-    command('osascript', '-e', applescript)
+    return command('osascript', '-e', applescript)
+
+
+def wifi_visibility_guard(action):
+    """Only toggle Wi-Fi when needed; never dismiss a different system panel."""
+    if action not in ('open', 'close'):
+        raise ValueError('Unknown Wi-Fi panel action')
+    return """
+set wifiVisible to false
+tell application "System Events"
+  if exists process "ControlCenter" then
+    set wifiWindows to windows of process "ControlCenter"
+    repeat with wifiWindow in wifiWindows
+      set remaining to 160
+      if my findItem({wifiWindow}, "wifi-header", 0, false) then
+        set wifiVisible to true
+        exit repeat
+      end if
+    end repeat
+  end if
+end tell
+if wifiVisible is %s then return
+set remaining to 120
+""" % ('true' if action == 'open' else 'false')
+
+
+def close_native_wifi():
+    if read('active.json', {}).get('native_wifi'):
+        native_item('Wi-Fi', ensure='close')
+        store('active.json', {})
 
 
 def close_panels():
+    close_native_wifi()
     native_calendar('hide')
     native_controls('hide')
     store('active.json', {})
-
-
-def native_wifi_connect(name):
-    """New secured networks use Apple's password UI; no credential is read."""
-    native_item('Wi-Fi')
-    script = '''
-property remaining : 160
-on findNetwork(item, wanted, depth)
-  if depth > 8 or remaining < 0 then return missing value
-  set remaining to remaining - 1
-  tell application "System Events"
-    try
-      set keyName to "AXIdentifier"
-      if wanted is "AXDisclosureTriangle" then set keyName to "AXRole"
-      if (value of attribute keyName of item) is wanted then return item
-    end try
-    try
-      repeat with child in UI elements of item
-        set found to my findNetwork(child, wanted, depth + 1)
-        if found is not missing value then return found
-      end repeat
-    end try
-  end tell
-  return missing value
-end findNetwork
-on run arguments
-  set wanted to "wifi-network-" & item 1 of arguments
-  repeat 20 times
-    set remaining to 160
-    tell application "System Events" to set roots to windows of process "ControlCenter"
-    repeat with root in roots
-      set found to findNetwork(root, wanted, 0)
-      if found is not missing value then
-        tell application "System Events" to perform action "AXPress" of found
-        return
-      end if
-    end repeat
-    try
-      set remaining to 160
-      repeat with root in roots
-        set more to findNetwork(root, "AXDisclosureTriangle", 0)
-        if more is not missing value then
-          tell application "System Events"
-            if (value of attribute "AXValue" of more) is 0 then perform action "AXPress" of more
-          end tell
-        end if
-      end repeat
-    end try
-    delay 0.1
-  end repeat
-  return "Network changed; choose from the open Wi-Fi controls"
-end run
-'''
-    command('/usr/bin/osascript', '-e', script, '--', name, timeout=7)
 
 
 def native_action(kind, name, value, revision):
@@ -644,7 +505,7 @@ def native_action(kind, name, value, revision):
                 return
             selected = actions[index]
     try:
-        handoff = selected[0] in ('native', 'wifi-native-network')
+        handoff = selected[0] == 'native'
         if handoff:
             with interaction():
                 if read('hover.json') != token:
@@ -671,13 +532,9 @@ def native_action(kind, name, value, revision):
                 store('anchor.json', {'request': str(token[0]), 'anchors': previous.get('anchors', [])})
             rows = fresh_rows(name)
             rows.insert(1, ('System controls unavailable · check Accessibility', None))
-        elif name == 'wifi':
-            rows = fresh_rows(name)
-            rows.insert(1, ('Could not connect · use Wi-Fi controls', None))
         else:
             rows = [(name.title(), None), ('Action unavailable · check local permissions', None)]
-    if render_rows(name, rows, token) and name == 'wifi' and selected[0] == 'wifi-access':
-        start_wifi_watch(token[0])
+    render_rows(name, rows, token)
 
 
 def action(args):
@@ -694,33 +551,6 @@ def action(args):
         command('SwitchAudioSource', '-t', 'output', '-s', values[0])
     elif kind == 'wifi':
         command('networksetup', '-setairportpower', *values)
-    elif kind == 'wifi-access':
-        status = wifi.query(STATE)
-        if status.get('authorization') in ('denied', 'restricted') or status.get('services') is not True:
-            command('open', 'x-apple.systempreferences:com.apple.preference.security?Privacy_LocationServices')
-        else:
-            wifi.query(STATE, request_access=True)
-    elif kind in ('wifi-network', 'wifi-native-network'):
-        name = values[0]
-        status = wifi.query(STATE)
-        scan = read('wifi-scan.json', {})
-        if (not wifi.current_scan(scan, status, read('wifi-invalidated.json', {}).get('time', 0))
-                or name not in [item['ssid'] for item in wifi.choices(scan, read('wifi-recent.json', {}))]):
-            raise ValueError('Available network choices changed; refresh Wi-Fi')
-        if status.get('ssid') == name:
-            return
-        if kind == 'wifi-native-network':
-            native_wifi_connect(name)
-            return
-        store('wifi-pending.json', {'ssid': name, 'time': time.time()})
-        refresh_open('wifi')
-        try:
-            response = command('/usr/sbin/networksetup', '-setairportnetwork', wifi_device(), name, timeout=20)
-            if response and not response.startswith('You have joined'):
-                raise ValueError('macOS could not join this network')
-        except (OSError, subprocess.SubprocessError, ValueError):
-            store('wifi-pending.json', {})
-            raise
     elif kind == 'bluetooth-power':
         command('blueutil', '--power', values[0])
     elif kind == 'bluetooth-device':
@@ -738,8 +568,6 @@ def main():
     kind, name, *extra = sys.argv[1:]
     if kind == 'hover' and name in PANELS:
         show(name)
-    elif kind == 'wifi-watch':
-        wifi_watch(name)
     elif kind == 'click' and name in PANELS:
         show(name, clicked=True)
     elif kind == 'changed':
@@ -762,6 +590,9 @@ def main():
             list(pool.map(fresh_rows, targets))
     elif kind == 'cancel':
         with interaction():
+            if (os.environ.get('SENDER') == 'desktop_concealed'
+                    and read('active.json', {}).get('native_wifi')):
+                return  # Let the system picker remain usable below the hidden bar.
             store('hover.json', [time.time_ns(), None])
             close_panels()
     elif kind in ('native-action', 'native-slider') and name in PANELS and len(extra) == 2:
@@ -773,10 +604,6 @@ def main():
             bar('--set', name, 'icon.color=' + appearance.color('accent' if powered else 'muted'))
         except (OSError, subprocess.SubprocessError, ValueError):
             bar('--set', name, 'icon.color=' + appearance.color('warning'))
-        if name == 'wifi':
-            if os.environ.get('SENDER') == 'desktop_network_changed':
-                store('wifi-invalidated.json', {'time': time.time()})
-            refresh_open('wifi')
     elif kind == 'scroll':
         if name not in ('volume', 'brightness'):
             return

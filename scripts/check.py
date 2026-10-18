@@ -23,11 +23,6 @@ def main():
                             'scripts/desktop-edge.m', 'scripts/calendar-panel.m', 'scripts/control-panel.m', 'scripts/app-menu.m',
                             '-o', str(Path(temp) / 'desktop-edge')], cwd=ROOT, check=True)
             subprocess.run([str(Path(temp) / 'desktop-edge'), '--self-test'], check=True)
-            subprocess.run(['xcrun', 'clang', '-fobjc-arc', '-Wall', '-Wextra', '-Werror',
-                            '-mmacosx-version-min=14.0', '-framework', 'AppKit', '-framework', 'CoreWLAN',
-                            '-framework', 'CoreLocation', 'scripts/wifi-access.m',
-                            '-o', str(Path(temp) / 'wifi-access')], cwd=ROOT, check=True)
-            subprocess.run([str(Path(temp) / 'wifi-access'), '--self-test'], check=True)
             subprocess.run(['xcrun', 'swiftc', '-typecheck', 'scripts/set-wallpaper.swift'],
                            cwd=ROOT, check=True)
     suite = unittest.defaultTestLoader.discover(str(ROOT / 'tests'))

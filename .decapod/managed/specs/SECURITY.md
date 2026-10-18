@@ -118,23 +118,18 @@ An OS update may change these interfaces. Ordinary failure restores the native
 menu; SIGKILL cannot run cleanup, and the owned LaunchAgent restarts the helper.
 Undo recovers the menu before checking guarded preference restoration.
 
-Desktop Controls keeps its existing no-Location identity. The separate Wi-Fi
-Access bundle declares the macOS purpose string needed for SSID names and uses
-CoreWLAN only after authorization. CoreLocation is limited to authorization:
-there are no coordinate, requestLocation or startUpdatingLocation calls.
-Installation and hover never request authorization or enable global Location
-Services. The explicit permission action is the opt-in; a denied response does
-not automatically open Settings or repeat the request. The owner must approve
-the privacy change and the OS dialog before named scans can work.
-
-Private 0600 JSON results are bounded and validated, then removed; recency and
-scan caches remain outside Git. Saved history ranks a scan-derived set and
-never establishes availability. Expired or invalidated results cannot authorize
-a join. Network names are literal argv, never AppleScript/shell interpolation.
-Passwords are neither read nor passed; Apple's UI owns new secured-network
-credentials. Native UI scraping is not used to populate the hover pane.
-SystemConfiguration notifications still carry no network values. Signing
-certificate selection stays local and no team name, ID or certificate enters Git.
+Wi-Fi does not link CoreLocation/CoreWLAN, install a consent helper or contain a
+Location purpose string. The native picker displays its own real network names
+directly on hover; production code does not scrape or retain them. Saved
+profiles never stand in for availability. Bounded AX traversal uses only fixed
+status-item and wifi-header identifiers to open idempotently and close only the
+Wi-Fi panel. Passwords are neither read nor passed. SystemConfiguration emits a
+fixed change event without reading, storing or forwarding network values.
+Location remains off. The failed custom scanner was removed rather than
+requesting permission again or changing TCC. The separate cached Wi-Fi Access
+builds from the rejected experiment may remain in private local state for
+recovery, but their active symlink and config link are removed and no service
+launches them. Existing Desktop Controls identity/Calendar/AX consent are intact.
 
 Window metadata is limited to application ownership, count and geometry;
 screen recording and private window titles are not needed. Device names,
@@ -159,7 +154,7 @@ loads a model. Ollama remains manually started and is not enabled at login.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `fe2c007ef63af40072574145bb42d051288c913b164cb6f22152a17df042ffb2`
-- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (7 files)
+- Repository signal fingerprint: `0b5828bb53eba4b63cedf3e162cbd15961dc1c131089bb4836e4e0a84c1cd27b`
+- Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

@@ -2,33 +2,21 @@
 
 ## Proof Surfaces
 
-The direct Wi-Fi revision passes 118 host tests plus native warnings-as-errors
-compilation and self-tests. Tests cover scan-derived availability independent
-of history, three-choice recency/known/signal ranking, duplicate radios, literal
-SSID bounds, permission-off redaction, background query modes and private-file
-cleanup, stale/interface/connection/link invalidation, hidden/superseded scan
-discard, failed-refresh action removal, literal credential-free joins, pending
-state and zero-exit join failures. New secured networks use the system password
-UI; no credentials are read. Explicit permission denial does not repeat a prompt
-or automatically open Settings.
+The Wi-Fi recovery passes 54 targeted desktop regression tests. They cover
+direct native hover/click without rendering setup or stale cache rows, canceled
+dwell, no custom network refresh over the native picker, survival of bar
+autohide, explicit close and switching to another themed pane.
 
-Wi-Fi Access is built and signed separately; the current Desktop Controls
-identity is unchanged. A real LaunchServices status query reported
-authorization notDetermined and Location Services off, with zero network names.
-No permission request has been sent. Real named-scan and hover verification are
-pending the owner's explicit privacy change and OS consent; synthetic checks
-do not prove that live behavior. Prototype Accessibility reads retrieved native
-rows, but compositor probes still observed a visible native frame even with an
-offscreen event bridge. That approach was rejected and is not in product code.
-Exact-candidate readiness and hosted CI remain required before publication.
-
-The current pane revision passes 103 host tests, warnings-as-errors native
-compilation and native self-tests. Regressions cover hidden-pin recovery without
-canceling visible/new pins, no saved profiles or stale saved-list cache in Wi-Fi,
-local link/address labels without an Internet claim, request-safe native handoff
-and failure recovery, visible-only network refresh, connected-device ordering,
-and state metadata retaining literal device actions. The native hidden-pin test
-checks acknowledgement even when AppKit already hid the panel.
+A private live test moved the pointer to the actual Wi-Fi bar icon over the
+current fullscreen app. The real picker opened in 1.133 seconds with two named
+network rows and exactly one connected row. Location Services was false before,
+during and after; the custom controls window remained hidden. Repeated hover
+kept the picker open. Moving into it and letting the bar hide retained it.
+Opening Sound closed Wi-Fi and displayed the themed Sound pane. Cleanup
+restored the pointer and closed test panes without a network change. This proves
+the functional native fallback only. Its styling/order are Apple's, and no
+custom top-three recent/available list is claimed. No current exact-candidate
+full validation or CI/publication readiness is claimed by these targeted checks.
 
 Sound and Bluetooth fixture previews were rendered and visually inspected:
 quiet shared Apple/app hover treatment, one current-device check, explicit state
@@ -48,8 +36,8 @@ A bounded public AX probe found macOS 27's fixed Wi-Fi menu-extra identifier
 inside MenuBarAgent hosting views; the compatible installed native_item action
 opened Apple's real picker without Location or a network switch. Its current
 SSID and known/other-network grouping were visually inspected privately. This
-is system-picker evidence, not proof of a custom scanned SSID list. The owner explicitly reconfirmed that Location stays off, so that custom
-scanned list is outside the authorized implementation. The installed Wi-Fi action was clicked through the actual bar and pane over
+is system-picker evidence, not proof of a custom scanned SSID list. The owner explicitly reconfirmed that Location stays off, so the requested custom
+scanned list remains unresolved rather than permission to change privacy. The installed Wi-Fi action was clicked through the actual bar and pane over
 fullscreen: Apple’s picker became visible, the custom pane closed and its
 backend active record cleared. No network was switched. All twelve actual bar routes passed over the real Ghostty fullscreen Space:
 ten controls opened on hover and click; Apple and app menus remained click-only.
@@ -344,7 +332,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `fe2c007ef63af40072574145bb42d051288c913b164cb6f22152a17df042ffb2`
-- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (7 files)
+- Repository signal fingerprint: `0b5828bb53eba4b63cedf3e162cbd15961dc1c131089bb4836e4e0a84c1cd27b`
+- Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

@@ -99,45 +99,7 @@ def compile_tools(directory):
                 temporary.chmod(0o700)
                 os.replace(temporary, target)
         tools[name] = str(target)
-    tools['wifi-access'] = setup_wifi_access(directory)
     return tools
-
-
-def setup_wifi_access(directory):
-    """Build only the separate Wi-Fi bundle; never rebuild Desktop Controls."""
-    directory.mkdir(parents=True, exist_ok=True, mode=0o700)
-    identity = os.environ.get('DOTFILES_WIFI_SIGN_IDENTITY', '')
-    if not identity:
-        result = subprocess.run(['security', 'find-identity', '-v', '-p', 'codesigning'],
-                                capture_output=True, text=True, check=True)
-        identities = re.findall(r'^\s*\d+\) ([0-9A-F]{40}) ', result.stdout, re.MULTILINE)
-        identity = identities[0] if len(identities) == 1 else '-'
-    source = ROOT / 'scripts/wifi-access.m'
-    info = ROOT / 'scripts/wifi-access-info.plist'
-    digest = hashlib.sha256(source.read_bytes() + info.read_bytes() + identity.encode()).hexdigest()[:16]
-    bundle = directory / ('WiFiAccess-' + digest + '.app')
-    target = bundle / 'Contents/MacOS/wifi-access'
-    if not target.is_file():
-        with tempfile.TemporaryDirectory(prefix='wifi-build-', dir=directory) as temp:
-            staged = Path(temp) / 'Wi-Fi Access.app'
-            executable = staged / 'Contents/MacOS/wifi-access'
-            executable.parent.mkdir(parents=True)
-            run('xcrun', 'clang', '-fobjc-arc', '-Wall', '-Wextra', '-Werror',
-                '-mmacosx-version-min=14.0', '-framework', 'AppKit', '-framework', 'CoreWLAN',
-                '-framework', 'CoreLocation', source, '-o', executable)
-            executable.chmod(0o700)
-            shutil.copyfile(info, staged / 'Contents/Info.plist')
-            run('codesign', '--force', '--sign', identity, '--identifier', 'local.dotfiles.wifi-access', staged)
-            run('codesign', '--verify', '--strict', staged)
-            os.replace(staged, bundle)
-    register_bundle(target)
-    link = directory / 'wifi-access'
-    if not link.is_symlink() or os.readlink(link) != str(target):
-        temporary = directory / 'wifi-access.new'
-        temporary.unlink(missing_ok=True)
-        temporary.symlink_to(target)
-        os.replace(temporary, link)
-    return str(target)
 
 
 def service_state():
@@ -286,11 +248,6 @@ def main(action, theme=None, layout=None):
                     os.kill(pid, signal.SIGUSR1)
                 print('Desktop appearance: ' + palette['name'] + ' / ' + palette['layout'])
                 return 0
-        if action == 'wifi-setup':
-            executable = setup_wifi_access(directory)
-            print('Wi-Fi Access installed: ' + str(Path(executable).parents[2]))
-            print('Location remains unchanged; the app requests access only after an explicit Wi-Fi pane action.')
-            return 0
         if action == 'permissions':
             if not agent_loaded():
                 raise ValueError('Enable the desktop profile before requesting its permissions')

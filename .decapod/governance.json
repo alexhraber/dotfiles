@@ -38,6 +38,14 @@
         "scripts/wifi-access.m",
         "tests/test_wifi.py"
       ]
+    },
+    {
+      "id": "native-wifi-hover-recovery",
+      "summary": "Remove rejected permission/setup implementation; actual native Wi-Fi hover works over fullscreen with Location off. Preserve original custom top-three request as incomplete. Targeted 54 tests, config doctor, real mouse hover/SSID selection marker/reentry/autohide/Sound-switch proof pass; no full validation or readiness claim.",
+      "input_digest": "sha256:f77fd9ca8c1773e2b1e4814831bfa19946e0f6799282cfb82ba52008bb10e12e",
+      "proof_refs": [
+        "/private/tmp/dotfiles-wifi-hover-proof.json"
+      ]
     }
   ],
   "intents": {
@@ -68,33 +76,33 @@
       },
       "deferred_questions": [],
       "human_questions": [],
-      "intent": "Build a separate short-lived Wi-Fi Access app for CoreWLAN SSID/scan queries and a direct custom hover pane with connected SSID, up to three familiar in-range networks ranked by observed use, selection and connecting status. Existing Desktop Controls identity and approvals stay intact. Native UI scraping is rejected after compositor probes showed visible frames. Location remains off unless owner explicitly opts in: no automatic authorization request, and no coordinate/location-update APIs anywhere. Prepare code and proof before requesting the one-time macOS permission decision needed for real named scans.",
+      "intent": "Keep Location off. Remove the rejected permission-gated Wi-Fi implementation and setup wall, including its unused helper. Open the actual macOS Wi-Fi picker directly on hover/click using already-approved Accessibility. It provides real connected SSID, available networks and connection states without an extra click; Apple owns its styling/order, so the custom top-three layout remains an explicitly unfulfilled request. Preserve existing Desktop Controls identity, other themed panes and fullscreen behavior. No offscreen scraping, flashing mirrored panes, saved-profile availability claims, Location request, coordinates, or TCC modifications.",
       "phases": [],
       "proof_hooks": [
-        "Scanner serialization/self-tests, on-demand execution and privacy invariants; availability/recency and stale-request/action tests; full host checks/native compilation; permission-off live proof, then permission-authorized real hover if granted; exact-candidate validation and platform CI before merge."
+        "Regression tests for native-hover dispatch, no custom/setup pane, idempotent native open and safe close, stale hover cancellation and switching panes; live desktop/fullscreen hover with real SSID and availability verified privately while Location stays off; canonical validation and platform CI before publication."
       ],
       "schema_version": "1.1.0",
       "spec_reviews": [
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/ARCHITECTURE.md",
-          "reason": "Reviewed the separate signed Wi-Fi app, authorization-only CoreLocation usage, direct CoreWLAN hover data, private on-demand query lifecycle and stale/hidden request gates. Live named scans remain explicitly pending owner privacy choice and OS consent.",
-          "reviewed_code_fingerprint": "fe2c007ef63af40072574145bb42d051288c913b164cb6f22152a17df042ffb2",
-          "spec_material_hash": "69ebbc85402259863f37b86acbbda51fdb6e88eef18f2b432bb13539ead39924"
+          "reason": "Reviewed direct native Wi-Fi hover, fixed-identifier open/close guard, bar-conceal ownership and no custom refresh. Separate consent/scanning helper was removed. Native fullscreen mouse-hover proof passes with Location off; custom themed top-three list remains unresolved.",
+          "reviewed_code_fingerprint": "0b5828bb53eba4b63cedf3e162cbd15961dc1c131089bb4836e4e0a84c1cd27b",
+          "spec_material_hash": "5a3c6f90d73ad225cf207285a49ac11611f6963bb5204d5847c8ff2b4f08a6a3"
         },
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/INTERFACES.md",
-          "reason": "Reviewed the separate signed Wi-Fi app, authorization-only CoreLocation usage, direct CoreWLAN hover data, private on-demand query lifecycle and stale/hidden request gates. Live named scans remain explicitly pending owner privacy choice and OS consent.",
-          "reviewed_code_fingerprint": "fe2c007ef63af40072574145bb42d051288c913b164cb6f22152a17df042ffb2",
-          "spec_material_hash": "306d9e9cb6a57bf8c3bc6017453e5018b3720bd425fb4c76fbc6759c73a1d4ac"
+          "reason": "Reviewed direct hover interaction and Apple-owned network content/dismissal, no second handoff action or setup prompt. Unit and real fullscreen hover checks support the functional fallback only; no custom recency/top-three list claim.",
+          "reviewed_code_fingerprint": "0b5828bb53eba4b63cedf3e162cbd15961dc1c131089bb4836e4e0a84c1cd27b",
+          "spec_material_hash": "f55700b15c75adb71ca14eae8778928fbc0a6fdd363d71c3e6afbf569c78dfda"
         },
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/SECURITY.md",
-          "reason": "Reviewed the separate signed Wi-Fi app, authorization-only CoreLocation usage, direct CoreWLAN hover data, private on-demand query lifecycle and stale/hidden request gates. Live named scans remain explicitly pending owner privacy choice and OS consent.",
-          "reviewed_code_fingerprint": "fe2c007ef63af40072574145bb42d051288c913b164cb6f22152a17df042ffb2",
-          "spec_material_hash": "9e6c7e178c71f71a3597449325e9664eee6bbdbf771fdfb3802faf5aec73bee6"
+          "reason": "Location remains off before/during/after actual hover. No Location prompt, SSID scraping, credential access, approved native rebuild or TCC change. Rejected helper active links and custom network caches were backed up locally and removed.",
+          "reviewed_code_fingerprint": "0b5828bb53eba4b63cedf3e162cbd15961dc1c131089bb4836e4e0a84c1cd27b",
+          "spec_material_hash": "05170cd904fc864a9499fdd192327623f760db1e887582e7182e9f41833dfefc"
         }
       ],
       "state": "APPROVED",
@@ -105,17 +113,31 @@
       ],
       "unknowns": [],
       "unresolved_contradictions": [],
-      "updated_at": "1792364875Z"
+      "updated_at": "1792365499Z"
     },
     "trajectory": {
       "active_boundaries": [
-        "Current claimed task and isolated work branch"
+        "Current claimed task and isolated work branch",
+        "Location remains off; no repeated permission question; preserve approved native app identity."
       ],
-      "artifact_hash": "sha256:18b9ceeaa9fbb471d143720012ce8207763771fda65b80814a6295d1bbac5f88",
+      "artifact_hash": "sha256:a503e082d5498a92c97ea699ca0d9177f7e3fcc720eed6daf004edbc2dd0286a",
       "blockers": [
+        "The custom themed top-three list is not implemented with Location off. Native picker hover is a truthful functional fallback only; do not close the original task or claim full acceptance.",
         "Waiting for owner decision on enabling macOS Location Services and Wi-Fi Access authorization; prior preference remains off."
       ],
       "checks": [
+        {
+          "name": "desktop-config-doctor",
+          "status": "passed"
+        },
+        {
+          "name": "direct-native-fullscreen-hover",
+          "status": "passed"
+        },
+        {
+          "name": "full-exact-candidate-validation",
+          "status": "unavailable"
+        },
         {
           "name": "host-118-tests-and-native-selftests",
           "status": "passed"
@@ -141,15 +163,27 @@
           "status": "failed"
         },
         {
+          "name": "permission-gated-hover",
+          "status": "failed"
+        },
+        {
           "name": "public-network-report-ssid",
+          "status": "unavailable"
+        },
+        {
+          "name": "requested-custom-top-three",
           "status": "unavailable"
         },
         {
           "name": "signed-wifi-helper-permission-off",
           "status": "passed"
+        },
+        {
+          "name": "wifi-desktop-regressions-54",
+          "status": "passed"
         }
       ],
-      "current_phase": "verification",
+      "current_phase": "Native Wi-Fi recovery installed; custom list incomplete",
       "custody": {
         "events": [
           {
@@ -184,10 +218,24 @@
             "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
             "kind": "trajectory_step_recorded",
             "sequence": 6
+          },
+          {
+            "detail": "trajectory:branch_01M58C4V19X11MCFQMX6SWKW4V",
+            "event_id": "event:7",
+            "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
+            "kind": "trajectory_step_recorded",
+            "sequence": 7
+          },
+          {
+            "detail": "trajectory:branch_01M58C4V19X11MCFQMX6SWKW4V",
+            "event_id": "event:8",
+            "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
+            "kind": "trajectory_step_recorded",
+            "sequence": 8
           }
         ],
         "knowledge_candidates": [],
-        "next_sequence": 6,
+        "next_sequence": 8,
         "schema_version": "1.0.0",
         "trajectories": {
           "branch_01M58C4V19X11MCFQMX6SWKW4V": {
@@ -263,6 +311,50 @@
                 "validation_findings": [
                   "Rejected native UI bridge after compositor frames remained visible. Separate Wi-Fi helper is signed and installed; actual LaunchServices status reports notDetermined and services=false. No Location permission request or global setting change has occurred. Desktop Controls remains approved build423089378d446f54. User has been asked for explicit privacy opt-in; actual named scan/fullscreen proof and publication remain pending."
                 ]
+              },
+              {
+                "action": "Recover rejected Wi-Fi UX",
+                "custody_event_id": "event:7",
+                "observations": [
+                  "/private/tmp/dotfiles-wifi-permission-off-proof.json"
+                ],
+                "proof_refs": [
+                  "permission-gated-hover"
+                ],
+                "scope": [
+                  "root"
+                ],
+                "sequence": 7,
+                "validation_findings": [
+                  "The requested custom top-three list has not been achieved. Direct native picker hover is a functional fallback, not equivalent visual completion."
+                ]
+              },
+              {
+                "action": "Native Wi-Fi recovery installed; custom list incomplete",
+                "custody_event_id": "event:8",
+                "observations": [
+                  ".config/sketchybar/plugins/controls.py",
+                  "tests/test_desktop.py",
+                  "README.md",
+                  ".decapod/config.toml",
+                  "/private/tmp/dotfiles-wifi-hover-proof.json",
+                  "/Users/arx/.local/state/dotfiles/backups/wifi-recovery-e4l7byfm/manifest.json",
+                  "/private/tmp/dotfiles-wifi-ui-backup-a5uii2e9"
+                ],
+                "proof_refs": [
+                  "direct-native-fullscreen-hover",
+                  "wifi-desktop-regressions-54",
+                  "desktop-config-doctor",
+                  "requested-custom-top-three",
+                  "full-exact-candidate-validation"
+                ],
+                "scope": [
+                  "root"
+                ],
+                "sequence": 8,
+                "validation_findings": [
+                  "Complete reviewed source inventory differs only in the reviewed controls implementation and removal of the rejected helper; command contract remains unchanged. Exact candidate validation and CI have not run, so no PR, merge or publication readiness is claimed."
+                ]
               }
             ]
           }
@@ -271,11 +363,15 @@
       "declared_commands": [],
       "destination": "pull request",
       "evidence": [
+        "/Users/arx/.local/state/dotfiles/backups/wifi-recovery-e4l7byfm/manifest.json",
         "/private/tmp/dotfiles-ssid-direct-host-check.txt",
         "/private/tmp/dotfiles-wifi-ax-item.txt",
         "/private/tmp/dotfiles-wifi-ax-panel.txt",
         "/private/tmp/dotfiles-wifi-bridge-proof.json",
+        "/private/tmp/dotfiles-wifi-hover-proof.json",
         "/private/tmp/dotfiles-wifi-network-state.txt",
+        "/private/tmp/dotfiles-wifi-permission-off-proof.json",
+        "/private/tmp/dotfiles-wifi-ui-backup-a5uii2e9",
         "scripts/wifi-access.m",
         "tests/test_wifi.py"
       ],
@@ -292,11 +388,18 @@
         "tests/test_wifi.py"
       ],
       "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
-      "modified_files": [],
+      "modified_files": [
+        ".config/sketchybar/plugins/controls.py",
+        ".decapod/config.toml",
+        "README.md",
+        "tests/test_desktop.py"
+      ],
       "next_transitions": [
         "After explicit owner opt-in, stage OS consent and verify actual named hover; then exact-candidate validation, platform CI and merge. Preserve current implementation otherwise.",
+        "Checkpoint local recovery; report remaining visual/list limitation candidly. Preserve Location off and existing native consent.",
         "Probe native panel lifetime and geometry capabilities, then implement and test viable bridge.",
         "Refine plan and declare falsifiable checks",
+        "Remove setup wall and unused consent helper; verify real native picker on hover before claiming functional improvement.",
         "Wait for UI choice; then implement and verify the authorized behavior without Location requests."
       ],
       "repo_scope": [
@@ -308,8 +411,10 @@
       "task_id": "bend_01m58c43xxb21mve",
       "tool_calls": [],
       "unresolved_assumptions": [
+        "Complete reviewed source inventory differs only in the reviewed controls implementation and removal of the rejected helper; command contract remains unchanged. Exact candidate validation and CI have not run, so no PR, merge or publication readiness is claimed.",
         "Location remains off. Official CoreWLAN names require Location permission. Existing Accessibility can read names in an open native Wi-Fi panel; no named UI remains after close. A hidden custom-pane snapshot would require opening a second UI, violating no flicker. Native direct hover can show names but Apple owns its theme/order; user choice requested before substituting that behavior.",
         "Rejected native UI bridge after compositor frames remained visible. Separate Wi-Fi helper is signed and installed; actual LaunchServices status reports notDetermined and services=false. No Location permission request or global setting change has occurred. Desktop Controls remains approved build423089378d446f54. User has been asked for explicit privacy opt-in; actual named scan/fullscreen proof and publication remain pending.",
+        "The requested custom top-three list has not been achieved. Direct native picker hover is a functional fallback, not equivalent visual completion.",
         "User reaffirmed exact custom hover and authorizes lifting native picker contents. Earlier native-hover choice is superseded. Investigate a live Accessibility bridge under existing approval; Location remains off."
       ]
     }
