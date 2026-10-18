@@ -89,11 +89,11 @@ The top three pixels reveal the bar; the bottom-center resting icon footprint
 the screen bottom, with no 26-point gap to chase. Resting size stays 40 points;
 unconstrained peak hover size is 77.5 points, 25% above the previous 62 points.
 Crowded layouts scale to fit. Exit hysteresis is 320 ms. Hover controls
-include calendar, sound/output/mute, built-in brightness, Wi-Fi power/details,
+include calendar, sound/output/mute, built-in brightness, Wi-Fi power/details and three recent saved-network choices,
 paired Bluetooth devices, battery and Fahrenheit CPU/GPU telemetry. Notifications
 are furthest right; hardware warnings are not an unread notification count.
 From that right edge inward, clock and weather come immediately after
-notifications. Only the Apple logo and foreground-app name occupy the left. Apple opens a native system menu only on click, with About This Mac,
+notifications. Only the Apple logo and foreground-app name occupy the left. Apple opens a themed system pane only on click, with About This Mac,
 System Settings, App Store, System Information, Force Quit and session/power
 entries. Native tracking supports selection, outside-click dismissal and Escape.
 Information/settings entries do not require AX access. Force Quit is a native
@@ -126,6 +126,12 @@ It reads the actual level rather than trusting event text, retains the hover
 request/anchor/pin, and rejects hidden, stale, dismissed or superseded work.
 Keyboard and other system level changes update the slider and numeric reading
 without pointer reentry; closed panes add no device polling.
+
+Clicking a running app uses the macOS reopen request without requesting a new
+instance. Wi-Fi selections revalidate against the current top-three saved
+profiles and call networksetup with a literal SSID and no password argument;
+a reported connection error retains the network list. Saved profiles are not
+claimed to be nearby. No Location access is requested.
 
 The dock renders only app icons over fully transparent pixels. It has no shelf,
 blur, border, shadow, text, badges or active markers. Autohide, magnification,
@@ -194,7 +200,7 @@ can leave partial state; the backup manifest remains the recovery input.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `c90d7a78288a21050213593e790c937dd8687f29e3dc5391cf1bb2eba8f0d425`
+- Repository signal fingerprint: `9c8d674dac16b4e6d6f39748f6fb5faaf48fe8a8e08adf63ae276d06db50866a`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

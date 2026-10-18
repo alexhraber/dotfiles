@@ -64,7 +64,7 @@ responses are rejected after dismissal or foreground-PID changes. Mouse/key
 event monitors dismiss open menus only; Escape is not consumed and other keys
 do nothing. No menu titles or command data are committed to Git.
 
-The Apple icon uses fixed native menu actions rather than another app's AX
+The Apple icon uses themed rows with fixed native actions rather than another app's AX
 tree. Application launches resolve four allowlisted bundle identifiers, with
 an exact installed system path fallback for About This Mac. No menu payload
 supplies shell text or an arbitrary URL. Force Quit displays a Cancel-default
@@ -108,10 +108,21 @@ Calendar or Accessibility consent does not prove access for the new build.
 Desktop activation is explicit. The helper uses private SkyLight menu calls,
 DisplayServices brightness, login-service screen lock and a Mission Control
 notification with SIP enabled;
-it does not inject code, install an event tap, warp the pointer or require root.
+it does not inject code, warp the pointer or require root. A scoped
+CGEventTapCreateForPid filter targets only the native Dock and only mouseMoved
+at the outer bottom two points while healthy, with detected Mission Control excluded.
+It subscribes to no keyboard/button/drag/wheel events, excludes connected-screen
+seams and detaches on restore or failed health checks. Accessibility remains a
+manual OS approval; without it, the native Dock can still reveal.
 An OS update may change these interfaces. Ordinary failure restores the native
 menu; SIGKILL cannot run cleanup, and the owned LaunchAgent restarts the helper.
 Undo recovers the menu before checking guarded preference restoration.
+
+Wi-Fi does not use CoreLocation/CoreWLAN scanning or contain a Location purpose
+string. Saved-profile names and bounded successful-selection history stay in
+private state. Connection actions revalidate current choices and pass the SSID
+as one argv element; passwords are neither read nor passed. Native controls
+provide availability without a custom scanner.
 
 Window metadata is limited to application ownership, count and geometry;
 screen recording and private window titles are not needed. Device names,
@@ -136,7 +147,7 @@ loads a model. Ollama remains manually started and is not enabled at login.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `c90d7a78288a21050213593e790c937dd8687f29e3dc5391cf1bb2eba8f0d425`
+- Repository signal fingerprint: `9c8d674dac16b4e6d6f39748f6fb5faaf48fe8a8e08adf63ae276d06db50866a`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

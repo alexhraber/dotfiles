@@ -217,20 +217,26 @@ scripts/dotfiles desktop undo
 
 The native fullscreen workflow remains intact. Reveal the status bar at the
 top three pixels and the dock in the bottom-center 44-point icon footprint.
-The dock icons sit at the screen's bottom edge. Each hides after
+The dock icons sit at the screen's bottom edge. Clicking an icon sends the
+normal macOS reopen request, so a running app can restore or recreate its
+window. It remains an open-apps-only dock. Each hides after
 leaving it for 320 ms; hovering a bar control opens its cached panel. Popups remain
 usable while the pointer is inside them. There is no permanently reserved
-strip, extra native menu row, or dock divider.
+strip, extra native menu row, or dock divider. With Accessibility enabled, a
+Dock-process-only mouse-motion filter suppresses the native Dock’s bottom-edge
+reveal in fullscreen. Clicks, dragging, scrolling and keys pass through. Mission
+Control, when detected by the helper, and connected-screen seams are excluded. If access is off, native
+reveal can return; `desktop undo` stops the helper and removes the filter.
 
 | Control | Hover / interaction |
 | --- | --- |
-| Apple | Click for a native system menu: About This Mac, System Settings, App Store, System Information, Force Quit and session/power actions |
+| Apple | Click for a themed system pane: About This Mac, System Settings, App Store, System Information, Force Quit and session/power actions |
 | Active app | Click for the app’s menu headings; hover File, Edit, View, Window, Help or another heading for its real commands |
 | Clock | Current macOS time; native month grid, date selection, previous/next month, today and synced calendar agenda |
 | Weather | ZIP 97750 forecast, wind in mph, precipitation chance, upcoming hours and extended outlook |
 | Sound | Volume slider, mute, output selection; scroll the bar item for volume |
 | Display | Built-in brightness slider; scroll the bar item to adjust |
-| Wi-Fi | Power toggle and connection details; native quick panel for network selection |
+| Wi-Fi | Power, connection details and up to three recent saved networks; native quick panel for nearby networks |
 | Bluetooth | Power toggle and paired-device connect/disconnect |
 | CPU / GPU | Load graph, real average die temperature in °F, power and fans |
 | RAM | Usage graph, capacity and swap details |
@@ -247,8 +253,12 @@ Wi-Fi, notification and Focus quick panels and App Exposé require local
 Accessibility/Automation approval for the responsible SketchyBar/osascript
 process. Bluetooth may request macOS Bluetooth permission. Approval is a local
 OS action and is not captured or bypassed by dotfiles. Network names can be
-redacted without Location permission; private network/device names are never
-stored in Git. Hardware alerts do not count unread app notifications: macOS
+redacted without Location permission. This helper never requests Location or
+scans nearby networks. Its **Recent saved networks** list uses up to three saved
+profiles; successful selections through this picker establish recency. Profiles
+without that history retain macOS preferred order. Saved does not mean nearby;
+use **Native Wi-Fi controls** to check availability. Passwords stay with macOS,
+and network names/selection history remain in private local state outside Git. Hardware alerts do not count unread app notifications: macOS
 offers no supported API for reading all other apps' notification content.
 
 Graphite uses slate surfaces, champagne accents and ice-blue hardware
@@ -303,8 +313,9 @@ and refreshes on bar reveal and wake. Seconds stay hidden; its compact fixed-wid
 shift adjacent controls. Time synchronization stays with macOS; no separate NTP
 client, network stream or clock daemon is installed.
 
-The Apple logo opens a native AppKit menu on click; hover only highlights it.
-It has normal menu selection, outside-click dismissal and Escape. About This Mac
+The Apple logo opens the same themed AppKit pane as the active-app menus;
+hover only highlights it. Clicking an entry selects it; outside clicks, Escape
+and clicking the Apple logo again dismiss it. About This Mac
 and System Settings open directly without Accessibility. Restart, Shut Down and
 Log Out request macOS confirmation dialogs; Force Quit opens a native app chooser.
 Lock Screen uses the installed macOS login service when supported. These session

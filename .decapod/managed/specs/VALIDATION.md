@@ -2,6 +2,29 @@
 
 ## Proof Surfaces
 
+The current privacy and interaction pass runs 92 host tests, native compilation
+with warnings as errors and native self-tests. Wi-Fi tests cover top-three
+saved-profile ordering, invalid history, duplicate/malformed SSIDs, literal
+argv without passwords, stale selections and CLI failures (including exit-zero
+failure text). A read-only installed check finds three choices from saved
+profiles, no Location purpose string and no linked CoreLocation/CoreWLAN.
+It does not switch the owner's network. The running helper's themed Apple pane
+was captured and inspected; click, repeated click and Escape behave correctly.
+A disposable windowless app was clicked through the actual custom dock: its
+reopen callback ran once, created a visible window and retained the same PID.
+The no-Location rebuild has fresh Calendar and Accessibility access. Real
+Ghostty headings and File hover contents were captured and inspected on this
+identity. A temporary fullscreen app, with no event tap of its own, applied
+bottom-edge pressure: the installed helper blocked 56 Dock motion events and
+no native Dock window appeared. Its PID remained unchanged; the captured
+bottom edge shows only the custom icons. An additional Mission Control check
+found that this OS presents its Dock composite at layer 20, while the existing
+helper detector expects layer 18. Its mission_control flag did not activate,
+so automatic bar suppression there remains an existing compatibility gap; the
+new motion filter only bypasses when that detector is active. Normal Mission
+Control entry/exit still worked. This pass does not claim that detector is fixed. Power, session
+and force-quit actions are never invoked by automation.
+
 The external-level correction passes 86 host tests, including native compilation
 and self-tests. New regressions cover hovered and pinned sliders, hidden/stale/
 dismissed panes, the first key before the next native status sample, transient
@@ -262,7 +285,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `c90d7a78288a21050213593e790c937dd8687f29e3dc5391cf1bb2eba8f0d425`
+- Repository signal fingerprint: `9c8d674dac16b4e6d6f39748f6fb5faaf48fe8a8e08adf63ae276d06db50866a`
 - Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

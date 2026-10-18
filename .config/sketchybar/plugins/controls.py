@@ -30,8 +30,9 @@ def native_controls(action=''):
     return command(str(STATE.parent / 'desktop-edge'), '--controls' + ('-' + action if action else ''))
 
 
-def command(*args, timeout=5):
-    return subprocess.check_output(args, text=True, stderr=subprocess.DEVNULL, timeout=timeout).strip()
+def command(*args, timeout=5, strip=True):
+    result = subprocess.check_output(args, text=True, stderr=subprocess.DEVNULL, timeout=timeout)
+    return result.strip() if strip else result
 
 
 def bar(*args):
@@ -68,6 +69,61 @@ def wifi_device():
     if not match:
         raise ValueError('Wi-Fi interface unavailable')
     return match[1]
+
+
+def valid_ssid(value):
+    return (isinstance(value, str) and 0 < len(value.encode('utf-8')) <= 32
+            and not any(ord(c) < 32 or ord(c) == 127 for c in value))
+
+
+def saved_wifi(device):
+    # Saved profiles need no Location access. Preserve literal SSID whitespace.
+    result = command('/usr/sbin/networksetup', '-listpreferredwirelessnetworks', device, strip=False)
+    lines = result.splitlines()
+    if not lines or lines[0] != f'Preferred networks on {device}:':
+        return []
+    return list(dict.fromkeys(line[1:] for line in lines[1:257]
+                             if line.startswith('\t') and valid_ssid(line[1:])))
+
+
+def current_wifi(device):
+    result = command('/usr/sbin/networksetup', '-getairportnetwork', device, strip=False).removesuffix('\n')
+    prefix = 'Current Wi-Fi Network: '
+    name = result[len(prefix):] if result.startswith(prefix) else ''
+    return name if valid_ssid(name) else ''
+
+
+def wifi_choices(names, history=None, now=None):
+    names = list(dict.fromkeys(name for name in names[:256] if valid_ssid(name)))
+    history = read('wifi-recent.json', {}) if history is None else history
+    if not isinstance(history, dict):
+        history = {}
+    def used(name):
+        stamp = history.get(name, 0)
+        return stamp if (isinstance(stamp, (int, float)) and not isinstance(stamp, bool)
+                         and math.isfinite(stamp) and 0 <= stamp <= (time.time() if now is None else now)) else 0
+    return sorted(names, key=lambda name: -used(name))[:3]
+
+
+def connect_wifi(name):
+    device = wifi_device()
+    if name not in wifi_choices(saved_wifi(device)):
+        raise ValueError('Saved network choices changed; reopen Wi-Fi')
+    if name == current_wifi(device):
+        return
+    # macOS handles saved credentials; never read passwords or put them in argv.
+    result = command('/usr/sbin/networksetup', '-setairportnetwork', device, name, timeout=20)
+    if result and not result.startswith('You have joined'):
+        raise ValueError('macOS could not join this network')
+    with interaction():
+        history = read('wifi-recent.json', {})
+        if not isinstance(history, dict):
+            history = {}
+        history = {key: value for key, value in history.items() if valid_ssid(key)
+                   and isinstance(value, (int, float)) and not isinstance(value, bool)
+                   and math.isfinite(value) and 0 <= value <= time.time()}
+        history[name] = time.time()
+        store('wifi-recent.json', dict(sorted(history.items(), key=lambda item: -item[1])[:256]))
 
 
 def sample():
@@ -121,16 +177,19 @@ def panel_rows(name):
         rows = [('Wi-Fi · ' + ('On' if powered else 'Off'), None),
                 ('Turn Wi-Fi ' + ('off' if powered else 'on'), ['wifi', device, 'off' if powered else 'on'])]
         if powered:
+            current = current_wifi(device)
+            if current:
+                rows.append(('Connected · ' + current, None))
+            choices = wifi_choices(saved_wifi(device))
+            rows.append(('Recent saved networks', None))
+            rows += [(('● ' if name == current else '○ ') + name,
+                      None if name == current else ['wifi-network', name]) for name in choices]
+            if not choices:
+                rows.append(('No saved networks', None))
             try:
-                address = command('ipconfig', 'getifaddr', device)
-                rows.append(('Address · ' + address, None))
+                rows.append(('Address · ' + command('ipconfig', 'getifaddr', device), None))
             except subprocess.SubprocessError:
                 rows.append(('No IPv4 connection', None))
-            network = command('networksetup', '-getairportnetwork', device)
-            if ':' in network:
-                rows.append((network.split(':', 1)[1].strip(), None))
-            else:
-                rows.append(('Network names require macOS location access', None))
         rows.append(('Native Wi-Fi controls', ['native', 'Wi-Fi']))
         return rows
     if name == 'bluetooth':
@@ -242,7 +301,7 @@ def show(name, clicked=False):
     if cached.get('rows'):
         if not render_rows(name, cached['rows'], token):
             return
-        ttl = 0 if name in ('cpu','gpu','memory','alerts','weather') else 2 if name in ('volume','brightness') else 15
+        ttl = 0 if name in ('cpu','gpu','memory','alerts','weather') else 2 if name in ('volume','brightness') else 0 if name == 'wifi' else 15
         if time.time()-cached.get('time', 0)<ttl:
             return
     else:
@@ -421,7 +480,11 @@ def native_action(kind, name, value, revision):
         action(selected)
         rows = fresh_rows(name)
     except (OSError, subprocess.SubprocessError, ValueError):
-        rows = [(name.title(), None), ('Action unavailable · check local permissions', None)]
+        if name == 'wifi':
+            rows = fresh_rows(name)
+            rows.insert(1, ('Could not connect · refresh or use native Wi-Fi controls', None))
+        else:
+            rows = [(name.title(), None), ('Action unavailable · check local permissions', None)]
     render_rows(name, rows, token)
 
 
@@ -437,6 +500,8 @@ def action(args):
         fresh_rows('brightness')
     elif kind == 'output':
         command('SwitchAudioSource', '-t', 'output', '-s', values[0])
+    elif kind == 'wifi-network':
+        connect_wifi(values[0])
     elif kind == 'wifi':
         command('networksetup', '-setairportpower', *values)
     elif kind == 'bluetooth-power':
