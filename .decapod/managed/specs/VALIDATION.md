@@ -2,6 +2,26 @@
 
 ## Proof Surfaces
 
+The direct Wi-Fi revision passes 118 host tests plus native warnings-as-errors
+compilation and self-tests. Tests cover scan-derived availability independent
+of history, three-choice recency/known/signal ranking, duplicate radios, literal
+SSID bounds, permission-off redaction, background query modes and private-file
+cleanup, stale/interface/connection/link invalidation, hidden/superseded scan
+discard, failed-refresh action removal, literal credential-free joins, pending
+state and zero-exit join failures. New secured networks use the system password
+UI; no credentials are read. Explicit permission denial does not repeat a prompt
+or automatically open Settings.
+
+Wi-Fi Access is built and signed separately; the current Desktop Controls
+identity is unchanged. A real LaunchServices status query reported
+authorization notDetermined and Location Services off, with zero network names.
+No permission request has been sent. Real named-scan and hover verification are
+pending the owner's explicit privacy change and OS consent; synthetic checks
+do not prove that live behavior. Prototype Accessibility reads retrieved native
+rows, but compositor probes still observed a visible native frame even with an
+offscreen event bridge. That approach was rejected and is not in product code.
+Exact-candidate readiness and hosted CI remain required before publication.
+
 The current pane revision passes 103 host tests, warnings-as-errors native
 compilation and native self-tests. Regressions cover hidden-pin recovery without
 canceling visible/new pins, no saved profiles or stale saved-list cache in Wi-Fi,
@@ -324,7 +344,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `7d7f25497510f0c7a0dc709ffbb32a71dd310a6341a72794c157f617e25cce77`
-- Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
+- Repository signal fingerprint: `fe2c007ef63af40072574145bb42d051288c913b164cb6f22152a17df042ffb2`
+- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (7 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

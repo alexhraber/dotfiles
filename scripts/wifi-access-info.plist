@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>CFBundleIdentifier</key><string>local.dotfiles.wifi-access</string>
+  <key>CFBundleName</key><string>Wi-Fi Access</string>
+  <key>CFBundleDisplayName</key><string>Wi-Fi Access</string>
+  <key>CFBundleExecutable</key><string>wifi-access</string>
+  <key>CFBundlePackageType</key><string>APPL</string>
+  <key>CFBundleVersion</key><string>1</string>
+  <key>LSUIElement</key><true/>
+  <key>NSLocationUsageDescription</key><string>macOS requires Location permission to show your connected Wi-Fi name and nearby network names. Wi-Fi Access never requests coordinates or location updates.</string>
+  <key>NSLocationWhenInUseUsageDescription</key><string>Show Wi-Fi network names in your custom menu bar. No coordinates or location updates are requested.</string>
+</dict></plist>

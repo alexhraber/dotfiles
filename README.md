@@ -236,7 +236,7 @@ reveal can return; `desktop undo` stops the helper and removes the filter.
 | Weather | ZIP 97750 forecast, wind in mph, precipitation chance, upcoming hours and extended outlook |
 | Sound | Volume slider, mute, output selection; scroll the bar item for volume |
 | Display | Built-in brightness slider; scroll the bar item to adjust |
-| Wi-Fi | Power and live link/address status; native picker for actual SSIDs, nearby networks and join progress |
+| Wi-Fi | Connected SSID and three available network choices directly on hover after one-time OS permission; power, link/address and connecting state |
 | Bluetooth | Connected devices first, explicit state and Connect/Disconnect hover actions |
 | CPU / GPU | Load graph, real average die temperature in °F, power and fans |
 | RAM | Usage graph, capacity and swap details |
@@ -255,15 +255,27 @@ Automation approval macOS requests for the responsible process. The **desktop pe
 Desktop Controls app and restarts its owned helper after approval, refreshing
 fullscreen panes without rebuilding or signing it again. Bluetooth may request
 macOS Bluetooth permission. Approval is a local
-OS action and is not captured or bypassed by dotfiles. Network names can be
-redacted without Location permission. With Location off, the custom Wi-Fi pane
-shows radio, link and IPv4 state; it never presents saved profiles as available.
-**Available networks & connection…** hands off to Apple's real Wi-Fi picker for
-the connected SSID, nearby choices, known-network priority and connection
-progress. The custom pane closes before that handoff. macOS 27's MenuBarAgent
-hosting views and the older ControlCenter menu-bar layout are both supported.
-The helper does not request Location or read Wi-Fi passwords. A custom scanned
-SSID list would require a separately approved privacy change.
+OS action and is not captured or bypassed by dotfiles.
+
+The separate **Wi-Fi Access** helper supplies the connected SSID and actual
+in-range networks to the themed hover pane. macOS requires Location Services
+and app approval for those names. Installation and hovering never request that
+permission. **Allow Wi-Fi names…** is the explicit opt-in; keeping Location off
+retains radio/link/address state and Apple's native picker. Wi-Fi Access uses
+CoreLocation only for authorization, with no coordinate or location-update calls.
+`scripts/dotfiles desktop wifi-setup` builds this bundle independently, preserving
+Desktop Controls' Calendar and Accessibility approval. A single existing valid
+local signing identity is used when available; an optional local
+`DOTFILES_WIFI_SIGN_IDENTITY` selects one without recording team IDs in Git.
+
+The pane ranks scan-confirmed choices by observed recent use, then known-network
+status and signal; it never treats saved history as availability. It shows at
+most three alternatives to the current network. Scans run only for the current
+visible pane and expire after eight seconds; stale actions are rejected.
+Saved/open-network joins use literal SSID arguments without passwords. New
+secured networks hand off to Apple's credential UI. **Available networks &
+connection…** remains available for the full native picker. Names, scan results
+and bounded recency history stay in private local state outside Git.
 
 Sound separates output selection from its level/mute controls and marks the
 current output once. Bluetooth lists connected devices first, shows connection

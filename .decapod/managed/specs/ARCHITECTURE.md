@@ -211,14 +211,26 @@ createsNewApplicationInstance disabled, preserving normal reopen semantics.
 desktop.py registers the complete signed bundle through public LSRegisterURL
 before activation, including cached builds launched directly by launchd.
 controls.py reads Wi-Fi power through networksetup and local link/address state
-through ifconfig/ipconfig. A normal networksetup SSID response is preserved
-literally; redacted responses remain unnamed. Saved-profile choices and their
-recency history are no longer used. Native handoff closes the custom pane first,
+through ifconfig/ipconfig. scripts/wifi-access.m is a separate signed LSUIElement
+bundle using CoreWLAN for the current SSID and deduplicated scan results.
+CoreLocation is used only to inspect/request authorization, never coordinates.
+Only the explicit permission action invokes --request-access. wifi.py launches
+status/scan instances in the background through LaunchServices, validates their
+bounded JSON and removes private result files. A visible-request worker scans
+serially; it discards superseded/hidden results and stops when its pane closes.
+Scan identity, interface, timestamp and network-event invalidation gate every
+choice and join. Private observed-use history ranks only scan-confirmed names;
+known networks and signal break ties. Availability expires after eight seconds.
+The current SSID is shown separately from three alternatives. New secured
+networks use bounded native UI selection for Apple's credential entry.
+Native handoff closes the custom pane first,
 checks its request token, and never rerenders over a successful system picker.
 The bounded native_item lookup finds fixed status-item identifiers below macOS
 27 MenuBarAgent hosting views, with the older ControlCenter menu-bar fallback.
-It does not extract native network lists or SSIDs. Accessibility probes use the
-same lookup without pressing an item.
+The hover does not scrape native lists; the experimental offscreen bridge was
+rejected after compositor measurements found visible frames. Native join actions
+match the selected literal SSID only after an explicit click. Accessibility
+probes use the fixed menu-extra lookup without pressing an item.
 
 desktop-edge.m observes public SystemConfiguration Link/IPv4/IPv6 changes and
 emits only the fixed desktop_network_changed SketchyBar event. It never reads or
@@ -351,7 +363,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `7d7f25497510f0c7a0dc709ffbb32a71dd310a6341a72794c157f617e25cce77`
-- Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
+- Repository signal fingerprint: `fe2c007ef63af40072574145bb42d051288c913b164cb6f22152a17df042ffb2`
+- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (7 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

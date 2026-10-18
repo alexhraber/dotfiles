@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "baseline": {
-    "accepted_commit": "3f18ce12d24d0e6596a583ff641a7262ab72a81e",
+    "accepted_commit": "c833a8826410840f2e8c27c0620e6492b482ea68",
     "unresolved": {
       "claim:actual-app-menus": {
         "falsifier": "Native action guards permit stale/disabled/submenu leaf execution, or the UI claims menus work without Accessibility.",
@@ -14,6 +14,7 @@
       "trajectory:20ee859f4dc5a1ed": "Official 0.119.0 image is still publishing. Proof runtime uses Ubuntu 24.04 and checksum-verified official aarch64 Linux release binary sha256:752751f6eb87a3d6a443e432b3f01bfdf7e08d17b728951dd35f077277d592cc; earlier Debian runtime rejected its GLIBC_2.39 dependency.",
       "trajectory:222b47dce3be7958": "Per-commit checkpoint failure on historical 53905f7 requires rebuilding this owned PR history; no required check is disabled.",
       "trajectory:3ad8d199dbb39b49": "Accessibility approval for the exact current app remains unavailable; no menu click parity claim.",
+      "trajectory:410a4e6f97d21362": "Location remains off by explicit final user instruction. Custom SSID enumeration is redacted by macOS; Apple native picker shows actual names and owns joining. No native UI names are scraped. Prior failed branch-binding readiness remains preserved in committed journal.",
       "trajectory:69fd57cf486c104c": "Existing Reduce Motion show/hide support is retained; dock polish targets stationary redraw suppression and precise settlement rather than adding visual chrome.",
       "trajectory:ad62d461499896f7": "The prior calendar build returned seven synced calendars and eight events after OS consent; current ad-hoc build requires fresh permission. Provider identity has not been asserted from counts. Accessibility remains pending, so actual app-menu execution is not yet proven.",
       "trajectory:b82ef2dafb2d2320": "Existing Mission Control detector expects Dock layer 18; this OS uses layer 20. Normal native entry/exit works, but helper flag/bar suppression there remains a documented compatibility gap outside this privacy/menu/dock-reopen correction.",
@@ -21,127 +22,42 @@
     }
   },
   "change": {
-    "id": "change_01M56F50SBB43S0G99NVYXTYNG",
-    "base_commit": "3f18ce12d24d0e6596a583ff641a7262ab72a81e",
+    "id": "change_01M58C4TYTR1RQDG8H2ED3BKEH",
+    "base_commit": "c833a8826410840f2e8c27c0620e6492b482ea68",
     "target_base": "origin/main"
-  },
-  "claims": {
-    "fullscreen-pane-recovery": {
-      "statement": "The approved helper renders every bar pane over native fullscreen; hidden pinned controls cannot block a subsequent request, and post-consent permissions refresh the existing helper.",
-      "falsifier": "Any real fullscreen bar route stays hidden after approval/refresh, a stale hidden pin blocks a new pane, or unapproved/stale helper status triggers a restart.",
-      "status": "supported",
-      "proof_refs": [
-        "/private/tmp/dotfiles-fullscreen-approved-final.json",
-        "/private/tmp/dotfiles-pane-host-check.txt"
-      ]
-    },
-    "honest-wifi-with-location-off": {
-      "statement": "Wi-Fi no longer advertises saved profiles as available; the custom pane shows link/address state and hands off to Apple for SSIDs and network choices without requesting Location.",
-      "falsifier": "The custom pane renders old saved profiles, requests Location or scrapes native SSIDs, or successful handoff leaves its custom pane open over the system picker.",
-      "status": "supported",
-      "proof_refs": [
-        ".config/sketchybar/plugins/controls.py",
-        "/private/tmp/dotfiles-wifi-handoff-final.json",
-        "tests/test_desktop.py"
-      ]
-    }
   },
   "checkpoints": [
     {
-      "id": "panes-location-off-source",
-      "summary": "Restore fullscreen pane requests and post-consent windows; unify Sound/Bluetooth actions and use an honest Wi-Fi native picker with Location off.",
-      "input_digest": "sha256:6eaa1c0bc4bdc273d819ec6e0383e34a5dbd236e7d542c40fa1c0472149ca531",
+      "id": "direct-wifi-pre-consent",
+      "summary": "Prepare separately signed on-demand Wi-Fi names helper and direct themed hover with scan/recency/connection guards; 118 tests pass. Location remains off and real named-scan proof awaits owner opt-in, so publication is not ready.",
+      "input_digest": "sha256:b3a16da887621428b3b858706f47d9255c0eb7f7ad866037f9e8cb18bd4ceac2",
       "proof_refs": [
-        "/private/tmp/dotfiles-fullscreen-approved-final.json",
-        "/private/tmp/dotfiles-pane-host-check.txt",
-        "/private/tmp/dotfiles-wifi-handoff-final.json"
-      ]
-    },
-    {
-      "id": "panes-task-branch-repair",
-      "summary": "Preserve failed readiness evidence and correct owned branch task binding; document network-test and Mission Control proof limits.",
-      "input_digest": "sha256:45a9a6ea00ff31999f778249b7d084fccb5d19b9437db1e4faf451646b7f17c2",
-      "proof_refs": [
-        ".decapod/managed/specs/VALIDATION.md",
-        "target/panes-validation.json"
-      ]
-    },
-    {
-      "id": "panes-current-epoch-proof",
-      "summary": "Bind current pane proof journal to the corrected exact task branch and validation epoch; retain prior source checkpoints and failed-readiness history.",
-      "input_digest": "sha256:4448fbf3bda924f9bff06ac7a60e31641a911731c316e06b0219bfe670827708",
-      "proof_refs": [
-        "/private/tmp/dotfiles-fullscreen-approved-final.json",
-        "/private/tmp/dotfiles-wifi-handoff-final.json",
-        "target/panes-current-project-check.json"
+        "/private/tmp/dotfiles-ssid-direct-host-check.txt",
+        "/private/tmp/dotfiles-wifi-join-check.scpt",
+        "/private/tmp/dotfiles-wifi-permission-off-proof.json",
+        "scripts/wifi-access.m",
+        "tests/test_wifi.py"
       ]
     }
   ],
   "intents": {
-    "intent:panes_verified_apis_01m56f458dwxfvky": {
+    "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH": {
       "acceptance_criteria": [],
       "assumptions": [],
       "boundaries": [
-        "Owned task worktree; no Location request, no SSID scraping, no network switch, no new signing identity."
+        "Current claimed task and isolated work branch"
       ],
       "constraints": [
-        ".config/sketchybar and scripts desktop controls with tests and living specs"
+        "root"
       ],
       "created_sequence": 1,
-      "id": "intent:panes_verified_apis_01m56f458dwxfvky",
+      "id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
       "out_of_scope": [],
       "proof_requirements": [],
-      "raw_intent": "Restore reliable fullscreen panes, clarify Sound/Bluetooth and show available Wi-Fi without sharing location.",
-      "refined_intent": "Current approved helper passes actual fullscreen routes and native network handoff. Preserve Location off; Apple picker owns SSIDs. Validate exact task branch before publication.",
+      "raw_intent": "Show connected and recent available Wi-Fi SSIDs on hover\n\nThe Wi-Fi hover pane must directly show the connected SSID and up to three actually available previously used networks, ordered by recency. Location remains off. Investigate native accessibility state and direct native-picker hover using existing approved control access; never mislabel saved profiles as available, never request coordinates or Location permission. Keep literal network names private and preserve fullscreen behavior.",
+      "refined_intent": "Show connected and recent available Wi-Fi SSIDs on hover\n\nThe Wi-Fi hover pane must directly show the connected SSID and up to three actually available previously used networks, ordered by recency. Location remains off. Investigate native accessibility state and direct native-picker hover using existing approved control access; never mislabel saved profiles as available, never request coordinates or Location permission. Keep literal network names private and preserve fullscreen behavior.",
       "status": "refined",
       "updated_sequence": 3
-    }
-  },
-  "epochs": {
-    "ve_acddd5cab9be6616": {
-      "constitution_hash": "sha256:62396c3f09acfeee97ea75e6b8a24bdd18de5e4152d01b922b625cc95b1d7fc3",
-      "constitution_version": "embedded-docs@0.119.0",
-      "epoch_id": "ve_acddd5cab9be6616",
-      "evaluator_identity": "decapod-validate@0.119.0",
-      "evaluator_set_hash": "sha256:6616b4917991d490a9a915bda7fdb05c18436517199038cb3ed40ac3781fb6d3",
-      "generated_specs_fingerprint": "7d7f25497510f0c7a0dc709ffbb32a71dd310a6341a72794c157f617e25cce77",
-      "generated_specs_manifest_hash": "sha256:97826272ad22388b9df25f2148819f35c62460b6db6a01025dd58f46950eefce",
-      "material_hashes": {
-        "constitution:core/DECAPOD": "sha256:62396c3f09acfeee97ea75e6b8a24bdd18de5e4152d01b922b625cc95b1d7fc3",
-        "generated_spec:.decapod/managed/specs/ARCHITECTURE.md": "sha256:e2ea248d8ba7202f1f39e5f8a0223ab69bc9ee67624a265fb5f2e739197b0b9b",
-        "generated_spec:.decapod/managed/specs/INTENT.md": "sha256:3144dd931ae334030ebd9c8e5e40151caad6930f15b7700fd70fd51360aa5b4b",
-        "generated_spec:.decapod/managed/specs/INTERFACES.md": "sha256:b4dd22cea6cc6389ea6c7545d7bd59693f831b3a96ad8151f8177167c24abaec",
-        "generated_spec:.decapod/managed/specs/OPERATIONS.md": "sha256:d8d145cc68aa04fd52e3cb138e91b39b9043a6cc0b6c5e24d8fe5c3202268198",
-        "generated_spec:.decapod/managed/specs/README.md": "sha256:abf509788bb4fab7449c875dd3a995bfeccdb36e868bbc1eab4d8da812b73db3",
-        "generated_spec:.decapod/managed/specs/SECURITY.md": "sha256:ba06b5089a910e30efab111305631595c0345b77e8e94c2ebc993654e0920fff",
-        "generated_spec:.decapod/managed/specs/SEMANTICS.md": "sha256:a9bc00043f14ca7f679bcb225890094e3279bb71319c49a7a207c714e4d1e39e",
-        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:e68cb9f092f3c072bb730a57ae04afcefb3408d485ed60f35dfa6676be7971ac",
-        "generated_specs_fingerprint": "7d7f25497510f0c7a0dc709ffbb32a71dd310a6341a72794c157f617e25cce77",
-        "generated_specs_manifest": "sha256:97826272ad22388b9df25f2148819f35c62460b6db6a01025dd58f46950eefce",
-        "governance_context": "sha256:cbf12c82eacf78ea928853b9354dc6423b01b8637d03bd1e3f40c47862ad2bf2",
-        "governance_material:.decapod/managed/Dockerfile.decapod": "sha256:74d3941dbee69f95ef7c34715ad8b5f9120e10fe527fe8d5e745397e709d597e",
-        "governance_material:AGENTS.md": "sha256:9aa28458b37fe535bddac458395aa0d4f2eaa2a729316f729580823006389929",
-        "governance_material:CLAUDE.md": "sha256:20996c562acb474beb10176d77871e84b7604f2ce595d090ebcc31ce089c4d7a",
-        "governance_material:CODEX.md": "sha256:2a6fa954bdfdfc1cfb7a9b1d70022816b624f8d458833b0cc7d58dc795e45388",
-        "governance_material:GEMINI.md": "sha256:0588c8946f1ddc26fbe028727aa0d64bba48b15f52adcd4244bfc4bf48a83856",
-        "governance_section:claims": "sha256:6020a777ee6f94222405ea46c6d3ab75cb148f5c13712278e18268158911e5dd",
-        "governance_section:plan": "sha256:2fd799c883c00ef0163c7b278ef6b8a05b0a3ebd99fdc31a3da19eccd18df747",
-        "living_spec_material:.decapod/managed/specs/ARCHITECTURE.md": "sha256:c828010cfb38260b82680d2faee4fb6c2f39b999a786841070572a799f724dc4",
-        "living_spec_material:.decapod/managed/specs/INTENT.md": "sha256:e18a0c893592cff494099d96b0ae4685c9b8d36d2b3b3d8da6ba7ad91e52729e",
-        "living_spec_material:.decapod/managed/specs/INTERFACES.md": "sha256:0b3eb3e3dc9f2b9ee05ac6454f94b143456edf863e1e4c5d1e4522b17b9a0e23",
-        "living_spec_material:.decapod/managed/specs/OPERATIONS.md": "sha256:95e65288a9d21da7898359f709be1cac57f3f1b488e8f0d3e043c16aee58ad4c",
-        "living_spec_material:.decapod/managed/specs/README.md": "sha256:0988c85d6c05f02d52684c9aafae50e95fd5d5576739d3e9d995af682697fd99",
-        "living_spec_material:.decapod/managed/specs/SECURITY.md": "sha256:0babde230d6a7ec1a8cf05c686764c82e0f2b6db20ca74b69155101833e4184d",
-        "living_spec_material:.decapod/managed/specs/SEMANTICS.md": "sha256:92bbe2607c6f8f94191a95ea977d9785f3472a0fae2835520dd86eae73130d5c",
-        "living_spec_material:.decapod/managed/specs/VALIDATION.md": "sha256:eedd91abc0f7775a967fa490e9e84ae62bcba8d66e2bf854747e11a4d9ee8a5d",
-        "proof_rubric": "sha256:99e8ef25629da391e9b479db9fff52b82f340224f7a69d8a88d2992ae8e90466",
-        "validation_profile": "sha256:37a8eec1ce19687d132fe29051dca629d164e2c4958ba141d5f4133a33f0688f"
-      },
-      "proof_rubric": "decapod-validate/current-proof-v1",
-      "proof_rubric_hash": "sha256:99e8ef25629da391e9b479db9fff52b82f340224f7a69d8a88d2992ae8e90466",
-      "schema_version": "1.0.0",
-      "validation_profile": "default",
-      "validation_profile_hash": "sha256:37a8eec1ce19687d132fe29051dca629d164e2c4958ba141d5f4133a33f0688f"
     }
   },
   "sections": {
@@ -152,472 +68,249 @@
       },
       "deferred_questions": [],
       "human_questions": [],
-      "intent": "Reliable fullscreen panes with hidden-pin recovery, a post-consent helper refresh, and the shared Apple/app menu visual language. Sound has explicit output grouping/current selection; Bluetooth sorts connected devices first with clear state and hover actions. The user reconfirmed Location stays off: no CoreLocation request, no CoreWLAN scan and no SSID extraction from native UI. Custom Wi-Fi shows truthful link/address state; Apple’s compatible native picker owns actual SSIDs, nearby/known choices and connecting progress.",
+      "intent": "Build a separate short-lived Wi-Fi Access app for CoreWLAN SSID/scan queries and a direct custom hover pane with connected SSID, up to three familiar in-range networks ranked by observed use, selection and connecting status. Existing Desktop Controls identity and approvals stay intact. Native UI scraping is rejected after compositor probes showed visible frames. Location remains off unless owner explicitly opts in: no automatic authorization request, and no coordinate/location-update APIs anywhere. Prepare code and proof before requesting the one-time macOS permission decision needed for real named scans.",
       "phases": [],
       "proof_hooks": [
-        "103 host tests and native self-tests; live shared pane inspection; 12 actual fullscreen routes with continuous foreground/fullscreen observation; actual Wi-Fi handoff; native permission lifecycle; exact-candidate canonical validation and macOS/Linux CI."
+        "Scanner serialization/self-tests, on-demand execution and privacy invariants; availability/recency and stale-request/action tests; full host checks/native compilation; permission-off live proof, then permission-authorized real hover if granted; exact-candidate validation and platform CI before merge."
       ],
       "schema_version": "1.1.0",
       "spec_reviews": [
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/ARCHITECTURE.md",
-          "reason": "Reviewed current source and proof: fullscreen pin recovery, post-consent helper refresh, shared action rows, truthful Wi-Fi state and native picker with Location off.",
-          "reviewed_code_fingerprint": "7d7f25497510f0c7a0dc709ffbb32a71dd310a6341a72794c157f617e25cce77",
-          "spec_material_hash": "c828010cfb38260b82680d2faee4fb6c2f39b999a786841070572a799f724dc4"
+          "reason": "Reviewed the separate signed Wi-Fi app, authorization-only CoreLocation usage, direct CoreWLAN hover data, private on-demand query lifecycle and stale/hidden request gates. Live named scans remain explicitly pending owner privacy choice and OS consent.",
+          "reviewed_code_fingerprint": "fe2c007ef63af40072574145bb42d051288c913b164cb6f22152a17df042ffb2",
+          "spec_material_hash": "69ebbc85402259863f37b86acbbda51fdb6e88eef18f2b432bb13539ead39924"
         },
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/INTERFACES.md",
-          "reason": "Reviewed current source and proof: fullscreen pin recovery, post-consent helper refresh, shared action rows, truthful Wi-Fi state and native picker with Location off.",
-          "reviewed_code_fingerprint": "7d7f25497510f0c7a0dc709ffbb32a71dd310a6341a72794c157f617e25cce77",
-          "spec_material_hash": "0b3eb3e3dc9f2b9ee05ac6454f94b143456edf863e1e4c5d1e4522b17b9a0e23"
+          "reason": "Reviewed the separate signed Wi-Fi app, authorization-only CoreLocation usage, direct CoreWLAN hover data, private on-demand query lifecycle and stale/hidden request gates. Live named scans remain explicitly pending owner privacy choice and OS consent.",
+          "reviewed_code_fingerprint": "fe2c007ef63af40072574145bb42d051288c913b164cb6f22152a17df042ffb2",
+          "spec_material_hash": "306d9e9cb6a57bf8c3bc6017453e5018b3720bd425fb4c76fbc6759c73a1d4ac"
         },
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/SECURITY.md",
-          "reason": "Reviewed current source and proof: fullscreen pin recovery, post-consent helper refresh, shared action rows, truthful Wi-Fi state and native picker with Location off.",
-          "reviewed_code_fingerprint": "7d7f25497510f0c7a0dc709ffbb32a71dd310a6341a72794c157f617e25cce77",
-          "spec_material_hash": "0babde230d6a7ec1a8cf05c686764c82e0f2b6db20ca74b69155101833e4184d"
+          "reason": "Reviewed the separate signed Wi-Fi app, authorization-only CoreLocation usage, direct CoreWLAN hover data, private on-demand query lifecycle and stale/hidden request gates. Live named scans remain explicitly pending owner privacy choice and OS consent.",
+          "reviewed_code_fingerprint": "fe2c007ef63af40072574145bb42d051288c913b164cb6f22152a17df042ffb2",
+          "spec_material_hash": "9e6c7e178c71f71a3597449325e9664eee6bbdbf771fdfb3802faf5aec73bee6"
         }
       ],
       "state": "APPROVED",
       "stop_conditions": [],
-      "title": "Restore fullscreen bar panes and remove unavailable saved Wi-Fi choices",
+      "title": "Show connected and recent available Wi-Fi SSIDs on hover",
       "todo_ids": [
-        "apis_01m56f458dwxfvky"
+        "bend_01m58c43xxb21mve"
       ],
       "unknowns": [],
       "unresolved_contradictions": [],
-      "updated_at": "1792301747Z"
+      "updated_at": "1792364875Z"
     },
     "trajectory": {
       "active_boundaries": [
-        "Owned task worktree; no Location request, no SSID scraping, no network switch, no new signing identity."
+        "Current claimed task and isolated work branch"
       ],
-      "artifact_hash": "sha256:c4ae515f45abf52c12d421eb1f2b72ee5b18ce70a333b61ba474eaccba4f638b",
+      "artifact_hash": "sha256:18b9ceeaa9fbb471d143720012ce8207763771fda65b80814a6295d1bbac5f88",
+      "blockers": [
+        "Waiting for owner decision on enabling macOS Location Services and Wi-Fi Access authorization; prior preference remains off."
+      ],
       "checks": [
         {
-          "name": "actual-fullscreen-12-routes",
+          "name": "host-118-tests-and-native-selftests",
           "status": "passed"
         },
         {
-          "name": "actual-native-wifi-handoff",
-          "status": "passed"
-        },
-        {
-          "name": "custom-ssid-list",
+          "name": "named-live-scan",
           "status": "unavailable"
         },
         {
-          "name": "decapod validate",
+          "name": "native-new-network-script-syntax",
           "status": "passed"
         },
         {
-          "name": "host-103-tests-and-native-selftests",
+          "name": "native-wifi-closed-item-identity",
+          "status": "unavailable"
+        },
+        {
+          "name": "native-wifi-open-panel-identity",
           "status": "passed"
         },
         {
-          "name": "native-permission-lifecycle",
+          "name": "offscreen-native-ui-no-flicker",
+          "status": "failed"
+        },
+        {
+          "name": "public-network-report-ssid",
+          "status": "unavailable"
+        },
+        {
+          "name": "signed-wifi-helper-permission-off",
           "status": "passed"
         }
       ],
-      "current_phase": "validation",
+      "current_phase": "verification",
       "custody": {
         "events": [
           {
             "event_id": "event:2",
-            "intent_id": "intent:panes_verified_apis_01m56f458dwxfvky",
+            "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
             "kind": "created",
             "sequence": 2
           },
           {
             "event_id": "event:3",
-            "intent_id": "intent:panes_verified_apis_01m56f458dwxfvky",
+            "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
             "kind": "refined",
             "sequence": 3
           },
           {
-            "detail": "trajectory:panes_verified_apis_01m56f458dwxfvky",
+            "detail": "trajectory:branch_01M58C4V19X11MCFQMX6SWKW4V",
             "event_id": "event:4",
-            "intent_id": "intent:panes_verified_apis_01m56f458dwxfvky",
+            "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
             "kind": "trajectory_step_recorded",
             "sequence": 4
           },
           {
-            "detail": "trajectory:panes_verified_apis_01m56f458dwxfvky",
+            "detail": "trajectory:branch_01M58C4V19X11MCFQMX6SWKW4V",
             "event_id": "event:5",
-            "intent_id": "intent:panes_verified_apis_01m56f458dwxfvky",
+            "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
             "kind": "trajectory_step_recorded",
             "sequence": 5
+          },
+          {
+            "detail": "trajectory:branch_01M58C4V19X11MCFQMX6SWKW4V",
+            "event_id": "event:6",
+            "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
+            "kind": "trajectory_step_recorded",
+            "sequence": 6
           }
         ],
         "knowledge_candidates": [],
-        "next_sequence": 5,
+        "next_sequence": 6,
         "schema_version": "1.0.0",
         "trajectories": {
-          "panes_verified_apis_01m56f458dwxfvky": {
+          "branch_01M58C4V19X11MCFQMX6SWKW4V": {
             "evidence_only": true,
-            "id": "panes_verified_apis_01m56f458dwxfvky",
-            "intent_id": "intent:panes_verified_apis_01m56f458dwxfvky",
+            "id": "branch_01M58C4V19X11MCFQMX6SWKW4V",
+            "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
             "steps": [
               {
-                "action": "verification",
-                "command": "python3.14 -B scripts/check.py",
+                "action": "investigation",
                 "custody_event_id": "event:4",
                 "observations": [
                   ".config/sketchybar/plugins/controls.py",
-                  ".config/sketchybar/sketchybarrc",
-                  "scripts/control-panel.m",
-                  "scripts/desktop-edge.m",
-                  "scripts/desktop.py",
-                  "scripts/check.py",
-                  "tests/test_desktop.py",
-                  ".decapod/managed/specs/VALIDATION.md",
-                  "/private/tmp/dotfiles-pane-host-check.txt",
-                  "/private/tmp/dotfiles-fullscreen-approved-final.json",
-                  "/private/tmp/dotfiles-wifi-handoff-final.json",
-                  "/private/tmp/dotfiles-live-volume-final.png",
-                  "/private/tmp/dotfiles-live-bluetooth-final.png"
+                  "scripts/app-menu.m",
+                  "/private/tmp/dotfiles-wifi-ax-item.txt",
+                  "/private/tmp/dotfiles-wifi-ax-panel.txt",
+                  "/private/tmp/dotfiles-wifi-network-state.txt"
                 ],
                 "proof_refs": [
-                  "host-103-tests-and-native-selftests",
-                  "actual-fullscreen-12-routes",
-                  "actual-native-wifi-handoff",
-                  "native-permission-lifecycle",
-                  "custom-ssid-list"
+                  "native-wifi-closed-item-identity",
+                  "native-wifi-open-panel-identity",
+                  "public-network-report-ssid"
                 ],
                 "scope": [
-                  ".config/sketchybar and scripts desktop controls with tests and living specs"
+                  "root"
                 ],
                 "sequence": 4,
                 "validation_findings": [
-                  "Location remains off by explicit final user instruction. Custom SSID enumeration is redacted by macOS; Apple native picker shows actual names and owns joining. No native UI names are scraped. Prior failed branch-binding readiness remains preserved in committed journal."
+                  "Location remains off. Official CoreWLAN names require Location permission. Existing Accessibility can read names in an open native Wi-Fi panel; no named UI remains after close. A hidden custom-pane snapshot would require opening a second UI, violating no flicker. Native direct hover can show names but Apple owns its theme/order; user choice requested before substituting that behavior."
                 ]
               },
               {
-                "action": "validation",
-                "command": "decapod validate",
+                "action": "investigation",
                 "custody_event_id": "event:5",
-                "observations": [
-                  ".decapod/governance.json",
-                  ".decapod/governance.json",
-                  "validation epoch ve_acddd5cab9be6616 completed with zero failures"
-                ],
-                "proof_refs": [
-                  "decapod validate"
-                ],
+                "observations": [],
+                "proof_refs": [],
                 "scope": [
-                  ".config/sketchybar and scripts desktop controls with tests and living specs"
+                  "root"
                 ],
                 "sequence": 5,
-                "validation_findings": []
+                "validation_findings": [
+                  "User reaffirmed exact custom hover and authorizes lifting native picker contents. Earlier native-hover choice is superseded. Investigate a live Accessibility bridge under existing approval; Location remains off."
+                ]
+              },
+              {
+                "action": "verification",
+                "custody_event_id": "event:6",
+                "observations": [
+                  "scripts/wifi-access.m",
+                  "scripts/wifi-access-info.plist",
+                  ".config/sketchybar/plugins/wifi.py",
+                  ".config/sketchybar/plugins/controls.py",
+                  "scripts/desktop.py",
+                  "scripts/manage.py",
+                  "scripts/check.py",
+                  "tests/test_wifi.py",
+                  "tests/test_desktop.py",
+                  "/private/tmp/dotfiles-ssid-direct-host-check.txt",
+                  "/private/tmp/dotfiles-wifi-bridge-proof.json",
+                  "scripts/wifi-access.m",
+                  "tests/test_wifi.py"
+                ],
+                "proof_refs": [
+                  "host-118-tests-and-native-selftests",
+                  "native-new-network-script-syntax",
+                  "signed-wifi-helper-permission-off",
+                  "named-live-scan",
+                  "offscreen-native-ui-no-flicker"
+                ],
+                "scope": [
+                  "root"
+                ],
+                "sequence": 6,
+                "validation_findings": [
+                  "Rejected native UI bridge after compositor frames remained visible. Separate Wi-Fi helper is signed and installed; actual LaunchServices status reports notDetermined and services=false. No Location permission request or global setting change has occurred. Desktop Controls remains approved build423089378d446f54. User has been asked for explicit privacy opt-in; actual named scan/fullscreen proof and publication remain pending."
+                ]
               }
             ]
           }
         }
       },
-      "declared_commands": [
-        "decapod validate",
-        "python3.14 -B scripts/check.py"
-      ],
+      "declared_commands": [],
+      "destination": "pull request",
       "evidence": [
-        "/private/tmp/dotfiles-fullscreen-approved-final.json",
-        "/private/tmp/dotfiles-live-bluetooth-final.png",
-        "/private/tmp/dotfiles-live-volume-final.png",
-        "/private/tmp/dotfiles-pane-host-check.txt",
-        "/private/tmp/dotfiles-wifi-handoff-final.json",
-        "validation epoch ve_acddd5cab9be6616 completed with zero failures"
+        "/private/tmp/dotfiles-ssid-direct-host-check.txt",
+        "/private/tmp/dotfiles-wifi-ax-item.txt",
+        "/private/tmp/dotfiles-wifi-ax-panel.txt",
+        "/private/tmp/dotfiles-wifi-bridge-proof.json",
+        "/private/tmp/dotfiles-wifi-network-state.txt",
+        "scripts/wifi-access.m",
+        "tests/test_wifi.py"
       ],
       "inspected_files": [
         ".config/sketchybar/plugins/controls.py",
-        ".config/sketchybar/sketchybarrc",
-        ".decapod/managed/specs/VALIDATION.md",
+        ".config/sketchybar/plugins/wifi.py",
+        "scripts/app-menu.m",
         "scripts/check.py",
-        "scripts/control-panel.m",
-        "scripts/desktop-edge.m",
         "scripts/desktop.py",
-        "tests/test_desktop.py"
+        "scripts/manage.py",
+        "scripts/wifi-access-info.plist",
+        "scripts/wifi-access.m",
+        "tests/test_desktop.py",
+        "tests/test_wifi.py"
       ],
-      "intent_id": "intent:panes_verified_apis_01m56f458dwxfvky",
-      "modified_files": [
-        ".decapod/governance.json"
-      ],
+      "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
+      "modified_files": [],
       "next_transitions": [
-        "Run current-epoch project checks, checkpoint candidate, validate, then PR/CI/merge.",
-        "publish"
+        "After explicit owner opt-in, stage OS consent and verify actual named hover; then exact-candidate validation, platform CI and merge. Preserve current implementation otherwise.",
+        "Probe native panel lifetime and geometry capabilities, then implement and test viable bridge.",
+        "Refine plan and declare falsifiable checks",
+        "Wait for UI choice; then implement and verify the authorized behavior without Location requests."
       ],
       "repo_scope": [
-        ".config/sketchybar and scripts desktop controls with tests and living specs"
+        "root"
       ],
-      "run_id": "panes_verified_apis_01m56f458dwxfvky",
+      "run_id": "branch_01M58C4V19X11MCFQMX6SWKW4V",
       "schema_version": "1.1.0",
       "shortcut_risk_signals": [],
-      "task_id": "apis_01m56f458dwxfvky",
+      "task_id": "bend_01m58c43xxb21mve",
       "tool_calls": [],
       "unresolved_assumptions": [
-        "Location remains off by explicit final user instruction. Custom SSID enumeration is redacted by macOS; Apple native picker shows actual names and owns joining. No native UI names are scraped. Prior failed branch-binding readiness remains preserved in committed journal."
-      ]
-    },
-    "validation": {
-      "ci_prediction": {
-        "confidence": "medium",
-        "recommendations": [
-          "Review the reported validation warnings before relying on the CI result.",
-          "Use `decapod validate -v --format json` to inspect the affected gate output."
-        ],
-        "result": "review"
-      },
-      "decapod_release": "0.119.0",
-      "drift_findings": [],
-      "elapsed_ms": 1982,
-      "epoch_ref": "ve_acddd5cab9be6616",
-      "fail_count": 0,
-      "failures": [],
-      "gate_timings": [
-        {
-          "elapsed_ms": 485,
-          "name": "validate_project_specs_docs"
-        },
-        {
-          "elapsed_ms": 382,
-          "name": "validate_stale_workspaces"
-        },
-        {
-          "elapsed_ms": 312,
-          "name": "validate_markdown_primitives_roundtrip_gate"
-        },
-        {
-          "elapsed_ms": 134,
-          "name": "validate_git_workspace_context"
-        },
-        {
-          "elapsed_ms": 128,
-          "name": "validate_machine_contract"
-        },
-        {
-          "elapsed_ms": 94,
-          "name": "validate_obligations"
-        },
-        {
-          "elapsed_ms": 61,
-          "name": "validate_legacy_jsonl_retired"
-        },
-        {
-          "elapsed_ms": 33,
-          "name": "validate_archive_integrity"
-        },
-        {
-          "elapsed_ms": 21,
-          "name": "validate_git_protected_branch"
-        },
-        {
-          "elapsed_ms": 19,
-          "name": "validate_repomap_determinism"
-        },
-        {
-          "elapsed_ms": 15,
-          "name": "validate_schema_determinism"
-        },
-        {
-          "elapsed_ms": 14,
-          "name": "validate_control_plane_contract"
-        },
-        {
-          "elapsed_ms": 13,
-          "name": "validate_federation_gates"
-        },
-        {
-          "elapsed_ms": 10,
-          "name": "validate_git_push_pr_gate"
-        },
-        {
-          "elapsed_ms": 9,
-          "name": "validate_no_legacy_namespaces"
-        },
-        {
-          "elapsed_ms": 8,
-          "name": "validate_lineage_hard_gate"
-        },
-        {
-          "elapsed_ms": 6,
-          "name": "validate_gatekeeper_gate"
-        },
-        {
-          "elapsed_ms": 3,
-          "name": "validate_watcher_audit"
-        },
-        {
-          "elapsed_ms": 3,
-          "name": "validate_knowledge_promotions_if_present"
-        },
-        {
-          "elapsed_ms": 3,
-          "name": "validate_lcm_rebuild_gate"
-        },
-        {
-          "elapsed_ms": 3,
-          "name": "validate_lcm_immutability"
-        },
-        {
-          "elapsed_ms": 3,
-          "name": "validate_generated_artifact_whitelist"
-        },
-        {
-          "elapsed_ms": 3,
-          "name": "validate_knowledge_integrity"
-        },
-        {
-          "elapsed_ms": 2,
-          "name": "validate_plan_governed_execution_gate"
-        },
-        {
-          "elapsed_ms": 2,
-          "name": "validate_entrypoint_invariants"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_policy_integrity"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_trajectory_artifacts_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_health_purity"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_validation_receipt_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_override_authority"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_recursive_improvement_passes_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_research_claims_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_jev_history_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_canon_mutation"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_database_schema_versions"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_watcher_purity"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_risk_map_violations"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_health_cache_integrity"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_spec_drift"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_project_config_toml"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_project_scoped_state"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_docs_templates_bucket"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_heartbeat_invocation_gate"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_context_capsule_policy_contract"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_repo_map"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_workunit_manifests_if_present"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_embedded_self_contained"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_internalization_artifacts_if_present"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_interface_contract_bootstrap"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_state_commit_gate"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_root_dockerfile_seed_detection"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_context_capsules_if_present"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_eval_gate_if_required"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_tooling_gate"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_risk_map"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_coplayer_policy_tightening"
-        }
-      ],
-      "git_revision": "45a90b9018e10a6188c9532440c4de01ffaf1fa8",
-      "kind": "validation_receipt",
-      "parallelism": 1,
-      "pass_count": 188,
-      "prediction_uses_warnings": true,
-      "receipt_hash": "sha256:c1ae4acda0b1a4b2d972252fc48e1559c33330863d69c23e0f361411add681f6",
-      "repo_signal_fingerprint": "7d7f25497510f0c7a0dc709ffbb32a71dd310a6341a72794c157f617e25cce77",
-      "schema_version": "1.0.0",
-      "status": "ok",
-      "temporary_artifacts_cleaned": 0,
-      "trajectory_artifact_hash": "sha256:c4ae515f45abf52c12d421eb1f2b72ee5b18ce70a333b61ba474eaccba4f638b",
-      "trajectory_run_id": "panes_verified_apis_01m56f458dwxfvky",
-      "warn_count": 4,
-      "warnings": [
-        "Risk map missing (run `decapod riskmap init`)",
-        "Stale workspaces preserved for explicit review: <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (current_workspace: workspace contains the current process; rerun prune from the host checkout after leaving this workspace so Git can release the branch), <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.)",
-        "Watcher audit trail missing (run `decapod govern watcher run`)",
-        "Workspace branch 'agent/unknown/apis_01m56f458dwxfvky' has unpushed commits or does not exist on origin. Branch pushes and iteration are allowed before preflight; hold PR creation until intent is converged, the branch is mergeable, and full `decapod validate` succeeds against the exact current candidate and accepted target."
+        "Location remains off. Official CoreWLAN names require Location permission. Existing Accessibility can read names in an open native Wi-Fi panel; no named UI remains after close. A hidden custom-pane snapshot would require opening a second UI, violating no flicker. Native direct hover can show names but Apple owns its theme/order; user choice requested before substituting that behavior.",
+        "Rejected native UI bridge after compositor frames remained visible. Separate Wi-Fi helper is signed and installed; actual LaunchServices status reports notDetermined and services=false. No Location permission request or global setting change has occurred. Desktop Controls remains approved build423089378d446f54. User has been asked for explicit privacy opt-in; actual named scan/fullscreen proof and publication remain pending.",
+        "User reaffirmed exact custom hover and authorizes lifting native picker contents. Earlier native-hover choice is superseded. Investigate a live Accessibility bridge under existing approval; Location remains off."
       ]
     }
   }

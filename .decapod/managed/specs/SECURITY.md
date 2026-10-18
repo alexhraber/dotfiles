@@ -118,16 +118,23 @@ An OS update may change these interfaces. Ordinary failure restores the native
 menu; SIGKILL cannot run cleanup, and the owned LaunchAgent restarts the helper.
 Undo recovers the menu before checking guarded preference restoration.
 
-Wi-Fi does not use CoreLocation/CoreWLAN scanning or contain a Location purpose
-string. Saved profiles are not used as availability data. Only the normal
-networksetup response may supply a custom SSID; otherwise Apple's native picker
-owns network identity, availability and connection progress. Its bounded lookup
-presses only a fixed menu-extra identifier; it does not scrape network names.
-The Accessibility probe checks the same route without pressing it or retaining
-an identifier list. Passwords are neither read nor passed. SystemConfiguration
-notifications trigger a fixed event without reading, storing or forwarding
-network values. Changing to a custom scanned SSID list requires the owner's
-explicit privacy decision and manual OS consent.
+Desktop Controls keeps its existing no-Location identity. The separate Wi-Fi
+Access bundle declares the macOS purpose string needed for SSID names and uses
+CoreWLAN only after authorization. CoreLocation is limited to authorization:
+there are no coordinate, requestLocation or startUpdatingLocation calls.
+Installation and hover never request authorization or enable global Location
+Services. The explicit permission action is the opt-in; a denied response does
+not automatically open Settings or repeat the request. The owner must approve
+the privacy change and the OS dialog before named scans can work.
+
+Private 0600 JSON results are bounded and validated, then removed; recency and
+scan caches remain outside Git. Saved history ranks a scan-derived set and
+never establishes availability. Expired or invalidated results cannot authorize
+a join. Network names are literal argv, never AppleScript/shell interpolation.
+Passwords are neither read nor passed; Apple's UI owns new secured-network
+credentials. Native UI scraping is not used to populate the hover pane.
+SystemConfiguration notifications still carry no network values. Signing
+certificate selection stays local and no team name, ID or certificate enters Git.
 
 Window metadata is limited to application ownership, count and geometry;
 screen recording and private window titles are not needed. Device names,
@@ -152,7 +159,7 @@ loads a model. Ollama remains manually started and is not enabled at login.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `7d7f25497510f0c7a0dc709ffbb32a71dd310a6341a72794c157f617e25cce77`
-- Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
+- Repository signal fingerprint: `fe2c007ef63af40072574145bb42d051288c913b164cb6f22152a17df042ffb2`
+- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (7 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

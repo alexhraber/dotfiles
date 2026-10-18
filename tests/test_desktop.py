@@ -17,6 +17,7 @@ sys.path.insert(0, str(ROOT / '.config/sketchybar/plugins'))
 import desktop
 import controls
 import appearance
+import wifi
 
 spec = importlib.util.spec_from_file_location('metrics', ROOT / '.config/sketchybar/plugins/metrics.py')
 metrics = importlib.util.module_from_spec(spec)
@@ -24,6 +25,13 @@ spec.loader.exec_module(metrics)
 
 
 class DesktopTests(unittest.TestCase):
+    def setUp(self):
+        query = patch.object(wifi, 'query', return_value={'authorization':'notDetermined',
+            'services':True,'ssid':'','networks':[]})
+        self.wifi_query = query.start(); self.addCleanup(query.stop)
+        worker = patch.object(controls, 'start_wifi_watch')
+        worker.start(); self.addCleanup(worker.stop)
+
     def test_control_access_requires_current_healthy_fresh_helper(self):
         with tempfile.TemporaryDirectory() as temp, patch.object(desktop,'agent_pid',return_value=17):
             root=Path(temp)
@@ -71,7 +79,8 @@ class DesktopTests(unittest.TestCase):
             rows=controls.panel_rows('wifi')
         self.assertIn(('Available networks & connection…',['native','Wi-Fi']),rows)
         self.assertFalse(any(action and action[0]=='wifi-network' for _,action in rows))
-        self.assertFalse(any('saved' in title.lower() or 'location' in title.lower() for title,_ in rows))
+        self.assertFalse(any('saved' in title.lower() for title,_ in rows))
+        self.wifi_query.assert_called_once_with(controls.STATE)
         self.assertFalse(any('-listpreferredwirelessnetworks' in call for call in queries))
 
     def test_wifi_connection_label_preserves_literal_ssid_and_redacted_names_are_omitted(self):

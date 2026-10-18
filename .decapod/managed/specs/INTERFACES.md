@@ -90,7 +90,8 @@ The top three pixels reveal the bar; the bottom-center resting icon footprint
 the screen bottom, with no 26-point gap to chase. Resting size stays 40 points;
 unconstrained peak hover size is 77.5 points, 25% above the previous 62 points.
 Crowded layouts scale to fit. Exit hysteresis is 320 ms. Hover controls
-include calendar, sound/output/mute, built-in brightness, Wi-Fi power/link/address status and a native network picker,
+include calendar, sound/output/mute, built-in brightness, Wi-Fi power/link/address status,
+permission-gated direct SSIDs/available choices and a native network picker,
 paired Bluetooth devices, battery and Fahrenheit CPU/GPU telemetry. Notifications
 are furthest right; hardware warnings are not an unread notification count.
 From that right edge inward, clock and weather come immediately after
@@ -129,13 +130,19 @@ Keyboard and other system level changes update the slider and numeric reading
 without pointer reentry; closed panes add no device polling.
 
 Clicking a running app uses the macOS reopen request without requesting a new
-instance. Wi-Fi offers no saved-network choices. Native picker handoff owns
-SSID availability, known-network priority and connecting state, closes the
-custom pane first, and preserves newer interactions on failure. Native action
+instance. Wi-Fi names use the separate Wi-Fi Access bundle. desktop wifi-setup
+builds/registers it without requesting Location or rebuilding Desktop Controls.
+The pane offers explicit permission opt-in, then connected SSID, scan-confirmed
+recent/known choices, connecting state and literal network joins. No scan starts
+for hidden panes; results that finish after dismissal are discarded. Expired,
+invalidated or connection/interface-mismatched results cannot authorize actions.
+Native picker/credential handoff closes the custom pane first and preserves
+newer interactions on failure. Native action
 rows optionally carry bounded detail/hint strings and selected/section booleans;
 these are presentation only and never become executable arguments. Sound marks
 the current output; Bluetooth sorts connected devices first and distinguishes
-state from its hover action. No Location access is requested.
+state from its hover action. Location is requested only by the explicit Wi-Fi
+permission action, never installation, warming, hover, status or scans.
 
 The desktop_network_changed event carries no network values. Wi-Fi refreshes an
 already-visible matching pane with its request/anchor/pin intact, and never
@@ -209,7 +216,7 @@ can leave partial state; the backup manifest remains the recovery input.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `7d7f25497510f0c7a0dc709ffbb32a71dd310a6341a72794c157f617e25cce77`
-- Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
+- Repository signal fingerprint: `fe2c007ef63af40072574145bb42d051288c913b164cb6f22152a17df042ffb2`
+- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (7 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

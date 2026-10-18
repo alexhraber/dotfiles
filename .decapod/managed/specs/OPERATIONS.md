@@ -47,6 +47,15 @@ systems call it Accessibility. After manual approval, rerun that command to
 verify the current healthy helper and restart it, refreshing fullscreen windows
 without rebuilding or signing a new app.
 Native quick-panel approval and LuLu filter approval are local OS actions.
+The separate Wi-Fi bundle can be installed with desktop wifi-setup; this does
+not request Location or rebuild Desktop Controls. Its explicit Allow Wi-Fi names
+action is the authorization opt-in. Global Location Services and app consent
+are required by macOS for SSIDs; when either stays off, names remain unavailable.
+The helper uses the single existing valid signing certificate when available,
+or a local DOTFILES_WIFI_SIGN_IDENTITY override. Team IDs stay out of source.
+Status and scan launches are short-lived background apps with a ten-second
+watchdog; explicit permission requests allow sixty seconds for a user response.
+No persistent Wi-Fi daemon or hidden native picker is installed.
 Only SketchyBar and local.dotfiles.desktop-edge start with this profile;
 Borders stays stopped and AeroSpace starts disabled. Models stay manual.
 
@@ -91,7 +100,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `7d7f25497510f0c7a0dc709ffbb32a71dd310a6341a72794c157f617e25cce77`
-- Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
+- Repository signal fingerprint: `fe2c007ef63af40072574145bb42d051288c913b164cb6f22152a17df042ffb2`
+- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (7 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
