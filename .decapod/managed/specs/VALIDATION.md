@@ -2,13 +2,48 @@
 
 ## Proof Surfaces
 
-The current pane revision passes 103 host tests, warnings-as-errors native
-compilation and native self-tests. Regressions cover hidden-pin recovery without
-canceling visible/new pins, no saved profiles or stale saved-list cache in Wi-Fi,
-local link/address labels without an Internet claim, request-safe native handoff
-and failure recovery, visible-only network refresh, connected-device ordering,
-and state metadata retaining literal device actions. The native hidden-pin test
-checks acknowledgement even when AppKit already hid the panel.
+The current Wi-Fi candidate passes 120 portable unit tests, including stable
+callbacks during rate refresh, changed-map rejection, request-bound expansion
+replay/reset, default top-three alternatives, explicit other choices, native
+handoff without inline rows, fixed-code diagnostics and staged permission readback.
+The signed auxiliary helper compiles with warnings as errors.
+
+The registered Desktop Panels app now reports its own Accessibility and Screen
+Recording access as true. With Location Services false, a private production
+probe used the actual bar hover over an existing fullscreen Space: opening took
+1.267 seconds, exactly one connected network and three actual alternatives were
+rendered, interface rates updated, periodic native rescans rendered, bar autohide
+retained the pane, the actual Other Networks button expanded, expansion survived
+the next rescan, the button collapsed it again, and pointer exit closed it.
+The prior asynchronous callback must finish before the next test press; a rushed
+probe timed out, and a separate run was interrupted before rescan. These failed
+attempts are retained privately rather than treated as successful proof.
+No network switch, power toggle or password entry was performed. Authentication
+handoff remains unverified. These host checks do not establish full exact-candidate
+publication readiness; governed validation and platform CI remain required.
+
+The existing .github/workflows/check.yml remains the required Linux/macOS source
+check workflow. During bootstrap, Decapod 0.119.1 repaired an absent ignored local
+policy file and incidentally generated another workflow despite init.ci=false.
+That unrequested scaffold was removed; the original required source checks are
+retained. Bootstrap project-check is a prerequisite, not publication proof.
+Full validation must still execute the complete reviewed source contract.
+
+The earlier fallback recovery passed 54 targeted desktop regression tests. They cover
+direct native hover/click without rendering setup or stale cache rows, canceled
+dwell, no custom network refresh over the native picker, survival of bar
+autohide, explicit close and switching to another themed pane.
+
+A private live test moved the pointer to the actual Wi-Fi bar icon over the
+current fullscreen app. The real picker opened in 1.133 seconds with two named
+network rows and exactly one connected row. Location Services was false before,
+during and after; the custom controls window remained hidden. Repeated hover
+kept the picker open. Moving into it and letting the bar hide retained it.
+Opening Sound closed Wi-Fi and displayed the themed Sound pane. Cleanup
+restored the pointer and closed test panes without a network change. This proves
+the functional native fallback only. Its styling/order are Apple's, and no
+custom top-three recent/available list is claimed. No current exact-candidate
+full validation or CI/publication readiness is claimed by these targeted checks.
 
 Sound and Bluetooth fixture previews were rendered and visually inspected:
 quiet shared Apple/app hover treatment, one current-device check, explicit state
@@ -28,8 +63,8 @@ A bounded public AX probe found macOS 27's fixed Wi-Fi menu-extra identifier
 inside MenuBarAgent hosting views; the compatible installed native_item action
 opened Apple's real picker without Location or a network switch. Its current
 SSID and known/other-network grouping were visually inspected privately. This
-is system-picker evidence, not proof of a custom scanned SSID list. The owner explicitly reconfirmed that Location stays off, so that custom
-scanned list is outside the authorized implementation. The installed Wi-Fi action was clicked through the actual bar and pane over
+is system-picker evidence, not proof of a custom scanned SSID list. The owner explicitly reconfirmed that Location stays off, so the requested custom
+scanned list was unresolved in that earlier build rather than permission to change privacy. The installed Wi-Fi action was clicked through the actual bar and pane over
 fullscreen: Apple’s picker became visible, the custom pane closed and its
 backend active record cleared. No network was switched. All twelve actual bar routes passed over the real Ghostty fullscreen Space:
 ten controls opened on hover and click; Apple and app menus remained click-only.
@@ -324,7 +359,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `7d7f25497510f0c7a0dc709ffbb32a71dd310a6341a72794c157f617e25cce77`
-- Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
+- Repository signal fingerprint: `8f0447a89547abc97705e14f3aad05122eaa25292f5da8f670f31805a6a63068`
+- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (7 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

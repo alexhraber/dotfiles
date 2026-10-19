@@ -65,6 +65,51 @@ def register_bundle(executable):
         cf.CFRelease(url)
 
 
+def setup_panels(directory):
+    """Build auxiliary panes without changing Desktop Controls or its approvals."""
+    identity = os.environ.get('DOTFILES_SIGNING_IDENTITY', '')
+    if not identity:
+        result = subprocess.check_output(['security', 'find-identity', '-v', '-p', 'codesigning'], text=True)
+        matches = re.findall(r'\b([A-F0-9]{40}) "Apple Development:', result)
+        if len(matches) != 1:
+            raise ValueError('Set DOTFILES_SIGNING_IDENTITY to one local signing identity')
+        identity = matches[0]
+    sources = ('wifi-pane.m', 'wifi-pane-info.plist', 'control-panel.m', 'control-panel.h',
+               'calendar-panel.m', 'calendar-panel.h', 'app-menu.m', 'app-menu.h')
+    digest = hashlib.sha256(identity.encode() + b''.join((ROOT/'scripts'/name).read_bytes() for name in sources)).hexdigest()[:16]
+    bundle = directory / ('DesktopPanels-' + digest + '.app')
+    target = bundle / 'Contents/MacOS/wifi-pane'
+    if not target.is_file():
+        with tempfile.TemporaryDirectory(prefix='panels-build-', dir=directory) as temp:
+            staged = Path(temp) / 'Desktop Panels.app'
+            executable = staged / 'Contents/MacOS/wifi-pane'
+            executable.parent.mkdir(parents=True)
+            command = ['xcrun', 'clang', '-fobjc-arc', '-Wall', '-Wextra', '-Werror',
+                       '-mmacosx-version-min=14.0', '-DDF_CONTROL_NOTIFICATION="local.dotfiles.desktop.panels"']
+            for framework in ('AppKit', 'QuartzCore', 'EventKit', 'ApplicationServices', 'ScreenCaptureKit', 'SystemConfiguration'):
+                command += ['-framework', framework]
+            run(*command, *(ROOT/'scripts'/name for name in ('wifi-pane.m', 'control-panel.m', 'calendar-panel.m', 'app-menu.m')), '-o', executable)
+            executable.chmod(0o700)
+            shutil.copyfile(ROOT/'scripts/wifi-pane-info.plist', staged/'Contents/Info.plist')
+            run('codesign', '--force', '--sign', identity, '--identifier', 'local.dotfiles.wifi-pane', staged)
+            run('codesign', '--verify', '--strict', staged)
+            os.replace(staged, bundle)
+    run('codesign', '--verify', '--strict', bundle)
+    register_bundle(target)
+    link = directory/'wifi-pane'
+    if link.is_symlink() and link.resolve() == target:
+        return target
+    if link.exists() or link.is_symlink():
+        backup = Path(tempfile.mkdtemp(prefix='panels-link-', dir=directory))
+        backup.chmod(0o700)
+        os.replace(link, backup/'wifi-pane')
+    temporary = directory/'wifi-pane.new'
+    temporary.unlink(missing_ok=True)
+    temporary.symlink_to(target)
+    os.replace(temporary, link)
+    return target
+
+
 def compile_tools(directory):
     tools = {}
     for source, name, command in (
@@ -236,6 +281,21 @@ def main(action, theme=None, layout=None):
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         manifest = directory / 'manifest.json'
         document = json.loads(manifest.read_text()) if manifest.exists() else None
+        if action in ('panels-setup', 'panels-permissions'):
+            target = setup_panels(directory)
+            print('Desktop Panels: ' + str(target.parents[2]))
+            if action == 'panels-permissions':
+                spec = importlib.util.spec_from_file_location('wifi_pane', ROOT/'.config/sketchybar/plugins/wifi_pane.py')
+                adapter = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(adapter)
+                access = adapter.query(directory/'bar', 'request-access')
+                print(json.dumps(access))
+                if not access['accessibility']:
+                    print('Enable Desktop Panels in Device Control and Data Access (Accessibility), then rerun this command for Screen Recording.')
+                elif not access['screen_capture']:
+                    print('Enable Desktop Panels in Screen & System Audio Recording, then verify again.')
+                return 0 if all(access[key] for key in ('accessibility', 'screen_capture', 'supported')) else 1
+            return 0
         if action in ('apply', 'theme'):
             palette = appearance.resolve(theme, layout)
             if action == 'theme' and (not document or not document['active']):

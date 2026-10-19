@@ -90,7 +90,7 @@ The top three pixels reveal the bar; the bottom-center resting icon footprint
 the screen bottom, with no 26-point gap to chase. Resting size stays 40 points;
 unconstrained peak hover size is 77.5 points, 25% above the previous 62 points.
 Crowded layouts scale to fit. Exit hysteresis is 320 ms. Hover controls
-include calendar, sound/output/mute, built-in brightness, Wi-Fi power/link/address status and a native network picker,
+include calendar, sound/output/mute, built-in brightness, a directly hovered native Wi-Fi picker,
 paired Bluetooth devices, battery and Fahrenheit CPU/GPU telemetry. Notifications
 are furthest right; hardware warnings are not an unread notification count.
 From that right edge inward, clock and weather come immediately after
@@ -129,18 +129,44 @@ Keyboard and other system level changes update the slider and numeric reading
 without pointer reentry; closed panes add no device polling.
 
 Clicking a running app uses the macOS reopen request without requesting a new
-instance. Wi-Fi offers no saved-network choices. Native picker handoff owns
-SSID availability, known-network priority and connecting state, closes the
-custom pane first, and preserves newer interactions on failure. Native action
-rows optionally carry bounded detail/hint strings and selected/section booleans;
-these are presentation only and never become executable arguments. Sound marks
-the current output; Bluetooth sorts connected devices first and distinguishes
-state from its hover action. No Location access is requested.
+instance. Wi-Fi hover/click opens the native picker directly, without custom
+loading, permission rows or a second handoff action. An open request is
+idempotent; closing checks the fixed wifi-header before pressing the item.
+Bar conceal retains a native Wi-Fi pane; explicit cancel and opening another
+themed pane close it. Apple owns its normal dismissal, actual network names,
+list order and connection state. No Location request, scan daemon, network-name
+cache, password read or credential write is part of this route. A custom themed
+top-three list is still an unfulfilled request, not a guarantee of this interface.
+Sound/Bluetooth rows retain bounded detail/hint/selected metadata and their
+literal device argv actions. Network change events carry no network values and
+never replace a native Wi-Fi picker with a custom pane.
 
-The desktop_network_changed event carries no network values. Wi-Fi refreshes an
-already-visible matching pane with its request/anchor/pin intact, and never
-reopens a hidden pane. network_events in private native status reports whether
-the public SystemConfiguration run-loop source is installed.
+The optional Desktop Panels route supersedes that fallback only when its own
+registered-app status reports supported, Accessibility and Screen Capture.
+`desktop panels-setup` installs it; `desktop panels-permissions` requests the two
+OS approvals without requesting Location.
+Permission requests are staged: Accessibility first, Screen Recording on a
+subsequent approved call, and actual access readback before success is reported.
+Setup/build never grants or requests those permissions. The adapter's `--snapshot`/`--action` response
+JSON has a fresh sampled timestamp, bounded typed rows and handoff status; the
+UI renders literal native network names/actions, connected state and current
+interface byte rates. As in Bluetooth, connected rows come first with a checkmark
+and Connected label; up to three alternatives show Not connected and Connect on
+hover. Native options follow; native category headings are omitted. Other Networks
+adds up to three actual other choices when expanded. Request-bound expansion is
+replayed by --snapshot/--action with --expanded, preserving it across refreshes.
+Normal registered-app OS approval, fullscreen hover, connected state, rates and
+expansion persistence are verified. Network switching/authentication remain untested.
+Rate-only redraws retain the callback revision; a changed request/action mapping
+invalidates it. Intentional native handoff allows an empty row list, closes the
+custom request and leaves the intended system UI visible.
+The transition from an already-open owned native picker closes it only after a
+native busy response, then retries its closing animation within a one-second
+bound. With access unavailable it remains open. Native codes survive helper exit
+errors in private diagnostics rather than being silently discarded. Bar conceal
+does not cancel a fresh, visible auxiliary pane; explicit cancel still closes it.
+Bluetooth's first On/Off row is clickable and owns the sole power action. Header
+and device callbacks keep separate row indices; native device argv are unchanged.
 
 The dock renders only app icons over fully transparent pixels. It has no shelf,
 blur, border, shadow, text, badges or active markers. Autohide, magnification,
@@ -209,7 +235,7 @@ can leave partial state; the backup manifest remains the recovery input.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `7d7f25497510f0c7a0dc709ffbb32a71dd310a6341a72794c157f617e25cce77`
-- Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
+- Repository signal fingerprint: `8f0447a89547abc97705e14f3aad05122eaa25292f5da8f670f31805a6a63068`
+- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (7 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

@@ -24,6 +24,24 @@ spec.loader.exec_module(metrics)
 
 
 class DesktopTests(unittest.TestCase):
+    def test_panel_permission_request_reports_actual_readiness_without_claiming_a_grant(self):
+        for accessibility, capture in ((False, False), (True, False), (True, True)):
+            with self.subTest(accessibility=accessibility, capture=capture), tempfile.TemporaryDirectory() as temp:
+                directory=Path(temp)
+                target=directory/'Desktop Panels.app/Contents/MacOS/wifi-pane'
+                access={'accessibility':accessibility, 'screen_capture':capture, 'supported':True}
+                adapter=SimpleNamespace(query=unittest.mock.Mock(return_value=access))
+                spec=SimpleNamespace(loader=SimpleNamespace(exec_module=lambda module:None))
+                with patch.object(desktop,'state_dir',return_value=directory), \
+                     patch.object(desktop.os,'uname',return_value=SimpleNamespace(sysname='Darwin')), \
+                     patch.object(desktop,'setup_panels',return_value=target), \
+                     patch.object(desktop.importlib.util,'spec_from_file_location',return_value=spec), \
+                     patch.object(desktop.importlib.util,'module_from_spec',return_value=adapter), \
+                     patch.object(desktop,'run') as run:
+                    self.assertEqual(desktop.main('panels-permissions'), 0 if accessibility and capture else 1)
+                    adapter.query.assert_called_once_with(directory/'bar','request-access')
+                    run.assert_not_called()
+
     def test_control_access_requires_current_healthy_fresh_helper(self):
         with tempfile.TemporaryDirectory() as temp, patch.object(desktop,'agent_pid',return_value=17):
             root=Path(temp)
@@ -58,58 +76,61 @@ class DesktopTests(unittest.TestCase):
                 unittest.mock.call('open','x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility')])
             healthy.assert_not_called()
 
-    def test_wifi_lists_no_saved_profiles_and_uses_native_availability_picker(self):
-        queries=[]
-        def command(*args,**kwargs):
-            queries.append(args)
-            if '-getairportpower' in args: return 'Wi-Fi Power (en0): On'
-            if args[:1]==('/sbin/ifconfig',): return 'status: active\n'
-            if '-getairportnetwork' in args: return 'You are not associated with an AirPort network.\n'
-            if args[:2]==('ipconfig','getifaddr'): return '192.0.2.1'
-            raise AssertionError('Unexpected network query: '+repr(args))
-        with patch.object(controls,'wifi_device',return_value='en0'), patch.object(controls,'command',side_effect=command):
-            rows=controls.panel_rows('wifi')
-        self.assertIn(('Available networks & connection…',['native','Wi-Fi']),rows)
-        self.assertFalse(any(action and action[0]=='wifi-network' for _,action in rows))
-        self.assertFalse(any('saved' in title.lower() or 'location' in title.lower() for title,_ in rows))
-        self.assertFalse(any('-listpreferredwirelessnetworks' in call for call in queries))
+    def test_wifi_hover_and_click_open_real_controls_without_a_setup_pane(self):
+        for clicked in (False, True):
+            with self.subTest(clicked=clicked), tempfile.TemporaryDirectory() as temp, \
+                 patch.object(controls,'STATE',Path(temp)), patch.object(controls,'native_controls') as native, \
+                 patch.object(controls,'native_calendar'), patch.object(controls,'native_item') as item, \
+                 patch.object(controls,'fresh_rows') as rows, patch.object(controls,'render_rows') as render, \
+                 patch.object(controls.time,'sleep'):
+                controls.store('wifi.cache.json',{'rows':[['Stale saved profile',None]]})
+                controls.show('wifi',clicked=clicked)
+                item.assert_called_once_with('Wi-Fi',ensure='open')
+                native.assert_called_once_with('hide')
+                rows.assert_not_called()
+                render.assert_not_called()
+                self.assertTrue(controls.read('active.json')['native_wifi'])
 
-    def test_wifi_connection_label_preserves_literal_ssid_and_redacted_names_are_omitted(self):
-        with patch.object(controls,'command',return_value='Current Wi-Fi Network:  Cafe \n'):
-            self.assertEqual(controls.current_wifi('en0'),' Cafe ')
-        with patch.object(controls,'command',return_value='You are not associated with an AirPort network.\n'):
-            self.assertEqual(controls.current_wifi('en0'),'')
-
-    def test_wifi_never_renders_the_old_saved_network_cache(self):
+    def test_leaving_before_wifi_dwell_cancels_the_open(self):
         with tempfile.TemporaryDirectory() as temp, patch.object(controls,'STATE',Path(temp)), \
-             patch.object(controls,'native_controls'), patch.object(controls,'fresh_rows',return_value=[('Wi-Fi',None),('Available networks & connection…',['native','Wi-Fi'])]), \
-             patch.object(controls.time,'sleep'), patch.object(controls,'render_rows',return_value=True) as render:
-            controls.store('wifi.cache.json',{'time':time.time(),'rows':[['Old saved profile',['wifi-network','Fake old SSID']]]})
-            controls.show('wifi')
-            self.assertFalse(any('Old saved profile' in str(call) for call in render.call_args_list))
+             patch.object(controls,'native_item') as item:
+            with patch.object(controls.time,'sleep',side_effect=lambda _:controls.leave('wifi')):
+                controls.show('wifi')
+            item.assert_not_called()
 
-    def test_wifi_connection_summary_follows_link_and_address_without_claiming_internet(self):
-        for linked,address,expected in ((True,'192.0.2.2','Connected'),(True,'169.254.1.2','Limited'),(True,None,'Link active'),(False,None,'Not connected')):
-            with self.subTest(state=expected):
-                def command(*args,**kwargs):
-                    if '-getairportpower' in args:return 'Wi-Fi Power (en0): On'
-                    if args[0]=='/sbin/ifconfig':return 'status: '+('active' if linked else 'inactive')+'\n'
-                    if args[0]=='ipconfig':
-                        if address is None:raise subprocess.CalledProcessError(1,args)
-                        return address
-                    raise AssertionError(args)
-                with patch.object(controls,'wifi_device',return_value='en0'), patch.object(controls,'current_wifi',return_value=''), patch.object(controls,'command',side_effect=command):
-                    rows=controls.panel_rows('wifi')
-                self.assertEqual(rows[0],('Wi-Fi · '+expected,None))
-                self.assertIn(('Available networks & connection…',['native','Wi-Fi']),rows)
-                self.assertFalse(any('internet' in title.lower() for title,_ in rows))
+    def test_native_wifi_is_not_replaced_by_network_change_refresh(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(controls,'STATE',Path(temp)), \
+             patch.object(controls,'panel_rows') as rows, patch.object(controls,'native_controls') as native:
+            controls.store('hover.json',[1,'wifi'])
+            controls.store('active.json',{'name':'wifi','request':'1','native_wifi':True})
+            self.assertFalse(controls.refresh_open('wifi'))
+            self.assertFalse(controls.visible_control('wifi',[1,'wifi']))
+            rows.assert_not_called()
+            native.assert_not_called()
 
-    def test_wifi_off_does_not_query_current_network_or_link(self):
-        with patch.object(controls,'wifi_device',return_value='en0'), patch.object(controls,'command',return_value='Wi-Fi Power (en0): Off') as command:
-            rows=controls.panel_rows('wifi')
-        command.assert_called_once_with('networksetup','-getairportpower','en0')
-        self.assertEqual(rows[0],('Wi-Fi · Off',None))
-        self.assertIn(('Turn Wi-Fi on',['wifi','en0','on']),rows)
+    def test_native_wifi_survives_bar_autohide_but_explicit_cancel_closes(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(controls,'STATE',Path(temp)), \
+             patch.object(controls,'native_item') as item, patch.object(controls,'native_controls'), \
+             patch.object(controls,'native_calendar'), patch.object(sys,'argv',['controls.py','cancel','all']):
+            controls.store('active.json',{'name':'wifi','native_wifi':True})
+            with patch.dict(os.environ,SENDER='desktop_concealed'):
+                controls.main()
+            item.assert_not_called()
+            self.assertTrue(controls.read('active.json')['native_wifi'])
+            with patch.dict(os.environ,SENDER='explicit'):
+                controls.main()
+            item.assert_called_once_with('Wi-Fi',ensure='close')
+            self.assertEqual(controls.read('active.json'),{})
+
+    def test_switching_to_another_pane_closes_owned_native_wifi(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(controls,'STATE',Path(temp)), \
+             patch.object(controls,'native_item') as item, patch.object(controls,'native_controls'), \
+             patch.object(controls,'fresh_rows',return_value=[('Sound · 50%',None)]), \
+             patch.object(controls.time,'sleep'):
+            controls.store('active.json',{'name':'wifi','native_wifi':True})
+            controls.show('volume')
+            item.assert_called_once_with('Wi-Fi',ensure='close')
+            self.assertEqual(controls.read('native-panel.json')['name'],'volume')
 
     def test_bluetooth_actions_say_connect_or_disconnect(self):
         def command(*args,**kwargs):
@@ -237,24 +258,6 @@ class DesktopTests(unittest.TestCase):
                         self.assertEqual(after[key],before[key])
                     native.assert_called_once_with()
 
-    def test_network_change_refreshes_only_current_visible_wifi_request(self):
-        for case in ('visible','hidden','stale','dismissed','other'):
-            with self.subTest(case=case), tempfile.TemporaryDirectory() as temp, \
-                 patch.object(controls,'STATE',Path(temp)/'bar'), patch.object(controls,'native_controls') as native, \
-                 patch.object(controls,'panel_rows',return_value=[('Wi-Fi · Connected',None),('Address · 192.0.2.2',None)]) as rows:
-                root=Path(temp); self.open_level_control(root,'wifi',True); native.reset_mock()
-                before=controls.read('native-panel.json'); status=json.loads((root/'status.json').read_text())
-                if case=='hidden': status['controls']['visible']=False
-                elif case=='stale': status['updated']-=10
-                elif case=='dismissed': controls.store('native-dismissed.json',{'request':'1'})
-                elif case=='other': status['controls']['name']='volume'
-                (root/'status.json').write_text(json.dumps(status))
-                changed=controls.refresh_open('wifi')
-                self.assertEqual(changed,case=='visible')
-                if case=='visible':
-                    self.assertEqual(controls.read('native-panel.json')['rows'][0]['text'],'Wi-Fi · Connected')
-                    for key in ('request','name','pinned','anchors'): self.assertEqual(controls.read('native-panel.json')[key],before[key])
-                else: rows.assert_not_called(); native.assert_not_called()
 
     def test_system_level_events_do_not_query_or_reopen_hidden_stale_or_dismissed_panes(self):
         for case in ('hidden','other','stale','dismissed','new-request'):

@@ -118,16 +118,41 @@ An OS update may change these interfaces. Ordinary failure restores the native
 menu; SIGKILL cannot run cleanup, and the owned LaunchAgent restarts the helper.
 Undo recovers the menu before checking guarded preference restoration.
 
-Wi-Fi does not use CoreLocation/CoreWLAN scanning or contain a Location purpose
-string. Saved profiles are not used as availability data. Only the normal
-networksetup response may supply a custom SSID; otherwise Apple's native picker
-owns network identity, availability and connection progress. Its bounded lookup
-presses only a fixed menu-extra identifier; it does not scrape network names.
-The Accessibility probe checks the same route without pressing it or retaining
-an identifier list. Passwords are neither read nor passed. SystemConfiguration
-notifications trigger a fixed event without reading, storing or forwarding
-network values. Changing to a custom scanned SSID list requires the owner's
-explicit privacy decision and manual OS consent.
+The native-picker fallback does not link CoreLocation/CoreWLAN, request additional
+consent or contain a Location purpose string. The native picker displays its own
+real network names directly on hover; that fallback does not read or retain them. Saved
+profiles never stand in for availability. Bounded AX traversal uses only fixed
+status-item and wifi-header identifiers to open idempotently and close only the
+Wi-Fi panel. Passwords are neither read nor passed. SystemConfiguration emits a
+fixed change event without reading, storing or forwarding network values.
+Location remains off. The failed custom scanner was removed rather than
+requesting permission again or changing TCC. The separate cached Wi-Fi Access
+builds from the rejected experiment may remain in private local state for
+recovery, but their active symlink and config link are removed and no service
+launches them. Existing Desktop Controls identity/Calendar/AX consent are intact.
+
+The new Desktop Panels adapter is distinct from that removed scanner. It links
+ScreenCaptureKit and AX, never CoreLocation/CoreWLAN. Its own Accessibility and
+Screen Recording approvals are requested only by an explicit command, never
+hover. Native AX controls provide names and selection; saved profiles do not
+substitute for nearby availability. Bounded traversal skips text/secure fields.
+Screen snapshots exist only in memory for native-popup concealment; production
+writes no screenshot or video. Fresh control descriptors and throughput samples
+remain in private local state, not Git. Literal descriptors are JSON/argv data,
+never shell commands; selected state is rechecked before an action. The single
+display/macOS version boundary falls back to Apple's picker. Signing identities
+are selected from local Keychain or environment and never written to the repo.
+Normal registered-app Wi-Fi activation, real fullscreen hover, rates and native
+disclosure interaction are verified with both explicit OS approvals. Authentication
+handoff remains unverified without changing the owner's connection.
+Request-bound mouse passthrough is acknowledged before native actions, resumed
+in cleanup and reset by an eight-second watchdog. It never grants a permission.
+Diagnostic-host tests use the agent's existing approvals and do not
+grant or inherit permissions into Desktop Panels. Fixed-code diagnostics contain
+only stage, time and known access booleans; arbitrary native error text is
+discarded so network names cannot enter error reports. Separate stage records
+prevent later status checks from erasing the snapshot failure. These records and
+the actual network snapshots remain private local state, never repository files.
 
 Window metadata is limited to application ownership, count and geometry;
 screen recording and private window titles are not needed. Device names,
@@ -152,7 +177,7 @@ loads a model. Ollama remains manually started and is not enabled at login.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `7d7f25497510f0c7a0dc709ffbb32a71dd310a6341a72794c157f617e25cce77`
-- Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
+- Repository signal fingerprint: `8f0447a89547abc97705e14f3aad05122eaa25292f5da8f670f31805a6a63068`
+- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (7 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

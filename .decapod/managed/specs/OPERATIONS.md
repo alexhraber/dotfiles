@@ -47,6 +47,18 @@ systems call it Accessibility. After manual approval, rerun that command to
 verify the current healthy helper and restart it, refreshing fullscreen windows
 without rebuilding or signing a new app.
 Native quick-panel approval and LuLu filter approval are local OS actions.
+Wi-Fi uses the themed Desktop Panels adapter when its own Accessibility and
+Screen Recording approvals are present; Location stays off. Install it with
+desktop panels-setup. desktop panels-permissions requests one pending approval
+per call and returns success only after actual readiness. Those approvals are
+now verified for the installed signed app. Unsupported/unapproved systems open
+the real system picker directly on hover.
+No Wi-Fi Access setup command or consent helper is part of the profile.
+The themed list keeps native choice order, connected first and up to three
+alternatives; explicit Other Networks expansion adds further real choices.
+Opening another pane closes Wi-Fi, while bar autohide retains it.
+Rollback is the scoped installer backup plus the preceding committed branch
+state; do not rebuild Desktop Controls or reset its working OS permissions.
 Only SketchyBar and local.dotfiles.desktop-edge start with this profile;
 Borders stays stopped and AeroSpace starts disabled. Models stay manual.
 
@@ -91,7 +103,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `7d7f25497510f0c7a0dc709ffbb32a71dd310a6341a72794c157f617e25cce77`
-- Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
+- Repository signal fingerprint: `8f0447a89547abc97705e14f3aad05122eaa25292f5da8f670f31805a6a63068`
+- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (7 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

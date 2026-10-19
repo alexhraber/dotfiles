@@ -210,21 +210,25 @@ DockView uses NSWorkspace openApplicationAtURL with activation enabled and
 createsNewApplicationInstance disabled, preserving normal reopen semantics.
 desktop.py registers the complete signed bundle through public LSRegisterURL
 before activation, including cached builds launched directly by launchd.
-controls.py reads Wi-Fi power through networksetup and local link/address state
-through ifconfig/ipconfig. A normal networksetup SSID response is preserved
-literally; redacted responses remain unnamed. Saved-profile choices and their
-recency history are no longer used. Native handoff closes the custom pane first,
-checks its request token, and never rerenders over a successful system picker.
-The bounded native_item lookup finds fixed status-item identifiers below macOS
-27 MenuBarAgent hosting views, with the older ControlCenter menu-bar fallback.
-It does not extract native network lists or SSIDs. Accessibility probes use the
-same lookup without pressing an item.
+controls.py reads Wi-Fi power through networksetup for the bar icon only.
+When auxiliary access is unavailable, show('wifi') uses the ordinary dwell/request
+cancellation, hides custom windows, then opens Apple's real Wi-Fi picker
+directly using native_item(ensure='open').
+A fixed wifi-header AX lookup makes opening idempotent and closing conditional:
+a different system panel is never toggled by Wi-Fi cleanup. No SSID is extracted,
+no saved-profile choices are synthesized and this fallback requests no scan.
+active.json marks native_wifi so level/network refresh cannot replace the picker.
+Bar conceal retains it while the pointer enters; another themed pane or explicit
+cancel closes only a visible Wi-Fi picker. Native outside-click/Escape behavior
+owns dismissal. The bounded status-item lookup supports MenuBarAgent hosting
+views on macOS 27 and the older ControlCenter menu bar.
 
-desktop-edge.m observes public SystemConfiguration Link/IPv4/IPv6 changes and
-emits only the fixed desktop_network_changed SketchyBar event. It never reads or
-forwards dynamic-store values. The Wi-Fi handler rereads status only for the
-current visible request; hidden/stale/dismissed panes cannot reopen. The event
-source is released on restore, and status.json reports network_events health.
+desktop-edge.m still emits the fixed desktop_network_changed event without
+reading or forwarding network values. Wi-Fi updates its radio icon only; Apple
+owns the visible native list. The desired themed top-three recency list remains
+unimplemented with Location off. Offscreen AX mirroring was rejected because
+compositor probes found visible frames. No change to the approved native binary
+or OS privacy settings is needed for this functional fallback.
 
 desktop.py's permissions route requests access from the installed native helper.
 It accepts approval only from healthy, fresh status bound to the current
@@ -235,6 +239,55 @@ signing change is needed after approval.
 
 ControlRow uses the Apple/app menu's shared palette and quiet hover highlight,
 with optional selected/detail/hint metadata for output and Bluetooth state.
+Desktop Panels (`scripts/wifi-pane.m`) compiles the same renderer with a distinct
+distributed-notification name. Its transient `--ui` server owns Wi-Fi/Bluetooth
+windows and request-bound private status; other panes keep Desktop Controls.
+HeaderPower maps the first On/Off row to index zero, with a power tooltip and AX
+button label. The Bluetooth body has no duplicate power action. `setup_panels`
+builds/signs/registers a complete auxiliary bundle, backs up its prior link and
+publishes it atomically, preserving the Desktop Controls identity and approvals.
+
+The auxiliary Wi-Fi route is gated by its registered app's AX and Screen Capture
+status. It captures one display into memory, covers native popup creation and
+closing, reads bounded native controls while skipping credential fields, and
+returns fresh typed rows. Actions match a fresh role/identifier/text/selected
+state before AXPress. Python serializes queries, validates results, preserves
+native buttons and the connected network within the 14-row budget.
+Wi-Fi's row projection shares Bluetooth's flat list: connected controls first,
+then up to three unselected native choices before the disclosure, followed by native
+disclosure/buttons. Explicit expansion adds up to three real other choices below
+the disclosure. Private request-bound wifi-view.json replays expansion into each
+new native popup; a new request starts collapsed. Labels use the same selected/detail/hint renderer; unselected
+networks explicitly say Not connected. The sampler reads
+netstat link counters each second only while its request remains visible. A
+four-second snapshot refresh reopens the native controls behind the cover;
+normal registered-app fullscreen hover, rates, state and expansion refresh have
+passed live checks. Network switching/authentication remain untested. Unsupported or
+unapproved systems retain direct native hover. No Location framework is linked.
+`wifi_snapshot` uses the helper's snapshot preflight, avoiding a redundant app
+launch. A fixed `native_panel_busy` response can close only the owned native
+fallback, then retry up to one second for its closing animation. Missing access
+leaves that working fallback open. Stale request tokens cancel the transition.
+Nonzero helper exits retain a validated native error code before Python raises;
+fixed-code private diagnostics retain separate status/snapshot/action stages.
+Desktop conceal events respect fresh visible auxiliary-pane reports, because the
+unchanged Desktop Controls process cannot track another app's pane pointer.
+The auxiliary app retains its own pointer, outside-click and Space dismissal.
+Live diagnostic-host proof covers fullscreen compositor visibility, real network
+state/rates, native-picker handoff, bar conceal survival and pointer-exit closure.
+The registered app's own normal permission path is now independently verified.
+Action revisions hash the request and literal action mapping, so rate refreshes
+do not reject in-flight clicks. Native radio/disclosure actions wait for observable
+state changes rather than a fixed sleep. A request-bound passthrough/resume pair
+temporarily releases the themed window's mouse interception while native actions
+run under the cover; status acknowledgement and an eight-second watchdog bound
+this state. Native handoff results close the custom request without drawing empty
+rows or dismissing the intended system dialog.
+Permission onboarding requests Accessibility first; only a call that starts
+with Accessibility already approved can request Screen Recording. The explicit
+lifecycle command reads the returned access JSON and reports not-ready with a
+nonzero exit until every required access flag is true. The Info.plist declares
+the screen capture purpose; setup/build itself requests no protected permission.
 Labels remain separate from literal device argv actions. DFControlsHide
 acknowledges pinned requests even if AppKit already hid their window. Python's
 hidden_pin reconciles a pin only against a fresh, healthy, subsequent native
@@ -351,7 +404,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `7d7f25497510f0c7a0dc709ffbb32a71dd310a6341a72794c157f617e25cce77`
-- Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
+- Repository signal fingerprint: `8f0447a89547abc97705e14f3aad05122eaa25292f5da8f670f31805a6a63068`
+- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (7 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
