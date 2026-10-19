@@ -60,6 +60,14 @@
       "proof_refs": [
         "126 host tests, native self-tests/compilation, actual window selection/fullscreen hover, launcher visual/input, Mission Control, Wi-Fi regression and application theme checks; exact-candidate readiness pending"
       ]
+    },
+    {
+      "id": "desktop-refinement-prerequisite-recovery",
+      "summary": "Preserve initial readiness failure and successful prerequisite bootstrap; retain original required CI contract after incidental scaffold healing.",
+      "input_digest": "sha256:9eb701946c17eb560adaaffc346d0b866ac914f82a4560106da9e66472f3a3e4",
+      "proof_refs": [
+        "container project-check status ok, scope project_prerequisites; full readiness still pending"
+      ]
     }
   ],
   "intents": {
@@ -80,6 +88,53 @@
       "refined_intent": "Refine dock previews, fullscreen behavior, unified theme and pane interactions\n\nOwner explicitly requests all four proposed improvements. Preserve transparent icons-only dock, fullscreen-first workflow, command-number desktop navigation, Location off, existing approved apps, scoped rollback and no flicker. Implement and verify meaningful hover window selection, Mission Control/edge/pane behavior, coordinated terminal-editor-launcher-wallpaper theme and consistent interaction styling. Publish main under standing authorization.",
       "status": "refined",
       "updated_sequence": 3
+    }
+  },
+  "epochs": {
+    "ve_7d27cbfa89cd774a": {
+      "constitution_hash": "sha256:b063c612f27e8d1fb18a4caabc87a16cc769d408d88d30446455e36014f1843c",
+      "constitution_version": "embedded-docs@0.119.1",
+      "epoch_id": "ve_7d27cbfa89cd774a",
+      "evaluator_identity": "decapod-validate@0.119.1",
+      "evaluator_set_hash": "sha256:d01110bf6e129b6d67cd8462424f4dd7d11d9655c4bf6a6a13c43dbdeede984e",
+      "generated_specs_fingerprint": "2eaddf2e356ec39c8e3e614a58c633c545357dcf80067322db990de53762f62e",
+      "generated_specs_manifest_hash": "sha256:50603d30552b703641f5011664e08ecae388ea6b87873f34959a72bd23212dba",
+      "material_hashes": {
+        "constitution:core/DECAPOD": "sha256:b063c612f27e8d1fb18a4caabc87a16cc769d408d88d30446455e36014f1843c",
+        "generated_spec:.decapod/managed/specs/ARCHITECTURE.md": "sha256:c55c7ffe8a2927d06ca3c15f649e70ea77eac233bb0e00a0ded0cc6d617d82d4",
+        "generated_spec:.decapod/managed/specs/INTENT.md": "sha256:31930443ee7e1c0a643210e56667c1df6363e58cf0f2b22d8df2919c2bda76b3",
+        "generated_spec:.decapod/managed/specs/INTERFACES.md": "sha256:ed8c4f0faea6142169f86fa9148074b37f0e79ba202cac37e42b1509c25010cc",
+        "generated_spec:.decapod/managed/specs/OPERATIONS.md": "sha256:71d44455a2bd02f9b68449a267e8a1ef696c791517db9b8326e45df0e6035f70",
+        "generated_spec:.decapod/managed/specs/README.md": "sha256:9fb07dde4ec7c58ee868140213b29b833d29a06a985b77e8f1839e3815a5327d",
+        "generated_spec:.decapod/managed/specs/SECURITY.md": "sha256:fb938097f739409097c26de575c50e86d211e02057b8577aa4d3c78aaf14394f",
+        "generated_spec:.decapod/managed/specs/SEMANTICS.md": "sha256:e9a1070cea4b3c98ad616ba1c2b50eebee3e1878876498d57f9ed8481e590e1b",
+        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:2ff1f5eb6fe371d5f65478acdb0805361fb4f33ac06359c4e17db97dde26da07",
+        "generated_specs_fingerprint": "2eaddf2e356ec39c8e3e614a58c633c545357dcf80067322db990de53762f62e",
+        "generated_specs_manifest": "sha256:50603d30552b703641f5011664e08ecae388ea6b87873f34959a72bd23212dba",
+        "governance_context": "sha256:247bcc70bfb7548d9546ab15b1be9c60ab1b1cf84e18a553bcc697be63690e24",
+        "governance_material:.decapod/managed/Dockerfile.decapod": "sha256:c9bdb828ff9c9a9e00392d153434ecaaf4d507081ff453c5e838375c55c650e4",
+        "governance_material:AGENTS.md": "sha256:4992240c6825701513873da48567d3560685511ff73827527f9152f7a25cd7e7",
+        "governance_material:CLAUDE.md": "sha256:add7e4f64ef63dd84c69fd8088da14b0c34afe3bf9144c0f59c304c23e1279d5",
+        "governance_material:CODEX.md": "sha256:2ff1b008789940fc7871a84a6a38ac3eec5bef53f1444a4d387f0e4e04d0b975",
+        "governance_material:GEMINI.md": "sha256:e2c5b404af6f21562159eb3be9fd955d9d9a52f1b6ac90fb24fcdf2b170f29fb",
+        "governance_section:claims": "sha256:e92a792629a0af3ebd38653ee164452fbb2b3fc5b01a04339e5b51aec640081c",
+        "governance_section:plan": "sha256:37e49a673a0709d32fd7267ee6d9681e98bf71cfe7b9afdb9fffc45f58707e39",
+        "living_spec_material:.decapod/managed/specs/ARCHITECTURE.md": "sha256:f7640f8ace3e069f095052b47dd892fcb9b7ca10956088be493b8158bd40b025",
+        "living_spec_material:.decapod/managed/specs/INTENT.md": "sha256:592fb705c130fff9d23ca9ac1a9432372e3a211a5464f7895282090e221464dc",
+        "living_spec_material:.decapod/managed/specs/INTERFACES.md": "sha256:30149aea798e2897fde2bdc5dd7cda93362b1d16708ae8ad89243ffb29ff7204",
+        "living_spec_material:.decapod/managed/specs/OPERATIONS.md": "sha256:2d5bf1b27e1946342964bb176f8e21accb3b7d55b66aa5757bbcb7fa266ba376",
+        "living_spec_material:.decapod/managed/specs/README.md": "sha256:0988c85d6c05f02d52684c9aafae50e95fd5d5576739d3e9d995af682697fd99",
+        "living_spec_material:.decapod/managed/specs/SECURITY.md": "sha256:d479385590a379ed5d88a7cd297bd5049defa45f2555ee96c682b0abb4b5b107",
+        "living_spec_material:.decapod/managed/specs/SEMANTICS.md": "sha256:92bbe2607c6f8f94191a95ea977d9785f3472a0fae2835520dd86eae73130d5c",
+        "living_spec_material:.decapod/managed/specs/VALIDATION.md": "sha256:7e5c571296379d18e170ecd7222d8806913d636bb4d0097a5bb12efedca01ed4",
+        "proof_rubric": "sha256:99e8ef25629da391e9b479db9fff52b82f340224f7a69d8a88d2992ae8e90466",
+        "validation_profile": "sha256:37a8eec1ce19687d132fe29051dca629d164e2c4958ba141d5f4133a33f0688f"
+      },
+      "proof_rubric": "decapod-validate/current-proof-v1",
+      "proof_rubric_hash": "sha256:99e8ef25629da391e9b479db9fff52b82f340224f7a69d8a88d2992ae8e90466",
+      "schema_version": "1.0.0",
+      "validation_profile": "default",
+      "validation_profile_hash": "sha256:37a8eec1ce19687d132fe29051dca629d164e2c4958ba141d5f4133a33f0688f"
     }
   },
   "sections": {
@@ -135,11 +190,15 @@
         "Current claimed task and isolated work branch",
         "Keep working installed helper until tested replacement is staged; stable signing may require one manual new main-app approval. Never reset TCC or claim approvals from agent-host probes."
       ],
-      "artifact_hash": "sha256:52d344c2581c19380120ea7ed80824260d06d7c9c111b772e0db98c041a6fc90",
+      "artifact_hash": "sha256:4e31234f3e3be6272053b02bbbfcf3215709ccf2116e2b5c4144eccd2a61321c",
       "checks": [
         {
           "name": "cold-fixture-enumeration",
           "status": "partial"
+        },
+        {
+          "name": "decapod validate",
+          "status": "passed"
         },
         {
           "name": "fullscreen-dock-hover",
@@ -160,6 +219,14 @@
         {
           "name": "portable-unit-tests",
           "status": "passed"
+        },
+        {
+          "name": "project-prerequisites",
+          "status": "passed"
+        },
+        {
+          "name": "publication-readiness",
+          "status": "failed"
         },
         {
           "name": "wifi-fullscreen-regression",
@@ -201,10 +268,24 @@
             "intent_id": "intent:change_01M595797HH1YF4NJ6TYH18P1V",
             "kind": "trajectory_step_recorded",
             "sequence": 6
+          },
+          {
+            "detail": "trajectory:branch_01M59579ABMWBHQJ1TR509CJYA",
+            "event_id": "event:7",
+            "intent_id": "intent:change_01M595797HH1YF4NJ6TYH18P1V",
+            "kind": "trajectory_step_recorded",
+            "sequence": 7
+          },
+          {
+            "detail": "trajectory:branch_01M59579ABMWBHQJ1TR509CJYA",
+            "event_id": "event:8",
+            "intent_id": "intent:change_01M595797HH1YF4NJ6TYH18P1V",
+            "kind": "trajectory_step_recorded",
+            "sequence": 8
           }
         ],
         "knowledge_candidates": [],
-        "next_sequence": 6,
+        "next_sequence": 8,
         "schema_version": "1.0.0",
         "trajectories": {
           "branch_01M59579ABMWBHQJ1TR509CJYA": {
@@ -270,17 +351,55 @@
                 ],
                 "sequence": 6,
                 "validation_findings": []
+              },
+              {
+                "action": "validation",
+                "command": "decapod validate",
+                "custody_event_id": "event:7",
+                "observations": [
+                  ".decapod/governance.json",
+                  ".decapod/governance.json",
+                  "validation epoch ve_7d27cbfa89cd774a completed with zero failures"
+                ],
+                "proof_refs": [
+                  "decapod validate"
+                ],
+                "scope": [
+                  "dotfiles-desktop"
+                ],
+                "sequence": 7,
+                "validation_findings": []
+              },
+              {
+                "action": "verification",
+                "custody_event_id": "event:8",
+                "observations": [
+                  "First full readiness attempt failed after validator healing added an incidental workflow despite init.ci=false and changed validation epoch. The generated workflow was preserved privately and removed; required Linux/macOS source workflow remains unchanged. Specs were refreshed to the declared source graph. Actual container project-check reports status ok with scope project_prerequisites; this is prerequisite evidence only. Commit recovery before starting a fresh final verification trajectory and full readiness retry."
+                ],
+                "proof_refs": [
+                  "publication-readiness",
+                  "project-prerequisites"
+                ],
+                "scope": [
+                  "dotfiles-desktop"
+                ],
+                "sequence": 8,
+                "validation_findings": []
               }
             ]
           }
         }
       },
-      "declared_commands": [],
+      "declared_commands": [
+        "decapod validate"
+      ],
       "destination": "pull request",
       "evidence": [
         "126 host tests and native checks passed before final auxiliary layout/diagnostics, which compile warnings-as-errors on installation. Real fullscreen Ghostty hover yields an inspected thumbnail; two-window explicit selection passed once; repeated cold fixture attempts remain partial. Final compact launcher keyboard/filter/visual check passed. Wi-Fi fullscreen hover 1.244 seconds, connected/available states, live rates/rescan and exit passed with Location off. Mission Control detection/hide/recovery passed. Exact-app AX/Calendar approval verified; legacy Accessibility removal explicitly authorized. Original runtime and terminal configuration backed up. Final source contract reviewed across 58 inventory entries; full repository readiness and hosted CI pending.",
         "126 unit tests passed; native development compilation and geometry self-tests passed; a real launcher input test timed out with query_length zero, so launcher keyboard behavior is not yet verified",
-        "Actual installed palette differs from static terminal Tokyo Night. Mission Control currently hardcodes Dock layer18 despite observed layer20. Existing Desktop Panels has AX/capture approvals, main Desktop Controls is ad-hoc signed. No standalone launcher installed, so add a themed app search through Apple pane without changing desktop navigation. Apple primary docs support window-scoped ScreenCaptureKit screenshots and public AX raise; Ghostty custom themes and pinned TokyoNight on_colors support shared palette."
+        "Actual installed palette differs from static terminal Tokyo Night. Mission Control currently hardcodes Dock layer18 despite observed layer20. Existing Desktop Panels has AX/capture approvals, main Desktop Controls is ad-hoc signed. No standalone launcher installed, so add a themed app search through Apple pane without changing desktop navigation. Apple primary docs support window-scoped ScreenCaptureKit screenshots and public AX raise; Ghostty custom themes and pinned TokyoNight on_colors support shared palette.",
+        "First full readiness attempt failed after validator healing added an incidental workflow despite init.ci=false and changed validation epoch. The generated workflow was preserved privately and removed; required Linux/macOS source workflow remains unchanged. Specs were refreshed to the declared source graph. Actual container project-check reports status ok with scope project_prerequisites; this is prerequisite evidence only. Commit recovery before starting a fresh final verification trajectory and full readiness retry.",
+        "validation epoch ve_7d27cbfa89cd774a completed with zero failures"
       ],
       "inspected_files": [
         ".config/ghostty/config",
@@ -294,12 +413,15 @@
         "scripts/wifi-pane.m"
       ],
       "intent_id": "intent:change_01M595797HH1YF4NJ6TYH18P1V",
-      "modified_files": [],
+      "modified_files": [
+        ".decapod/governance.json"
+      ],
       "next_transitions": [
         "Checkpoint final implementation, bootstrap prerequisite receipt, run full exact-candidate validation, then hosted CI and authorized main merge",
         "Implement shared palette projections and style primitives, native window preview/launcher modules, robust transition classifier and staged stable signing; verify before activation.",
         "Refine plan and declare falsifiable checks",
-        "Resolve live launcher input, prove exact window selection, then request approval for the staged stable-signature helper before activating it"
+        "Resolve live launcher input, prove exact window selection, then request approval for the staged stable-signature helper before activating it",
+        "publish"
       ],
       "repo_scope": [
         "dotfiles-desktop"
@@ -310,6 +432,267 @@
       "task_id": "docs_01m5956rfgdprk10",
       "tool_calls": [],
       "unresolved_assumptions": []
+    },
+    "validation": {
+      "ci_prediction": {
+        "confidence": "medium",
+        "recommendations": [
+          "Review the reported validation warnings before relying on the CI result.",
+          "Use `decapod validate -v --format json` to inspect the affected gate output."
+        ],
+        "result": "review"
+      },
+      "decapod_release": "0.119.1",
+      "drift_findings": [],
+      "elapsed_ms": 2803,
+      "epoch_ref": "ve_7d27cbfa89cd774a",
+      "fail_count": 0,
+      "failures": [],
+      "gate_timings": [
+        {
+          "elapsed_ms": 837,
+          "name": "validate_project_specs_docs"
+        },
+        {
+          "elapsed_ms": 507,
+          "name": "validate_stale_workspaces"
+        },
+        {
+          "elapsed_ms": 391,
+          "name": "validate_markdown_primitives_roundtrip_gate"
+        },
+        {
+          "elapsed_ms": 213,
+          "name": "validate_machine_contract"
+        },
+        {
+          "elapsed_ms": 151,
+          "name": "validate_git_workspace_context"
+        },
+        {
+          "elapsed_ms": 112,
+          "name": "validate_obligations"
+        },
+        {
+          "elapsed_ms": 77,
+          "name": "validate_legacy_jsonl_retired"
+        },
+        {
+          "elapsed_ms": 43,
+          "name": "validate_archive_integrity"
+        },
+        {
+          "elapsed_ms": 28,
+          "name": "validate_schema_determinism"
+        },
+        {
+          "elapsed_ms": 25,
+          "name": "validate_repomap_determinism"
+        },
+        {
+          "elapsed_ms": 18,
+          "name": "validate_control_plane_contract"
+        },
+        {
+          "elapsed_ms": 17,
+          "name": "validate_federation_gates"
+        },
+        {
+          "elapsed_ms": 14,
+          "name": "validate_lineage_hard_gate"
+        },
+        {
+          "elapsed_ms": 12,
+          "name": "validate_git_push_pr_gate"
+        },
+        {
+          "elapsed_ms": 11,
+          "name": "validate_git_protected_branch"
+        },
+        {
+          "elapsed_ms": 10,
+          "name": "validate_no_legacy_namespaces"
+        },
+        {
+          "elapsed_ms": 6,
+          "name": "validate_gatekeeper_gate"
+        },
+        {
+          "elapsed_ms": 6,
+          "name": "validate_knowledge_integrity"
+        },
+        {
+          "elapsed_ms": 4,
+          "name": "validate_knowledge_promotions_if_present"
+        },
+        {
+          "elapsed_ms": 4,
+          "name": "validate_watcher_audit"
+        },
+        {
+          "elapsed_ms": 4,
+          "name": "validate_lcm_immutability"
+        },
+        {
+          "elapsed_ms": 3,
+          "name": "validate_lcm_rebuild_gate"
+        },
+        {
+          "elapsed_ms": 3,
+          "name": "validate_generated_artifact_whitelist"
+        },
+        {
+          "elapsed_ms": 3,
+          "name": "validate_plan_governed_execution_gate"
+        },
+        {
+          "elapsed_ms": 2,
+          "name": "validate_policy_integrity"
+        },
+        {
+          "elapsed_ms": 2,
+          "name": "validate_trajectory_artifacts_if_present"
+        },
+        {
+          "elapsed_ms": 2,
+          "name": "validate_entrypoint_invariants"
+        },
+        {
+          "elapsed_ms": 2,
+          "name": "validate_database_schema_versions"
+        },
+        {
+          "elapsed_ms": 2,
+          "name": "validate_research_claims_if_present"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_override_authority"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_canon_mutation"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_watcher_purity"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_jev_history_if_present"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_risk_map_violations"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_health_purity"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_validation_receipt_if_present"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_recursive_improvement_passes_if_present"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_health_cache_integrity"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_spec_drift"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_project_config_toml"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_context_capsule_policy_contract"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_project_scoped_state"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_heartbeat_invocation_gate"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_docs_templates_bucket"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_repo_map"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_internalization_artifacts_if_present"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_workunit_manifests_if_present"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_context_capsules_if_present"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_root_dockerfile_seed_detection"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_embedded_self_contained"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_state_commit_gate"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_interface_contract_bootstrap"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_eval_gate_if_required"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_risk_map"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_coplayer_policy_tightening"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_tooling_gate"
+        }
+      ],
+      "git_revision": "ffc726514a449e5e139f43758ee9393f2fb7cafc",
+      "kind": "validation_receipt",
+      "parallelism": 1,
+      "pass_count": 187,
+      "prediction_uses_warnings": true,
+      "receipt_hash": "sha256:c22b731555c9d9484e4572499eca3123ef3886a7be56886b22f18aea741c5ead",
+      "repo_signal_fingerprint": "2eaddf2e356ec39c8e3e614a58c633c545357dcf80067322db990de53762f62e",
+      "schema_version": "1.0.0",
+      "status": "ok",
+      "temporary_artifacts_cleaned": 0,
+      "trajectory_artifact_hash": "sha256:e3dfd4bdbfed2b58d3cb37b713572f9b2384d9e7def4df1b59a5424772e8481a",
+      "trajectory_run_id": "branch_01M59579ABMWBHQJ1TR509CJYA",
+      "warn_count": 4,
+      "warnings": [
+        "Risk map missing (run `decapod riskmap init`)",
+        "Stale workspaces preserved for explicit review: <external-path> (current_workspace: workspace contains the current process; rerun prune from the host checkout after leaving this workspace so Git can release the branch), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.)",
+        "Watcher audit trail missing (run `decapod govern watcher run`)",
+        "Workspace branch 'agent/unknown/todo-01m595-docs_01m5956rfgdprk10-1792382573' has unpushed commits or does not exist on origin. Branch pushes and iteration are allowed before preflight; hold PR creation until intent is converged, the branch is mergeable, and full `decapod validate` succeeds against the exact current candidate and accepted target."
+      ]
     }
   }
 }
