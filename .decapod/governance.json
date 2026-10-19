@@ -42,6 +42,14 @@
       "proof_refs": [
         "Private registered-app UI proof; six Display tests; native compilation; full candidate validation pending."
       ]
+    },
+    {
+      "id": "display-prerequisites",
+      "summary": "Capture passing project prerequisites and current-trajectory validation receipt after supported recovery reopened the unverified prior completion.",
+      "input_digest": "sha256:d1589a18ec5f2dff11306fdf7a5d619d85669c09ca3e331c33c5b2088ff28229",
+      "proof_refs": [
+        "/tmp/dotfiles-display-prerequisites.json: status ok; project_prerequisites only, not publication readiness"
+      ]
     }
   ],
   "intents": {
@@ -62,6 +70,53 @@
       "refined_intent": "Match brightness and sound slider fill to the shared gold accent\n\nOwner requests the filled portions of Brightness and Sound sliders match the gold battery/CPU/GPU/memory meters. Preserve native slider input, keyboard-level updates, current palette selection, fullscreen panels, stable signing and rollback. Verify actual rendering and live controls, then merge and push under standing authorization.",
       "status": "refined",
       "updated_sequence": 3
+    }
+  },
+  "epochs": {
+    "ve_4f3862c173dbc15e": {
+      "constitution_hash": "sha256:b063c612f27e8d1fb18a4caabc87a16cc769d408d88d30446455e36014f1843c",
+      "constitution_version": "embedded-docs@0.119.1",
+      "epoch_id": "ve_4f3862c173dbc15e",
+      "evaluator_identity": "decapod-validate@0.119.1",
+      "evaluator_set_hash": "sha256:d01110bf6e129b6d67cd8462424f4dd7d11d9655c4bf6a6a13c43dbdeede984e",
+      "generated_specs_fingerprint": "2ecf78b493a6390b0233c22d537c0f69655d248ed53759d610299422faf02a4c",
+      "generated_specs_manifest_hash": "sha256:e2298a97cf218121da3c8ee6abb2d13fc7000579eeeaea190e3a6dfa69a75111",
+      "material_hashes": {
+        "constitution:core/DECAPOD": "sha256:b063c612f27e8d1fb18a4caabc87a16cc769d408d88d30446455e36014f1843c",
+        "generated_spec:.decapod/managed/specs/ARCHITECTURE.md": "sha256:b6c6ce0c1f167a99a8f74758628efe2ecd6834a1b5e909986dec5b21050cc6f8",
+        "generated_spec:.decapod/managed/specs/INTENT.md": "sha256:203de0ffcdb56b405e0696fe1ff7daaaa1eb18cf1dc7e984eaa4cd5f44a6379e",
+        "generated_spec:.decapod/managed/specs/INTERFACES.md": "sha256:e416c7fb1b934d975b0760f2c99e4167ecd666ea190b690a581c7b85ba8a55f8",
+        "generated_spec:.decapod/managed/specs/OPERATIONS.md": "sha256:c74f4663721c3b982115121ca5fa4c56f9a1d5ed6bc3d245125e660bbbc2dd70",
+        "generated_spec:.decapod/managed/specs/README.md": "sha256:7a5108d978fc5a730532cc66eb8b174a5ac5ac4cd0b02c08ab2500496935e014",
+        "generated_spec:.decapod/managed/specs/SECURITY.md": "sha256:ec0226b3c475618a0fa873639176278ecb532a45d7241eb081f24e569e92d036",
+        "generated_spec:.decapod/managed/specs/SEMANTICS.md": "sha256:cc44dd2d3a37d91ece4ed55bda1d17aa8df8b905f7a5e587dca93c7b9893b6b6",
+        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:8dda377aac9a8c0995497a34d81af98b68a35dfcabe7926bd1bd695da70e8c78",
+        "generated_specs_fingerprint": "2ecf78b493a6390b0233c22d537c0f69655d248ed53759d610299422faf02a4c",
+        "generated_specs_manifest": "sha256:e2298a97cf218121da3c8ee6abb2d13fc7000579eeeaea190e3a6dfa69a75111",
+        "governance_context": "sha256:a35aafb0100f08011a168d474b7707630afd52bf00f6f37cf6b060174ac02c07",
+        "governance_material:.decapod/managed/Dockerfile.decapod": "sha256:c9bdb828ff9c9a9e00392d153434ecaaf4d507081ff453c5e838375c55c650e4",
+        "governance_material:AGENTS.md": "sha256:4992240c6825701513873da48567d3560685511ff73827527f9152f7a25cd7e7",
+        "governance_material:CLAUDE.md": "sha256:add7e4f64ef63dd84c69fd8088da14b0c34afe3bf9144c0f59c304c23e1279d5",
+        "governance_material:CODEX.md": "sha256:2ff1b008789940fc7871a84a6a38ac3eec5bef53f1444a4d387f0e4e04d0b975",
+        "governance_material:GEMINI.md": "sha256:e2c5b404af6f21562159eb3be9fd955d9d9a52f1b6ac90fb24fcdf2b170f29fb",
+        "governance_section:claims": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "governance_section:plan": "sha256:a267598a66972d2f5a3eafbe77abf8c25df68d81bbae8a2fbe048dd044eda00a",
+        "living_spec_material:.decapod/managed/specs/ARCHITECTURE.md": "sha256:00cb7346aa088ac5ae96f72bb78ae07b45554ebce84fc0ec422c85678559268c",
+        "living_spec_material:.decapod/managed/specs/INTENT.md": "sha256:7cf3d35d1f4f0e99466bc96e01eae0311600233b8b62339074fc625db17035e5",
+        "living_spec_material:.decapod/managed/specs/INTERFACES.md": "sha256:bc51a818ecfcdb1768ac6880fb2f47eaac958dfee863b7d06d7f87562a35056e",
+        "living_spec_material:.decapod/managed/specs/OPERATIONS.md": "sha256:2d5bf1b27e1946342964bb176f8e21accb3b7d55b66aa5757bbcb7fa266ba376",
+        "living_spec_material:.decapod/managed/specs/README.md": "sha256:0988c85d6c05f02d52684c9aafae50e95fd5d5576739d3e9d995af682697fd99",
+        "living_spec_material:.decapod/managed/specs/SECURITY.md": "sha256:ef1dd6a804b0a7b95fe6f122c977a5a8ee6f065d44ae923aef0ce92489e42435",
+        "living_spec_material:.decapod/managed/specs/SEMANTICS.md": "sha256:92bbe2607c6f8f94191a95ea977d9785f3472a0fae2835520dd86eae73130d5c",
+        "living_spec_material:.decapod/managed/specs/VALIDATION.md": "sha256:2ef491f339ee8607260c7f075ee063b175670773490181d73719759b45026d5e",
+        "proof_rubric": "sha256:99e8ef25629da391e9b479db9fff52b82f340224f7a69d8a88d2992ae8e90466",
+        "validation_profile": "sha256:37a8eec1ce19687d132fe29051dca629d164e2c4958ba141d5f4133a33f0688f"
+      },
+      "proof_rubric": "decapod-validate/current-proof-v1",
+      "proof_rubric_hash": "sha256:99e8ef25629da391e9b479db9fff52b82f340224f7a69d8a88d2992ae8e90466",
+      "schema_version": "1.0.0",
+      "validation_profile": "default",
+      "validation_profile_hash": "sha256:37a8eec1ce19687d132fe29051dca629d164e2c4958ba141d5f4133a33f0688f"
     }
   },
   "sections": {
@@ -117,8 +172,12 @@
       "active_boundaries": [
         "Current claimed task and isolated work branch"
       ],
-      "artifact_hash": "sha256:fc9cee4a7f955f16372fb4efdec250800ae1df1107ea46afc9e9fb8c6603d414",
+      "artifact_hash": "sha256:e9448ffd9aff06540cbdbb1b88e8bf5b9ccd34ae1df879d9c52291ffae002215",
       "checks": [
+        {
+          "name": "decapod validate",
+          "status": "passed"
+        },
         {
           "name": "discovery_initial_attempts",
           "status": "failed"
@@ -168,7 +227,7 @@
           "status": "passed"
         }
       ],
-      "current_phase": "verification",
+      "current_phase": "validation",
       "custody": {
         "events": [
           {
@@ -210,10 +269,17 @@
             "intent_id": "intent:change_01M5AHS446SS97TA9VXSF9FBAQ",
             "kind": "trajectory_step_recorded",
             "sequence": 7
+          },
+          {
+            "detail": "trajectory:branch_01M5AHS46TE3EZNSX1WY8MG6Y3",
+            "event_id": "event:8",
+            "intent_id": "intent:change_01M5AHS446SS97TA9VXSF9FBAQ",
+            "kind": "trajectory_step_recorded",
+            "sequence": 8
           }
         ],
         "knowledge_candidates": [],
-        "next_sequence": 7,
+        "next_sequence": 8,
         "schema_version": "1.0.0",
         "trajectories": {
           "branch_01M5AHS46TE3EZNSX1WY8MG6Y3": {
@@ -305,18 +371,40 @@
                 ],
                 "sequence": 7,
                 "validation_findings": []
+              },
+              {
+                "action": "validation",
+                "command": "decapod validate",
+                "custody_event_id": "event:8",
+                "observations": [
+                  ".decapod/governance.json",
+                  ".decapod/governance.json",
+                  "validation epoch ve_4f3862c173dbc15e completed with zero failures"
+                ],
+                "proof_refs": [
+                  "decapod validate"
+                ],
+                "scope": [
+                  "Display management plus gold-at-rest Sound/Display sliders",
+                  "dotfiles-desktop"
+                ],
+                "sequence": 8,
+                "validation_findings": []
               }
             ]
           }
         }
       },
-      "declared_commands": [],
+      "declared_commands": [
+        "decapod validate"
+      ],
       "destination": "pull request",
       "evidence": [
         "131 portable tests plus native warnings-as-errors compilation, native self-tests and Swift typecheck passed before final cleanup refinement. Real gold tracks verified idle and hovered with no clicks or level changes; private captures /private/tmp/dotfiles-volume-idle.png and /private/tmp/dotfiles-brightness-hover.png. Empty/half/full gold pixels 0/514/1028. Earlier native discovery failed on JSON Boolean encoding and expanded-page closure; private fixed-ID transition now finds and closes both pages.",
         "Final registered-app warm-snapshot fullscreen hover opened in 0.669 seconds with real screen metadata, three toggles and one native nearby choice. Periodic rescan, bar conceal survival, actual True Tone button toggle and restore, and pointer exit passed. Probe allowed asynchronous callback completion between clicks; original True Tone state was verified/restored in cleanup.",
         "Three consecutive signed native scans passed with preserved AX/capture consent. Earlier real fullscreen hover passed at 3.907 seconds with actual connected metadata, three toggles, one real nearby choice, periodic refresh, bar-autohide survival and exit. Immediate loading-pane experiment failed dismissal timing and was removed; only already-fresh native snapshots now use a fast path, protected by a regression test. Six Display protocol tests passed. No screen was connected during tests; multi-screen capture and pairing/mode changes are unverified.",
-        "Warnings-as-errors AppKit control renderer compiled successfully at /private/tmp/dotfiles-display-development. Slider drawing uses public NSSliderCell drawBarInside and knobRectFlipped APIs; native input remains inherited."
+        "Warnings-as-errors AppKit control renderer compiled successfully at /private/tmp/dotfiles-display-development. Slider drawing uses public NSSliderCell drawBarInside and knobRectFlipped APIs; native input remains inherited.",
+        "validation epoch ve_4f3862c173dbc15e completed with zero failures"
       ],
       "inspected_files": [
         ".config/sketchybar/plugins/controls.py",
@@ -328,6 +416,7 @@
         ".config/sketchybar/plugins/controls.py",
         ".config/sketchybar/plugins/display_pane.py",
         ".config/sketchybar/sketchybarrc",
+        ".decapod/governance.json",
         "scripts/control-panel.m",
         "scripts/manage.py",
         "scripts/wifi-pane-info.plist",
@@ -338,7 +427,8 @@
         "Commit reviewed source/specs, recover missing prior-task verification using supported QA transaction, then exact-candidate full validation and hosted CI.",
         "Inspect native display controls without connecting devices, then implement real display pane.",
         "Refine plan and declare falsifiable checks",
-        "Verify corrected signed discovery repeatedly, activate themed Display pane and live state controls, then full publication validation."
+        "Verify corrected signed discovery repeatedly, activate themed Display pane and live state controls, then full publication validation.",
+        "publish"
       ],
       "repo_scope": [
         "Display management plus gold-at-rest Sound/Display sliders",
@@ -352,6 +442,267 @@
       "unresolved_assumptions": [
         "Actual AirPlay pairing/extend-mode change and multi-screen cover remain untested without connecting hardware.",
         "Actual Screen Mirroring AX controls and nearby device state require live inspection before adapter design."
+      ]
+    },
+    "validation": {
+      "ci_prediction": {
+        "confidence": "medium",
+        "recommendations": [
+          "Review the reported validation warnings before relying on the CI result.",
+          "Use `decapod validate -v --format json` to inspect the affected gate output."
+        ],
+        "result": "review"
+      },
+      "decapod_release": "0.119.1",
+      "drift_findings": [],
+      "elapsed_ms": 5988,
+      "epoch_ref": "ve_4f3862c173dbc15e",
+      "fail_count": 0,
+      "failures": [],
+      "gate_timings": [
+        {
+          "elapsed_ms": 2120,
+          "name": "validate_markdown_primitives_roundtrip_gate"
+        },
+        {
+          "elapsed_ms": 684,
+          "name": "validate_project_specs_docs"
+        },
+        {
+          "elapsed_ms": 673,
+          "name": "validate_obligations"
+        },
+        {
+          "elapsed_ms": 551,
+          "name": "validate_stale_workspaces"
+        },
+        {
+          "elapsed_ms": 430,
+          "name": "validate_legacy_jsonl_retired"
+        },
+        {
+          "elapsed_ms": 235,
+          "name": "validate_archive_integrity"
+        },
+        {
+          "elapsed_ms": 213,
+          "name": "validate_machine_contract"
+        },
+        {
+          "elapsed_ms": 157,
+          "name": "validate_control_plane_contract"
+        },
+        {
+          "elapsed_ms": 150,
+          "name": "validate_git_workspace_context"
+        },
+        {
+          "elapsed_ms": 82,
+          "name": "validate_lineage_hard_gate"
+        },
+        {
+          "elapsed_ms": 35,
+          "name": "validate_lcm_rebuild_gate"
+        },
+        {
+          "elapsed_ms": 35,
+          "name": "validate_watcher_audit"
+        },
+        {
+          "elapsed_ms": 34,
+          "name": "validate_lcm_immutability"
+        },
+        {
+          "elapsed_ms": 34,
+          "name": "validate_knowledge_promotions_if_present"
+        },
+        {
+          "elapsed_ms": 27,
+          "name": "validate_no_legacy_namespaces"
+        },
+        {
+          "elapsed_ms": 22,
+          "name": "validate_federation_gates"
+        },
+        {
+          "elapsed_ms": 19,
+          "name": "validate_repomap_determinism"
+        },
+        {
+          "elapsed_ms": 16,
+          "name": "validate_schema_determinism"
+        },
+        {
+          "elapsed_ms": 12,
+          "name": "validate_git_protected_branch"
+        },
+        {
+          "elapsed_ms": 11,
+          "name": "validate_git_push_pr_gate"
+        },
+        {
+          "elapsed_ms": 7,
+          "name": "validate_knowledge_integrity"
+        },
+        {
+          "elapsed_ms": 6,
+          "name": "validate_gatekeeper_gate"
+        },
+        {
+          "elapsed_ms": 5,
+          "name": "validate_plan_governed_execution_gate"
+        },
+        {
+          "elapsed_ms": 4,
+          "name": "validate_database_schema_versions"
+        },
+        {
+          "elapsed_ms": 3,
+          "name": "validate_policy_integrity"
+        },
+        {
+          "elapsed_ms": 3,
+          "name": "validate_generated_artifact_whitelist"
+        },
+        {
+          "elapsed_ms": 2,
+          "name": "validate_health_cache_integrity"
+        },
+        {
+          "elapsed_ms": 2,
+          "name": "validate_entrypoint_invariants"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_canon_mutation"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_trajectory_artifacts_if_present"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_watcher_purity"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_health_purity"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_override_authority"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_risk_map_violations"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_jev_history_if_present"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_validation_receipt_if_present"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_recursive_improvement_passes_if_present"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_research_claims_if_present"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_spec_drift"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_project_config_toml"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_docs_templates_bucket"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_project_scoped_state"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_heartbeat_invocation_gate"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_context_capsule_policy_contract"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_repo_map"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_workunit_manifests_if_present"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_internalization_artifacts_if_present"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_interface_contract_bootstrap"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_eval_gate_if_required"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_risk_map"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_state_commit_gate"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_embedded_self_contained"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_root_dockerfile_seed_detection"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_context_capsules_if_present"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_coplayer_policy_tightening"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_tooling_gate"
+        }
+      ],
+      "git_revision": "399b851cc788d6953fb02d793a35daa9630e405e",
+      "kind": "validation_receipt",
+      "parallelism": 1,
+      "pass_count": 187,
+      "prediction_uses_warnings": true,
+      "receipt_hash": "sha256:4a7456197a78daf64637d82f9b56099cff2425b81e9da0a582ee2df52205d49b",
+      "repo_signal_fingerprint": "2ecf78b493a6390b0233c22d537c0f69655d248ed53759d610299422faf02a4c",
+      "schema_version": "1.0.0",
+      "status": "ok",
+      "temporary_artifacts_cleaned": 0,
+      "trajectory_artifact_hash": "sha256:e9448ffd9aff06540cbdbb1b88e8bf5b9ccd34ae1df879d9c52291ffae002215",
+      "trajectory_run_id": "branch_01M5AHS46TE3EZNSX1WY8MG6Y3",
+      "warn_count": 4,
+      "warnings": [
+        "Risk map missing (run `decapod riskmap init`)",
+        "Stale workspaces preserved for explicit review: <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (current_workspace: workspace contains the current process; rerun prune from the host checkout after leaving this workspace so Git can release the branch)",
+        "Watcher audit trail missing (run `decapod govern watcher run`)",
+        "Workspace branch 'agent/unknown/code_01m5ahqc38tw4t4t-display-controls' has unpushed commits or does not exist on origin. Branch pushes and iteration are allowed before preflight; hold PR creation until intent is converged, the branch is mergeable, and full `decapod validate` succeeds against the exact current candidate and accepted target."
       ]
     }
   }
