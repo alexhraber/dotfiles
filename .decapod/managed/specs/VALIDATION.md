@@ -22,6 +22,12 @@ No network switch, power toggle or password entry was performed. Authentication
 handoff remains unverified. These host checks do not establish full exact-candidate
 publication readiness; governed validation and platform CI remain required.
 
+The 0.119.1 validator also installs .github/workflows/decapod-validate.yml for
+bounded CI-local governance checks beside the existing Linux/macOS source checks.
+Its immutable provider change range and drift check were reviewed. Bootstrap
+project-check succeeds and writes the prerequisite receipt; it is not full
+publication proof. Full validation must still execute the reviewed source contract.
+
 The earlier fallback recovery passed 54 targeted desktop regression tests. They cover
 direct native hover/click without rendering setup or stale cache rows, canceled
 dwell, no custom network refresh over the native picker, survival of bar
@@ -352,7 +358,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `8f0447a89547abc97705e14f3aad05122eaa25292f5da8f670f31805a6a63068`
-- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (7 files)
+- Repository signal fingerprint: `53759c6499c5cbd224f07d2c14267eb91880ee3a875c5a979778d926055448cd`
+- Significant implementation surfaces: `.config/` (5 files), `.github/` (2 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (7 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
