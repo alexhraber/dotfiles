@@ -115,6 +115,11 @@
         "host_unit_suite",
         "registered_app_fullscreen_wifi"
       ]
+    },
+    {
+      "id": "retain-configured-source-ci",
+      "summary": "Remove incidental validation-healing CI scaffold, respecting init.ci=false and preserving the actual existing Linux/macOS check.yml obligations. Ignored local policy was healed by CLI. Restore reviewed source inventory; product unchanged and proof retained. Start fresh validation epoch after committing this repair.",
+      "input_digest": "sha256:799ab46a81898bcf54bb12acf96e3026b894eb2c65ffd9c68b0e67c8a8801eed"
     }
   ],
   "intents": {
@@ -202,22 +207,22 @@
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/ARCHITECTURE.md",
-          "reason": "Final implementation unchanged since 120 passing tests and normal fullscreen native disclosure/rate proof. Reviewed added validator-generated CI-local workflow with immutable provider range and spec drift check; source contract still runs existing Linux/macOS source checks. Bootstrap receipt is prerequisite only.",
-          "reviewed_code_fingerprint": "53759c6499c5cbd224f07d2c14267eb91880ee3a875c5a979778d926055448cd",
+          "reason": "Final product implementation unchanged and live verified; retain original mandatory check.yml Linux/macOS contract. Removed incidental auto-generated CI scaffold introduced while validator healed an ignored local policy; init.ci remains false. Complete inventory restored to reviewed implementation-only changes.",
+          "reviewed_code_fingerprint": "8f0447a89547abc97705e14f3aad05122eaa25292f5da8f670f31805a6a63068",
           "spec_material_hash": "cd1ced2453f64ec9a40a92429ae6850e10ce07711014fe99e8d10be4577ea3bd"
         },
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/INTERFACES.md",
-          "reason": "Final hover/expansion/action protocol unchanged and live verified. New generated CI-local workflow adds governance execution, not product behavior or authority to bypass full readiness. Reviewed complete inventory.",
-          "reviewed_code_fingerprint": "53759c6499c5cbd224f07d2c14267eb91880ee3a875c5a979778d926055448cd",
+          "reason": "Final native Wi-Fi protocol, stable callbacks and expansion replay unchanged. No extra CI workflow is introduced; existing required source checks remain. Host 120 tests and actual fullscreen interactions pass; full consumer readiness pending.",
+          "reviewed_code_fingerprint": "8f0447a89547abc97705e14f3aad05122eaa25292f5da8f670f31805a6a63068",
           "spec_material_hash": "b2547d83a579d05a44f380c8194a342d6e7b967cf93face2d8477171fb3ddc2a"
         },
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/SECURITY.md",
-          "reason": "No product security change since live app approval proof: Location off, credential fields skipped, memory-only cover, private diagnostics, local signing. Added generated CI workflow uses read-only source and immutable change range; no secrets committed.",
-          "reviewed_code_fingerprint": "53759c6499c5cbd224f07d2c14267eb91880ee3a875c5a979778d926055448cd",
+          "reason": "Product privacy boundaries unchanged: explicit AX/capture approved, Location off, private state and memory-only cover. Incidental unrequested CI scaffold removed without weakening original mandatory checks. Existing working Desktop Controls identity retained.",
+          "reviewed_code_fingerprint": "8f0447a89547abc97705e14f3aad05122eaa25292f5da8f670f31805a6a63068",
           "spec_material_hash": "8ce569d9793cd2b832eb083f86f33d1c38764aaa61833561aad66bcd4d9a8ca5"
         }
       ],
@@ -229,7 +234,7 @@
       ],
       "unknowns": [],
       "unresolved_contradictions": [],
-      "updated_at": "1792376284Z"
+      "updated_at": "1792376551Z"
     },
     "trajectory": {
       "active_boundaries": [
