@@ -45,6 +45,19 @@ def native_controls(action=''):
 
 def display_watch(request):
     token = [int(request), 'brightness']
+    # Let LaunchServices finish presenting the pane before opening Apple's
+    # discovery UI. Launching our renderer during discovery closes that UI.
+    deadline = time.monotonic() + 3
+    while visible_control('brightness', token):
+        status = read('panel-ui-status.json', {})
+        if (status.get('request') == str(token[0]) and status.get('name') == 'brightness' and status.get('visible')
+                and 0 <= time.time()-status.get('updated', 0) < 1):
+            break
+        if time.monotonic() >= deadline:
+            return
+        time.sleep(.05)
+    else:
+        return
     while visible_control('brightness', token):
         age = time.time() - read('display-snapshot.json', {}).get('sampled', 0)
         for _ in range(max(1, math.ceil(max(0, 4-age)*10))):
@@ -60,8 +73,10 @@ def display_watch(request):
             refresh_open('brightness')
         except (OSError, subprocess.SubprocessError, ValueError):
             # Never retain stale nearby choices as clickable actions.
-            render_rows('brightness', [('Display · ' + brightness() + '%', None),
-                        ('Display discovery paused · hover again to retry', None)], token)
+            with interaction():
+                if visible_control('brightness', token):
+                    _render_rows('brightness', [('Display · ' + brightness() + '%', None),
+                                 ('Display discovery paused · hover again to retry', None)])
             return
 
 
@@ -177,7 +192,10 @@ def panel_rows(name):
         return [('Calendar', None), ('Native month grid and synced agenda', None)]
     if name == 'brightness':
         value = brightness()
-        return display_pane.panel_rows(read('display-snapshot.json', {}), value)
+        try:
+            return display_pane.panel_rows(read('display-snapshot.json', {}), value)
+        except ValueError:
+            return [('Display · ' + value + '%', None), ('Discovering displays & appearance…', None)]
     if name == 'volume':
         volume = command('osascript', '-e', 'output volume of (get volume settings)')
         muted = command('osascript', '-e', 'output muted of (get volume settings)') == 'true'
@@ -345,28 +363,8 @@ def show(name, clicked=False):
         except (OSError, subprocess.SubprocessError, ValueError):
             themed_wifi = False
     if name == 'brightness':
-        # Reuse only a still-fresh native snapshot; every action revalidates
-        # against Apple's controls. Cold discovery never displays saved devices.
-        try:
-            initial = panel_rows(name)
-        except (OSError, subprocess.SubprocessError, ValueError, KeyError):
-            initial = None
-        if initial is not None:
-            if render_rows(name, initial, token):
-                subprocess.Popen([sys.executable, '-B', str(HERE), 'display-watch', str(token[0])],
-                                 stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            return
-        try:
-            snapshot = display_pane.query(STATE)
-            with interaction():
-                if read('hover.json') != token:
-                    return
-                store('display-snapshot.json', snapshot)
-        except (OSError, subprocess.SubprocessError, ValueError):
-            # Keep brightness usable even if native discovery is temporarily busy.
-            render_rows(name, [('Display · ' + brightness() + '%', None),
-                               ('Display controls are busy · hover again to retry', None)], token)
-            return
+        # Presentation never waits for native discovery. A cold pane offers a
+        # live slider immediately; only validated fresh snapshots supply actions.
         if render_rows(name, panel_rows(name), token):
             subprocess.Popen([sys.executable, '-B', str(HERE), 'display-watch', str(token[0])],
                              stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)

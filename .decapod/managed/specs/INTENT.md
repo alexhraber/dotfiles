@@ -210,6 +210,9 @@ Arrangement, scaling and device-specific refresh settings remain in Display
 Settings. Gold filled Sound/Display tracks match capacity meters through the
 shared accent palette. Native input, keyboard-level refresh, fullscreen Spaces,
 Location-off operation and stable existing consent identities are preserved.
+A cold hover must present the live brightness slider before native discovery;
+nearby choices appear afterward without requiring another hover. Leaving the
+pane during discovery must prevent delayed results or failures reopening it.
 
 <!-- decapod:declared-capabilities:start -->
 
@@ -226,7 +229,7 @@ These declarations select authoring and proof obligations; they do not attest im
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `2ecf78b493a6390b0233c22d537c0f69655d248ed53759d610299422faf02a4c`
+- Repository signal fingerprint: `c651940cee68383c9f25d55e5530df3d639c5b9eeeffbcda48ab3da369c9c502`
 - Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (9 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
