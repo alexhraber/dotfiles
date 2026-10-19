@@ -237,7 +237,7 @@ reveal can return; `desktop undo` stops the helper and removes the filter.
 | Sound | Volume slider, mute, output selection; scroll the bar item for volume |
 | Display | Built-in brightness slider; scroll the bar item to adjust |
 | Wi-Fi | Hover opens the real Wi-Fi picker directly: connected SSID, nearby networks, radio switch and join progress |
-| Bluetooth | Connected devices first, explicit state and Connect/Disconnect hover actions |
+| Bluetooth | Click the header’s On/Off label to toggle power; connected devices first with Connect/Disconnect hover actions |
 | CPU / GPU | Load graph, real average die temperature in °F, power and fans |
 | RAM | Usage graph, capacity and swap details |
 | Battery | Charge, charging state, time estimate, temperature and cycles |
@@ -265,6 +265,19 @@ Apple's picker behavior. Its theme, grouping and list size remain Apple's:
 the requested custom top-three recent/available list is still unresolved.
 macOS 27's MenuBarAgent hosting views and the older ControlCenter menu-bar layout
 are supported. Dotfiles does not request Location or read Wi-Fi passwords.
+
+The separate **Desktop Panels** adapter is installed with
+`scripts/dotfiles desktop panels-setup`, preserving Desktop Controls and its
+Calendar/Accessibility approvals. Bluetooth uses its themed renderer; the header's
+On/Off label is the sole power button. `desktop panels-permissions` sends the
+adapter's own Accessibility and Screen Recording requests. With both approved,
+the Wi-Fi adapter reads Apple's actual nearby/connected controls and translates
+their actions into themed rows, with live interface download/upload rates. Its
+temporary screen cover exists only in memory; it writes no screen images or
+credentials. Location stays off. Without these approvals, Wi-Fi continues using
+the native picker. The adapter currently supports one display on macOS 15.2 or
+later. End-to-end themed Wi-Fi acceptance remains pending those OS approvals;
+the native list supplies grouping/order, not a separately verified recency rank.
 
 Sound separates output selection from its level/mute controls and marks the
 current output once. Bluetooth lists connected devices first, shows connection

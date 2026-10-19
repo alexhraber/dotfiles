@@ -46,6 +46,15 @@
       "proof_refs": [
         "/private/tmp/dotfiles-wifi-hover-proof.json"
       ]
+    },
+    {
+      "id": "desktop-panels-bluetooth",
+      "summary": "Install verified Bluetooth header power button and auxiliary themed renderer; preserve existing Desktop Controls identity. Native Wi-Fi adapter, rates and tests implemented, pending explicit Screen Recording approval and live integration proof; no PR/merge readiness claim.",
+      "input_digest": "sha256:e8c018603787fc8752c9e1ff92aab9c0cb7b77d425278f7d2541dc25284d76f7",
+      "proof_refs": [
+        "/private/tmp/dotfiles-bluetooth-header-probe.m",
+        "/private/tmp/dotfiles-wifi-covered-proof.json"
+      ]
     }
   ],
   "intents": {
@@ -76,33 +85,33 @@
       },
       "deferred_questions": [],
       "human_questions": [],
-      "intent": "Keep Location off. Remove the rejected permission-gated Wi-Fi implementation and setup wall, including its unused helper. Open the actual macOS Wi-Fi picker directly on hover/click using already-approved Accessibility. It provides real connected SSID, available networks and connection states without an extra click; Apple owns its styling/order, so the custom top-three layout remains an explicitly unfulfilled request. Preserve existing Desktop Controls identity, other themed panes and fullscreen behavior. No offscreen scraping, flashing mirrored panes, saved-profile availability claims, Location request, coordinates, or TCC modifications.",
+      "intent": "Deliver native Wi-Fi controls/options in the existing theme with real SSIDs, click-to-connect, connected/connecting/error states, and live interface upload/download speeds. Add Bluetooth header On/Off as its power button and remove duplicate power row. Keep Location off and no flicker. Preserve current approved runtime until replacement permissions and actual behavior verified. A transient memory-only snapshot cover is the Wi-Fi bridge candidate; use rendered video frames with independent uncovered control, not unordered window metadata, to establish no native flash. Reuse existing themed row rendering, scope new Screen Capture/AX helper, never store screenshots or credentials in Git, and do not ask for Location.",
       "phases": [],
       "proof_hooks": [
-        "Regression tests for native-hover dispatch, no custom/setup pane, idempotent native open and safe close, stale hover cancellation and switching panes; live desktop/fullscreen hover with real SSID and availability verified privately while Location stays off; canonical validation and platform CI before publication."
+        "Continuous-cover rendered-frame proof including open/close and uncovered positive control; private native option/action validation; Bluetooth header action and throughput counter tests; signed helper live status and OS approvals; full exact-candidate validation and platform CI before merge."
       ],
       "schema_version": "1.1.0",
       "spec_reviews": [
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/ARCHITECTURE.md",
-          "reason": "Reviewed direct native Wi-Fi hover, fixed-identifier open/close guard, bar-conceal ownership and no custom refresh. Separate consent/scanning helper was removed. Native fullscreen mouse-hover proof passes with Location off; custom themed top-three list remains unresolved.",
-          "reviewed_code_fingerprint": "0b5828bb53eba4b63cedf3e162cbd15961dc1c131089bb4836e4e0a84c1cd27b",
-          "spec_material_hash": "5a3c6f90d73ad225cf207285a49ac11611f6963bb5204d5847c8ff2b4f08a6a3"
+          "reason": "Reviewed isolated Desktop Panels renderer, native AX adapter behind memory-only cover, private request lifecycle, local certificate build and new native CI compile. Bluetooth installed/live AX verified; full Wi-Fi route remains explicitly pending Screen Capture approval and action/performance proof.",
+          "reviewed_code_fingerprint": "bbaaa250dd601e1ba58a43bf226c431cad5c743e9e17c15eaae8ac775a8d4d53",
+          "spec_material_hash": "75aa1cb0d8c26f8e11a453e0ab6c3f84d341383e87558da35308753d08bc8fbc"
         },
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/INTERFACES.md",
-          "reason": "Reviewed direct hover interaction and Apple-owned network content/dismissal, no second handoff action or setup prompt. Unit and real fullscreen hover checks support the functional fallback only; no custom recency/top-three list claim.",
-          "reviewed_code_fingerprint": "0b5828bb53eba4b63cedf3e162cbd15961dc1c131089bb4836e4e0a84c1cd27b",
-          "spec_material_hash": "f55700b15c75adb71ca14eae8778928fbc0a6fdd363d71c3e6afbf569c78dfda"
+          "reason": "Bluetooth header index zero owns power action with device actions unchanged. Documented explicit panels setup/permission commands and fresh bounded native descriptors, rates and native fallback. No end-to-end themed Wi-Fi acceptance or recency rank claim.",
+          "reviewed_code_fingerprint": "bbaaa250dd601e1ba58a43bf226c431cad5c743e9e17c15eaae8ac775a8d4d53",
+          "spec_material_hash": "d27baf07ab1602abd95052f97e201618ba32b7fcc3e379eadc355f95e92bf520"
         },
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/SECURITY.md",
-          "reason": "Location remains off before/during/after actual hover. No Location prompt, SSID scraping, credential access, approved native rebuild or TCC change. Rejected helper active links and custom network caches were backed up locally and removed.",
-          "reviewed_code_fingerprint": "0b5828bb53eba4b63cedf3e162cbd15961dc1c131089bb4836e4e0a84c1cd27b",
-          "spec_material_hash": "05170cd904fc864a9499fdd192327623f760db1e887582e7182e9f41833dfefc"
+          "reason": "Location remains off; separate registered app AX approved, Screen Capture pending. No password/text-field reads or persisted screen images. Local Keychain signing identity is never recorded in Git. Existing Desktop Controls Calendar/AX identity unchanged; full Wi-Fi handoff still unverified.",
+          "reviewed_code_fingerprint": "bbaaa250dd601e1ba58a43bf226c431cad5c743e9e17c15eaae8ac775a8d4d53",
+          "spec_material_hash": "03322ce20e723eff9148676449185f57a7f6f431ce08fbea89227748f6df9cd8"
         }
       ],
       "state": "APPROVED",
@@ -113,19 +122,26 @@
       ],
       "unknowns": [],
       "unresolved_contradictions": [],
-      "updated_at": "1792365499Z"
+      "updated_at": "1792373074Z"
     },
     "trajectory": {
       "active_boundaries": [
         "Current claimed task and isolated work branch",
         "Location remains off; no repeated permission question; preserve approved native app identity."
       ],
-      "artifact_hash": "sha256:a503e082d5498a92c97ea699ca0d9177f7e3fcc720eed6daf004edbc2dd0286a",
+      "artifact_hash": "sha256:4c6017743dff8cd018622d88fd2fb00cd4762f913932141361368ab90d26aaff",
       "blockers": [
-        "The custom themed top-three list is not implemented with Location off. Native picker hover is a truthful functional fallback only; do not close the original task or claim full acceptance.",
-        "Waiting for owner decision on enabling macOS Location Services and Wi-Fi Access authorization; prior preference remains off."
+        "Registered Desktop Panels has Accessibility approval but Screen Capture remains false; only the user can approve that macOS switch. Native Wi-Fi fallback remains active, themed Wi-Fi live/action/authentication and recency acceptance unverified."
       ],
       "checks": [
+        {
+          "name": "bluetooth_header_installed",
+          "status": "passed"
+        },
+        {
+          "name": "bluetooth_live_header",
+          "status": "passed"
+        },
         {
           "name": "desktop-config-doctor",
           "status": "passed"
@@ -159,6 +175,10 @@
           "status": "passed"
         },
         {
+          "name": "native_compile",
+          "status": "passed"
+        },
+        {
           "name": "offscreen-native-ui-no-flicker",
           "status": "failed"
         },
@@ -169,6 +189,14 @@
         {
           "name": "public-network-report-ssid",
           "status": "unavailable"
+        },
+        {
+          "name": "python_suite",
+          "status": "passed"
+        },
+        {
+          "name": "registered_helper_access",
+          "status": "partial"
         },
         {
           "name": "requested-custom-top-three",
@@ -183,7 +211,7 @@
           "status": "passed"
         }
       ],
-      "current_phase": "Native Wi-Fi recovery installed; custom list incomplete",
+      "current_phase": "verification",
       "custody": {
         "events": [
           {
@@ -232,10 +260,24 @@
             "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
             "kind": "trajectory_step_recorded",
             "sequence": 8
+          },
+          {
+            "detail": "trajectory:branch_01M58C4V19X11MCFQMX6SWKW4V",
+            "event_id": "event:9",
+            "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
+            "kind": "trajectory_step_recorded",
+            "sequence": 9
+          },
+          {
+            "detail": "trajectory:branch_01M58C4V19X11MCFQMX6SWKW4V",
+            "event_id": "event:10",
+            "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
+            "kind": "trajectory_step_recorded",
+            "sequence": 10
           }
         ],
         "knowledge_candidates": [],
-        "next_sequence": 8,
+        "next_sequence": 10,
         "schema_version": "1.0.0",
         "trajectories": {
           "branch_01M58C4V19X11MCFQMX6SWKW4V": {
@@ -355,6 +397,46 @@
                 "validation_findings": [
                   "Complete reviewed source inventory differs only in the reviewed controls implementation and removal of the rejected helper; command contract remains unchanged. Exact candidate validation and CI have not run, so no PR, merge or publication readiness is claimed."
                 ]
+              },
+              {
+                "action": "verification",
+                "custody_event_id": "event:9",
+                "observations": [
+                  "scripts/wifi-pane.m",
+                  "scripts/control-panel.m",
+                  "scripts/desktop.py",
+                  "scripts/manage.py",
+                  ".config/sketchybar/plugins/controls.py",
+                  ".config/sketchybar/plugins/wifi_pane.py",
+                  "tests/test_wifi_pane.py",
+                  "108 Python tests pass; native signed helper compile -Wall -Wextra -Werror passes; live AX Bluetooth probe finds one header button, zero duplicate power rows, five device buttons. Existing DesktopControls-423089378d446f54 runtime link unchanged. Covered prototype rendered video has 39 identical covered frames and 22 uncovered positive-control frames; production LaunchServices Wi-Fi path awaits Screen Capture approval."
+                ],
+                "proof_refs": [
+                  "python_suite",
+                  "native_compile",
+                  "bluetooth_live_header",
+                  "registered_helper_access"
+                ],
+                "scope": [
+                  "root"
+                ],
+                "sequence": 9,
+                "validation_findings": []
+              },
+              {
+                "action": "trajectory.record",
+                "custody_event_id": "event:10",
+                "observations": [
+                  "/private/tmp/dotfiles-bluetooth-header-probe reports header_buttons=1 duplicate_power_rows=0 device_buttons=5; Python full suite 108 tests passes; existing Desktop Controls executable symlink unchanged."
+                ],
+                "proof_refs": [
+                  "bluetooth_header_installed"
+                ],
+                "scope": [
+                  "root"
+                ],
+                "sequence": 10,
+                "validation_findings": []
               }
             ]
           }
@@ -364,6 +446,7 @@
       "destination": "pull request",
       "evidence": [
         "/Users/arx/.local/state/dotfiles/backups/wifi-recovery-e4l7byfm/manifest.json",
+        "/private/tmp/dotfiles-bluetooth-header-probe reports header_buttons=1 duplicate_power_rows=0 device_buttons=5; Python full suite 108 tests passes; existing Desktop Controls executable symlink unchanged.",
         "/private/tmp/dotfiles-ssid-direct-host-check.txt",
         "/private/tmp/dotfiles-wifi-ax-item.txt",
         "/private/tmp/dotfiles-wifi-ax-panel.txt",
@@ -372,6 +455,7 @@
         "/private/tmp/dotfiles-wifi-network-state.txt",
         "/private/tmp/dotfiles-wifi-permission-off-proof.json",
         "/private/tmp/dotfiles-wifi-ui-backup-a5uii2e9",
+        "108 Python tests pass; native signed helper compile -Wall -Wextra -Werror passes; live AX Bluetooth probe finds one header button, zero duplicate power rows, five device buttons. Existing DesktopControls-423089378d446f54 runtime link unchanged. Covered prototype rendered video has 39 identical covered frames and 22 uncovered positive-control frames; production LaunchServices Wi-Fi path awaits Screen Capture approval.",
         "scripts/wifi-access.m",
         "tests/test_wifi.py"
       ],
@@ -390,12 +474,19 @@
       "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
       "modified_files": [
         ".config/sketchybar/plugins/controls.py",
+        ".config/sketchybar/plugins/wifi_pane.py",
         ".decapod/config.toml",
         "README.md",
-        "tests/test_desktop.py"
+        "scripts/control-panel.m",
+        "scripts/desktop.py",
+        "scripts/manage.py",
+        "scripts/wifi-pane.m",
+        "tests/test_desktop.py",
+        "tests/test_wifi_pane.py"
       ],
       "next_transitions": [
         "After explicit owner opt-in, stage OS consent and verify actual named hover; then exact-candidate validation, platform CI and merge. Preserve current implementation otherwise.",
+        "After manual Screen Recording approval, verify real hover, native actions, rate updates, no visible flash, fullscreen and lifecycle; then finish exact-candidate validation before any PR/merge.",
         "Checkpoint local recovery; report remaining visual/list limitation candidly. Preserve Location off and existing native consent.",
         "Probe native panel lifetime and geometry capabilities, then implement and test viable bridge.",
         "Refine plan and declare falsifiable checks",

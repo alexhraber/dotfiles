@@ -238,6 +238,25 @@ signing change is needed after approval.
 
 ControlRow uses the Apple/app menu's shared palette and quiet hover highlight,
 with optional selected/detail/hint metadata for output and Bluetooth state.
+Desktop Panels (`scripts/wifi-pane.m`) compiles the same renderer with a distinct
+distributed-notification name. Its transient `--ui` server owns Wi-Fi/Bluetooth
+windows and request-bound private status; other panes keep Desktop Controls.
+HeaderPower maps the first On/Off row to index zero, with a power tooltip and AX
+button label. The Bluetooth body has no duplicate power action. `setup_panels`
+builds/signs/registers a complete auxiliary bundle, backs up its prior link and
+publishes it atomically, preserving the Desktop Controls identity and approvals.
+
+The auxiliary Wi-Fi route is gated by its registered app's AX and Screen Capture
+status. It captures one display into memory, covers native popup creation and
+closing, reads bounded native controls while skipping credential fields, and
+returns fresh typed rows. Actions match a fresh role/identifier/text/selected
+state before AXPress. Python serializes queries, validates results, preserves
+native buttons and the connected network within the 14-row budget, and samples
+netstat link counters each second only while its request remains visible. A
+four-second snapshot refresh reopens the native controls behind the cover;
+performance, connection/authentication handoff and full mouse-hover acceptance
+still require live verification after Screen Recording approval. Unsupported or
+unapproved systems retain direct native hover. No Location framework is linked.
 Labels remain separate from literal device argv actions. DFControlsHide
 acknowledges pinned requests even if AppKit already hid their window. Python's
 hidden_pin reconciles a pin only against a fresh, healthy, subsequent native
@@ -354,7 +373,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `0b5828bb53eba4b63cedf3e162cbd15961dc1c131089bb4836e4e0a84c1cd27b`
-- Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
+- Repository signal fingerprint: `bbaaa250dd601e1ba58a43bf226c431cad5c743e9e17c15eaae8ac775a8d4d53`
+- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (7 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

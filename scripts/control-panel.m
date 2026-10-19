@@ -16,7 +16,10 @@ static BOOL renderPending;
 static NSDictionary *controlDocument, *controlPalette;
 static NSString *dismissedRequest;
 static BOOL colorsChanged;
-static NSString *const controlNotification=@"local.dotfiles.desktop.controls";
+#ifndef DF_CONTROL_NOTIFICATION
+#define DF_CONTROL_NOTIFICATION "local.dotfiles.desktop.controls"
+#endif
+static NSString *const controlNotification=@DF_CONTROL_NOTIFICATION;
 static CGFloat panelWidth(NSDictionary *document) {
     return [document[@"name"] isEqual:@"weather"] ? 380 :
         [@[@"cpu",@"gpu",@"memory",@"battery"] containsObject:document[@"name"]] ? 344 : 320;
@@ -192,6 +195,21 @@ static NSDictionary *readDocument(void) {
 }
 @end
 
+@interface HeaderPower : ControlRow
+@end
+@implementation HeaderPower
+- (void)drawRect:(__unused NSRect)dirty {
+    NSDictionary *attributes=@{NSFontAttributeName:[NSFont systemFontOfSize:20 weight:NSFontWeightSemibold],
+        NSForegroundColorAttributeName:DFPanelColor(self.hovered || self.highlighted ? 0xb8a6ff : 0xe6edf7)};
+    CGFloat width=[self.title sizeWithAttributes:attributes].width;
+    if (self.hovered || self.highlighted) {
+        [DFPanelColor(0x202735) setFill];
+        [[NSBezierPath bezierPathWithRoundedRect:NSMakeRect(self.bounds.size.width-width-16,2,width+16,30) xRadius:7 yRadius:7] fill];
+    }
+    [self.title drawInRect:NSMakeRect(self.bounds.size.width-width-6,4,width+2,28) withAttributes:attributes];
+}
+@end
+
 @interface ControlGraph : NSView
 @property NSArray<NSNumber *> *samples;
 @end
@@ -311,9 +329,18 @@ static void runControl(NSString *kind, NSString *argument) {
     } else {
     symbol(self,panelSymbol(controlDocument[@"name"]),NSMakeRect(20,20,18,18),DFPanelColor(0xb8a6ff));
     text(self,[hero.firstObject uppercaseString],NSMakeRect(46,22,width-222,18),11,DFPanelColor(0x94a3b8),NSFontWeightSemibold);
-    NSTextField *primary=text(self,hero.count>1 ? [[hero subarrayWithRange:NSMakeRange(1,hero.count-1)] componentsJoinedByString:@" · "] : @"",
+    NSString *primaryTitle=hero.count>1 ? [[hero subarrayWithRange:NSMakeRange(1,hero.count-1)] componentsJoinedByString:@" · "] : @"";
+    if ([@[@"bluetooth",@"wifi"] containsObject:controlDocument[@"name"]] && [rows.firstObject[@"action"] boolValue]) {
+        HeaderPower *power=[[HeaderPower alloc] initWithFrame:NSMakeRect(width-174,14,154,34)];
+        power.title=primaryTitle;power.tag=0;power.target=self;power.action=@selector(clicked:);
+        power.toolTip=[primaryTitle isEqual:@"On"] ? @"Turn off" : @"Turn on";
+        power.accessibilityLabel=[NSString stringWithFormat:@"%@: %@",hero.firstObject,power.toolTip];
+        [self addSubview:power];
+    } else {
+    NSTextField *primary=text(self,primaryTitle,
          NSMakeRect(width-174,14,154,34),statPanel(controlDocument) || [controlDocument[@"name"] isEqual:@"weather"] ? 24 : 20,DFPanelColor(0xe6edf7),NSFontWeightSemibold);
     primary.alignment=NSTextAlignmentRight;
+    }
     }
     NSString *subtitle=controlDocument[@"subtitle"];
     if (!subtitle.length) subtitle=@{@"volume":@"Output level & devices", @"brightness":@"Built-in display",
@@ -518,7 +545,7 @@ void DFControlsTick(double now, NSPoint pointer) {
 }
 NSDictionary *DFControlsStatus(void) {
     NSRect frame=controlPanel.frame;
-    return @{@"visible":@(controlPanel.visible),@"name":controlDocument[@"name"] ?: @"",@"backend_available":@(installedPython()!=nil),
+    return @{@"visible":@(controlPanel.visible),@"name":controlDocument[@"name"] ?: @"",@"request":controlDocument[@"request"] ?: @"",@"backend_available":@(installedPython()!=nil),
              @"pinned":@([controlDocument[@"pinned"] boolValue]),@"frame":@[@(frame.origin.x),@(frame.origin.y),@(frame.size.width),@(frame.size.height)]};
 }
 int DFControlsSelfTest(void) {

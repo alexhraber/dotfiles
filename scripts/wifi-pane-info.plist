@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>CFBundleIdentifier</key><string>local.dotfiles.wifi-pane</string>
+  <key>CFBundleName</key><string>Desktop Panels</string>
+  <key>CFBundleDisplayName</key><string>Desktop Panels</string>
+  <key>CFBundleExecutable</key><string>wifi-pane</string>
+  <key>CFBundlePackageType</key><string>APPL</string>
+  <key>CFBundleVersion</key><string>1</string>
+  <key>LSUIElement</key><true/>
+  <key>LSMinimumSystemVersion</key><string>15.2</string>
+</dict></plist>

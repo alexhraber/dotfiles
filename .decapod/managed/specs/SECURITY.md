@@ -131,6 +131,20 @@ builds from the rejected experiment may remain in private local state for
 recovery, but their active symlink and config link are removed and no service
 launches them. Existing Desktop Controls identity/Calendar/AX consent are intact.
 
+The new Desktop Panels adapter is distinct from that removed scanner. It links
+ScreenCaptureKit and AX, never CoreLocation/CoreWLAN. Its own Accessibility and
+Screen Recording approvals are requested only by an explicit command, never
+hover. Native AX controls provide names and selection; saved profiles do not
+substitute for nearby availability. Bounded traversal skips text/secure fields.
+Screen snapshots exist only in memory for native-popup concealment; production
+writes no screenshot or video. Fresh control descriptors and throughput samples
+remain in private local state, not Git. Literal descriptors are JSON/argv data,
+never shell commands; selected state is rechecked before an action. The single
+display/macOS version boundary falls back to Apple's picker. Signing identities
+are selected from local Keychain or environment and never written to the repo.
+The new app has not yet received Screen Recording approval; no end-to-end Wi-Fi
+or authentication-handoff guarantee follows from the prototype cover proof.
+
 Window metadata is limited to application ownership, count and geometry;
 screen recording and private window titles are not needed. Device names,
 addresses, samples, logs, compiled helpers and wallpaper archives remain in
@@ -154,7 +168,7 @@ loads a model. Ollama remains manually started and is not enabled at login.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `0b5828bb53eba4b63cedf3e162cbd15961dc1c131089bb4836e4e0a84c1cd27b`
-- Significant implementation surfaces: `.config/` (4 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (6 files)
+- Repository signal fingerprint: `bbaaa250dd601e1ba58a43bf226c431cad5c743e9e17c15eaae8ac775a8d4d53`
+- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (7 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
