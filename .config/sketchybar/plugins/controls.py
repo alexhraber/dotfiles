@@ -259,6 +259,32 @@ def item_anchors(name):
         return []
 
 
+def wifi_snapshot(token):
+    # The snapshot already checks access. Avoid a separate app launch for a
+    # preflight, and leave a working fallback open when access is unavailable.
+    closed = False
+    deadline = None
+    while read('hover.json') == token:
+        try:
+            return wifi_pane.query(STATE)
+        except wifi_pane.NativeError as error:
+            if error.code != 'native_panel_busy':
+                raise
+            if not closed:
+                with interaction():
+                    if read('hover.json') != token:
+                        return None
+                    if not read('active.json', {}).get('native_wifi'):
+                        raise
+                    close_native_wifi()
+                closed = True
+                deadline = time.monotonic() + 1
+            if time.monotonic() >= deadline:
+                raise
+            time.sleep(.08)
+    return None
+
+
 def show(name, clicked=False):
     token = [time.time_ns(), name]
     with interaction():
@@ -285,10 +311,13 @@ def show(name, clicked=False):
         store('anchor.json', {'request': str(token[0]), 'anchors': anchors})
     if not already_open and not clicked:
         time.sleep(0.12)
-    themed_wifi = name == 'wifi' and wifi_pane.available(STATE)
-    if themed_wifi:
+    themed_wifi = False
+    if name == 'wifi':
         try:
-            snapshot = wifi_pane.query(STATE)
+            snapshot = wifi_snapshot(token)
+            if snapshot is None:
+                return
+            themed_wifi = True
         except (OSError, subprocess.SubprocessError, ValueError):
             themed_wifi = False
     with interaction():
@@ -721,9 +750,16 @@ def main():
             list(pool.map(fresh_rows, targets))
     elif kind == 'cancel':
         with interaction():
-            if (os.environ.get('SENDER') == 'desktop_concealed'
-                    and read('active.json', {}).get('native_wifi')):
-                return  # Let the system picker remain usable below the hidden bar.
+            active = read('active.json', {})
+            if os.environ.get('SENDER') == 'desktop_concealed':
+                if active.get('native_wifi'):
+                    return
+                # Desktop Panels owns its own pointer/anchor dismissal. The
+                # old desktop helper cannot see this separate app's window.
+                if active.get('backend') == 'panel-ui':
+                    token = read('hover.json')
+                    if visible_control(active.get('name'), token):
+                        return
             store('hover.json', [time.time_ns(), None])
             close_panels()
     elif kind in ('native-action', 'native-slider') and name in PANELS and len(extra) == 2:

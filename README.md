@@ -270,7 +270,9 @@ The separate **Desktop Panels** adapter is installed with
 `scripts/dotfiles desktop panels-setup`, preserving Desktop Controls and its
 Calendar/Accessibility approvals. Bluetooth uses its themed renderer; the header's
 On/Off label is the sole power button. `desktop panels-permissions` sends the
-adapter's own Accessibility and Screen Recording requests. With both approved,
+adapter's own requests one permission at a time, reports actual access, and
+returns success only when both Accessibility and Screen Recording are approved.
+Rerun it after approving Accessibility to request Screen Recording. With both approved,
 the Wi-Fi adapter reads Apple's actual nearby/connected controls and translates
 their actions into themed rows, with live interface download/upload rates. Its
 layout follows Bluetooth: the connected network comes first, up to three nearby
@@ -281,6 +283,14 @@ credentials. Location stays off. Without these approvals, Wi-Fi continues using
 the native picker. The adapter currently supports one display on macOS 15.2 or
 later. End-to-end themed Wi-Fi acceptance remains pending those OS approvals;
 the native list supplies choice order, not a separately verified recency rank.
+Activation checks access inside the snapshot request. An owned native picker is
+closed and retried briefly when it would block the adapter; unrelated native
+panels are left alone. Bar autohide leaves an open Desktop Panels window to its
+own pointer-dismissal logic. Private `bar/wifi-diagnostic*.json` records distinguish
+permission, native-panel and adapter failures without network names or images.
+Fullscreen hover, connected-state rendering and rate refresh have passed a live
+diagnostic run through the agent's existing access. That is separate from normal
+activation through Desktop Panels' own OS permissions, which remains unverified.
 
 Sound separates output selection from its level/mute controls and marks the
 current output once. Bluetooth lists connected devices first, shows connection

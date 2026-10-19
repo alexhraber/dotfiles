@@ -246,8 +246,11 @@ int main(int argc,const char **argv) { @autoreleasepool {
     NSDictionary *result=nil;
     if ([mode isEqual:@"--status"]) result=accessStatus();
     else if ([mode isEqual:@"--request-access"]) {
-        AXIsProcessTrustedWithOptions((__bridge CFDictionaryRef)@{(__bridge NSString *)kAXTrustedCheckOptionPrompt:@YES});
-        if (!CGPreflightScreenCaptureAccess()) CGRequestScreenCaptureAccess();
+        // Stage the OS dialogs. An unconfirmed Accessibility request must not
+        // be followed immediately by a second protected permission request.
+        if (!AXIsProcessTrusted())
+            AXIsProcessTrustedWithOptions((__bridge CFDictionaryRef)@{(__bridge NSString *)kAXTrustedCheckOptionPrompt:@YES});
+        else if (!CGPreflightScreenCaptureAccess()) CGRequestScreenCaptureAccess();
         result=accessStatus();
     } else if ([mode isEqual:@"--snapshot"]) result=query(nil);
     else if ([mode isEqual:@"--action"] && argc==3 && strlen(argv[2])<=4096) {

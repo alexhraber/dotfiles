@@ -285,7 +285,16 @@ def main(action, theme=None, layout=None):
             target = setup_panels(directory)
             print('Desktop Panels: ' + str(target.parents[2]))
             if action == 'panels-permissions':
-                run('open', '-W', '-n', '-a', target.parents[2], '--args', '--request-access')
+                spec = importlib.util.spec_from_file_location('wifi_pane', ROOT/'.config/sketchybar/plugins/wifi_pane.py')
+                adapter = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(adapter)
+                access = adapter.query(directory/'bar', 'request-access')
+                print(json.dumps(access))
+                if not access['accessibility']:
+                    print('Enable Desktop Panels in Device Control and Data Access (Accessibility), then rerun this command for Screen Recording.')
+                elif not access['screen_capture']:
+                    print('Enable Desktop Panels in Screen & System Audio Recording, then verify again.')
+                return 0 if all(access[key] for key in ('accessibility', 'screen_capture', 'supported')) else 1
             return 0
         if action in ('apply', 'theme'):
             palette = appearance.resolve(theme, layout)

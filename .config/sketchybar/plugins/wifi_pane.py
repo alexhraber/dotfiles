@@ -9,12 +9,49 @@ import tempfile
 import time
 
 
+class NativeError(ValueError):
+    def __init__(self, code):
+        self.code = code
+        super().__init__('Native Wi-Fi: ' + code)
+
+
+def diagnostic(state, mode, code, access=None):
+    """Keep fixed failure stages locally, never SSIDs, arguments or screen data."""
+    stage = mode if mode in ('status', 'request-access', 'snapshot', 'action') else 'unknown'
+    value = {'time': time.time(), 'stage': stage, 'code': code}
+    if access is not None:
+        value['access'] = {key: access[key] for key in ('accessibility', 'screen_capture', 'supported')}
+    temporary = state / ('wifi-diagnostic-' + str(os.getpid()))
+    for target in ('wifi-diagnostic.json', 'wifi-diagnostic-'+stage+'.json'):
+        try:
+            fd = os.open(temporary, os.O_CREAT | os.O_EXCL | os.O_WRONLY | os.O_NOFOLLOW, 0o600)
+            with os.fdopen(fd, 'w') as output:
+                json.dump(value, output)
+            temporary.replace(state/target)
+        except OSError:
+            pass  # Diagnostics must never interrupt device controls.
+        finally:
+            try:
+                temporary.unlink(missing_ok=True)
+            except OSError:
+                pass
+
+
 def query(state, mode='snapshot', selector=None):
     state.mkdir(parents=True, exist_ok=True, mode=0o700)
     fd = os.open(state/'wifi-query.lock', os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW, 0o600)
     with os.fdopen(fd, 'a') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX)
-        return _query(state, mode, selector)
+        try:
+            value = _query(state, mode, selector)
+        except (OSError, subprocess.SubprocessError, ValueError) as error:
+            code = error.code if isinstance(error, NativeError) else 'adapter_error'
+            diagnostic(state, mode, code)
+            raise
+        access = value if mode in ('status', 'request-access') else None
+        code = 'access_unavailable' if access is not None and not all(access[key] for key in ('accessibility', 'screen_capture', 'supported')) else 'ok'
+        diagnostic(state, mode, code, access)
+        return value
 
 
 def _query(state, mode, selector):
@@ -34,13 +71,20 @@ def _query(state, mode, selector):
         args += ['--args', '--' + mode]
         if selector is not None:
             args += [json.dumps(selector, ensure_ascii=False)]
-        subprocess.run(args, check=True, timeout=95 if mode == 'request-access' else 15,
-                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        process = subprocess.run(args, check=False, timeout=95 if mode == 'request-access' else 15,
+                                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         if result.stat().st_size > 131072:
             raise ValueError('Wi-Fi response too large')
         value = json.loads(result.read_text())
-        if not isinstance(value, dict) or value.get('error'):
-            raise ValueError('Native Wi-Fi action unavailable')
+        if not isinstance(value, dict):
+            raise NativeError('invalid_response')
+        if value.get('error'):
+            code = value['error']
+            known = ('access_unavailable', 'native_panel_busy', 'cover_unavailable', 'native_panel_unavailable',
+                     'option_changed', 'action_failed', 'invalid_action', 'invalid_mode')
+            raise NativeError(code if code in known else 'helper_error')
+        if process.returncode:
+            raise NativeError('helper_exit')
         if mode in ('status', 'request-access'):
             if not all(isinstance(value.get(key), bool) for key in ('accessibility', 'screen_capture', 'supported')):
                 raise ValueError('Invalid Wi-Fi access response')
@@ -48,14 +92,6 @@ def _query(state, mode, selector):
         return validate(value)
     finally:
         result.unlink(missing_ok=True)
-
-
-def available(state):
-    try:
-        status = query(state, 'status')
-        return all(status[key] for key in ('accessibility', 'screen_capture', 'supported'))
-    except (OSError, subprocess.SubprocessError, ValueError):
-        return False
 
 
 def validate(value, now=None):

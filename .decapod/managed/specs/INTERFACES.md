@@ -144,13 +144,21 @@ never replace a native Wi-Fi picker with a custom pane.
 The optional Desktop Panels route supersedes that fallback only when its own
 registered-app status reports supported, Accessibility and Screen Capture.
 `desktop panels-setup` installs it; `desktop panels-permissions` requests the two
-OS approvals without requesting Location. The adapter's `--snapshot`/`--action`
+OS approvals without requesting Location.
+Permission requests are staged: Accessibility first, Screen Recording on a
+subsequent approved call, and actual access readback before success is reported.
+Setup/build never grants or requests those permissions. The adapter's `--snapshot`/`--action` response
 JSON has a fresh sampled timestamp, bounded typed rows and handoff status; the
 UI renders literal native network names/actions, connected state and current
 interface byte rates. As in Bluetooth, connected rows come first with a checkmark
 and Connected label; up to three alternatives show Not connected and Connect on
 hover. Native options follow; native category headings are omitted. This route
 remains pending live OS approval verification.
+The transition from an already-open owned native picker closes it only after a
+native busy response, then retries its closing animation within a one-second
+bound. With access unavailable it remains open. Native codes survive helper exit
+errors in private diagnostics rather than being silently discarded. Bar conceal
+does not cancel a fresh, visible auxiliary pane; explicit cancel still closes it.
 Bluetooth's first On/Off row is clickable and owns the sole power action. Header
 and device callbacks keep separate row indices; native device argv are unchanged.
 
@@ -221,7 +229,7 @@ can leave partial state; the backup manifest remains the recovery input.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `9cb113537f5e7d4aa4de4f8bc3955cd8a641152d7d6e5b24e31f26a5b082b7d6`
+- Repository signal fingerprint: `56c1eb23356c3403332a5df5a55a3a676f35da42c1133927e3c446f5b3f758a3`
 - Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (7 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

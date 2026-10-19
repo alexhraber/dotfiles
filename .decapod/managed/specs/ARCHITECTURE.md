@@ -262,6 +262,23 @@ four-second snapshot refresh reopens the native controls behind the cover;
 performance, connection/authentication handoff and full mouse-hover acceptance
 still require live verification after Screen Recording approval. Unsupported or
 unapproved systems retain direct native hover. No Location framework is linked.
+`wifi_snapshot` uses the helper's snapshot preflight, avoiding a redundant app
+launch. A fixed `native_panel_busy` response can close only the owned native
+fallback, then retry up to one second for its closing animation. Missing access
+leaves that working fallback open. Stale request tokens cancel the transition.
+Nonzero helper exits retain a validated native error code before Python raises;
+fixed-code private diagnostics retain separate status/snapshot/action stages.
+Desktop conceal events respect fresh visible auxiliary-pane reports, because the
+unchanged Desktop Controls process cannot track another app's pane pointer.
+The auxiliary app retains its own pointer, outside-click and Space dismissal.
+Live diagnostic-host proof covers fullscreen compositor visibility, real network
+state/rates, native-picker handoff, bar conceal survival and pointer-exit closure.
+It does not establish the separate registered app's normal permission path.
+Permission onboarding requests Accessibility first; only a call that starts
+with Accessibility already approved can request Screen Recording. The explicit
+lifecycle command reads the returned access JSON and reports not-ready with a
+nonzero exit until every required access flag is true. The Info.plist declares
+the screen capture purpose; setup/build itself requests no protected permission.
 Labels remain separate from literal device argv actions. DFControlsHide
 acknowledges pinned requests even if AppKit already hid their window. Python's
 hidden_pin reconciles a pin only against a fresh, healthy, subsequent native
@@ -378,7 +395,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `9cb113537f5e7d4aa4de4f8bc3955cd8a641152d7d6e5b24e31f26a5b082b7d6`
+- Repository signal fingerprint: `56c1eb23356c3403332a5df5a55a3a676f35da42c1133927e3c446f5b3f758a3`
 - Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (7 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

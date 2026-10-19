@@ -24,6 +24,24 @@ spec.loader.exec_module(metrics)
 
 
 class DesktopTests(unittest.TestCase):
+    def test_panel_permission_request_reports_actual_readiness_without_claiming_a_grant(self):
+        for accessibility, capture in ((False, False), (True, False), (True, True)):
+            with self.subTest(accessibility=accessibility, capture=capture), tempfile.TemporaryDirectory() as temp:
+                directory=Path(temp)
+                target=directory/'Desktop Panels.app/Contents/MacOS/wifi-pane'
+                access={'accessibility':accessibility, 'screen_capture':capture, 'supported':True}
+                adapter=SimpleNamespace(query=unittest.mock.Mock(return_value=access))
+                spec=SimpleNamespace(loader=SimpleNamespace(exec_module=lambda module:None))
+                with patch.object(desktop,'state_dir',return_value=directory), \
+                     patch.object(desktop.os,'uname',return_value=SimpleNamespace(sysname='Darwin')), \
+                     patch.object(desktop,'setup_panels',return_value=target), \
+                     patch.object(desktop.importlib.util,'spec_from_file_location',return_value=spec), \
+                     patch.object(desktop.importlib.util,'module_from_spec',return_value=adapter), \
+                     patch.object(desktop,'run') as run:
+                    self.assertEqual(desktop.main('panels-permissions'), 0 if accessibility and capture else 1)
+                    adapter.query.assert_called_once_with(directory/'bar','request-access')
+                    run.assert_not_called()
+
     def test_control_access_requires_current_healthy_fresh_helper(self):
         with tempfile.TemporaryDirectory() as temp, patch.object(desktop,'agent_pid',return_value=17):
             root=Path(temp)

@@ -5,6 +5,7 @@ import sys
 import tempfile
 import time
 import unittest
+from types import SimpleNamespace
 from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]/'.config/sketchybar/plugins'))
@@ -22,6 +23,95 @@ def snapshot(rows):
 
 
 class WifiPaneTests(unittest.TestCase):
+    def test_auxiliary_pane_survives_bar_conceal_but_explicit_cancel_still_closes_it(self):
+        for name in ('wifi', 'bluetooth'):
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as temp, \
+                 patch.object(controls, 'STATE', Path(temp)), patch.object(controls, 'native_controls') as native, \
+                 patch.object(controls, 'native_calendar'), patch.object(sys, 'argv', ['controls.py','cancel','all']):
+                controls.store('hover.json', [101,name])
+                controls.store('active.json', {'name':name, 'backend':'panel-ui', 'request':'101', 'time':time.time()})
+                controls.store('panel-ui-status.json', {'name':name, 'request':'101', 'visible':True, 'updated':time.time()})
+                with patch.dict(controls.os.environ, SENDER='desktop_concealed'):
+                    controls.main()
+                native.assert_not_called()
+                self.assertEqual(controls.read('hover.json'), [101,name])
+                with patch.dict(controls.os.environ, SENDER='explicit'):
+                    controls.main()
+                native.assert_called_once_with('hide')
+                self.assertEqual(controls.read('active.json'), {})
+
+    def test_native_failure_code_survives_nonzero_helper_exit_without_network_names(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = Path(temp)/'bar'
+            target = Path(temp)/'Desktop Panels.app/Contents/MacOS/wifi-pane'
+            target.parent.mkdir(parents=True); target.touch()
+            (Path(temp)/'wifi-pane').symlink_to(target)
+            def run(args, **kwargs):
+                Path(args[args.index('--stdout')+1]).write_text(json.dumps({'error':'native_panel_busy'}))
+                return SimpleNamespace(returncode=1)
+            with patch.object(wifi_pane.subprocess, 'run', side_effect=run), \
+                 self.assertRaises(wifi_pane.NativeError) as error:
+                wifi_pane.query(state)
+            self.assertEqual(error.exception.code, 'native_panel_busy')
+            report = json.loads((state/'wifi-diagnostic.json').read_text())
+            self.assertEqual((report['stage'], report['code']), ('snapshot', 'native_panel_busy'))
+            self.assertEqual((state/'wifi-diagnostic.json').stat().st_mode & 0o777, 0o600)
+            self.assertEqual(set(report), {'stage','code','time'})
+            wifi_pane.diagnostic(state, 'status', 'access_unavailable',
+                                 {'accessibility':False, 'screen_capture':False, 'supported':True})
+            self.assertEqual(json.loads((state/'wifi-diagnostic-snapshot.json').read_text()), report)
+
+    def test_unknown_native_error_text_is_never_recorded_as_diagnostics(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state = Path(temp)/'bar'
+            target = Path(temp)/'Desktop Panels.app/Contents/MacOS/wifi-pane'
+            target.parent.mkdir(parents=True); target.touch()
+            (Path(temp)/'wifi-pane').symlink_to(target)
+            def run(args, **kwargs):
+                Path(args[args.index('--stdout')+1]).write_text(json.dumps({'error':'Private network name'}))
+                return SimpleNamespace(returncode=1)
+            with patch.object(wifi_pane.subprocess, 'run', side_effect=run), self.assertRaises(wifi_pane.NativeError):
+                wifi_pane.query(state)
+            self.assertNotIn('Private network name', (state/'wifi-diagnostic.json').read_text())
+
+    def test_owned_fallback_closes_on_busy_and_retries_closing_animation(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(controls, 'STATE', Path(temp)), \
+             patch.object(controls, 'native_item') as item, patch.object(controls.time, 'sleep'), \
+             patch.object(wifi_pane, 'query') as query:
+            controls.store('hover.json', [101,'wifi'])
+            controls.store('active.json', {'name':'wifi','native_wifi':True})
+            def observe(*args):
+                if query.call_count == 1:
+                    item.assert_not_called()
+                    raise wifi_pane.NativeError('native_panel_busy')
+                self.assertEqual(controls.read('active.json'), {})
+                item.assert_called_once_with('Wi-Fi', ensure='close')
+                if query.call_count == 2:
+                    raise wifi_pane.NativeError('native_panel_busy')
+                return {'snapshot':True}
+            query.side_effect = observe
+            self.assertEqual(controls.wifi_snapshot([101,'wifi']), {'snapshot':True})
+            self.assertEqual(query.call_count, 3)
+
+    def test_missing_access_does_not_close_the_working_native_fallback(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(controls, 'STATE', Path(temp)), \
+             patch.object(controls, 'native_item') as item, \
+             patch.object(wifi_pane, 'query', side_effect=wifi_pane.NativeError('access_unavailable')):
+            controls.store('hover.json', [101,'wifi'])
+            controls.store('active.json', {'name':'wifi','native_wifi':True})
+            with self.assertRaises(wifi_pane.NativeError): controls.wifi_snapshot([101,'wifi'])
+            item.assert_not_called()
+            self.assertTrue(controls.read('active.json')['native_wifi'])
+
+    def test_unowned_native_panel_is_never_closed_or_retried(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(controls, 'STATE', Path(temp)), \
+             patch.object(controls, 'native_item') as item, \
+             patch.object(wifi_pane, 'query', side_effect=wifi_pane.NativeError('native_panel_busy')) as query:
+            controls.store('hover.json', [101,'wifi'])
+            with self.assertRaises(wifi_pane.NativeError): controls.wifi_snapshot([101,'wifi'])
+            item.assert_not_called()
+            self.assertEqual(query.call_count, 1)
+
     def test_native_order_connected_row_and_three_available_choices(self):
         connected = option('network', 'Current', True)
         data = snapshot([option('section', 'Known Networks'), connected] +

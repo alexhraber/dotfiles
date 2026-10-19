@@ -63,6 +63,17 @@
       "proof_refs": [
         "tests/test_wifi_pane.py"
       ]
+    },
+    {
+      "id": "wifi-activation-recovery",
+      "summary": "Fix reproduced native-picker busy handoff and auxiliary autohide cancellation; preserve fixed failure stages and verify final signed app with real Wi-Fi/rates/fullscreen hover under diagnostic-host access. Stage permission requests one at a time with real status readback; 116 tests pass. App permissions remain disabled, normal activation unverified, no PR or merge readiness.",
+      "input_digest": "sha256:a041b53ad16cd7d724b936f1dc31f30ccc47c8c7345e3991a9295ee727977eab",
+      "proof_refs": [
+        "/private/tmp/dotfiles-wifi-activation-history.json",
+        "/private/tmp/dotfiles-wifi-activation-proof.json",
+        "tests/test_desktop.py",
+        "tests/test_wifi_pane.py"
+      ]
     }
   ],
   "intents": {
@@ -93,7 +104,7 @@
       },
       "deferred_questions": [],
       "human_questions": [],
-      "intent": "Deliver native Wi-Fi controls/options in the existing theme with real SSIDs, click-to-connect, connected/connecting/error states, and live interface upload/download speeds. Add Bluetooth header On/Off as its power button and remove duplicate power row. Keep Location off and no flicker. Preserve current approved runtime until replacement permissions and actual behavior verified. A transient memory-only snapshot cover is the Wi-Fi bridge candidate; use rendered video frames with independent uncovered control, not unordered window metadata, to establish no native flash. Reuse existing themed row rendering, scope new Screen Capture/AX helper, never store screenshots or credentials in Git, and do not ask for Location.",
+      "intent": "Deliver Bluetooth-style Wi-Fi with real SSIDs, connection state/actions and rates while Location stays off. Owner reports Screen Recording enabled had no effect and has disabled it. Diagnose actual launch/access attribution, bridge and hover cancellation before requesting any repeat approval; leave disabled permission untouched. Preserve native fallback, Bluetooth and current approved Desktop Controls identity. Add private fixed-code diagnostics rather than silent swallowed bridge failures. Existing memory-only cover architecture remains a candidate until real production activation is verified.",
       "phases": [],
       "proof_hooks": [
         "Continuous-cover rendered-frame proof including open/close and uncovered positive control; private native option/action validation; Bluetooth header action and throughput counter tests; signed helper live status and OS approvals; full exact-candidate validation and platform CI before merge."
@@ -103,23 +114,23 @@
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/ARCHITECTURE.md",
-          "reason": "Reviewed Wi-Fi flat connected-first projection matching Bluetooth, three unselected choices total, native options retained and shared row metadata. Existing capture adapter and app identities unchanged; Screen Capture live proof still pending.",
-          "reviewed_code_fingerprint": "9cb113537f5e7d4aa4de4f8bc3955cd8a641152d7d6e5b24e31f26a5b082b7d6",
-          "spec_material_hash": "c815705970d337d3b2de6b26107a50a4289cc8ab5fdbe53a09252984624e3bb5"
+          "reason": "Reviewed native-picker busy transition, bounded owned-window retry, query access preflight reuse, auxiliary bar-conceal ownership, fixed-code diagnostics and staged permission requests/readback. Final signed app passes private real-data/fullscreen compositor/hover/rates proof under diagnostic-host access; normal app permissions remain disabled and production activation unverified.",
+          "reviewed_code_fingerprint": "56c1eb23356c3403332a5df5a55a3a676f35da42c1133927e3c446f5b3f758a3",
+          "spec_material_hash": "552dcc4f591373683f953d893cab669c82b9f642183b8e8ae3d24f76f64e816c"
         },
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/INTERFACES.md",
-          "reason": "Reviewed exact Bluetooth-style Wi-Fi row order, header power action, Connected/Not connected labels and hover actions. New projection/render regression and all 109 Python tests pass; native fallback remains while Screen Capture false.",
-          "reviewed_code_fingerprint": "9cb113537f5e7d4aa4de4f8bc3955cd8a641152d7d6e5b24e31f26a5b082b7d6",
-          "spec_material_hash": "5bb9a3e1e26ac8ec5a0240d99401bf1cbe3f08f0d72b972b25a79941bedb588e"
+          "reason": "Reviewed preservation of native fallback with missing access, no closing of unowned system panels, explicit cancel vs bar hide, and actual permission readiness return code. 116 tests pass and final signed helper live diagnostic proof covers real network state/rates, fullscreen visibility, hover conceal survival and exit closure. No normal app-access acceptance claim.",
+          "reviewed_code_fingerprint": "56c1eb23356c3403332a5df5a55a3a676f35da42c1133927e3c446f5b3f758a3",
+          "spec_material_hash": "c7f8fcf7c104a134a6edfc5465d5c6deb31a9347bd2025e9a331ad7fc3f0101e"
         },
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/SECURITY.md",
-          "reason": "Reviewed unchanged Location-off boundary and explicit fallback vs optional AX/capture adapter. No native rebuild, added consent request, persisted image or fabricated nearby network. Live custom Wi-Fi remains unverified until manual macOS approval.",
-          "reviewed_code_fingerprint": "9cb113537f5e7d4aa4de4f8bc3955cd8a641152d7d6e5b24e31f26a5b082b7d6",
-          "spec_material_hash": "93af56655647cf23922e25425ad5528e935586953ea8674335d72048e5eaca2f"
+          "reason": "Reviewed no Location or repeated approval request during diagnosis; diagnostic-host approval is distinct from registered app approval. Both app access flags remain disabled before/after tests. Native errors are constrained codes, separate-stage diagnostics private without SSIDs or screenshots, stable signing requirement retained, approved Desktop Controls executable unchanged. Normal production/action proof remains pending.",
+          "reviewed_code_fingerprint": "56c1eb23356c3403332a5df5a55a3a676f35da42c1133927e3c446f5b3f758a3",
+          "spec_material_hash": "9a5647790c96a16225288cd4766f13c1ef88c0d56caff59bb2bcac5b97b7b554"
         }
       ],
       "state": "APPROVED",
@@ -130,16 +141,16 @@
       ],
       "unknowns": [],
       "unresolved_contradictions": [],
-      "updated_at": "1792373267Z"
+      "updated_at": "1792374092Z"
     },
     "trajectory": {
       "active_boundaries": [
         "Current claimed task and isolated work branch",
         "Location remains off; no repeated permission question; preserve approved native app identity."
       ],
-      "artifact_hash": "sha256:c42a8571e1ebc7a8a0da4b1c19e2a57f35bb9ce29fbd8d3aa949105cc1a53093",
+      "artifact_hash": "sha256:0de341121c238030e42d08ee5f68aa5ab9247f73aea6058e895e7a496c1ad234",
       "blockers": [
-        "Registered Desktop Panels has Accessibility approval but Screen Capture remains false; only the user can approve that macOS switch. Native Wi-Fi fallback remains active, themed Wi-Fi live/action/authentication and recency acceptance unverified."
+        "Owner reported enabling had no effect, then disabled again. Registered app access remains disabled; normal production activation and authentication handoff are not verified. Diagnostic-host proof is separate and grants nothing to the app. No claim about which permissions were previously enabled."
       ],
       "checks": [
         {
@@ -156,6 +167,14 @@
         },
         {
           "name": "desktop-config-doctor",
+          "status": "passed"
+        },
+        {
+          "name": "diagnostic_host_fullscreen_hover",
+          "status": "passed"
+        },
+        {
+          "name": "diagnostic_host_real_wifi_handoff",
           "status": "passed"
         },
         {
@@ -211,6 +230,14 @@
           "status": "passed"
         },
         {
+          "name": "python_suite_116",
+          "status": "passed"
+        },
+        {
+          "name": "registered_app_permissions",
+          "status": "unavailable"
+        },
+        {
           "name": "registered_helper_access",
           "status": "partial"
         },
@@ -220,6 +247,10 @@
         },
         {
           "name": "signed-wifi-helper-permission-off",
+          "status": "passed"
+        },
+        {
+          "name": "signed_native_compile",
           "status": "passed"
         },
         {
@@ -297,10 +328,17 @@
             "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
             "kind": "trajectory_step_recorded",
             "sequence": 11
+          },
+          {
+            "detail": "trajectory:branch_01M58C4V19X11MCFQMX6SWKW4V",
+            "event_id": "event:12",
+            "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
+            "kind": "trajectory_step_recorded",
+            "sequence": 12
           }
         ],
         "knowledge_candidates": [],
-        "next_sequence": 11,
+        "next_sequence": 12,
         "schema_version": "1.0.0",
         "trajectories": {
           "branch_01M58C4V19X11MCFQMX6SWKW4V": {
@@ -479,6 +517,32 @@
                 ],
                 "sequence": 11,
                 "validation_findings": []
+              },
+              {
+                "action": "verification",
+                "custody_event_id": "event:12",
+                "observations": [
+                  ".config/sketchybar/plugins/controls.py",
+                  ".config/sketchybar/plugins/wifi_pane.py",
+                  "scripts/desktop.py",
+                  "scripts/wifi-pane.m",
+                  "scripts/wifi-pane-info.plist",
+                  "tests/test_wifi_pane.py",
+                  "tests/test_desktop.py",
+                  "Private activation proof reproduces native_panel_busy from an existing native picker, then verifies fixed transition, real selected SSID, actual interface rates, compositor presence, bar-autohide survival and pointer-exit closure. Prior fullscreen proof passed; latest required-fullscreen signed-build proof recorded privately. App permissions before and after remain false; existing approved Desktop Controls binary unchanged. CLI now reads actual access JSON and reports nonzero until all requirements hold; native request stages one permission per call. No TCC reset or privacy grant occurred."
+                ],
+                "proof_refs": [
+                  "python_suite_116",
+                  "signed_native_compile",
+                  "diagnostic_host_real_wifi_handoff",
+                  "diagnostic_host_fullscreen_hover",
+                  "registered_app_permissions"
+                ],
+                "scope": [
+                  "root"
+                ],
+                "sequence": 12,
+                "validation_findings": []
               }
             ]
           }
@@ -498,6 +562,7 @@
         "/private/tmp/dotfiles-wifi-permission-off-proof.json",
         "/private/tmp/dotfiles-wifi-ui-backup-a5uii2e9",
         "108 Python tests pass; native signed helper compile -Wall -Wextra -Werror passes; live AX Bluetooth probe finds one header button, zero duplicate power rows, five device buttons. Existing DesktopControls-423089378d446f54 runtime link unchanged. Covered prototype rendered video has 39 identical covered frames and 22 uncovered positive-control frames; production LaunchServices Wi-Fi path awaits Screen Capture approval.",
+        "Private activation proof reproduces native_panel_busy from an existing native picker, then verifies fixed transition, real selected SSID, actual interface rates, compositor presence, bar-autohide survival and pointer-exit closure. Prior fullscreen proof passed; latest required-fullscreen signed-build proof recorded privately. App permissions before and after remain false; existing approved Desktop Controls binary unchanged. CLI now reads actual access JSON and reports nonzero until all requirements hold; native request stages one permission per call. No TCC reset or privacy grant occurred.",
         "Wi-Fi projection now matches Bluetooth flat rows: selected network first, three unselected native networks total, native options last, Connected/Not connected and Connect/Disconnect metadata. New regression covers network order across native headings and exact row renderer payload. All 109 Python tests pass; GUI activation remains unavailable because Screen Capture=false for registered Desktop Panels. No Location request, native app rebuild, SSID fabrication or final Wi-Fi acceptance claim.",
         "scripts/wifi-access.m",
         "tests/test_wifi.py"
@@ -523,6 +588,7 @@
         "scripts/control-panel.m",
         "scripts/desktop.py",
         "scripts/manage.py",
+        "scripts/wifi-pane-info.plist",
         "scripts/wifi-pane.m",
         "tests/test_desktop.py",
         "tests/test_wifi_pane.py"
@@ -531,6 +597,7 @@
         "After explicit owner opt-in, stage OS consent and verify actual named hover; then exact-candidate validation, platform CI and merge. Preserve current implementation otherwise.",
         "After manual Screen Recording approval, verify real hover, native actions, rate updates, no visible flash, fullscreen and lifecycle; then finish exact-candidate validation before any PR/merge.",
         "Checkpoint local recovery; report remaining visual/list limitation candidly. Preserve Location off and existing native consent.",
+        "Finish checkpoint. Only after concrete verified fixes, stage one required OS approval at a time and read actual registered-app status; normal mouse-hover and native-action proof remain required before full exact-candidate validation, PR or merge.",
         "Probe native panel lifetime and geometry capabilities, then implement and test viable bridge.",
         "Refine plan and declare falsifiable checks",
         "Remove setup wall and unused consent helper; verify real native picker on hover before claiming functional improvement.",
