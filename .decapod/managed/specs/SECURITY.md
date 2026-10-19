@@ -191,7 +191,7 @@ loads a model. Ollama remains manually started and is not enabled at login.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `8838451aa0625316cf53a96f436fbc8e1769588dbc349533b3f65d968fd9fe01`
+- Repository signal fingerprint: `6567d5a0e46c74b68701b0163dc4a781a612410a6936f2725b6f7df6cee8ff3e`
 - Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (9 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

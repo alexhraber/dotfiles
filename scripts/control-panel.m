@@ -2,6 +2,7 @@
 #import "panel-style.h"
 #import "calendar-panel.h"
 #import "app-menu.h"
+#import "panel-request.h"
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -503,6 +504,7 @@ static void showControls(void) {
         controlPanel.opaque=NO; controlPanel.backgroundColor=NSColor.clearColor; controlPanel.hasShadow=YES; controlPanel.hidesOnDeactivate=NO;
         controlView=[[ControlView alloc] initWithFrame:NSMakeRect(0,0,width,200)]; controlPanel.contentView=controlView;
     }
+    controlPanel.level=displayCoverToken ? CGWindowLevelForKey(kCGPopUpMenuWindowLevelKey)+2 : CGWindowLevelForKey(kCGStatusWindowLevelKey)+2;
     NSPoint pointer=NSEvent.mouseLocation; NSScreen *screen=same ? controlPanel.screen : NSScreen.mainScreen;
     if (!screen) screen=NSScreen.mainScreen;
     if (!same) for (NSScreen *candidate in NSScreen.screens) if (NSPointInRect(pointer,candidate.frame)) screen=candidate;
@@ -534,6 +536,12 @@ static void showControls(void) {
 }
 void DFControlsInitialize(NSString *directory) {
     controlDirectory=directory;
+    // A replacement UI server must remain above an already-running live cover.
+    // The lease is private, live-process-bound and expires without its producer.
+    if ([controlNotification isEqual:@"local.dotfiles.desktop.panels"]) {
+        displayCoverToken=DFNativeUIActiveToken(directory);
+        if (displayCoverToken) displayCoverUntil=NSProcessInfo.processInfo.systemUptime+12;
+    }
     [NSDistributedNotificationCenter.defaultCenter addObserverForName:controlNotification object:nil queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification *note) {
         NSString *cover=note.userInfo[@"cover"];
         if ([note.object isEqual:@"display-cover-begin"] || [note.object isEqual:@"display-cover-end"]) {

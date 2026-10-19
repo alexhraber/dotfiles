@@ -443,7 +443,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `8838451aa0625316cf53a96f436fbc8e1769588dbc349533b3f65d968fd9fe01`
+- Repository signal fingerprint: `6567d5a0e46c74b68701b0163dc4a781a612410a6936f2725b6f7df6cee8ff3e`
 - Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (9 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
@@ -513,3 +513,10 @@ resetting Control Center during discovery. Token-matched cleanup, expiry and
 process-liveness checks prevent a crashed adapter retaining the deferral.
 The mirroring page waits for its actionable Settings footer, then settles
 briefly before collecting choices; its early header is not a readiness signal.
+
+A replacement Desktop Panels UI server reads the validated active native-UI
+lease token at startup and restores temporary stacking before its first draw.
+It therefore remains visible if the preceding UI process exited during a
+discovery request. Malformed token, PID or expiry types are ignored. Matching
+end notifications restore ordinary stacking for both original and replacement
+servers; expiry remains the fallback.

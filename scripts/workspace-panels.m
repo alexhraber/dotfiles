@@ -456,14 +456,15 @@ int DFWorkspaceSelfTest(void) {
     NSString *directory=[NSTemporaryDirectory() stringByAppendingPathComponent:[@"dotfiles-native-lease-" stringByAppendingString:NSUUID.UUID.UUIDString]];
     BOOL leasePassed=NO;
     @try {
-        if (!DFNativeUIBegin(directory,@"first") || !DFNativeUIBusy(directory) || DFNativeUIBegin(directory,@"second")) return 1;
+        if (!DFNativeUIBegin(directory,@"first") || ![DFNativeUIActiveToken(directory) isEqual:@"first"] || DFNativeUIBegin(directory,@"second")) return 1;
         DFNativeUIEnd(directory,@"stale");if (!DFNativeUIBusy(directory)) return 1;
         NSString *path=[directory stringByAppendingPathComponent:@"bar/native-ui-lease.json"];
         chmod(path.fileSystemRepresentation,0644);if (DFNativeUIBusy(directory)) return 1;
         chmod(path.fileSystemRepresentation,0600);if (!DFNativeUIBusy(directory)) return 1;
         DFNativeUIEnd(directory,@"first");if (DFNativeUIBusy(directory)) return 1;
-        for (NSDictionary *lease in @[@{@"pid":@(getpid()),@"expires":@(NSDate.date.timeIntervalSince1970-1)},
-                                      @{@"pid":@2147483647,@"expires":@(NSDate.date.timeIntervalSince1970+10)}]) {
+        for (NSDictionary *lease in @[@{@"token":@"expired",@"pid":@(getpid()),@"expires":@(NSDate.date.timeIntervalSince1970-1)},
+                                      @{@"token":@"dead",@"pid":@2147483647,@"expires":@(NSDate.date.timeIntervalSince1970+10)},
+                                      @{@"token":@"malformed",@"pid":NSNull.null,@"expires":@(NSDate.date.timeIntervalSince1970+10)}]) {
             NSData *data=[NSJSONSerialization dataWithJSONObject:lease options:0 error:nil];
             [data writeToFile:path atomically:YES];chmod(path.fileSystemRepresentation,0600);
             if (DFNativeUIBusy(directory)) return 1;

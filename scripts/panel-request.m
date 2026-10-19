@@ -70,14 +70,18 @@ void DFWorkspaceCancelAll(NSString *directory) {
 
 // A private, expiring lease prevents the menu watchdog from resetting native
 // controls in the middle of a managed transaction. A dead helper cannot hold it.
-BOOL DFNativeUIBusy(NSString *directory) {
+NSString *DFNativeUIActiveToken(NSString *directory) {
     NSDictionary *lease=readPrivate([directory stringByAppendingPathComponent:@"bar/native-ui-lease.json"]);
-    double left=[lease[@"expires"] doubleValue]-NSDate.date.timeIntervalSince1970;
-    long long owner=[lease[@"pid"] longLongValue];
-    return left>0 && left<=12 && owner>0 && owner<=INT_MAX && (kill((pid_t)owner,0)==0 || errno==EPERM);
+    NSString *token=lease[@"token"];NSNumber *expires=lease[@"expires"],*pid=lease[@"pid"];
+    if (![token isKindOfClass:NSString.class] || !token.length || token.length>64
+        || ![expires isKindOfClass:NSNumber.class] || ![pid isKindOfClass:NSNumber.class]) return nil;
+    double left=expires.doubleValue-NSDate.date.timeIntervalSince1970;long long owner=pid.longLongValue;
+    return left>0 && left<=12 && owner>0 && owner<=INT_MAX && pid.doubleValue==owner
+        && (kill((pid_t)owner,0)==0 || errno==EPERM) ? token : nil;
 }
+BOOL DFNativeUIBusy(NSString *directory) {return DFNativeUIActiveToken(directory)!=nil;}
 BOOL DFNativeUIBegin(NSString *directory, NSString *token) {
-    if (!token.length || DFNativeUIBusy(directory)) return NO;
+    if (!token.length || token.length>64 || DFNativeUIBusy(directory)) return NO;
     NSString *bar=[directory stringByAppendingPathComponent:@"bar"];
     if (![NSFileManager.defaultManager createDirectoryAtPath:bar withIntermediateDirectories:YES attributes:@{NSFilePosixPermissions:@0700} error:nil]) return NO;
     NSData *data=[NSJSONSerialization dataWithJSONObject:@{@"token":token,@"pid":@(getpid()),@"expires":@(NSDate.date.timeIntervalSince1970+12)} options:0 error:nil];
