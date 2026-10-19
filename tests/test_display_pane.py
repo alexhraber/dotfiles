@@ -38,6 +38,76 @@ class DisplayTests(unittest.TestCase):
             self.assertTrue(any(row['action'] for row in document['rows']))
             scan.assert_not_called()
 
+    def test_cold_or_stale_hover_presents_live_slider_before_discovery(self):
+        for saved in ({}, dict(snapshot(), sampled=time.time()-60)):
+            with self.subTest(stale=bool(saved)), tempfile.TemporaryDirectory() as temp, \
+                 patch.object(controls, 'STATE', Path(temp)/'bar'), \
+                 patch.object(controls, 'brightness', return_value='54'), \
+                 patch.object(controls, 'item_anchors', return_value=[]), \
+                 patch.object(controls, 'native_controls'), \
+                 patch.object(controls.subprocess, 'Popen') as spawn, \
+                 patch.object(display_pane, 'query') as scan:
+                controls.store('display-snapshot.json', saved)
+                controls.show('brightness')
+                document = controls.read('native-panel.json')
+                self.assertEqual(document['slider'], 54)
+                self.assertFalse(any(row['action'] for row in document['rows']))
+                self.assertEqual(controls.read('active.json')['name'], 'brightness')
+                # A bar leave after presentation must not cancel the request.
+                token = controls.read('hover.json')
+                controls.leave('brightness')
+                self.assertEqual(controls.read('hover.json'), token)
+                self.assertIn('display-watch', spawn.call_args.args[0])
+                scan.assert_not_called()
+
+    def test_discovery_waits_for_renderer_acknowledgement(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(controls, 'STATE', Path(temp)), \
+             patch.object(controls, 'visible_control', return_value=True), \
+             patch.object(controls, 'refresh_open'), \
+             patch.object(controls.time, 'sleep') as sleep:
+            def acknowledge(_):
+                controls.store('panel-ui-status.json', {'request': '1', 'name': 'brightness',
+                               'visible': True, 'updated': time.time()})
+            sleep.side_effect = acknowledge
+            def scan(_):
+                self.assertGreater(sleep.call_count, 0)
+                self.assertEqual(controls.read('panel-ui-status.json')['request'], '1')
+                raise ValueError('Temporary failure')
+            with patch.object(display_pane, 'query', side_effect=scan), \
+                 patch.object(controls, 'brightness', return_value='54'), \
+                 patch.object(controls, '_render_rows'):
+                controls.display_watch('1')
+
+    def test_cancelled_startup_never_starts_discovery(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(controls, 'STATE', Path(temp)), \
+             patch.object(controls, 'visible_control', side_effect=[True, False]), \
+             patch.object(controls.time, 'sleep'), patch.object(display_pane, 'query') as scan:
+            controls.display_watch('1')
+            scan.assert_not_called()
+
+    def test_completion_after_pointer_exit_never_reopens_pane(self):
+        for fail in (False, True):
+            with self.subTest(fail=fail), tempfile.TemporaryDirectory() as temp, \
+                 patch.object(controls, 'STATE', Path(temp)), \
+                 patch.object(controls.time, 'sleep'), \
+                 patch.object(controls, '_render_rows') as render, \
+                 patch.object(controls, 'refresh_open') as refresh:
+                controls.store('panel-ui-status.json', {'request': '1', 'name': 'brightness',
+                               'visible': True, 'updated': time.time()})
+                visible = True
+                def scan(_):
+                    nonlocal visible
+                    visible = False
+                    if fail:
+                        raise ValueError('Temporary failure')
+                    return snapshot()
+                with patch.object(controls, 'visible_control', side_effect=lambda *_: visible), \
+                     patch.object(display_pane, 'query', side_effect=scan):
+                    controls.display_watch('1')
+                render.assert_not_called()
+                refresh.assert_not_called()
+                self.assertIsNone(controls.read('display-snapshot.json'))
+
     def test_native_response_rejects_stale_or_forged_controls_and_topology(self):
         good = snapshot()
         self.assertIs(display_pane.validate(good), good)

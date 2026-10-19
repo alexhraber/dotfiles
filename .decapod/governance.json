@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "baseline": {
-    "accepted_commit": "d78a59e99664acd51963fe64f1181f716dbaa196",
+    "accepted_commit": "395a4503aa0aa68b90e6f7bef1ac52771516775f",
     "unresolved": {
       "claim:actual-app-menus": {
         "falsifier": "Native action guards permit stale/disabled/submenu leaf execution, or the UI claims menus work without Accessibility.",
@@ -11,8 +11,11 @@
         "statement": "The custom Apple/application menus mirror AX commands and require local Accessibility approval; actual command execution remains unverified until that approval is granted.",
         "status": "open"
       },
+      "plan:24679fc37fb770b7": "Actual wireless pairing/mirror/extend changes and multi-screen capture require hardware testing; this pass does not connect an external screen during verification.",
+      "trajectory:0bab6fe5bb9600bb": "Actual AirPlay pairing/extend-mode change and multi-screen cover remain untested without connecting hardware.",
       "trajectory:20ee859f4dc5a1ed": "Official 0.119.0 image is still publishing. Proof runtime uses Ubuntu 24.04 and checksum-verified official aarch64 Linux release binary sha256:752751f6eb87a3d6a443e432b3f01bfdf7e08d17b728951dd35f077277d592cc; earlier Debian runtime rejected its GLIBC_2.39 dependency.",
       "trajectory:222b47dce3be7958": "Per-commit checkpoint failure on historical 53905f7 requires rebuilding this owned PR history; no required check is disabled.",
+      "trajectory:3582c4c8e25b539d": "Actual Screen Mirroring AX controls and nearby device state require live inspection before adapter design.",
       "trajectory:3ad8d199dbb39b49": "Accessibility approval for the exact current app remains unavailable; no menu click parity claim.",
       "trajectory:410a4e6f97d21362": "Location remains off by explicit final user instruction. Custom SSID enumeration is redacted by macOS; Apple native picker shows actual names and owns joining. No native UI names are scraped. Prior failed branch-binding readiness remains preserved in committed journal.",
       "trajectory:69fd57cf486c104c": "Existing Reduce Motion show/hide support is retained; dock polish targets stationary redraw suppression and precise settlement rather than adding visual chrome.",
@@ -22,88 +25,107 @@
     }
   },
   "change": {
-    "id": "change_01M5AHS446SS97TA9VXSF9FBAQ",
-    "base_commit": "d78a59e99664acd51963fe64f1181f716dbaa196",
+    "id": "change_01M5AXGZD1VC30TD8SKGM79ZJ7",
+    "base_commit": "395a4503aa0aa68b90e6f7bef1ac52771516775f",
     "target_base": "origin/main"
+  },
+  "claims": {
+    "display-cold-hover": {
+      "statement": "Cold Display hover presents a live slider before native discovery and late discovery cannot reopen a dismissed pane",
+      "falsifier": "Cold hover waits on native scans, fails to present, or a completed/failed scan revives a dismissed pane",
+      "status": "supported",
+      "proof_refs": [
+        "/private/tmp/dotfiles-display-cold-proof.py",
+        "tests/test_display_pane.py"
+      ]
+    }
   },
   "checkpoints": [
     {
-      "id": "display-controls-source",
-      "summary": "Implement real native Display management and persistent accent slider fills; document consent, hardware and proof boundaries.",
-      "input_digest": "sha256:4becad01025cd154a5ec053a96ad479c763be289402f4eea2b2f53d447431474",
+      "id": "display-hover-source",
+      "summary": "Present cold Display slider before discovery; wait for renderer and reject late updates",
+      "input_digest": "sha256:817c3cb6251ec21c7ea1f7d6d90c4c8cc26c35e4d6a29ca150ab6efe3213ada5",
       "proof_refs": [
-        "Native compilation and prior 131-test suite; six targeted Display tests; private idle/hover color and signed discovery/fullscreen evidence."
+        "tests/test_display_pane.py"
       ]
     },
     {
-      "id": "display-controls-reviewed",
-      "summary": "Final reviewed Display controls with real native choices, persistent gold fill, live True Tone restore and Wi-Fi regression evidence.",
-      "input_digest": "sha256:20c70be7da509761d4585085a6a25d0bb0512d93488d63101c6b457e2296eae4",
+      "id": "display-hover-proof",
+      "summary": "Record passing project prerequisites and content-bound spec reviews",
+      "input_digest": "sha256:3d21adcfd55b825407ba6437d19d4016c5b3eecf312b7156f15357e5091a62a8",
       "proof_refs": [
-        "Private registered-app UI proof; six Display tests; native compilation; full candidate validation pending."
+        "tests/test_display_pane.py"
       ]
     },
     {
-      "id": "display-prerequisites",
-      "summary": "Capture passing project prerequisites and current-trajectory validation receipt after supported recovery reopened the unverified prior completion.",
-      "input_digest": "sha256:d1589a18ec5f2dff11306fdf7a5d619d85669c09ca3e331c33c5b2088ff28229",
+      "id": "display-hover-review",
+      "summary": "Preserve reviewed proof metadata before supported validation epoch recovery",
+      "input_digest": "sha256:3d21adcfd55b825407ba6437d19d4016c5b3eecf312b7156f15357e5091a62a8",
       "proof_refs": [
-        "/tmp/dotfiles-display-prerequisites.json: status ok; project_prerequisites only, not publication readiness"
+        "tests/test_display_pane.py"
+      ]
+    },
+    {
+      "id": "display-hover-final-prerequisites",
+      "summary": "Bind passing project prerequisites to recovered trajectory",
+      "input_digest": "sha256:cc900eef7e6302a4c3b700bc8510f6cd889747fb8bdf9bd116e12fe6f749f867",
+      "proof_refs": [
+        "tests/test_display_pane.py"
       ]
     }
   ],
   "intents": {
-    "intent:change_01M5AHS446SS97TA9VXSF9FBAQ": {
+    "intent:display-hover-final": {
       "acceptance_criteria": [],
       "assumptions": [],
       "boundaries": [
-        "Current claimed task and isolated work branch"
+        "Display lifecycle only; no permissions or native adapter changes"
       ],
       "constraints": [
-        "dotfiles-desktop"
+        "controls.py and regression tests"
       ],
       "created_sequence": 1,
-      "id": "intent:change_01M5AHS446SS97TA9VXSF9FBAQ",
+      "id": "intent:display-hover-final",
       "out_of_scope": [],
       "proof_requirements": [],
-      "raw_intent": "Match brightness and sound slider fill to the shared gold accent\n\nOwner requests the filled portions of Brightness and Sound sliders match the gold battery/CPU/GPU/memory meters. Preserve native slider input, keyboard-level updates, current palette selection, fullscreen panels, stable signing and rollback. Verify actual rendering and live controls, then merge and push under standing authorization.",
-      "refined_intent": "Match brightness and sound slider fill to the shared gold accent\n\nOwner requests the filled portions of Brightness and Sound sliders match the gold battery/CPU/GPU/memory meters. Preserve native slider input, keyboard-level updates, current palette selection, fullscreen panels, stable signing and rollback. Verify actual rendering and live controls, then merge and push under standing authorization.",
+      "raw_intent": "Display hover lags and pane does not load",
+      "refined_intent": "Prove prompt cold presentation and safe request-bound async discovery",
       "status": "refined",
       "updated_sequence": 3
     }
   },
   "epochs": {
-    "ve_4f3862c173dbc15e": {
+    "ve_3514ef836d92fc22": {
       "constitution_hash": "sha256:b063c612f27e8d1fb18a4caabc87a16cc769d408d88d30446455e36014f1843c",
       "constitution_version": "embedded-docs@0.119.1",
-      "epoch_id": "ve_4f3862c173dbc15e",
+      "epoch_id": "ve_3514ef836d92fc22",
       "evaluator_identity": "decapod-validate@0.119.1",
       "evaluator_set_hash": "sha256:d01110bf6e129b6d67cd8462424f4dd7d11d9655c4bf6a6a13c43dbdeede984e",
-      "generated_specs_fingerprint": "2ecf78b493a6390b0233c22d537c0f69655d248ed53759d610299422faf02a4c",
-      "generated_specs_manifest_hash": "sha256:e2298a97cf218121da3c8ee6abb2d13fc7000579eeeaea190e3a6dfa69a75111",
+      "generated_specs_fingerprint": "c651940cee68383c9f25d55e5530df3d639c5b9eeeffbcda48ab3da369c9c502",
+      "generated_specs_manifest_hash": "sha256:7309b02cf9ac9dcb7aae8b7c1a7758c7ffe863178ff205fd04227e58a336d9a5",
       "material_hashes": {
         "constitution:core/DECAPOD": "sha256:b063c612f27e8d1fb18a4caabc87a16cc769d408d88d30446455e36014f1843c",
-        "generated_spec:.decapod/managed/specs/ARCHITECTURE.md": "sha256:b6c6ce0c1f167a99a8f74758628efe2ecd6834a1b5e909986dec5b21050cc6f8",
-        "generated_spec:.decapod/managed/specs/INTENT.md": "sha256:203de0ffcdb56b405e0696fe1ff7daaaa1eb18cf1dc7e984eaa4cd5f44a6379e",
-        "generated_spec:.decapod/managed/specs/INTERFACES.md": "sha256:e416c7fb1b934d975b0760f2c99e4167ecd666ea190b690a581c7b85ba8a55f8",
-        "generated_spec:.decapod/managed/specs/OPERATIONS.md": "sha256:c74f4663721c3b982115121ca5fa4c56f9a1d5ed6bc3d245125e660bbbc2dd70",
-        "generated_spec:.decapod/managed/specs/README.md": "sha256:7a5108d978fc5a730532cc66eb8b174a5ac5ac4cd0b02c08ab2500496935e014",
-        "generated_spec:.decapod/managed/specs/SECURITY.md": "sha256:ec0226b3c475618a0fa873639176278ecb532a45d7241eb081f24e569e92d036",
-        "generated_spec:.decapod/managed/specs/SEMANTICS.md": "sha256:cc44dd2d3a37d91ece4ed55bda1d17aa8df8b905f7a5e587dca93c7b9893b6b6",
-        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:8dda377aac9a8c0995497a34d81af98b68a35dfcabe7926bd1bd695da70e8c78",
-        "generated_specs_fingerprint": "2ecf78b493a6390b0233c22d537c0f69655d248ed53759d610299422faf02a4c",
-        "generated_specs_manifest": "sha256:e2298a97cf218121da3c8ee6abb2d13fc7000579eeeaea190e3a6dfa69a75111",
-        "governance_context": "sha256:a35aafb0100f08011a168d474b7707630afd52bf00f6f37cf6b060174ac02c07",
+        "generated_spec:.decapod/managed/specs/ARCHITECTURE.md": "sha256:5eca565be56237ccc51180b2f33f73155dccd43ed10f00b824042a35f3dce39e",
+        "generated_spec:.decapod/managed/specs/INTENT.md": "sha256:4fce74735629f9b932a578fa153737dec63852dbc211fbb58421bf57f266ce5c",
+        "generated_spec:.decapod/managed/specs/INTERFACES.md": "sha256:b849900574b8d549d2d71649c6763cc03dc3c3fd4a9d82c019ee5dd122a0b5c5",
+        "generated_spec:.decapod/managed/specs/OPERATIONS.md": "sha256:dcf7d72a00f32b01fd8ae1057929bb3f6d4b9251ff5e11d4884b8e560fa61f2c",
+        "generated_spec:.decapod/managed/specs/README.md": "sha256:07ceee4372f50129eba9c85a81483a0e23aedaa546635400ce05387c84731c10",
+        "generated_spec:.decapod/managed/specs/SECURITY.md": "sha256:b44590ce4fb2bcea9371c86af73dd7f6d7b0191b09d65346bd0b67b82ba4f186",
+        "generated_spec:.decapod/managed/specs/SEMANTICS.md": "sha256:65b95f563f3538f511394ef8d5bf3308d8406d16f0c75e335c15dcd3afa0b071",
+        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:f56582c06a3dc9da1dd3f4085b2feb886807ec3a242ce0498bc69281fdfe8178",
+        "generated_specs_fingerprint": "c651940cee68383c9f25d55e5530df3d639c5b9eeeffbcda48ab3da369c9c502",
+        "generated_specs_manifest": "sha256:7309b02cf9ac9dcb7aae8b7c1a7758c7ffe863178ff205fd04227e58a336d9a5",
+        "governance_context": "sha256:95b7a71e630b8026f3abba9b0b0d955ab21d162d4e7ffb0a5945915a28e85eef",
         "governance_material:.decapod/managed/Dockerfile.decapod": "sha256:c9bdb828ff9c9a9e00392d153434ecaaf4d507081ff453c5e838375c55c650e4",
         "governance_material:AGENTS.md": "sha256:4992240c6825701513873da48567d3560685511ff73827527f9152f7a25cd7e7",
         "governance_material:CLAUDE.md": "sha256:add7e4f64ef63dd84c69fd8088da14b0c34afe3bf9144c0f59c304c23e1279d5",
         "governance_material:CODEX.md": "sha256:2ff1b008789940fc7871a84a6a38ac3eec5bef53f1444a4d387f0e4e04d0b975",
         "governance_material:GEMINI.md": "sha256:e2c5b404af6f21562159eb3be9fd955d9d9a52f1b6ac90fb24fcdf2b170f29fb",
-        "governance_section:claims": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
-        "governance_section:plan": "sha256:a267598a66972d2f5a3eafbe77abf8c25df68d81bbae8a2fbe048dd044eda00a",
-        "living_spec_material:.decapod/managed/specs/ARCHITECTURE.md": "sha256:00cb7346aa088ac5ae96f72bb78ae07b45554ebce84fc0ec422c85678559268c",
-        "living_spec_material:.decapod/managed/specs/INTENT.md": "sha256:7cf3d35d1f4f0e99466bc96e01eae0311600233b8b62339074fc625db17035e5",
-        "living_spec_material:.decapod/managed/specs/INTERFACES.md": "sha256:bc51a818ecfcdb1768ac6880fb2f47eaac958dfee863b7d06d7f87562a35056e",
+        "governance_section:claims": "sha256:e73e1d50b2adda22497ea8edb4d3f1a7bc7c4d5cecbd453cf38d27b6f8681177",
+        "governance_section:plan": "sha256:2aa4c829107bccba271f61376da3c9dcdb611e584c69a4bf02e91e5ff55c5999",
+        "living_spec_material:.decapod/managed/specs/ARCHITECTURE.md": "sha256:0d5867860c101ed6d9934e49014579236a39a08bfc9877097ef05927b47782fb",
+        "living_spec_material:.decapod/managed/specs/INTENT.md": "sha256:4b0087710ca1e38f563f590b89194e85232667dff7d3d15793e7c709c0014aa2",
+        "living_spec_material:.decapod/managed/specs/INTERFACES.md": "sha256:7219b1cae31b04e336d4f731e379df68918e6617becf5f0771442987bc2900d6",
         "living_spec_material:.decapod/managed/specs/OPERATIONS.md": "sha256:2d5bf1b27e1946342964bb176f8e21accb3b7d55b66aa5757bbcb7fa266ba376",
         "living_spec_material:.decapod/managed/specs/README.md": "sha256:0988c85d6c05f02d52684c9aafae50e95fd5d5576739d3e9d995af682697fd99",
         "living_spec_material:.decapod/managed/specs/SECURITY.md": "sha256:ef1dd6a804b0a7b95fe6f122c977a5a8ee6f065d44ae923aef0ce92489e42435",
@@ -125,105 +147,59 @@
         "file_touch_budget": null,
         "forbidden_paths": []
       },
-      "deferred_questions": [
-        "Actual wireless pairing/mirror/extend changes and multi-screen capture require hardware testing; this pass does not connect an external screen during verification."
-      ],
+      "deferred_questions": [],
       "human_questions": [],
-      "intent": "Replace brightness-only bar identity with Display: actual connected-screen dimensions and modes, native appearance toggles, real nearby AirPlay/Sidecar choices and native pairing/content/mirror/extend confirmation. Preserve fullscreen, Location off, stable signed consent and rollback. Sound and Display filled tracks remain gold at rest, hover, press and drag through the shared accent palette. Complete checks and merge/push under standing authorization.",
+      "intent": "Fix cold Display hover latency and missing pane",
       "phases": [],
       "proof_hooks": [
-        "Native and portable checks, live idle/hover gold, repeated signed display discovery and fullscreen themed pane, request-safe actions and regression checks. Do not connect hardware merely to test; record external mode and multi-screen limits."
+        "decapod validate"
       ],
       "schema_version": "1.1.0",
       "spec_reviews": [
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/ARCHITECTURE.md",
-          "reason": "Reviewed final Display native discovery/actions, gold idle track and hardware verification boundaries.",
-          "reviewed_code_fingerprint": "2ecf78b493a6390b0233c22d537c0f69655d248ed53759d610299422faf02a4c",
-          "spec_material_hash": "00cb7346aa088ac5ae96f72bb78ae07b45554ebce84fc0ec422c85678559268c"
+          "reason": "Reviewed immediate slider, bounded renderer acknowledgement and guarded updates against current source",
+          "reviewed_code_fingerprint": "c651940cee68383c9f25d55e5530df3d639c5b9eeeffbcda48ab3da369c9c502",
+          "spec_material_hash": "0d5867860c101ed6d9934e49014579236a39a08bfc9877097ef05927b47782fb"
         },
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/INTERFACES.md",
-          "reason": "Reviewed final Display native discovery/actions, gold idle track and hardware verification boundaries.",
-          "reviewed_code_fingerprint": "2ecf78b493a6390b0233c22d537c0f69655d248ed53759d610299422faf02a4c",
-          "spec_material_hash": "bc51a818ecfcdb1768ac6880fb2f47eaac958dfee863b7d06d7f87562a35056e"
+          "reason": "Reviewed cold snapshot/status lifecycle against current source",
+          "reviewed_code_fingerprint": "c651940cee68383c9f25d55e5530df3d639c5b9eeeffbcda48ab3da369c9c502",
+          "spec_material_hash": "7219b1cae31b04e336d4f731e379df68918e6617becf5f0771442987bc2900d6"
         },
         {
-          "disposition": "updated",
+          "disposition": "unchanged_with_reason",
           "path": ".decapod/managed/specs/SECURITY.md",
-          "reason": "Reviewed final Display native discovery/actions, gold idle track and hardware verification boundaries.",
-          "reviewed_code_fingerprint": "2ecf78b493a6390b0233c22d537c0f69655d248ed53759d610299422faf02a4c",
+          "reason": "No permission, capture, native action validation or consent identity changes",
+          "reviewed_code_fingerprint": "c651940cee68383c9f25d55e5530df3d639c5b9eeeffbcda48ab3da369c9c502",
           "spec_material_hash": "ef1dd6a804b0a7b95fe6f122c977a5a8ee6f065d44ae923aef0ce92489e42435"
         }
       ],
       "state": "APPROVED",
       "stop_conditions": [],
-      "title": "Refine display management and native slider accent",
+      "title": "Fix cold Display hover latency and missing pane",
       "todo_ids": [
-        "code_01m5ahqc38tw4t4t"
+        "bugs_01m5axghdpzj1spf"
       ],
       "unknowns": [],
       "unresolved_contradictions": [],
-      "updated_at": "1792435333Z"
+      "updated_at": "1792442129Z"
     },
     "trajectory": {
       "active_boundaries": [
-        "Current claimed task and isolated work branch"
+        "Display lifecycle only; no permissions or native adapter changes"
       ],
-      "artifact_hash": "sha256:e9448ffd9aff06540cbdbb1b88e8bf5b9ccd34ae1df879d9c52291ffae002215",
+      "artifact_hash": "sha256:0c58bde037f0409d05ec1398c5784476a0ca7da26138b5ef787b4d96c77a3e5c",
       "checks": [
         {
           "name": "decapod validate",
           "status": "passed"
         },
         {
-          "name": "discovery_initial_attempts",
-          "status": "failed"
-        },
-        {
-          "name": "early_loading_preview",
-          "status": "failed"
-        },
-        {
-          "name": "external_connection",
-          "status": "unavailable"
-        },
-        {
-          "name": "fresh_snapshot_fast_path",
-          "status": "passed"
-        },
-        {
-          "name": "fullscreen_display_hover",
-          "status": "passed"
-        },
-        {
-          "name": "live_final_display",
-          "status": "passed"
-        },
-        {
-          "name": "live_idle_hover_gold",
-          "status": "passed"
-        },
-        {
-          "name": "macos_development_suite",
-          "status": "passed"
-        },
-        {
-          "name": "native_compile",
-          "status": "passed"
-        },
-        {
-          "name": "native_display_transition",
-          "status": "passed"
-        },
-        {
-          "name": "signed_display_discovery",
-          "status": "passed"
-        },
-        {
-          "name": "true_tone_button_restore",
+          "name": "display-regressions",
           "status": "passed"
         }
       ],
@@ -232,163 +208,75 @@
         "events": [
           {
             "event_id": "event:2",
-            "intent_id": "intent:change_01M5AHS446SS97TA9VXSF9FBAQ",
+            "intent_id": "intent:display-hover-final",
             "kind": "created",
             "sequence": 2
           },
           {
             "event_id": "event:3",
-            "intent_id": "intent:change_01M5AHS446SS97TA9VXSF9FBAQ",
+            "intent_id": "intent:display-hover-final",
             "kind": "refined",
             "sequence": 3
           },
           {
-            "detail": "trajectory:branch_01M5AHS46TE3EZNSX1WY8MG6Y3",
+            "detail": "trajectory:display-hover-final",
             "event_id": "event:4",
-            "intent_id": "intent:change_01M5AHS446SS97TA9VXSF9FBAQ",
+            "intent_id": "intent:display-hover-final",
             "kind": "trajectory_step_recorded",
             "sequence": 4
           },
           {
-            "detail": "trajectory:branch_01M5AHS46TE3EZNSX1WY8MG6Y3",
+            "detail": "trajectory:display-hover-final",
             "event_id": "event:5",
-            "intent_id": "intent:change_01M5AHS446SS97TA9VXSF9FBAQ",
+            "intent_id": "intent:display-hover-final",
             "kind": "trajectory_step_recorded",
             "sequence": 5
-          },
-          {
-            "detail": "trajectory:branch_01M5AHS46TE3EZNSX1WY8MG6Y3",
-            "event_id": "event:6",
-            "intent_id": "intent:change_01M5AHS446SS97TA9VXSF9FBAQ",
-            "kind": "trajectory_step_recorded",
-            "sequence": 6
-          },
-          {
-            "detail": "trajectory:branch_01M5AHS46TE3EZNSX1WY8MG6Y3",
-            "event_id": "event:7",
-            "intent_id": "intent:change_01M5AHS446SS97TA9VXSF9FBAQ",
-            "kind": "trajectory_step_recorded",
-            "sequence": 7
-          },
-          {
-            "detail": "trajectory:branch_01M5AHS46TE3EZNSX1WY8MG6Y3",
-            "event_id": "event:8",
-            "intent_id": "intent:change_01M5AHS446SS97TA9VXSF9FBAQ",
-            "kind": "trajectory_step_recorded",
-            "sequence": 8
           }
         ],
         "knowledge_candidates": [],
-        "next_sequence": 8,
+        "next_sequence": 5,
         "schema_version": "1.0.0",
         "trajectories": {
-          "branch_01M5AHS46TE3EZNSX1WY8MG6Y3": {
+          "display-hover-final": {
             "evidence_only": true,
-            "id": "branch_01M5AHS46TE3EZNSX1WY8MG6Y3",
-            "intent_id": "intent:change_01M5AHS446SS97TA9VXSF9FBAQ",
+            "id": "display-hover-final",
+            "intent_id": "intent:display-hover-final",
             "steps": [
               {
-                "action": "implementation",
+                "action": "verification",
                 "custody_event_id": "event:4",
                 "observations": [
-                  "scripts/control-panel.m",
-                  "scripts/wifi-pane.m",
                   ".config/sketchybar/plugins/controls.py",
-                  "scripts/control-panel.m",
-                  ".config/sketchybar/sketchybarrc",
-                  "Warnings-as-errors AppKit control renderer compiled successfully at /private/tmp/dotfiles-display-development. Slider drawing uses public NSSliderCell drawBarInside and knobRectFlipped APIs; native input remains inherited."
-                ],
-                "proof_refs": [
-                  "native_compile"
-                ],
-                "scope": [
-                  "dotfiles-desktop"
-                ],
-                "sequence": 4,
-                "validation_findings": [
-                  "Actual Screen Mirroring AX controls and nearby device state require live inspection before adapter design."
-                ]
-              },
-              {
-                "action": "implementation",
-                "custody_event_id": "event:5",
-                "observations": [
-                  "scripts/wifi-pane.m",
-                  "scripts/wifi-pane-info.plist",
-                  "scripts/manage.py",
-                  ".config/sketchybar/plugins/display_pane.py",
                   ".config/sketchybar/plugins/controls.py",
                   "tests/test_display_pane.py",
-                  "131 portable tests plus native warnings-as-errors compilation, native self-tests and Swift typecheck passed before final cleanup refinement. Real gold tracks verified idle and hovered with no clicks or level changes; private captures /private/tmp/dotfiles-volume-idle.png and /private/tmp/dotfiles-brightness-hover.png. Empty/half/full gold pixels 0/514/1028. Earlier native discovery failed on JSON Boolean encoding and expanded-page closure; private fixed-ID transition now finds and closes both pages."
+                  "10 targeted tests pass; cold fullscreen hover 0.543s, discovery 3.855s, bar-hide survival, refresh and pointer-exit passed",
+                  "Prior journal preserved in commits c95b7c5 and 1698196; new trajectory follows STALE_VALIDATION_EVIDENCE recovery"
                 ],
                 "proof_refs": [
-                  "macos_development_suite",
-                  "live_idle_hover_gold",
-                  "native_display_transition",
-                  "discovery_initial_attempts"
+                  "display-regressions"
                 ],
                 "scope": [
-                  "dotfiles-desktop"
+                  "controls.py and regression tests"
                 ],
-                "sequence": 5,
-                "validation_findings": [
-                  "Actual AirPlay pairing/extend-mode change and multi-screen cover remain untested without connecting hardware."
-                ]
-              },
-              {
-                "action": "verification",
-                "custody_event_id": "event:6",
-                "observations": [
-                  "Three consecutive signed native scans passed with preserved AX/capture consent. Earlier real fullscreen hover passed at 3.907 seconds with actual connected metadata, three toggles, one real nearby choice, periodic refresh, bar-autohide survival and exit. Immediate loading-pane experiment failed dismissal timing and was removed; only already-fresh native snapshots now use a fast path, protected by a regression test. Six Display protocol tests passed. No screen was connected during tests; multi-screen capture and pairing/mode changes are unverified."
-                ],
-                "proof_refs": [
-                  "signed_display_discovery",
-                  "fullscreen_display_hover",
-                  "early_loading_preview",
-                  "fresh_snapshot_fast_path",
-                  "external_connection"
-                ],
-                "scope": [
-                  "Display management plus gold-at-rest Sound/Display sliders",
-                  "dotfiles-desktop"
-                ],
-                "sequence": 6,
-                "validation_findings": []
-              },
-              {
-                "action": "verification",
-                "custody_event_id": "event:7",
-                "observations": [
-                  "Final registered-app warm-snapshot fullscreen hover opened in 0.669 seconds with real screen metadata, three toggles and one native nearby choice. Periodic rescan, bar conceal survival, actual True Tone button toggle and restore, and pointer exit passed. Probe allowed asynchronous callback completion between clicks; original True Tone state was verified/restored in cleanup."
-                ],
-                "proof_refs": [
-                  "live_final_display",
-                  "true_tone_button_restore"
-                ],
-                "scope": [
-                  "Display management plus gold-at-rest Sound/Display sliders",
-                  "dotfiles-desktop"
-                ],
-                "sequence": 7,
+                "sequence": 4,
                 "validation_findings": []
               },
               {
                 "action": "validation",
                 "command": "decapod validate",
-                "custody_event_id": "event:8",
+                "custody_event_id": "event:5",
                 "observations": [
                   ".decapod/governance.json",
                   ".decapod/governance.json",
-                  "validation epoch ve_4f3862c173dbc15e completed with zero failures"
+                  "validation epoch ve_3514ef836d92fc22 completed with zero failures"
                 ],
                 "proof_refs": [
                   "decapod validate"
                 ],
                 "scope": [
-                  "Display management plus gold-at-rest Sound/Display sliders",
-                  "dotfiles-desktop"
+                  "controls.py and regression tests"
                 ],
-                "sequence": 8,
+                "sequence": 5,
                 "validation_findings": []
               }
             ]
@@ -398,51 +286,32 @@
       "declared_commands": [
         "decapod validate"
       ],
-      "destination": "pull request",
       "evidence": [
-        "131 portable tests plus native warnings-as-errors compilation, native self-tests and Swift typecheck passed before final cleanup refinement. Real gold tracks verified idle and hovered with no clicks or level changes; private captures /private/tmp/dotfiles-volume-idle.png and /private/tmp/dotfiles-brightness-hover.png. Empty/half/full gold pixels 0/514/1028. Earlier native discovery failed on JSON Boolean encoding and expanded-page closure; private fixed-ID transition now finds and closes both pages.",
-        "Final registered-app warm-snapshot fullscreen hover opened in 0.669 seconds with real screen metadata, three toggles and one native nearby choice. Periodic rescan, bar conceal survival, actual True Tone button toggle and restore, and pointer exit passed. Probe allowed asynchronous callback completion between clicks; original True Tone state was verified/restored in cleanup.",
-        "Three consecutive signed native scans passed with preserved AX/capture consent. Earlier real fullscreen hover passed at 3.907 seconds with actual connected metadata, three toggles, one real nearby choice, periodic refresh, bar-autohide survival and exit. Immediate loading-pane experiment failed dismissal timing and was removed; only already-fresh native snapshots now use a fast path, protected by a regression test. Six Display protocol tests passed. No screen was connected during tests; multi-screen capture and pairing/mode changes are unverified.",
-        "Warnings-as-errors AppKit control renderer compiled successfully at /private/tmp/dotfiles-display-development. Slider drawing uses public NSSliderCell drawBarInside and knobRectFlipped APIs; native input remains inherited.",
-        "validation epoch ve_4f3862c173dbc15e completed with zero failures"
+        "10 targeted tests pass; cold fullscreen hover 0.543s, discovery 3.855s, bar-hide survival, refresh and pointer-exit passed",
+        "Prior journal preserved in commits c95b7c5 and 1698196; new trajectory follows STALE_VALIDATION_EVIDENCE recovery",
+        "validation epoch ve_3514ef836d92fc22 completed with zero failures"
       ],
       "inspected_files": [
-        ".config/sketchybar/plugins/controls.py",
-        "scripts/control-panel.m",
-        "scripts/wifi-pane.m"
+        ".config/sketchybar/plugins/controls.py"
       ],
-      "intent_id": "intent:change_01M5AHS446SS97TA9VXSF9FBAQ",
+      "intent_id": "intent:display-hover-final",
       "modified_files": [
         ".config/sketchybar/plugins/controls.py",
-        ".config/sketchybar/plugins/display_pane.py",
-        ".config/sketchybar/sketchybarrc",
         ".decapod/governance.json",
-        "scripts/control-panel.m",
-        "scripts/manage.py",
-        "scripts/wifi-pane-info.plist",
-        "scripts/wifi-pane.m",
         "tests/test_display_pane.py"
       ],
       "next_transitions": [
-        "Commit reviewed source/specs, recover missing prior-task verification using supported QA transaction, then exact-candidate full validation and hosted CI.",
-        "Inspect native display controls without connecting devices, then implement real display pane.",
-        "Refine plan and declare falsifiable checks",
-        "Verify corrected signed discovery repeatedly, activate themed Display pane and live state controls, then full publication validation.",
         "publish"
       ],
       "repo_scope": [
-        "Display management plus gold-at-rest Sound/Display sliders",
-        "dotfiles-desktop"
+        "controls.py and regression tests"
       ],
-      "run_id": "branch_01M5AHS46TE3EZNSX1WY8MG6Y3",
+      "run_id": "display-hover-final",
       "schema_version": "1.1.0",
       "shortcut_risk_signals": [],
-      "task_id": "code_01m5ahqc38tw4t4t",
+      "task_id": "bugs_01m5axghdpzj1spf",
       "tool_calls": [],
-      "unresolved_assumptions": [
-        "Actual AirPlay pairing/extend-mode change and multi-screen cover remain untested without connecting hardware.",
-        "Actual Screen Mirroring AX controls and nearby device state require live inspection before adapter design."
-      ]
+      "unresolved_assumptions": []
     },
     "validation": {
       "ci_prediction": {
@@ -455,90 +324,94 @@
       },
       "decapod_release": "0.119.1",
       "drift_findings": [],
-      "elapsed_ms": 5988,
-      "epoch_ref": "ve_4f3862c173dbc15e",
+      "elapsed_ms": 6495,
+      "epoch_ref": "ve_3514ef836d92fc22",
       "fail_count": 0,
       "failures": [],
       "gate_timings": [
         {
-          "elapsed_ms": 2120,
+          "elapsed_ms": 2388,
           "name": "validate_markdown_primitives_roundtrip_gate"
         },
         {
-          "elapsed_ms": 684,
-          "name": "validate_project_specs_docs"
-        },
-        {
-          "elapsed_ms": 673,
-          "name": "validate_obligations"
-        },
-        {
-          "elapsed_ms": 551,
+          "elapsed_ms": 731,
           "name": "validate_stale_workspaces"
         },
         {
-          "elapsed_ms": 430,
+          "elapsed_ms": 722,
+          "name": "validate_obligations"
+        },
+        {
+          "elapsed_ms": 552,
+          "name": "validate_project_specs_docs"
+        },
+        {
+          "elapsed_ms": 441,
           "name": "validate_legacy_jsonl_retired"
         },
         {
-          "elapsed_ms": 235,
+          "elapsed_ms": 248,
           "name": "validate_archive_integrity"
         },
         {
-          "elapsed_ms": 213,
+          "elapsed_ms": 220,
           "name": "validate_machine_contract"
         },
         {
-          "elapsed_ms": 157,
+          "elapsed_ms": 177,
           "name": "validate_control_plane_contract"
         },
         {
-          "elapsed_ms": 150,
+          "elapsed_ms": 167,
           "name": "validate_git_workspace_context"
         },
         {
-          "elapsed_ms": 82,
+          "elapsed_ms": 92,
           "name": "validate_lineage_hard_gate"
         },
         {
-          "elapsed_ms": 35,
-          "name": "validate_lcm_rebuild_gate"
-        },
-        {
-          "elapsed_ms": 35,
+          "elapsed_ms": 38,
           "name": "validate_watcher_audit"
         },
         {
-          "elapsed_ms": 34,
+          "elapsed_ms": 37,
           "name": "validate_lcm_immutability"
+        },
+        {
+          "elapsed_ms": 37,
+          "name": "validate_lcm_rebuild_gate"
         },
         {
           "elapsed_ms": 34,
           "name": "validate_knowledge_promotions_if_present"
         },
         {
-          "elapsed_ms": 27,
-          "name": "validate_no_legacy_namespaces"
-        },
-        {
-          "elapsed_ms": 22,
-          "name": "validate_federation_gates"
-        },
-        {
-          "elapsed_ms": 19,
+          "elapsed_ms": 25,
           "name": "validate_repomap_determinism"
         },
         {
-          "elapsed_ms": 16,
+          "elapsed_ms": 25,
+          "name": "validate_federation_gates"
+        },
+        {
+          "elapsed_ms": 15,
           "name": "validate_schema_determinism"
         },
         {
-          "elapsed_ms": 12,
+          "elapsed_ms": 15,
           "name": "validate_git_protected_branch"
         },
         {
-          "elapsed_ms": 11,
+          "elapsed_ms": 14,
           "name": "validate_git_push_pr_gate"
+        },
+        {
+          "elapsed_ms": 10,
+          "name": "validate_no_legacy_namespaces"
+        },
+        {
+          "elapsed_ms": 7,
+          "name": "validate_gatekeeper_gate"
         },
         {
           "elapsed_ms": 7,
@@ -546,10 +419,6 @@
         },
         {
           "elapsed_ms": 6,
-          "name": "validate_gatekeeper_gate"
-        },
-        {
-          "elapsed_ms": 5,
           "name": "validate_plan_governed_execution_gate"
         },
         {
@@ -566,7 +435,15 @@
         },
         {
           "elapsed_ms": 2,
+          "name": "validate_trajectory_artifacts_if_present"
+        },
+        {
+          "elapsed_ms": 2,
           "name": "validate_health_cache_integrity"
+        },
+        {
+          "elapsed_ms": 2,
+          "name": "validate_jev_history_if_present"
         },
         {
           "elapsed_ms": 2,
@@ -574,11 +451,19 @@
         },
         {
           "elapsed_ms": 1,
+          "name": "validate_validation_receipt_if_present"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_research_claims_if_present"
+        },
+        {
+          "elapsed_ms": 1,
           "name": "validate_canon_mutation"
         },
         {
           "elapsed_ms": 1,
-          "name": "validate_trajectory_artifacts_if_present"
+          "name": "validate_recursive_improvement_passes_if_present"
         },
         {
           "elapsed_ms": 1,
@@ -590,30 +475,14 @@
         },
         {
           "elapsed_ms": 1,
-          "name": "validate_override_authority"
-        },
-        {
-          "elapsed_ms": 1,
           "name": "validate_risk_map_violations"
         },
         {
           "elapsed_ms": 1,
-          "name": "validate_jev_history_if_present"
+          "name": "validate_override_authority"
         },
         {
-          "elapsed_ms": 1,
-          "name": "validate_validation_receipt_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_recursive_improvement_passes_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_research_claims_if_present"
-        },
-        {
-          "elapsed_ms": 1,
+          "elapsed_ms": 0,
           "name": "validate_spec_drift"
         },
         {
@@ -622,7 +491,7 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_docs_templates_bucket"
+          "name": "validate_context_capsule_policy_contract"
         },
         {
           "elapsed_ms": 0,
@@ -634,11 +503,7 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_context_capsule_policy_contract"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_repo_map"
+          "name": "validate_docs_templates_bucket"
         },
         {
           "elapsed_ms": 0,
@@ -650,23 +515,7 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_interface_contract_bootstrap"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_eval_gate_if_required"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_risk_map"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_state_commit_gate"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_embedded_self_contained"
+          "name": "validate_repo_map"
         },
         {
           "elapsed_ms": 0,
@@ -678,6 +527,26 @@
         },
         {
           "elapsed_ms": 0,
+          "name": "validate_eval_gate_if_required"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_state_commit_gate"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_embedded_self_contained"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_risk_map"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_interface_contract_bootstrap"
+        },
+        {
+          "elapsed_ms": 0,
           "name": "validate_coplayer_policy_tightening"
         },
         {
@@ -685,24 +554,24 @@
           "name": "validate_tooling_gate"
         }
       ],
-      "git_revision": "399b851cc788d6953fb02d793a35daa9630e405e",
+      "git_revision": "1698196e5b9c09c29b397f5d279c1434b7773ce4",
       "kind": "validation_receipt",
       "parallelism": 1,
-      "pass_count": 187,
+      "pass_count": 188,
       "prediction_uses_warnings": true,
-      "receipt_hash": "sha256:4a7456197a78daf64637d82f9b56099cff2425b81e9da0a582ee2df52205d49b",
-      "repo_signal_fingerprint": "2ecf78b493a6390b0233c22d537c0f69655d248ed53759d610299422faf02a4c",
+      "receipt_hash": "sha256:e4ba65c43140a179d3901f6c9ad23e2ade4a116bcbf6c78796dcb4faa9462d76",
+      "repo_signal_fingerprint": "c651940cee68383c9f25d55e5530df3d639c5b9eeeffbcda48ab3da369c9c502",
       "schema_version": "1.0.0",
       "status": "ok",
       "temporary_artifacts_cleaned": 0,
-      "trajectory_artifact_hash": "sha256:e9448ffd9aff06540cbdbb1b88e8bf5b9ccd34ae1df879d9c52291ffae002215",
-      "trajectory_run_id": "branch_01M5AHS46TE3EZNSX1WY8MG6Y3",
+      "trajectory_artifact_hash": "sha256:0c58bde037f0409d05ec1398c5784476a0ca7da26138b5ef787b4d96c77a3e5c",
+      "trajectory_run_id": "display-hover-final",
       "warn_count": 4,
       "warnings": [
         "Risk map missing (run `decapod riskmap init`)",
-        "Stale workspaces preserved for explicit review: <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (current_workspace: workspace contains the current process; rerun prune from the host checkout after leaving this workspace so Git can release the branch)",
+        "Stale workspaces preserved for explicit review: <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (current_workspace: workspace contains the current process; rerun prune from the host checkout after leaving this workspace so Git can release the branch), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.)",
         "Watcher audit trail missing (run `decapod govern watcher run`)",
-        "Workspace branch 'agent/unknown/code_01m5ahqc38tw4t4t-display-controls' has unpushed commits or does not exist on origin. Branch pushes and iteration are allowed before preflight; hold PR creation until intent is converged, the branch is mergeable, and full `decapod validate` succeeds against the exact current candidate and accepted target."
+        "Workspace branch 'agent/unknown/bugs_01m5axghdpzj1spf-display-hover' has unpushed commits or does not exist on origin. Branch pushes and iteration are allowed before preflight; hold PR creation until intent is converged, the branch is mergeable, and full `decapod validate` succeeds against the exact current candidate and accepted target."
       ]
     }
   }

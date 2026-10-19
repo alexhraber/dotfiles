@@ -258,7 +258,7 @@ can leave partial state; the backup manifest remains the recovery input.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `2ecf78b493a6390b0233c22d537c0f69655d248ed53759d610299422faf02a4c`
+- Repository signal fingerprint: `c651940cee68383c9f25d55e5530df3d639c5b9eeeffbcda48ab3da369c9c502`
 - Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (9 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
@@ -281,3 +281,8 @@ Private display-snapshot.json and literal row actions remain under the existing
 and Display popups. Appearance toggles refresh the themed pane; device/settings
 actions hand off to native pairing/content confirmation and close only the matching
 custom request. Discovery never selects a screen or changes the display topology.
+An absent or stale snapshot yields an immediate live slider and noninteractive
+discovery label. The watcher waits at most three seconds for a fresh matching
+`panel-ui-status.json` request/name/visible acknowledgement before native reads.
+Pointer exit, a newer request or failed renderer startup cancels pending work;
+late failures do not reopen a dismissed pane.

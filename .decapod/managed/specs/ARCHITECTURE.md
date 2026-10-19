@@ -443,7 +443,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `2ecf78b493a6390b0233c22d537c0f69655d248ed53759d610299422faf02a4c`
+- Repository signal fingerprint: `c651940cee68383c9f25d55e5530df3d639c5b9eeeffbcda48ab3da369c9c502`
 - Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (9 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
@@ -456,6 +456,12 @@ screens, appearance toggles and nearby devices into the shared 14-row renderer.
 Display title. It reads brightness independently of discovery, so keyboard events
 refresh an open slider without reopening native controls. A request-bound watcher
 refreshes discovery while visible; failures remove stale clickable choices.
+Cold presentation uses brightness plus a discovery label, with no saved device
+actions. `display_watch` waits for a fresh, matching renderer status before
+opening Control Center, preventing a renderer launch from dismissing native
+discovery. Its wait is bounded and observes cancellation. Both success and
+failure paths require current native visibility before committing updates;
+failed discovery cannot revive a pane after pointer exit.
 
 `scripts/wifi-pane.m` also implements `--display-snapshot`/`--display-action`.
 It opens the fixed Control Center module, uses the exposed show-details action
