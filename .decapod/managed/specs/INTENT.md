@@ -100,7 +100,9 @@ starting tomorrow, with Fahrenheit highs/lows and forecast-local day boundaries.
 
 The owner's desired Wi-Fi result remains a themed hover with the connected
 SSID and up to three actual nearby networks ranked by recent use, with Location
-off. That complete result has not been achieved. The functional fallback opens
+off. The themed adapter now displays actual native choices and connection state;
+the native list supplies ordering rather than an independently verified recency rank.
+The functional fallback opens
 Apple's actual Wi-Fi picker directly on hover, eliminating the rejected custom
 permission/setup wall and extra handoff click. Apple owns list styling, grouping,
 availability and connection progress; those are not claimed as a custom list.
@@ -113,14 +115,17 @@ not block subsequent fullscreen hover or click interactions.
 The Bluetooth header's On/Off label is now its only power action; paired-device
 rows retain their Connect/Disconnect behavior. Desktop Panels renders that
 change without replacing the approved Desktop Controls executable. A separate
-native Wi-Fi adapter and throughput sampler are implemented but await the
-adapter's own Screen Recording approval for live end-to-end verification.
+native Wi-Fi adapter and throughput sampler are implemented and its own
+Accessibility/Screen Recording approvals have been verified through normal launch.
 Location remains off. Native-picker fallback remains available; implemented
-adapter code is not evidence that the full Wi-Fi request has been accepted.
+native authentication is left to macOS and has not been tested by changing the owner's connection.
 Wi-Fi follows Bluetooth's row layout: a header power action, connected network
-first, at most three other actual nearby networks across native groups, and
+first, at most three nearby alternatives initially, and
 Connected/Not connected labels with explicit hover actions. Native network
 options follow the flat list; raw macOS group headings do not create extra rows.
+Explicit Other Networks expansion adds up to three further native choices and
+survives periodic refresh for that hover request. Fullscreen hover, real rates,
+connected state and expansion persistence have passed normal registered-app checks.
 
 The clock is a native Sunday-first month grid and selected-day agenda, with
 today/month navigation, event dots and per-calendar source selection. EventKit
@@ -198,7 +203,7 @@ These declarations select authoring and proof obligations; they do not attest im
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `56c1eb23356c3403332a5df5a55a3a676f35da42c1133927e3c446f5b3f758a3`
+- Repository signal fingerprint: `8f0447a89547abc97705e14f3aad05122eaa25292f5da8f670f31805a6a63068`
 - Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (7 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

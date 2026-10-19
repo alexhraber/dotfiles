@@ -152,8 +152,14 @@ JSON has a fresh sampled timestamp, bounded typed rows and handoff status; the
 UI renders literal native network names/actions, connected state and current
 interface byte rates. As in Bluetooth, connected rows come first with a checkmark
 and Connected label; up to three alternatives show Not connected and Connect on
-hover. Native options follow; native category headings are omitted. This route
-remains pending live OS approval verification.
+hover. Native options follow; native category headings are omitted. Other Networks
+adds up to three actual other choices when expanded. Request-bound expansion is
+replayed by --snapshot/--action with --expanded, preserving it across refreshes.
+Normal registered-app OS approval, fullscreen hover, connected state, rates and
+expansion persistence are verified. Network switching/authentication remain untested.
+Rate-only redraws retain the callback revision; a changed request/action mapping
+invalidates it. Intentional native handoff allows an empty row list, closes the
+custom request and leaves the intended system UI visible.
 The transition from an already-open owned native picker closes it only after a
 native busy response, then retries its closing animation within a one-second
 bound. With access unavailable it remains open. Native codes survive helper exit
@@ -229,7 +235,7 @@ can leave partial state; the backup manifest remains the recovery input.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `56c1eb23356c3403332a5df5a55a3a676f35da42c1133927e3c446f5b3f758a3`
+- Repository signal fingerprint: `8f0447a89547abc97705e14f3aad05122eaa25292f5da8f670f31805a6a63068`
 - Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (7 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

@@ -254,13 +254,15 @@ returns fresh typed rows. Actions match a fresh role/identifier/text/selected
 state before AXPress. Python serializes queries, validates results, preserves
 native buttons and the connected network within the 14-row budget.
 Wi-Fi's row projection shares Bluetooth's flat list: connected controls first,
-then three unselected native network controls total, followed by native
-disclosure/buttons. Labels use the same selected/detail/hint renderer; unselected
+then up to three unselected native choices before the disclosure, followed by native
+disclosure/buttons. Explicit expansion adds up to three real other choices below
+the disclosure. Private request-bound wifi-view.json replays expansion into each
+new native popup; a new request starts collapsed. Labels use the same selected/detail/hint renderer; unselected
 networks explicitly say Not connected. The sampler reads
 netstat link counters each second only while its request remains visible. A
 four-second snapshot refresh reopens the native controls behind the cover;
-performance, connection/authentication handoff and full mouse-hover acceptance
-still require live verification after Screen Recording approval. Unsupported or
+normal registered-app fullscreen hover, rates, state and expansion refresh have
+passed live checks. Network switching/authentication remain untested. Unsupported or
 unapproved systems retain direct native hover. No Location framework is linked.
 `wifi_snapshot` uses the helper's snapshot preflight, avoiding a redundant app
 launch. A fixed `native_panel_busy` response can close only the owned native
@@ -273,7 +275,14 @@ unchanged Desktop Controls process cannot track another app's pane pointer.
 The auxiliary app retains its own pointer, outside-click and Space dismissal.
 Live diagnostic-host proof covers fullscreen compositor visibility, real network
 state/rates, native-picker handoff, bar conceal survival and pointer-exit closure.
-It does not establish the separate registered app's normal permission path.
+The registered app's own normal permission path is now independently verified.
+Action revisions hash the request and literal action mapping, so rate refreshes
+do not reject in-flight clicks. Native radio/disclosure actions wait for observable
+state changes rather than a fixed sleep. A request-bound passthrough/resume pair
+temporarily releases the themed window's mouse interception while native actions
+run under the cover; status acknowledgement and an eight-second watchdog bound
+this state. Native handoff results close the custom request without drawing empty
+rows or dismissing the intended system dialog.
 Permission onboarding requests Accessibility first; only a call that starts
 with Accessibility already approved can request Screen Recording. The explicit
 lifecycle command reads the returned access JSON and reports not-ready with a
@@ -395,7 +404,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `56c1eb23356c3403332a5df5a55a3a676f35da42c1133927e3c446f5b3f758a3`
+- Repository signal fingerprint: `8f0447a89547abc97705e14f3aad05122eaa25292f5da8f670f31805a6a63068`
 - Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (7 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

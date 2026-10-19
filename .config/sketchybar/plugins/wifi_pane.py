@@ -54,6 +54,34 @@ def query(state, mode='snapshot', selector=None):
         return value
 
 
+def view_context(state):
+    try:
+        token = json.loads((state/'hover.json').read_text())
+        if (not isinstance(token, list) or len(token) != 2 or token[1] != 'wifi'
+                or not isinstance(token[0], int) or isinstance(token[0], bool)):
+            return None, False
+        try:
+            view = json.loads((state/'wifi-view.json').read_text())
+        except (OSError, ValueError):
+            view = {}
+        expanded = isinstance(view, dict) and view.get('request') == str(token[0]) and view.get('expanded') is True
+        return token, expanded
+    except (OSError, ValueError):
+        return None, False
+
+
+def save_view(state, token, value):
+    expanded = any(row['kind'] == 'disclosure' and row['selected'] for row in value['rows'])
+    fd, filename = tempfile.mkstemp(prefix='wifi-view-', dir=state)
+    temporary = Path(filename)
+    try:
+        with os.fdopen(fd, 'w') as output:
+            json.dump({'request': str(token[0]), 'expanded': expanded}, output)
+        temporary.replace(state/'wifi-view.json')
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
 def _query(state, mode, selector):
     helper = state.parent / 'wifi-pane'
     if not helper.is_file():
@@ -63,6 +91,7 @@ def _query(state, mode, selector):
     fd, filename = tempfile.mkstemp(prefix='wifi-result-', dir=state)
     os.close(fd)
     result = Path(filename)
+    token, expanded = view_context(state) if mode in ('snapshot', 'action') else (None, False)
     try:
         args = ['/usr/bin/open', '-W', '-n', '-a', str(bundle), '--stdout', filename,
                 '--stderr', '/dev/null']
@@ -71,6 +100,8 @@ def _query(state, mode, selector):
         args += ['--args', '--' + mode]
         if selector is not None:
             args += [json.dumps(selector, ensure_ascii=False)]
+        if expanded:
+            args += ['--expanded']
         process = subprocess.run(args, check=False, timeout=95 if mode == 'request-access' else 15,
                                  stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         if result.stat().st_size > 131072:
@@ -81,7 +112,7 @@ def _query(state, mode, selector):
         if value.get('error'):
             code = value['error']
             known = ('access_unavailable', 'native_panel_busy', 'cover_unavailable', 'native_panel_unavailable',
-                     'option_changed', 'action_failed', 'invalid_action', 'invalid_mode')
+                     'option_changed', 'action_failed', 'action_no_change', 'input_unavailable', 'invalid_action', 'invalid_mode')
             raise NativeError(code if code in known else 'helper_error')
         if process.returncode:
             raise NativeError('helper_exit')
@@ -89,7 +120,10 @@ def _query(state, mode, selector):
             if not all(isinstance(value.get(key), bool) for key in ('accessibility', 'screen_capture', 'supported')):
                 raise ValueError('Invalid Wi-Fi access response')
             return value
-        return validate(value)
+        value = validate(value)
+        if token is not None and not value.get('handoff') and view_context(state)[0] == token:
+            save_view(state, token, value)
+        return value
     finally:
         result.unlink(missing_ok=True)
 
@@ -115,22 +149,32 @@ def validate(value, now=None):
             raise ValueError('Invalid native Wi-Fi state')
         if row['kind'] == 'network' and not 0 < len(row['text'].encode('utf-8')) <= 32:
             raise ValueError('Invalid network name')
-    if sum(row['kind'] == 'power' for row in rows) != 1:
-        raise ValueError('Wi-Fi radio state is missing')
     if not isinstance(value.get('handoff', False), bool):
         raise ValueError('Invalid native Wi-Fi handoff')
+    powers = sum(row['kind'] == 'power' for row in rows)
+    if powers > 1 or (powers != 1 and not value.get('handoff')):
+        raise ValueError('Wi-Fi radio state is missing')
     return value
 
 
 def panel_rows(value, budget=14):
     """Use Bluetooth's connected-first list, backed by real native actions."""
-    native = validate(value)['rows']
+    value = validate(value)
+    if value.get('handoff'):
+        raise ValueError('Native Wi-Fi handed off to system controls')
+    native = value['rows']
     power = next(row for row in native if row['kind'] == 'power')
     result = [('Wi-Fi · ' + ('On' if power['selected'] else 'Off'), ['wifi-pane', power])]
     networks = [row for row in native if row['kind'] == 'network']
     connected = [row for row in networks if row['selected']]
-    nearby = [row for row in networks if not row['selected']][:3]
-    options = [row for row in native if row['kind'] in ('disclosure', 'button')]
+    split = next((i for i, row in enumerate(native) if row['kind'] == 'disclosure'), len(native))
+    nearby = [row for row in native[:split] if row['kind'] == 'network' and not row['selected']][:3]
+    options = []
+    for row in native:
+        if row['kind'] in ('disclosure', 'button'):
+            options.append(row)
+            if row['kind'] == 'disclosure' and row['selected']:
+                options += [item for item in native[split+1:] if item['kind'] == 'network' and not item['selected']][:3]
     body = connected + nearby + options
     # Preserve native buttons and the connected network when the fixed-size
     # renderer's budget is exceeded; only extra network choices are trimmed.

@@ -23,6 +23,79 @@ def snapshot(rows):
 
 
 class WifiPaneTests(unittest.TestCase):
+    def test_expansion_is_replayed_for_refresh_and_scoped_to_the_active_request(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state=Path(temp)/'bar';state.mkdir()
+            (state/'hover.json').write_text(json.dumps([101,'wifi']))
+            target=Path(temp)/'Desktop Panels.app/Contents/MacOS/wifi-pane'
+            target.parent.mkdir(parents=True);target.touch()
+            (Path(temp)/'wifi-pane').symlink_to(target)
+            seen=[]
+            def run(args,**kwargs):
+                mode=args[args.index('--args')+1]
+                expanded='--expanded' in args
+                seen.append((mode,expanded))
+                value=snapshot([option('disclosure','Other Networks', True if mode=='--action' else expanded)])
+                Path(args[args.index('--stdout')+1]).write_text(json.dumps(value))
+                return SimpleNamespace(returncode=0)
+            with patch.object(wifi_pane.subprocess,'run',side_effect=run):
+                wifi_pane.query(state,'action',option('disclosure','Other Networks'))
+                wifi_pane.query(state)
+                self.assertEqual(seen,[('--action',False),('--snapshot',True)])
+                (state/'hover.json').write_text(json.dumps([102,'wifi']))
+                wifi_pane.query(state)
+                self.assertEqual(seen[-1],('--snapshot',False))
+            self.assertEqual((state/'wifi-view.json').stat().st_mode & 0o777,0o600)
+
+    def test_other_network_choices_appear_only_when_explicitly_expanded(self):
+        native=[option('network','Connected',True)] + [option('network',f'Known {i}') for i in range(4)]
+        native += [option('disclosure','Other Networks')] + [option('network',f'Other {i}') for i in range(5)]
+        native += [option('button','Wi-Fi Settings…')]
+        closed=wifi_pane.panel_rows(snapshot(native))
+        self.assertEqual(sum(bool(a) and a[1]['kind']=='network' for _,a in closed),4)
+        native[5]['selected']=True
+        opened=wifi_pane.panel_rows(snapshot(native))
+        self.assertEqual(sum(bool(a) and a[1]['kind']=='network' for _,a in opened),7)
+        self.assertEqual(opened[-1][0],'Wi-Fi Settings…')
+
+    def test_system_handoff_accepts_closed_picker_without_rendering_empty_rows(self):
+        handoff={'sampled':time.time(),'rows':[],'handoff':True}
+        self.assertEqual(wifi_pane.validate(handoff),handoff)
+        with self.assertRaises(ValueError):wifi_pane.panel_rows(handoff)
+        rows=wifi_pane.panel_rows(snapshot([option('button','Wi-Fi Settings…')]))
+        with tempfile.TemporaryDirectory() as temp, patch.object(controls,'STATE',Path(temp)), \
+             patch.object(controls,'native_controls'), patch.object(controls,'native_calendar'), \
+             patch.object(wifi_pane,'query',return_value=handoff), patch.object(controls,'fresh_rows') as fresh:
+            controls.store('hover.json',[101,'wifi'])
+            controls.render_rows('wifi',rows)
+            revision=controls.read('native-panel.json')['revision']
+            controls.native_action('native-action','wifi','1',revision)
+            self.assertEqual(controls.read('active.json'),{})
+            self.assertIsNone(controls.read('hover.json')[1])
+            fresh.assert_not_called()
+
+    def test_rate_refresh_keeps_callback_valid_but_changed_actions_invalidate_it(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(controls, 'STATE', Path(temp)), \
+             patch.object(controls, 'native_controls'), patch.object(controls, 'action') as action, \
+             patch.object(controls, 'fresh_rows') as fresh:
+            rows=wifi_pane.panel_rows(snapshot([option('network','Example',True), option('disclosure','Other Networks')]))
+            fresh.return_value=rows
+            controls.store('hover.json',[101,'wifi'])
+            controls.render_rows('wifi',rows)
+            old=controls.read('native-panel.json')['revision']
+            controls.store('wifi-speed.json',{'request':'101','label':'↓ 1.0 MB/s   ↑ 0 B/s'})
+            controls.render_rows('wifi',rows)
+            self.assertEqual(controls.read('native-panel.json')['revision'],old)
+            controls.native_action('native-action','wifi','2',old)
+            action.assert_called_once_with(rows[2][1])
+            action.reset_mock()
+            replacement=copy.deepcopy(rows)
+            replacement[2][1][1]['selected']=True
+            controls.render_rows('wifi',replacement)
+            controls.native_action('native-action','wifi','2',old)
+            action.assert_not_called()
+            self.assertNotEqual(controls.read('native-panel.json')['revision'],old)
+
     def test_auxiliary_pane_survives_bar_conceal_but_explicit_cancel_still_closes_it(self):
         for name in ('wifi', 'bluetooth'):
             with self.subTest(name=name), tempfile.TemporaryDirectory() as temp, \
@@ -135,9 +208,9 @@ class WifiPaneTests(unittest.TestCase):
     def test_wifi_matches_bluetooth_connected_first_without_duplicate_groups(self):
         connected = option('network', 'Connected network', True)
         native = snapshot([option('section', 'Known Networks'), option('network', 'Saved nearby'),
-                           option('disclosure', 'Other Networks'), option('section', 'Nearby'),
+                           option('section', 'Nearby'),
                            option('network', 'Nearby 1'), connected, option('network', 'Nearby 2'),
-                           option('network', 'Nearby 3'), option('button', 'Wi-Fi Settings…')])
+                           option('network', 'Nearby 3'), option('disclosure', 'Other Networks'), option('button', 'Wi-Fi Settings…')])
         rows = wifi_pane.panel_rows(native)
         self.assertEqual(rows[1], ('Connected network', ['wifi-pane', connected]))
         self.assertEqual(sum(a[1]['kind'] == 'network' for _, a in rows if a), 4)

@@ -65,7 +65,7 @@ static NSDictionary *descriptor(id element) {
     }
     if (!kind || !safeText(label,512)) return nil;
     return @{@"kind":kind,@"text":label,@"role":role,@"identifier":identifier,
-             @"selected":@((BOOL)([value(element,kAXValueAttribute) integerValue]==1)),
+             @"selected":@((BOOL)([kind isEqual:@"disclosure"] ? [value(element,kAXValueAttribute) boolValue] : [value(element,kAXValueAttribute) integerValue]==1)),
              @"enabled":@((BOOL)(![value(element,kAXEnabledAttribute) isEqual:@NO]))};
 }
 static void collect(id root, NSMutableArray *rows, NSUInteger depth, NSUInteger *budget) {
@@ -189,7 +189,27 @@ static BOOL nativeVisible(pid_t owner) {
     }
     return NO;
 }
-static NSDictionary *query(NSDictionary *selector) {
+static id disclosure(id root, NSUInteger depth, NSUInteger *budget) {
+    if (!*budget || depth>8) return nil;--*budget;
+    if ([value(root,kAXRoleAttribute) isEqual:@"AXDisclosureTriangle"]) return root;
+    NSString *role=value(root,kAXRoleAttribute);
+    if ([@[@"AXTextField",@"AXTextArea",@"AXSecureTextField"] containsObject:role]) return nil;
+    for (id child in children(root)) {id result=disclosure(child,depth+1,budget);if(result)return result;}
+    return nil;
+}
+static BOOL expandPanel(id panel, BOOL expanded) {
+    NSUInteger budget=256;id target=disclosure(panel,0,&budget);
+    if (!target || [value(target,kAXValueAttribute) boolValue]==expanded) return YES;
+    if (AXUIElementPerformAction((__bridge AXUIElementRef)target,kAXPressAction)!=kAXErrorSuccess) return NO;
+    CFAbsoluteTime deadline=CFAbsoluteTimeGetCurrent()+1.5;
+    while (CFAbsoluteTimeGetCurrent()<deadline) {
+        id observed=value(target,kAXValueAttribute);
+        if (observed && [observed boolValue]==expanded) {pump(.06);return YES;}
+        pump(.02);
+    }
+    return NO;
+}
+static NSDictionary *query(NSDictionary *selector, BOOL expanded) {
     NSDictionary *access=accessStatus();
     if (![access[@"accessibility"] boolValue] || ![access[@"screen_capture"] boolValue] || ![access[@"supported"] boolValue]) return @{@"error":@"access_unavailable"};
     id center=application(@"ControlCenter"),menu=application(@"MenuBarAgent");
@@ -198,6 +218,25 @@ static NSDictionary *query(NSDictionary *selector) {
     id item=find(menu,@"com.apple.menuextra.wifi",nil,0,&budget);
     if (!item) { budget=160;item=find(center,@"com.apple.menuextra.wifi",nil,0,&budget); }
     if (!item || !beginCover()) return @{@"error":@"cover_unavailable"};
+    NSString *inputRequest=nil;
+    if (selector || expanded) {
+        NSString *bar=[stateDirectory() stringByAppendingPathComponent:@"bar"];
+        NSDictionary *document=readJSON([bar stringByAppendingPathComponent:@"native-panel.json"]);
+        NSDictionary *status=readJSON([bar stringByAppendingPathComponent:@"panel-ui-status.json"]);
+        if ([document[@"name"] isEqual:@"wifi"] && [status[@"visible"] boolValue]
+            && [document[@"request"] isEqual:status[@"request"]]
+            && NSDate.date.timeIntervalSince1970-[status[@"updated"] doubleValue]<1) {
+            inputRequest=document[@"request"];
+            DFControlsNotifyRequest(@"passthrough",inputRequest);
+            CFAbsoluteTime deadline=CFAbsoluteTimeGetCurrent()+.6;
+            do {pump(.02);status=readJSON([bar stringByAppendingPathComponent:@"panel-ui-status.json"]);}
+            while (![status[@"input_passthrough"] boolValue] && CFAbsoluteTimeGetCurrent()<deadline);
+            if (![status[@"input_passthrough"] boolValue]) {
+                DFControlsNotifyRequest(@"resume",inputRequest);pump(.03);endCover();
+                return @{@"error":@"input_unavailable"};
+            }
+        }
+    }
     id panel=nil;BOOL opened=NO,handoff=NO;NSString *failure=nil;
     NSMutableArray *rows=NSMutableArray.new;
     @try {
@@ -210,14 +249,30 @@ static NSDictionary *query(NSDictionary *selector) {
             if (!panel) pump(.01);
         }
         if (!panel) failure=@"native_panel_unavailable";
-        if (panel && selector) {
+        if (panel && ![selector[@"kind"] isEqual:@"power"] && !expandPanel(panel,expanded)) failure=@"action_no_change";
+        if (panel && selector && !failure) {
             budget=256;id target=findAction(panel,selector,0,&budget);
             if (!target) failure=@"option_changed";
             else if (AXUIElementPerformAction((__bridge AXUIElementRef)target,kAXPressAction)!=kAXErrorSuccess) failure=@"action_failed";
             else {
-                // Wait for SwiftUI to publish its asynchronous control state.
-                pump(.4);
+                // Native disclosure/radio state is asynchronous. Wait for
+                // observable state rather than returning a premature snapshot.
+                if ([@[@"disclosure",@"power"] containsObject:selector[@"kind"]]) {
+                    CFAbsoluteTime changedDeadline=CFAbsoluteTimeGetCurrent()+1.5;
+                    while (CFAbsoluteTimeGetCurrent()<changedDeadline) {
+                        id observed=value(target,kAXValueAttribute);
+                        if (observed && [observed boolValue]!=[selector[@"selected"] boolValue]) break;
+                        pump(.02);
+                    }
+                    id after=value(target,kAXValueAttribute);
+                    if (!after || [after boolValue]==[selector[@"selected"] boolValue]) failure=@"action_no_change";
+                    else pump(.06);
+                } else pump(.4);
                 handoff=[selector[@"kind"] isEqual:@"button"];
+                if ([selector[@"kind"] isEqual:@"network"]) {
+                    for (NSRunningApplication *app in NSWorkspace.sharedWorkspace.runningApplications)
+                        if ([app.executableURL.lastPathComponent isEqual:@"WiFiAgent"] && nativeVisible(app.processIdentifier)) handoff=YES;
+                }
                 for (id window in windows(center)) if ([value(window,kAXModalAttribute) boolValue]) handoff=YES;
             }
         }
@@ -225,13 +280,14 @@ static NSDictionary *query(NSDictionary *selector) {
     } @finally {
         // Closing must finish before the cover is removed, not just before
         // AXPress returns. Otherwise the native closing animation can flash.
-        if (opened && panel) {
+        if (opened && panel && !handoff) {
             budget=160;
             if (find(panel,@"wifi-header",nil,0,&budget)) AXUIElementPerformAction((__bridge AXUIElementRef)item,kAXPressAction);
         }
         pid_t owner=0;AXUIElementGetPid((__bridge AXUIElementRef)center,&owner);
         CFAbsoluteTime deadline=CFAbsoluteTimeGetCurrent()+1.5;
-        while (owner && nativeVisible(owner) && CFAbsoluteTimeGetCurrent()<deadline) pump(.01);
+        while (!handoff && owner && nativeVisible(owner) && CFAbsoluteTimeGetCurrent()<deadline) pump(.01);
+        DFControlsNotifyRequest(@"resume",inputRequest);pump(.03);
         endCover();
     }
     if (failure) return @{@"error":failure};
@@ -240,6 +296,7 @@ static NSDictionary *query(NSDictionary *selector) {
 int main(int argc,const char **argv) { @autoreleasepool {
     [NSApplication.sharedApplication setActivationPolicy:NSApplicationActivationPolicyAccessory];
     NSString *mode=argc>1 ? [NSString stringWithUTF8String:argv[1]] : @"--status";
+    BOOL expanded=argc>2 && strcmp(argv[argc-1],"--expanded")==0;
     if ([mode isEqual:@"--ui"]) return runPanelUI();
     if ([mode isEqual:@"--ui-hide"]) {DFControlsNotify(@"hide");return 0;}
     alarm([mode isEqual:@"--request-access"] ? 90 : 12);
@@ -252,15 +309,15 @@ int main(int argc,const char **argv) { @autoreleasepool {
             AXIsProcessTrustedWithOptions((__bridge CFDictionaryRef)@{(__bridge NSString *)kAXTrustedCheckOptionPrompt:@YES});
         else if (!CGPreflightScreenCaptureAccess()) CGRequestScreenCaptureAccess();
         result=accessStatus();
-    } else if ([mode isEqual:@"--snapshot"]) result=query(nil);
-    else if ([mode isEqual:@"--action"] && argc==3 && strlen(argv[2])<=4096) {
+    } else if ([mode isEqual:@"--snapshot"] && (argc==2 || (argc==3 && expanded))) result=query(nil,expanded);
+    else if ([mode isEqual:@"--action"] && (argc==3 || (argc==4 && expanded)) && strlen(argv[2])<=4096) {
         NSData *data=[[NSString stringWithUTF8String:argv[2]] dataUsingEncoding:NSUTF8StringEncoding];
         id selector=[NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
         BOOL valid=[selector isKindOfClass:NSDictionary.class];
         if (valid) valid=[@[@"power",@"network",@"disclosure",@"button"] containsObject:selector[@"kind"]]
             && safeText(selector[@"text"],512) && [selector[@"role"] isKindOfClass:NSString.class]
             && [selector[@"identifier"] isKindOfClass:NSString.class] && [selector[@"selected"] isKindOfClass:NSNumber.class];
-        result=valid ? query(selector) : @{@"error":@"invalid_action"};
+        result=valid ? query(selector,expanded) : @{@"error":@"invalid_action"};
     } else result=@{@"error":@"invalid_mode"};
     NSData *json=[NSJSONSerialization dataWithJSONObject:result options:0 error:nil];
     fwrite(json.bytes,1,json.length,stdout);fputc('\n',stdout);

@@ -142,8 +142,12 @@ remain in private local state, not Git. Literal descriptors are JSON/argv data,
 never shell commands; selected state is rechecked before an action. The single
 display/macOS version boundary falls back to Apple's picker. Signing identities
 are selected from local Keychain or environment and never written to the repo.
-Normal registered-app Wi-Fi activation and authentication handoff remain
-unverified. Diagnostic-host tests use the agent's existing approvals and do not
+Normal registered-app Wi-Fi activation, real fullscreen hover, rates and native
+disclosure interaction are verified with both explicit OS approvals. Authentication
+handoff remains unverified without changing the owner's connection.
+Request-bound mouse passthrough is acknowledged before native actions, resumed
+in cleanup and reset by an eight-second watchdog. It never grants a permission.
+Diagnostic-host tests use the agent's existing approvals and do not
 grant or inherit permissions into Desktop Panels. Fixed-code diagnostics contain
 only stage, time and known access booleans; arbitrary native error text is
 discarded so network names cannot enter error reports. Separate stage records
@@ -173,7 +177,7 @@ loads a model. Ollama remains manually started and is not enabled at login.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `56c1eb23356c3403332a5df5a55a3a676f35da42c1133927e3c446f5b3f758a3`
+- Repository signal fingerprint: `8f0447a89547abc97705e14f3aad05122eaa25292f5da8f670f31805a6a63068`
 - Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (7 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

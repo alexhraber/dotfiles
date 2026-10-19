@@ -1,6 +1,7 @@
 """Hover controls for SketchyBar. Device names and samples stay in private state."""
 from contextlib import contextmanager
 import fcntl
+import hashlib
 import json
 import math
 import os
@@ -460,8 +461,13 @@ def render_rows(name, rows, token=None):
 def _render_rows(name, rows):
     close_native_wifi()
     rows = rows[:14]
-    store(name + '.json', [action for _, action in rows])
-    document = {'name': name, 'revision': str(time.time_ns()), 'request': str(read('hover.json', [0])[0]),
+    actions = [action for _, action in rows]
+    store(name + '.json', actions)
+    request = str(read('hover.json', [0])[0])
+    # Live telemetry must not invalidate a click already travelling from the
+    # native view. Bind callbacks to the request and exact action mapping.
+    revision = hashlib.sha256(json.dumps([name, request, actions], sort_keys=True).encode()).hexdigest()
+    document = {'name': name, 'revision': revision, 'request': request,
                 'rows': [{'text': str(label)[:512], 'action': bool(action)} for label, action in rows]}
     for row, (label, action) in zip(document['rows'], rows):
         if name == 'volume' and label == 'Output devices' and not action:
@@ -646,7 +652,8 @@ def native_action(kind, name, value, revision):
                 if read('hover.json') != token:
                     return
                 close_panels()
-        action(selected)
+        if action(selected) is True:
+            return  # A Wi-Fi system-dialog handoff already closed this request.
         if handoff:
             with interaction():
                 if read('hover.json') == token:
@@ -703,12 +710,11 @@ def action(args):
         with interaction():
             if read('hover.json') != token:
                 return
-            store('wifi-snapshot.json', snapshot)
-        if snapshot.get('handoff'):
-            with interaction():
+            if snapshot.get('handoff'):
                 store('hover.json', [time.time_ns(), None])
                 close_panels()
-            return
+                return True
+            store('wifi-snapshot.json', snapshot)
     elif kind == 'bluetooth-power':
         command('blueutil', '--power', values[0])
     elif kind == 'bluetooth-device':

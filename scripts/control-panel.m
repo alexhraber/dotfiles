@@ -13,6 +13,7 @@ static double controlAway;
 static BOOL controlBusy;
 static NSUInteger controlButtons;
 static BOOL renderPending;
+static double passthroughUntil;
 static NSDictionary *controlDocument, *controlPalette;
 static NSString *dismissedRequest;
 static BOOL colorsChanged;
@@ -457,6 +458,7 @@ static NSDictionary *renderIdentity(NSDictionary *document) {
 static void showControls(void) {
     NSDictionary *document=readDocument(); if (!document) return;
     if ([document[@"request"] isEqual:dismissedRequest]) return;
+    if (![document[@"request"] isEqual:controlDocument[@"request"]]) controlPanel.ignoresMouseEvents=NO;
     BOOL same=[controlDocument[@"name"] isEqual:document[@"name"]] && controlPanel.visible;
     BOOL redraw=!same || ![renderIdentity(controlDocument) isEqual:renderIdentity(document)];
     controlDocument=document; DFCalendarHide(); DFMenusHide();
@@ -500,11 +502,19 @@ static void showControls(void) {
 void DFControlsInitialize(NSString *directory) {
     controlDirectory=directory;
     [NSDistributedNotificationCenter.defaultCenter addObserverForName:controlNotification object:nil queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification *note) {
+        NSString *request=note.userInfo[@"request"];
+        if (request && ![request isEqual:controlDocument[@"request"]]) return;
         if ([note.object isEqual:@"show"]) showControls(); else if ([note.object isEqual:@"hide"]) DFControlsHide();
+        else if ([note.object isEqual:@"passthrough"] && [controlDocument[@"name"] isEqual:@"wifi"]) {controlPanel.ignoresMouseEvents=YES;passthroughUntil=NSProcessInfo.processInfo.systemUptime+8;}
+        else if ([note.object isEqual:@"resume"]) {controlPanel.ignoresMouseEvents=NO;passthroughUntil=0;}
     }];
 }
 void DFControlsNotify(NSString *action) {
     [NSDistributedNotificationCenter.defaultCenter postNotificationName:controlNotification object:action userInfo:nil deliverImmediately:YES];
+}
+void DFControlsNotifyRequest(NSString *action, NSString *request) {
+    if (!request.length) return;
+    [NSDistributedNotificationCenter.defaultCenter postNotificationName:controlNotification object:action userInfo:@{@"request":request} deliverImmediately:YES];
 }
 static void acknowledgeDismissal(NSString *request) {
     if (!request.length) return;
@@ -525,12 +535,13 @@ void DFControlsHide(void) {
         dismissedRequest=controlDocument[@"request"];
         if ([controlDocument[@"pinned"] boolValue]) acknowledgeDismissal(dismissedRequest);
     }
-    [controlPanel orderOut:nil]; controlAway=0; renderPending=NO;
+    [controlPanel orderOut:nil]; controlPanel.ignoresMouseEvents=NO; controlAway=0; renderPending=NO;
 }
 BOOL DFControlsContainsPointer(NSPoint pointer) {
     return controlPanel.visible && ([controlDocument[@"pinned"] boolValue] || NSPointInRect(pointer,NSInsetRect(controlPanel.frame,-4,-4)) || NSPointInRect(pointer,controlAnchor));
 }
 void DFControlsTick(double now, NSPoint pointer) {
+    if (controlPanel.ignoresMouseEvents && NSProcessInfo.processInfo.systemUptime>passthroughUntil) controlPanel.ignoresMouseEvents=NO;
     if (colorsChanged) { colorsChanged=NO; DFCalendarAppearance(); if (controlPanel.visible) [controlView render]; DFMenusHide(); }
     if (!controlPanel.visible) return;
     NSUInteger buttons=NSEvent.pressedMouseButtons;
@@ -545,7 +556,7 @@ void DFControlsTick(double now, NSPoint pointer) {
 }
 NSDictionary *DFControlsStatus(void) {
     NSRect frame=controlPanel.frame;
-    return @{@"visible":@(controlPanel.visible),@"name":controlDocument[@"name"] ?: @"",@"request":controlDocument[@"request"] ?: @"",@"backend_available":@(installedPython()!=nil),
+    return @{@"visible":@(controlPanel.visible),@"input_passthrough":@(controlPanel.ignoresMouseEvents),@"name":controlDocument[@"name"] ?: @"",@"request":controlDocument[@"request"] ?: @"",@"backend_available":@(installedPython()!=nil),
              @"pinned":@([controlDocument[@"pinned"] boolValue]),@"frame":@[@(frame.origin.x),@(frame.origin.y),@(frame.size.width),@(frame.size.height)]};
 }
 int DFControlsSelfTest(void) {

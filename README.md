@@ -236,7 +236,7 @@ reveal can return; `desktop undo` stops the helper and removes the filter.
 | Weather | ZIP 97750 forecast, wind in mph, precipitation chance, upcoming hours and extended outlook |
 | Sound | Volume slider, mute, output selection; scroll the bar item for volume |
 | Display | Built-in brightness slider; scroll the bar item to adjust |
-| Wi-Fi | Hover opens the real Wi-Fi picker directly: connected SSID, nearby networks, radio switch and join progress |
+| Wi-Fi | Themed connected SSID and nearby choices, native connection actions, radio switch and live upload/download rates |
 | Bluetooth | Click the header’s On/Off label to toggle power; connected devices first with Connect/Disconnect hover actions |
 | CPU / GPU | Load graph, real average die temperature in °F, power and fans |
 | RAM | Usage graph, capacity and swap details |
@@ -256,13 +256,13 @@ Desktop Controls app and restarts its owned helper after approval, refreshing
 fullscreen panes without rebuilding or signing it again. Bluetooth may request
 macOS Bluetooth permission. Approval is a local
 OS action and is not captured or bypassed by dotfiles. Network names can be
-redacted without Location permission. With Location off, hovering Wi-Fi opens
+redacted without Location permission. Without the optional Desktop Panels approvals, hovering Wi-Fi opens
 Apple's real picker directly after the normal dwell; there is no custom setup
 wall or second handoff click. It owns the connected SSID, nearby choices and
 connection progress. Repeated hover keeps it open, bar autohide does not dismiss
 it, and opening another themed pane closes it. Outside click and Escape follow
 Apple's picker behavior. Its theme, grouping and list size remain Apple's:
-the requested custom top-three recent/available list is still unresolved.
+the themed adapter below provides the custom layout after its own approvals.
 macOS 27's MenuBarAgent hosting views and the older ControlCenter menu-bar layout
 are supported. Dotfiles does not request Location or read Wi-Fi passwords.
 
@@ -277,20 +277,25 @@ the Wi-Fi adapter reads Apple's actual nearby/connected controls and translates
 their actions into themed rows, with live interface download/upload rates. Its
 layout follows Bluetooth: the connected network comes first, up to three nearby
 alternatives follow, and rows show Connected/Not connected with hover actions.
+Other Networks expands up to three additional nearby choices below its row;
+that expansion survives live refreshes and resets for a new hover session.
 Native network controls remain below the network list. Its
 temporary screen cover exists only in memory; it writes no screen images or
 credentials. Location stays off. Without these approvals, Wi-Fi continues using
 the native picker. The adapter currently supports one display on macOS 15.2 or
-later. End-to-end themed Wi-Fi acceptance remains pending those OS approvals;
-the native list supplies choice order, not a separately verified recency rank.
+later. The native list supplies choice order, not a separately verified recency rank.
 Activation checks access inside the snapshot request. An owned native picker is
 closed and retried briefly when it would block the adapter; unrelated native
 panels are left alone. Bar autohide leaves an open Desktop Panels window to its
 own pointer-dismissal logic. Private `bar/wifi-diagnostic*.json` records distinguish
 permission, native-panel and adapter failures without network names or images.
-Fullscreen hover, connected-state rendering and rate refresh have passed a live
-diagnostic run through the agent's existing access. That is separate from normal
-activation through Desktop Panels' own OS permissions, which remains unverified.
+Fullscreen hover, connected-state rendering, live rates, native disclosure actions
+and expansion surviving refresh have passed through the registered app's own
+approved permissions. Location remains off. Connection/authentication handoff
+is implemented but has not been tested by disconnecting the owner's network.
+Rate-only updates preserve action callbacks; changes to the actual action mapping
+invalidate older callbacks. Native actions temporarily release mouse interception
+under the memory-only cover and restore it afterward, with a bounded watchdog.
 
 Sound separates output selection from its level/mute controls and marks the
 current output once. Bluetooth lists connected devices first, shows connection
