@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "baseline": {
-    "accepted_commit": "829e62f9fe58017c61cc0eb8fd7abf0364630b23",
+    "accepted_commit": "9dd54edf89b38800c22fe818a4fba01a8767ceb0",
     "unresolved": {
       "claim:actual-app-menus": {
         "falsifier": "Native action guards permit stale/disabled/submenu leaf execution, or the UI claims menus work without Accessibility.",
@@ -13,6 +13,7 @@
       },
       "plan:24679fc37fb770b7": "Actual wireless pairing/mirror/extend changes and multi-screen capture require hardware testing; this pass does not connect an external screen during verification.",
       "trajectory:0bab6fe5bb9600bb": "Actual AirPlay pairing/extend-mode change and multi-screen cover remain untested without connecting hardware.",
+      "trajectory:0feefffd9200c409": "Uninterrupted hover and hardware pairing not exercised while user uses mouse; no more pointer or Space manipulation",
       "trajectory:20ee859f4dc5a1ed": "Official 0.119.0 image is still publishing. Proof runtime uses Ubuntu 24.04 and checksum-verified official aarch64 Linux release binary sha256:752751f6eb87a3d6a443e432b3f01bfdf7e08d17b728951dd35f077277d592cc; earlier Debian runtime rejected its GLIBC_2.39 dependency.",
       "trajectory:222b47dce3be7958": "Per-commit checkpoint failure on historical 53905f7 requires rebuilding this owned PR history; no required check is disabled.",
       "trajectory:3582c4c8e25b539d": "Actual Screen Mirroring AX controls and nearby device state require live inspection before adapter design.",
@@ -25,124 +26,48 @@
     }
   },
   "change": {
-    "id": "change_01M5B1JGGY8YYEZX0QEK69P3G7",
-    "base_commit": "829e62f9fe58017c61cc0eb8fd7abf0364630b23",
+    "id": "change_01M5B7AJD3J1P1XSTGN2ZS0HVR",
+    "base_commit": "9dd54edf89b38800c22fe818a4fba01a8767ceb0",
     "target_base": "origin/main"
   },
   "claims": {
-    "responsive-display-discovery": {
-      "statement": "Display native discovery renders a live background beneath interactive controls and retains independently discovered screen rows",
-      "falsifier": "Discovery freezes a screenshot over controls, erases successful native screen rows after an unrelated page failure, or allows an expired/dead query to retain watchdog deferral",
+    "cross-space-cards": {
+      "statement": "Dock enumeration retains inactive fullscreen apps even when their AX list is empty.",
+      "falsifier": "A real titled normal-layer shareable window is omitted solely because AX lists no windows.",
       "status": "supported",
       "proof_refs": [
-        "/private/tmp/dotfiles-display-live-cover-proof.py",
-        "scripts/workspace-panels.m",
-        "tests/test_display_pane.py"
+        "scripts/workspace-panels.m:mergeWindows; native self-tests; private dock-previews-native.json"
       ]
     }
   },
   "checkpoints": [
     {
-      "id": "display-responsive-source",
-      "summary": "Replace frozen display cover, preserve screen discovery and coordinate native menu watchdog",
-      "input_digest": "sha256:b5f2e745b5e71ab8c9fafc170d1ad28143640d62747bf461ad6a7cc68243a0ec",
+      "id": "dock-preview-implementation",
+      "summary": "Merge the all-Space capture inventory with AX cards; preserve native selection, private diagnostics and truthful unavailable thumbnails.",
+      "input_digest": "sha256:a13de366668c935e10ce7fbaa6a7384d32c08915861be975adaa0cbfff8d77b9",
       "proof_refs": [
-        "scripts/workspace-panels.m",
-        "tests/test_display_pane.py"
-      ]
-    },
-    {
-      "id": "display-responsive-prerequisites",
-      "summary": "Record passing prerequisites and retain the existing required CI workflow",
-      "input_digest": "sha256:73374a1f8e4fa0dd15589f1389e2b3875f9b5d14943c0448042579edb2c6c6df",
-      "proof_refs": [
-        "scripts/workspace-panels.m",
-        "tests/test_display_pane.py"
-      ]
-    },
-    {
-      "id": "display-server-recovery",
-      "summary": "Keep replacement pane above an in-flight live cover and reject malformed leases",
-      "input_digest": "sha256:8cd2986836dd1d2797a845f6b28667ca1af892df5baaba7ab610539fce7e9020",
-      "proof_refs": [
-        "scripts/workspace-panels.m"
-      ]
-    },
-    {
-      "id": "display-responsive-final-proof",
-      "summary": "Bind final lifecycle and native lease regression proof to current candidate",
-      "input_digest": "sha256:d6a6fcb2415b8e8f85fa86c80c9338f41b985e1610370129bacf05552ad7c78b",
-      "proof_refs": [
-        "scripts/workspace-panels.m",
-        "tests/test_display_pane.py"
+        "Native signed helper self-tests and private dock-previews-native.json; 59-source reconciliation review"
       ]
     }
   ],
   "intents": {
-    "intent:display-responsive-final": {
+    "intent:change_01M5B7AJD3J1P1XSTGN2ZS0HVR": {
       "acceptance_criteria": [],
       "assumptions": [],
       "boundaries": [
-        "No pointer movement, Space switching, Location or consent changes"
+        "Current claimed task and isolated work branch"
       ],
       "constraints": [
-        "Display transaction lifecycle and proof"
+        "root"
       ],
       "created_sequence": 1,
-      "id": "intent:display-responsive-final",
+      "id": "intent:change_01M5B7AJD3J1P1XSTGN2ZS0HVR",
       "out_of_scope": [],
       "proof_requirements": [],
-      "raw_intent": "Remove Display lag and restore screen options",
-      "refined_intent": "Finish live discovery and preserve pane visibility across renderer restarts during an active transaction",
+      "raw_intent": "Restore dock previews for windows on other fullscreen Spaces",
+      "refined_intent": "Restore dock previews for windows on other fullscreen Spaces",
       "status": "refined",
       "updated_sequence": 3
-    }
-  },
-  "epochs": {
-    "ve_da81e27f630637e1": {
-      "constitution_hash": "sha256:b063c612f27e8d1fb18a4caabc87a16cc769d408d88d30446455e36014f1843c",
-      "constitution_version": "embedded-docs@0.119.1",
-      "epoch_id": "ve_da81e27f630637e1",
-      "evaluator_identity": "decapod-validate@0.119.1",
-      "evaluator_set_hash": "sha256:d01110bf6e129b6d67cd8462424f4dd7d11d9655c4bf6a6a13c43dbdeede984e",
-      "generated_specs_fingerprint": "6567d5a0e46c74b68701b0163dc4a781a612410a6936f2725b6f7df6cee8ff3e",
-      "generated_specs_manifest_hash": "sha256:6c30d19cf7769c9c9557441ebab11232c9dd71268deeede53a5887c74d729929",
-      "material_hashes": {
-        "constitution:core/DECAPOD": "sha256:b063c612f27e8d1fb18a4caabc87a16cc769d408d88d30446455e36014f1843c",
-        "generated_spec:.decapod/managed/specs/ARCHITECTURE.md": "sha256:fde4ef2089cf69ec5cadb41987c972c5c374c7aa8562ca58f8b5a08943f342eb",
-        "generated_spec:.decapod/managed/specs/INTENT.md": "sha256:d816cb6aeed6a8ed2981c1f950e6b2ee1c512e6cee98535133ccc7cfa5160889",
-        "generated_spec:.decapod/managed/specs/INTERFACES.md": "sha256:8fa984bac1797b1591149650fbfc42b399f9641a6e26b03f661dd25d3eadd5ca",
-        "generated_spec:.decapod/managed/specs/OPERATIONS.md": "sha256:e1af12ec7658bbd1218c38925bcfbcb88b32d5ed11e03f8f324824c7cccee9ef",
-        "generated_spec:.decapod/managed/specs/README.md": "sha256:906b42fd5163b1710c3c9c49520ae1e91ad9d088f161cb6ac77ac110c06cec82",
-        "generated_spec:.decapod/managed/specs/SECURITY.md": "sha256:634ad2a9265769e7b853f57cb3f6eef5f7460365ceb08b7f8dbb7656729270b8",
-        "generated_spec:.decapod/managed/specs/SEMANTICS.md": "sha256:39066e01e7312384a985f51175000ef2d67b1a2dc3a192831861f728ea7b545d",
-        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:3991ce57b97f2b5d44829c0338d2070e5ec59337c2d37af20467813ebfec9b0d",
-        "generated_specs_fingerprint": "6567d5a0e46c74b68701b0163dc4a781a612410a6936f2725b6f7df6cee8ff3e",
-        "generated_specs_manifest": "sha256:6c30d19cf7769c9c9557441ebab11232c9dd71268deeede53a5887c74d729929",
-        "governance_context": "sha256:53e20013f866165f10ab890cd4ffe6bcc6b3fc73c0403370301db8b5373c72e3",
-        "governance_material:.decapod/managed/Dockerfile.decapod": "sha256:c9bdb828ff9c9a9e00392d153434ecaaf4d507081ff453c5e838375c55c650e4",
-        "governance_material:AGENTS.md": "sha256:4992240c6825701513873da48567d3560685511ff73827527f9152f7a25cd7e7",
-        "governance_material:CLAUDE.md": "sha256:add7e4f64ef63dd84c69fd8088da14b0c34afe3bf9144c0f59c304c23e1279d5",
-        "governance_material:CODEX.md": "sha256:2ff1b008789940fc7871a84a6a38ac3eec5bef53f1444a4d387f0e4e04d0b975",
-        "governance_material:GEMINI.md": "sha256:e2c5b404af6f21562159eb3be9fd955d9d9a52f1b6ac90fb24fcdf2b170f29fb",
-        "governance_section:claims": "sha256:0120be906faf792f4a06949eebb6a5b0941ca7ba65094c5311b98612cd02d539",
-        "governance_section:plan": "sha256:159d6342de3a7dc55b23744113cba431519609d9f359a52772f0b001af096ada",
-        "living_spec_material:.decapod/managed/specs/ARCHITECTURE.md": "sha256:66b8519a2245d7d43c90c1d8244492ef137587620dec0a3971c8e5149b318d99",
-        "living_spec_material:.decapod/managed/specs/INTENT.md": "sha256:dc229743236e50f4ad995948bae9778a43a22362d448bd4295d56f25eee1fa76",
-        "living_spec_material:.decapod/managed/specs/INTERFACES.md": "sha256:3ad5e31eee45f1d3a90e83aefcae0628855e7be05347cd89e57423bb03294d74",
-        "living_spec_material:.decapod/managed/specs/OPERATIONS.md": "sha256:2d5bf1b27e1946342964bb176f8e21accb3b7d55b66aa5757bbcb7fa266ba376",
-        "living_spec_material:.decapod/managed/specs/README.md": "sha256:0988c85d6c05f02d52684c9aafae50e95fd5d5576739d3e9d995af682697fd99",
-        "living_spec_material:.decapod/managed/specs/SECURITY.md": "sha256:a585c8df4fe175ee44a6928cdf86cb035a04b9544c39f65bdd9d65004ec11321",
-        "living_spec_material:.decapod/managed/specs/SEMANTICS.md": "sha256:92bbe2607c6f8f94191a95ea977d9785f3472a0fae2835520dd86eae73130d5c",
-        "living_spec_material:.decapod/managed/specs/VALIDATION.md": "sha256:2ef491f339ee8607260c7f075ee063b175670773490181d73719759b45026d5e",
-        "proof_rubric": "sha256:99e8ef25629da391e9b479db9fff52b82f340224f7a69d8a88d2992ae8e90466",
-        "validation_profile": "sha256:37a8eec1ce19687d132fe29051dca629d164e2c4958ba141d5f4133a33f0688f"
-      },
-      "proof_rubric": "decapod-validate/current-proof-v1",
-      "proof_rubric_hash": "sha256:99e8ef25629da391e9b479db9fff52b82f340224f7a69d8a88d2992ae8e90466",
-      "schema_version": "1.0.0",
-      "validation_profile": "default",
-      "validation_profile_hash": "sha256:37a8eec1ce19687d132fe29051dca629d164e2c4958ba141d5f4133a33f0688f"
     }
   },
   "sections": {
@@ -153,90 +78,100 @@
       },
       "deferred_questions": [],
       "human_questions": [],
-      "intent": "Eliminate Display discovery freezes and restore nearby screen options",
+      "intent": "Restore dock window discovery and thumbnails across native fullscreen Spaces. Hover must enumerate other apps without activating them or moving the pointer/Space; keep titles and pixels in memory and preserve stable permissions.",
       "phases": [],
       "proof_hooks": [
-        "decapod validate"
+        "Native read-only off-Space window enumeration and identity matching",
+        "Native workspace regression self-tests and repository validation"
       ],
       "schema_version": "1.1.0",
       "spec_reviews": [
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/ARCHITECTURE.md",
-          "reason": "Reviewed final transaction lifecycle including active-lease recovery before replacement UI first draw",
-          "reviewed_code_fingerprint": "6567d5a0e46c74b68701b0163dc4a781a612410a6936f2725b6f7df6cee8ff3e",
-          "spec_material_hash": "66b8519a2245d7d43c90c1d8244492ef137587620dec0a3971c8e5149b318d99"
+          "reason": "Updated the public all-Space inventory union, visibility-based matching, bounded capture-only click fallback and honest capture failure behavior; implementation reviewed in workspace-panels.m.",
+          "reviewed_code_fingerprint": "3b6044e4a1455683da0d2691737a683757e83ca84f41599e27e6297ca9bd0c79",
+          "spec_material_hash": "66370172a35aa6d4f75d5b6d156cd03f7624d86893a0b353758facb181ee78a7"
         },
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/INTERFACES.md",
-          "reason": "Reviewed active token API, malformed-state rejection, partial native rows and live-control stacking",
-          "reviewed_code_fingerprint": "6567d5a0e46c74b68701b0163dc4a781a612410a6936f2725b6f7df6cee8ff3e",
-          "spec_material_hash": "3ad5e31eee45f1d3a90e83aefcae0628855e7be05347cd89e57423bb03294d74"
+          "reason": "Updated inactive-Space cards, counts-only diagnostic mode and capture-ID revalidation. Existing private IPC and stable permission contracts retained.",
+          "reviewed_code_fingerprint": "3b6044e4a1455683da0d2691737a683757e83ca84f41599e27e6297ca9bd0c79",
+          "spec_material_hash": "86c245f069573065bb7d4761cba67454d86f08892e78fd29d05b5390aead3e61"
         },
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/SECURITY.md",
-          "reason": "Reviewed final source: private owned lease, live process, bounded expiry, type validation, stable consent and video-only memory capture",
-          "reviewed_code_fingerprint": "6567d5a0e46c74b68701b0163dc4a781a612410a6936f2725b6f7df6cee8ff3e",
-          "spec_material_hash": "a585c8df4fe175ee44a6928cdf86cb035a04b9544c39f65bdd9d65004ec11321"
+          "reason": "Reviewed all-Space window metadata/pixels as session memory only. Existing Screen Recording and AX consent reused; no new private APIs, Location, on-hover activation or persisted titles/IDs/images.",
+          "reviewed_code_fingerprint": "3b6044e4a1455683da0d2691737a683757e83ca84f41599e27e6297ca9bd0c79",
+          "spec_material_hash": "28e8e59d47a57f752b925f34e88fc12904fe162f60f9c3dee6e8e2d5f10dcdc1"
         }
       ],
       "state": "APPROVED",
       "stop_conditions": [],
-      "title": "Eliminate Display discovery freezes and restore nearby screen options",
+      "title": "Restore dock previews for windows on other fullscreen Spaces",
       "todo_ids": [
-        "bugs_01m5b1hrh0sypzc0"
+        "bugs_01m5b7724gyaxha1"
       ],
       "unknowns": [],
       "unresolved_contradictions": [],
-      "updated_at": "1792448924Z"
+      "updated_at": "1792453916Z"
     },
     "trajectory": {
       "active_boundaries": [
-        "No pointer movement, Space switching, Location or consent changes"
+        "Current claimed task and isolated work branch",
+        "No synthetic pointer movement, app activation or Space switching in live verification; existing permissions retained."
       ],
-      "artifact_hash": "sha256:05256ec5c51f34517915d4e75b57c5b7e868327e850c2e7d6de602bfabfb866f",
+      "artifact_hash": "sha256:d3599866fde8fbb5929d27cea64b1833482dfe460eefa18a4160377f27df3186",
       "checks": [
         {
-          "name": "decapod validate",
+          "name": "AX-only-card-enumeration",
           "status": "passed"
         },
         {
-          "name": "display-regressions",
+          "name": "live-other-Space-discovery",
           "status": "passed"
         },
         {
-          "name": "signed-native-discovery",
+          "name": "live-other-Space-thumbnail-capture",
+          "status": "partial"
+        },
+        {
+          "name": "native-cross-Space-regressions",
           "status": "passed"
+        },
+        {
+          "name": "physical-hover",
+          "status": "unavailable"
         }
       ],
-      "current_phase": "validation",
+      "current_phase": "verification",
       "custody": {
         "events": [
           {
             "event_id": "event:2",
-            "intent_id": "intent:display-responsive-final",
+            "intent_id": "intent:change_01M5B7AJD3J1P1XSTGN2ZS0HVR",
             "kind": "created",
             "sequence": 2
           },
           {
             "event_id": "event:3",
-            "intent_id": "intent:display-responsive-final",
+            "intent_id": "intent:change_01M5B7AJD3J1P1XSTGN2ZS0HVR",
             "kind": "refined",
             "sequence": 3
           },
           {
-            "detail": "trajectory:display-responsive-final",
+            "detail": "trajectory:branch_01M5B7AJFPFGX8XVCBP7BGH1MH",
             "event_id": "event:4",
-            "intent_id": "intent:display-responsive-final",
+            "intent_id": "intent:change_01M5B7AJD3J1P1XSTGN2ZS0HVR",
             "kind": "trajectory_step_recorded",
             "sequence": 4
           },
           {
-            "detail": "trajectory:display-responsive-final",
+            "detail": "trajectory:branch_01M5B7AJFPFGX8XVCBP7BGH1MH",
             "event_id": "event:5",
-            "intent_id": "intent:display-responsive-final",
+            "intent_id": "intent:change_01M5B7AJD3J1P1XSTGN2ZS0HVR",
             "kind": "trajectory_step_recorded",
             "sequence": 5
           }
@@ -245,345 +180,89 @@
         "next_sequence": 5,
         "schema_version": "1.0.0",
         "trajectories": {
-          "display-responsive-final": {
+          "branch_01M5B7AJFPFGX8XVCBP7BGH1MH": {
             "evidence_only": true,
-            "id": "display-responsive-final",
-            "intent_id": "intent:display-responsive-final",
+            "id": "branch_01M5B7AJFPFGX8XVCBP7BGH1MH",
+            "intent_id": "intent:change_01M5B7AJD3J1P1XSTGN2ZS0HVR",
             "steps": [
               {
-                "action": "verification",
+                "action": "trajectory.record",
                 "custody_event_id": "event:4",
                 "observations": [
-                  "scripts/control-panel.m",
-                  "scripts/panel-request.m",
                   "scripts/workspace-panels.m",
-                  "Prior journal preserved in 58d39b4 and 5925d85; signed response rendered 204 live frames, one nearby screen and three appearance toggles; 12 Python tests passed",
-                  "Final lifecycle repair restores stacking when UI server restarts during a live transaction; malformed lease types fail closed and native self-tests exercise token ownership and expiry"
+                  "scripts/desktop-edge.m",
+                  "scripts/wifi-pane.m"
                 ],
                 "proof_refs": [
-                  "signed-native-discovery",
-                  "display-regressions"
+                  "AX-only-card-enumeration"
                 ],
                 "scope": [
-                  "Display transaction lifecycle and proof"
+                  "root"
                 ],
                 "sequence": 4,
                 "validation_findings": [
-                  "Uninterrupted hover and hardware pairing not exercised while user uses mouse; no more pointer or Space manipulation"
+                  "Public all-Space capture lookup currently runs only after at least one AX card exists; diagnostic counts will establish actual off-Space omission."
                 ]
               },
               {
-                "action": "validation",
-                "command": "decapod validate",
+                "action": "verification",
                 "custody_event_id": "event:5",
                 "observations": [
-                  ".decapod/governance.json",
-                  ".decapod/governance.json",
-                  "validation epoch ve_da81e27f630637e1 completed with zero failures"
+                  "scripts/workspace-panels.m",
+                  "scripts/workspace-panels.h",
+                  "scripts/wifi-pane.m",
+                  "Signed installed helper discovers inactive Chrome and Notes with AX=0 and cards=1; Notes and inactive Ghostty snapshot successfully. Chrome sometimes fails capture with SCStreamErrorInternalError -3811 and retains its card. Private native report outside Git.",
+                  "All 59 reconciled source hashes match current files; accepted workflow and command digest unchanged; no temporary probes or private state tracked."
                 ],
                 "proof_refs": [
-                  "decapod validate"
+                  "native-cross-Space-regressions",
+                  "live-other-Space-discovery",
+                  "live-other-Space-thumbnail-capture",
+                  "physical-hover"
                 ],
                 "scope": [
-                  "Display transaction lifecycle and proof"
+                  "root"
                 ],
                 "sequence": 5,
-                "validation_findings": []
+                "validation_findings": [
+                  "Public capture can refuse dormant windows; no thumbnail or exact selection across multiple inaccessible fullscreen windows is promised when the OS omits it."
+                ]
               }
             ]
           }
         }
       },
-      "declared_commands": [
-        "decapod validate"
-      ],
+      "declared_commands": [],
+      "destination": "pull request",
       "evidence": [
-        "Final lifecycle repair restores stacking when UI server restarts during a live transaction; malformed lease types fail closed and native self-tests exercise token ownership and expiry",
-        "Prior journal preserved in 58d39b4 and 5925d85; signed response rendered 204 live frames, one nearby screen and three appearance toggles; 12 Python tests passed",
-        "validation epoch ve_da81e27f630637e1 completed with zero failures"
+        "All 59 reconciled source hashes match current files; accepted workflow and command digest unchanged; no temporary probes or private state tracked.",
+        "Signed installed helper discovers inactive Chrome and Notes with AX=0 and cards=1; Notes and inactive Ghostty snapshot successfully. Chrome sometimes fails capture with SCStreamErrorInternalError -3811 and retains its card. Private native report outside Git."
       ],
-      "inspected_files": [],
-      "intent_id": "intent:display-responsive-final",
+      "inspected_files": [
+        "scripts/desktop-edge.m",
+        "scripts/wifi-pane.m",
+        "scripts/workspace-panels.m"
+      ],
+      "intent_id": "intent:change_01M5B7AJD3J1P1XSTGN2ZS0HVR",
       "modified_files": [
-        ".decapod/governance.json",
-        "scripts/control-panel.m",
-        "scripts/panel-request.m",
+        "scripts/wifi-pane.m",
+        "scripts/workspace-panels.h",
         "scripts/workspace-panels.m"
       ],
       "next_transitions": [
-        "publish"
+        "Refine plan and declare falsifiable checks"
       ],
       "repo_scope": [
-        "Display transaction lifecycle and proof"
+        "root"
       ],
-      "run_id": "display-responsive-final",
+      "run_id": "branch_01M5B7AJFPFGX8XVCBP7BGH1MH",
       "schema_version": "1.1.0",
       "shortcut_risk_signals": [],
-      "task_id": "bugs_01m5b1hrh0sypzc0",
+      "task_id": "bugs_01m5b7724gyaxha1",
       "tool_calls": [],
       "unresolved_assumptions": [
-        "Uninterrupted hover and hardware pairing not exercised while user uses mouse; no more pointer or Space manipulation"
-      ]
-    },
-    "validation": {
-      "ci_prediction": {
-        "confidence": "medium",
-        "recommendations": [
-          "Review the reported validation warnings before relying on the CI result.",
-          "Use `decapod validate -v --format json` to inspect the affected gate output."
-        ],
-        "result": "review"
-      },
-      "decapod_release": "0.119.1",
-      "drift_findings": [],
-      "elapsed_ms": 6219,
-      "epoch_ref": "ve_da81e27f630637e1",
-      "fail_count": 0,
-      "failures": [],
-      "gate_timings": [
-        {
-          "elapsed_ms": 2161,
-          "name": "validate_markdown_primitives_roundtrip_gate"
-        },
-        {
-          "elapsed_ms": 794,
-          "name": "validate_stale_workspaces"
-        },
-        {
-          "elapsed_ms": 717,
-          "name": "validate_obligations"
-        },
-        {
-          "elapsed_ms": 557,
-          "name": "validate_project_specs_docs"
-        },
-        {
-          "elapsed_ms": 443,
-          "name": "validate_legacy_jsonl_retired"
-        },
-        {
-          "elapsed_ms": 250,
-          "name": "validate_archive_integrity"
-        },
-        {
-          "elapsed_ms": 167,
-          "name": "validate_control_plane_contract"
-        },
-        {
-          "elapsed_ms": 158,
-          "name": "validate_machine_contract"
-        },
-        {
-          "elapsed_ms": 143,
-          "name": "validate_git_workspace_context"
-        },
-        {
-          "elapsed_ms": 94,
-          "name": "validate_lineage_hard_gate"
-        },
-        {
-          "elapsed_ms": 39,
-          "name": "validate_lcm_immutability"
-        },
-        {
-          "elapsed_ms": 38,
-          "name": "validate_watcher_audit"
-        },
-        {
-          "elapsed_ms": 38,
-          "name": "validate_lcm_rebuild_gate"
-        },
-        {
-          "elapsed_ms": 38,
-          "name": "validate_knowledge_promotions_if_present"
-        },
-        {
-          "elapsed_ms": 25,
-          "name": "validate_federation_gates"
-        },
-        {
-          "elapsed_ms": 21,
-          "name": "validate_repomap_determinism"
-        },
-        {
-          "elapsed_ms": 16,
-          "name": "validate_schema_determinism"
-        },
-        {
-          "elapsed_ms": 14,
-          "name": "validate_git_push_pr_gate"
-        },
-        {
-          "elapsed_ms": 13,
-          "name": "validate_git_protected_branch"
-        },
-        {
-          "elapsed_ms": 11,
-          "name": "validate_no_legacy_namespaces"
-        },
-        {
-          "elapsed_ms": 7,
-          "name": "validate_knowledge_integrity"
-        },
-        {
-          "elapsed_ms": 6,
-          "name": "validate_plan_governed_execution_gate"
-        },
-        {
-          "elapsed_ms": 6,
-          "name": "validate_gatekeeper_gate"
-        },
-        {
-          "elapsed_ms": 4,
-          "name": "validate_database_schema_versions"
-        },
-        {
-          "elapsed_ms": 4,
-          "name": "validate_policy_integrity"
-        },
-        {
-          "elapsed_ms": 3,
-          "name": "validate_generated_artifact_whitelist"
-        },
-        {
-          "elapsed_ms": 2,
-          "name": "validate_health_cache_integrity"
-        },
-        {
-          "elapsed_ms": 2,
-          "name": "validate_entrypoint_invariants"
-        },
-        {
-          "elapsed_ms": 2,
-          "name": "validate_trajectory_artifacts_if_present"
-        },
-        {
-          "elapsed_ms": 2,
-          "name": "validate_research_claims_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_canon_mutation"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_jev_history_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_validation_receipt_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_watcher_purity"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_recursive_improvement_passes_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_risk_map_violations"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_health_purity"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_override_authority"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_project_config_toml"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_spec_drift"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_context_capsule_policy_contract"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_project_scoped_state"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_heartbeat_invocation_gate"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_docs_templates_bucket"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_workunit_manifests_if_present"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_repo_map"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_internalization_artifacts_if_present"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_eval_gate_if_required"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_interface_contract_bootstrap"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_embedded_self_contained"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_context_capsules_if_present"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_risk_map"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_state_commit_gate"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_root_dockerfile_seed_detection"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_coplayer_policy_tightening"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_tooling_gate"
-        }
-      ],
-      "git_revision": "c09a33af0dbb8340687b1af9847c0f6769951328",
-      "kind": "validation_receipt",
-      "parallelism": 1,
-      "pass_count": 188,
-      "prediction_uses_warnings": true,
-      "receipt_hash": "sha256:850a6931d6002676f135cc46015611a5e54c24780d8069ebb8d9b088c8a2631a",
-      "repo_signal_fingerprint": "6567d5a0e46c74b68701b0163dc4a781a612410a6936f2725b6f7df6cee8ff3e",
-      "schema_version": "1.0.0",
-      "status": "ok",
-      "temporary_artifacts_cleaned": 0,
-      "trajectory_artifact_hash": "sha256:05256ec5c51f34517915d4e75b57c5b7e868327e850c2e7d6de602bfabfb866f",
-      "trajectory_run_id": "display-responsive-final",
-      "warn_count": 4,
-      "warnings": [
-        "Risk map missing (run `decapod riskmap init`)",
-        "Stale workspaces preserved for explicit review: <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (current_workspace: workspace contains the current process; rerun prune from the host checkout after leaving this workspace so Git can release the branch)",
-        "Watcher audit trail missing (run `decapod govern watcher run`)",
-        "Workspace branch 'agent/unknown/bugs_01m5b1hrh0sypzc0-display-responsive' has unpushed commits or does not exist on origin. Branch pushes and iteration are allowed before preflight; hold PR creation until intent is converged, the branch is mergeable, and full `decapod validate` succeeds against the exact current candidate and accepted target."
+        "Public all-Space capture lookup currently runs only after at least one AX card exists; diagnostic counts will establish actual off-Space omission.",
+        "Public capture can refuse dormant windows; no thumbnail or exact selection across multiple inaccessible fullscreen windows is promised when the OS omits it."
       ]
     }
   }

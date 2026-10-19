@@ -28,6 +28,7 @@ static BOOL capturePending;
 static NSString *workspaceError;
 static NSUInteger scannedWindows,scannedRoles,scannedFrames;
 static AXError scanError;
+static NSUInteger scannedShareable;
 
 static id attribute(id element,CFStringRef key) {
     CFTypeRef result=NULL;
@@ -52,6 +53,63 @@ static BOOL windowRect(id element,CGRect *rect) {
 static BOOL sameRect(CGRect a,CGRect b) {
     return fabs(a.origin.x-b.origin.x)<3 && fabs(a.origin.y-b.origin.y)<3
         && fabs(a.size.width-b.size.width)<3 && fabs(a.size.height-b.size.height)<3;
+}
+static BOOL previewBounds(CGRect rect) {
+    return isfinite(rect.origin.x) && isfinite(rect.origin.y) && isfinite(rect.size.width)
+        && isfinite(rect.size.height) && rect.size.width>=80 && rect.size.height>=60;
+}
+static SCShareableContent *shareableWindows(void) {
+    if (!CGPreflightScreenCaptureAccess()) return nil;
+    dispatch_semaphore_t ready=dispatch_semaphore_create(0);
+    __block SCShareableContent *content=nil;
+    [SCShareableContent getShareableContentExcludingDesktopWindows:YES onScreenWindowsOnly:NO completionHandler:^(SCShareableContent *value,__unused NSError *error) {
+        content=value;dispatch_semaphore_signal(ready);
+    }];
+    return dispatch_semaphore_wait(ready,dispatch_time(DISPATCH_TIME_NOW,3*NSEC_PER_SEC))==0 ? content : nil;
+}
+static NSArray<NSDictionary *> *shareableCandidates(SCShareableContent *content,pid_t pid) {
+    NSMutableArray *candidates=NSMutableArray.new;
+    for (SCWindow *window in content.windows) {
+        if (window.owningApplication.processID!=pid || window.windowLayer!=0 || !previewBounds(window.frame)) continue;
+        [candidates addObject:@{@"id":@(window.windowID),@"title":window.title ?: @"",@"bounds":[NSValue valueWithRect:NSRectFromCGRect(window.frame)],@"onscreen":@(window.onScreen),@"capture":window}];
+    }
+    return candidates;
+}
+static BOOL matchingWindow(NSDictionary *entry,NSDictionary *candidate) {
+    return sameRect([entry[@"bounds"] rectValue],[candidate[@"bounds"] rectValue])
+        && (![candidate[@"title"] length] || [candidate[@"title"] isEqual:entry[@"identity_title"]]);
+}
+static NSMutableArray *mergeWindows(NSRunningApplication *app,NSArray *accessible,NSArray *candidates) {
+    NSMutableArray *entries=NSMutableArray.new;NSMutableSet *claimed=NSMutableSet.new;
+    for (NSDictionary *source in accessible) {
+        NSMutableDictionary *entry=source.mutableCopy;NSMutableArray *matches=NSMutableArray.new,*titled=NSMutableArray.new,*visible=NSMutableArray.new;
+        for (NSDictionary *candidate in candidates) if (sameRect([entry[@"bounds"] rectValue],[candidate[@"bounds"] rectValue])) {
+            [matches addObject:candidate];
+            if ([candidate[@"title"] length] && [candidate[@"title"] isEqual:entry[@"identity_title"]]) [titled addObject:candidate];
+            if ([candidate[@"onscreen"] boolValue]) [visible addObject:candidate];
+        }
+        // AppKit and ScreenCaptureKit can publish different titles for the
+        // same window. Current-Space visibility disambiguates equal fullscreen
+        // rectangles before title hints; neither hint permits a guessed match.
+        if (!app.hidden && ![entry[@"minimized"] boolValue] && visible.count) matches=visible;
+        else if (titled.count) matches=titled;
+        // Geometry/title are only a bridge from AX to a capture identity. Never
+        // guess an image when two shareable windows have the same description.
+        if (matches.count==1) {entry[@"capture"]=matches[0][@"capture"];entry[@"id"]=matches[0][@"id"];[claimed addObject:matches[0][@"id"]];}
+        else for (NSDictionary *candidate in matches) [claimed addObject:candidate[@"id"]];
+        [entries addObject:entry];
+    }
+    for (NSDictionary *candidate in candidates) {
+        if (entries.count>=32) break;
+        NSString *title=candidate[@"title"];
+        // Unnamed, unmatched surfaces include fullscreen backdrops and app
+        // helpers; AX remains authoritative for legitimate untitled windows.
+        if (!title.length || [claimed containsObject:candidate[@"id"]]) continue;
+        [claimed addObject:candidate[@"id"]];
+        [entries addObject:[@{@"app":app,@"title":[title substringToIndex:MIN((NSUInteger)256,title.length)],@"identity_title":title,
+            @"bounds":candidate[@"bounds"],@"id":candidate[@"id"],@"capture":candidate[@"capture"],@"other_space":@YES} mutableCopy]];
+    }
+    return entries;
 }
 static NSRect placePreview(NSRect screen,NSRect anchor,CGFloat width,CGFloat height) {
     width=MIN(width,screen.size.width-24);height=MIN(height,screen.size.height-100);
@@ -97,6 +155,48 @@ static void clearSurface(void) {
 }
 static void focusWindow(NSDictionary *entry) {
     NSRunningApplication *app=entry[@"app"];id window=entry[@"window"];
+    if (!window) {
+        // The public AX list omits other-Space windows. Revalidate the capture
+        // ID before an explicit click activates the app, then resolve the AX
+        // object only after macOS has made that app's Space accessible.
+        NSUInteger current=generation;
+        dispatch_async(windowQueue,^{
+            BOOL live=NO;
+            for (NSDictionary *candidate in shareableCandidates(shareableWindows(),app.processIdentifier))
+                if ([candidate[@"id"] isEqual:entry[@"id"]] && matchingWindow(entry,candidate)) {live=YES;break;}
+            dispatch_async(dispatch_get_main_queue(),^{
+                if (generation!=current || app.terminated) return;
+                if (!live) {workspaceError=@"window_closed";return;}
+                [app unhide];[app activateWithOptions:0];DFWorkspaceHide();NSUInteger activated=generation;
+                // An unavailable AX root must never be substituted with an
+                // unrelated window. Activation itself follows native Spaces.
+                dispatch_async(windowQueue,^{
+                    id root=CFBridgingRelease(AXUIElementCreateApplication(app.processIdentifier));
+                    AXUIElementSetMessagingTimeout((__bridge AXUIElementRef)root,.12);
+                    double deadline=NSProcessInfo.processInfo.systemUptime+.8;
+                    do {
+                        NSMutableArray *matches=NSMutableArray.new;
+                        for (id candidate in appWindows(root)) {
+                            CGRect bounds;
+                            if (windowRect(candidate,&bounds) && sameRect(bounds,[entry[@"bounds"] rectValue])
+                                && [attribute(candidate,kAXTitleAttribute) isEqual:entry[@"identity_title"]]) [matches addObject:candidate];
+                        }
+                        if (matches.count==1) {
+                            id selected=matches.firstObject;
+                            dispatch_async(dispatch_get_main_queue(),^{
+                                if (generation!=activated || !app.active || app.terminated) return;
+                                if ([attribute(selected,kAXMinimizedAttribute) boolValue])
+                                    AXUIElementSetAttributeValue((__bridge AXUIElementRef)selected,kAXMinimizedAttribute,kCFBooleanFalse);
+                                AXUIElementSetAttributeValue((__bridge AXUIElementRef)selected,kAXMainAttribute,kCFBooleanTrue);
+                                if (AXUIElementPerformAction((__bridge AXUIElementRef)selected,kAXRaiseAction)==kAXErrorSuccess) focusCount++;
+                            });return;
+                        }
+                        [NSThread sleepForTimeInterval:.05];
+                    } while (!app.terminated && NSProcessInfo.processInfo.systemUptime<deadline);
+                });
+            });
+        });return;
+    }
     pid_t pid=0;
     if (app.terminated || AXUIElementGetPid((__bridge AXUIElementRef)window,&pid)!=kAXErrorSuccess || pid!=app.processIdentifier) return;
     id root=CFBridgingRelease(AXUIElementCreateApplication(pid));AXUIElementSetMessagingTimeout((__bridge AXUIElementRef)root,.25);
@@ -134,8 +234,8 @@ static void focusWindow(NSDictionary *entry) {
     NSMutableParagraphStyle *paragraph=NSMutableParagraphStyle.new;paragraph.lineBreakMode=NSLineBreakByTruncatingTail;
     [self.entry[@"title"] drawInRect:NSMakeRect(10,143,self.bounds.size.width-20,17) withAttributes:
         @{NSFontAttributeName:[NSFont systemFontOfSize:12 weight:NSFontWeightMedium],NSForegroundColorAttributeName:DFPanelColor(0xe6edf7),NSParagraphStyleAttributeName:paragraph}];
-    NSString *detail=self.hovered ? @"Open window" : [self.entry[@"minimized"] boolValue] ? @"Minimized"
-        : [self.entry[@"fullscreen"] boolValue] ? @"Full screen" : @"Window";
+    NSString *detail=self.hovered ? @"Open window" : [self.entry[@"capture_error"] boolValue] ? @"Preview unavailable" : [self.entry[@"minimized"] boolValue] ? @"Minimized"
+        : [self.entry[@"fullscreen"] boolValue] ? @"Full screen" : [self.entry[@"other_space"] boolValue] ? @"Application window" : @"Window";
     [detail drawAtPoint:NSMakePoint(10,165) withAttributes:@{NSFontAttributeName:[NSFont systemFontOfSize:10 weight:NSFontWeightMedium],
         NSForegroundColorAttributeName:DFPanelColor(self.hovered ? 0xb8a6ff : 0x94a3b8)}];
 }
@@ -161,22 +261,6 @@ static void renderDock(NSRunningApplication *app,NSMutableArray *entries) {
         button.toolTip=windowEntries[i][@"title"];[content addSubview:button];[windowButtons addObject:button];
     }
     windowScroll.documentView=content;[surface addSubview:windowScroll];DFPanelPresent(workspacePanel);
-    if (!CGPreflightScreenCaptureAccess()) return;
-    NSUInteger current=generation;
-    [SCShareableContent getShareableContentExcludingDesktopWindows:YES onScreenWindowsOnly:NO completionHandler:^(SCShareableContent *shareable,__unused NSError *error) {
-        dispatch_async(dispatch_get_main_queue(),^{
-            if (generation!=current || !workspacePanel.visible) return;
-            for (NSMutableDictionary *entry in windowEntries) {
-                NSMutableArray *matches=NSMutableArray.new;CGRect bounds=[entry[@"bounds"] rectValue];
-                for (SCWindow *window in shareable.windows) {
-                    if (window.owningApplication.processID!=app.processIdentifier || window.windowLayer!=0 || !sameRect(bounds,window.frame)) continue;
-                    if (window.title.length && ![window.title isEqual:entry[@"title"]]) continue;
-                    [matches addObject:window];
-                }
-                if (matches.count==1) entry[@"capture"]=matches.firstObject;
-            }
-        });
-    }];
 }
 static void showDock(NSDictionary *request) {
     NSRunningApplication *app=[NSRunningApplication runningApplicationWithProcessIdentifier:[request[@"pid"] intValue]];
@@ -215,18 +299,22 @@ static void showDock(NSDictionary *request) {
             id title=attribute(window,kAXTitleAttribute);
             if (![title isKindOfClass:NSString.class] || ![title length]) title=app.localizedName ?: @"Window";
             if ([title length]>256) title=[title substringToIndex:256];
-            [entries addObject:[@{@"window":window,@"app":app,@"title":title,@"bounds":[NSValue valueWithRect:NSRectFromCGRect(bounds)],
+            id identityTitle=attribute(window,kAXTitleAttribute);
+            [entries addObject:[@{@"window":window,@"app":app,@"title":title,@"identity_title":[identityTitle isKindOfClass:NSString.class] ? identityTitle : @"",@"bounds":[NSValue valueWithRect:NSRectFromCGRect(bounds)],
                 @"minimized":@([attribute(window,kAXMinimizedAttribute) boolValue]),
                 @"fullscreen":@([attribute(window,CFSTR("AXFullScreen")) boolValue])} mutableCopy]];
         }
+        SCShareableContent *shareable=shareableWindows();
+        NSArray *candidates=shareableCandidates(shareable,app.processIdentifier);
+        entries=mergeWindows(app,entries,candidates);
         dispatch_async(dispatch_get_main_queue(),^{
             if (generation!=current || !workspacePanel.visible) return;
-            scannedWindows=windows.count;scannedRoles=roles;scannedFrames=frames;scanError=readError;
+            scannedWindows=windows.count;scannedRoles=roles;scannedFrames=frames;scanError=readError;scannedShareable=candidates.count;
             if (readError!=kAXErrorSuccess) workspaceError=@"window_list_unavailable";
             if (entries.count) renderDock(app,entries);
             else {
                 clearSurface();label(surface,app.localizedName,NSMakeRect(24,18,272,22),14,YES,0xe6edf7);
-                label(surface,readError==kAXErrorSuccess ? @"No windows to preview" : @"Window previews unavailable",NSMakeRect(24,64,272,24),12,NO,0x94a3b8);
+                label(surface,readError==kAXErrorSuccess && shareable ? @"No windows to preview" : @"Window previews unavailable",NSMakeRect(24,64,272,24),12,NO,0x94a3b8);
                 label(surface,@"Click its dock icon to open the app.",NSMakeRect(24,96,272,24),11,NO,0x94a3b8);
             }
         });
@@ -381,7 +469,7 @@ void DFWorkspaceShow(void) {
 void DFWorkspaceHide(void) {
     generation++;[workspacePanel orderOut:nil];windowEntries=nil;windowButtons=nil;windowScroll=nil;
     filteredApplications=nil;searchField=nil;capturePending=NO;awaySince=0;workspaceError=nil;
-    scannedWindows=0;scannedRoles=0;scannedFrames=0;scanError=kAXErrorSuccess;
+    scannedWindows=0;scannedRoles=0;scannedFrames=0;scannedShareable=0;scanError=kAXErrorSuccess;
     clearSurface();
 }
 void DFWorkspaceInitialize(NSString *directory) {
@@ -420,7 +508,7 @@ void DFWorkspaceTick(double now,NSPoint pointer) {
                 NSImage *thumbnail=image ? [[NSImage alloc] initWithCGImage:image size:NSZeroSize] : nil;
                 dispatch_async(dispatch_get_main_queue(),^{
                     if (generation!=current || !workspacePanel.visible) return;
-                    capturePending=NO;if (thumbnail) entry[@"image"]=thumbnail;button.needsDisplay=YES;
+                    capturePending=NO;if (thumbnail) entry[@"image"]=thumbnail;else entry[@"capture_error"]=@YES;button.needsDisplay=YES;
                 });
             }];break;
         }
@@ -442,7 +530,56 @@ NSDictionary *DFWorkspaceStatus(void) {
         @"frame":@[@(f.origin.x),@(f.origin.y),@(f.size.width),@(f.size.height)],@"windows":@(windowEntries.count),
         @"thumbnails":@(thumbnails),@"focus_count":@(focusCount),@"applications":@(applicationEntries.count),
         @"key":@(workspacePanel.keyWindow),@"matches":@(filteredApplications.count),@"query_length":@(searchField.stringValue.length),@"error":workspaceError ?: @"",
-        @"scan":@{@"listed":@(scannedWindows),@"roles":@(scannedRoles),@"frames":@(scannedFrames),@"error":@(scanError)}};
+        @"scan":@{@"listed":@(scannedWindows),@"roles":@(scannedRoles),@"frames":@(scannedFrames),@"shareable":@(scannedShareable),@"error":@(scanError)}};
+}
+NSDictionary *DFWorkspaceDiagnostics(BOOL capture) {
+    // Read-only counts; never persist private titles, geometry or window IDs.
+    NSArray *quartz=CFBridgingRelease(CGWindowListCopyWindowInfo(kCGWindowListOptionAll,kCGNullWindowID));
+    __block SCShareableContent *content=nil;__block BOOL done=NO;
+    if (CGPreflightScreenCaptureAccess()) dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED,0),^{
+        SCShareableContent *value=shareableWindows();dispatch_async(dispatch_get_main_queue(),^{content=value;done=YES;});
+    });
+    else done=YES;
+    double deadline=NSProcessInfo.processInfo.systemUptime+4;
+    while (!done && NSProcessInfo.processInfo.systemUptime<deadline)
+        [NSRunLoop.currentRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:.01]];
+    NSMutableArray *apps=NSMutableArray.new;
+    for (NSRunningApplication *app in NSWorkspace.sharedWorkspace.runningApplications) {
+        if (app.activationPolicy!=NSApplicationActivationPolicyRegular || app.terminated) continue;
+        id root=CFBridgingRelease(AXUIElementCreateApplication(app.processIdentifier));
+        AXUIElementSetMessagingTimeout((__bridge AXUIElementRef)root,.12);
+        NSArray *windows=appWindows(root);NSUInteger frames=0,cg=0,off=0,sc=0,eligible=0,titled=0;
+        NSMutableArray *accessible=NSMutableArray.new;
+        for (id window in windows) {
+            CGRect rect;if (!windowRect(window,&rect)) continue;frames++;
+            id title=attribute(window,kAXTitleAttribute);if (![title isKindOfClass:NSString.class]) title=@"";
+            [accessible addObject:@{@"window":window,@"app":app,@"title":title,@"identity_title":title,@"bounds":[NSValue valueWithRect:NSRectFromCGRect(rect)]}];
+        }
+        for (NSDictionary *window in quartz) if ([window[(__bridge NSString *)kCGWindowOwnerPID] intValue]==app.processIdentifier
+            && [window[(__bridge NSString *)kCGWindowLayer] intValue]==0) {
+            cg++;if (![window[(__bridge NSString *)kCGWindowIsOnscreen] boolValue]) off++;
+        }
+        for (SCWindow *window in content.windows) if (window.owningApplication.processID==app.processIdentifier && window.windowLayer==0) {
+            sc++;if (window.frame.size.width>=80 && window.frame.size.height>=60) {eligible++;if(window.title.length)titled++;}
+        }
+        NSArray *entries=mergeWindows(app,accessible,shareableCandidates(content,app.processIdentifier));
+        NSUInteger images=0;__block NSInteger captureError=0;
+        if (capture) for (NSDictionary *entry in entries) {
+            SCWindow *window=entry[@"capture"];if (!window) continue;
+            __block BOOL captured=NO,finished=NO;
+            SCStreamConfiguration *configuration=SCStreamConfiguration.new;
+            configuration.width=220;configuration.height=140;configuration.showsCursor=NO;
+            [SCScreenshotManager captureImageWithFilter:[[SCContentFilter alloc] initWithDesktopIndependentWindow:window] configuration:configuration completionHandler:^(CGImageRef image,NSError *error) {
+                BOOL valid=image && CGImageGetWidth(image)>0 && CGImageGetHeight(image)>0;
+                NSInteger code=error.code;dispatch_async(dispatch_get_main_queue(),^{captured=valid;finished=YES;captureError=code;});
+            }];
+            double until=NSProcessInfo.processInfo.systemUptime+1;
+            while (!finished && NSProcessInfo.processInfo.systemUptime<until) [NSRunLoop.currentRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:.01]];
+            if(captured)images++;break;
+        }
+        [apps addObject:@{@"app":app.bundleIdentifier ?: @"",@"active":@(app.active),@"ax":@(windows.count),@"frames":@(frames),@"quartz":@(cg),@"offscreen":@(off),@"shareable":@(sc),@"eligible":@(eligible),@"titled":@(titled),@"cards":@(entries.count),@"captured":@(images),@"capture_error":@(captureError)}];
+    }
+    return @{@"accessibility":@(AXIsProcessTrusted()),@"screen_capture":@(CGPreflightScreenCaptureAccess()),@"shareable_ready":@(content!=nil),@"apps":apps};
 }
 int DFWorkspaceSelfTest(void) {
     if (!sameRect(CGRectMake(0,0,300,200),CGRectMake(1,2,301,201)) || sameRect(CGRectMake(0,0,300,200),CGRectMake(10,0,300,200))) return 1;
@@ -453,6 +590,26 @@ int DFWorkspaceSelfTest(void) {
     }
     if (applicationScore(@"System Settings",@"sys set")<0 || applicationScore(@"Ghostty",@"gh")!=0
         || applicationScore(@"Safari",@"gh")!=-1 || applicationScore(@"Éditeur",@"edit")!=0) return 1;
+    NSRunningApplication *app=NSRunningApplication.currentApplication;
+    NSValue *bounds=[NSValue valueWithRect:NSMakeRect(0,0,800,600)];
+    NSDictionary *first=@{@"id":@1,@"title":@"First",@"bounds":bounds,@"capture":NSNull.null};
+    NSDictionary *second=@{@"id":@2,@"title":@"Second",@"bounds":bounds,@"capture":NSNull.null};
+    NSDictionary *untitled=@{@"id":@3,@"title":@"",@"bounds":bounds,@"capture":NSNull.null};
+    NSDictionary *ax=@{@"title":@"First",@"identity_title":@"First",@"bounds":bounds,@"window":NSNull.null};
+    NSArray *merged=mergeWindows(app,@[],@[first,second,first,untitled]);
+    if (merged.count!=2 || ![merged[0][@"other_space"] boolValue] || ![merged[1][@"id"] isEqual:@2]) return 1;
+    merged=mergeWindows(app,@[ax],@[first,second]);
+    if (merged.count!=2 || ![merged[0][@"id"] isEqual:@1] || !merged[0][@"window"] || merged[1][@"window"]) return 1;
+    NSDictionary *duplicate=@{@"id":@4,@"title":@"First",@"bounds":bounds,@"capture":NSNull.null};
+    merged=mergeWindows(app,@[ax],@[first,duplicate]);
+    if (merged.count!=1 || merged[0][@"capture"] || merged[0][@"id"]) return 1;
+    merged=mergeWindows(app,@[ax],@[]);if (merged.count!=1 || merged[0][@"capture"]) return 1;
+    NSDictionary *current=@{@"id":@5,@"title":@"Different SC title",@"bounds":bounds,@"capture":NSNull.null,@"onscreen":@YES};
+    merged=mergeWindows(app,@[ax],@[current,second]);
+    if (merged.count!=2 || ![merged[0][@"id"] isEqual:@5] || ![merged[1][@"id"] isEqual:@2]) return 1;
+    NSMutableArray *many=NSMutableArray.new;
+    for(NSUInteger i=1;i<=40;i++) [many addObject:@{@"id":@(i),@"title":@"Window",@"bounds":bounds,@"capture":NSNull.null}];
+    if (mergeWindows(app,@[],many).count!=32 || previewBounds(CGRectMake(0,0,NAN,600)) || previewBounds(CGRectMake(0,0,1,1))) return 1;
     NSString *directory=[NSTemporaryDirectory() stringByAppendingPathComponent:[@"dotfiles-native-lease-" stringByAppendingString:NSUUID.UUID.UUIDString]];
     BOOL leasePassed=NO;
     @try {
@@ -472,5 +629,5 @@ int DFWorkspaceSelfTest(void) {
         leasePassed=YES;
     } @finally {[NSFileManager.defaultManager removeItemAtPath:directory error:nil];}
     if (!leasePassed) return 1;
-    puts("Workspace panels: geometry, matching and bounded private native-UI lease passed.");return 0;
+    puts("Workspace panels: cross-Space inventory, identity matching, geometry and bounded private native-UI lease passed.");return 0;
 }

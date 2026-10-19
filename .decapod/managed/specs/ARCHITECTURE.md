@@ -353,10 +353,23 @@ on overview/Space transitions, and rejects obsolete bar visibility commands.
 
 panel-request.m atomically writes private bounded requests and launches/reuses
 Desktop Panels on demand. workspace-panels.m enumerates AX windows off the main
-thread with per-call timeouts, limits windows to 32, and retains AX objects only
-in memory. Public ScreenCaptureKit window filters capture one visible card at a
-time; unique PID/frame/title matching gates images, while exact AX object identity
-gates selection independently. Offscreen images are evicted. Cards scroll beyond
+thread with per-call timeouts and merges public ScreenCaptureKit's all-Space
+inventory before deciding whether an app has windows. AX alone omits windows on
+inactive fullscreen Spaces. The union retains real AX windows and adds titled,
+normal-layer shareable windows with usable geometry; unnamed unmatched helper
+surfaces are excluded. Unique PID/frame matching uses current-Space visibility
+and title hints to disambiguate, without assuming both APIs publish equal titles.
+Capture window IDs deduplicate the union; ambiguous AX/capture bridges receive
+no guessed thumbnail. Lists are capped at 32 and all references stay in RAM.
+Public window-only filters capture one visible card at a time. AX-backed clicks
+revalidate exact membership. Capture-only clicks revalidate the ID/PID/frame/title
+before native app activation, then briefly retry an exact AX match; if that
+window remains inaccessible, native app activation is the fallback. Selecting a
+specific one of several inaccessible fullscreen windows is not guaranteed by
+the public AX API. Hover never activates an app or switches Space.
+An OS capture failure leaves the window's app icon and a "Preview unavailable"
+label; it must not convert a real off-Space window into "No windows". No app is
+activated to force a thumbnail. Offscreen images are evicted. Cards scroll beyond
 four visible columns; pointer bridges retain the dock until the pane is left.
 Generation checks discard late window lists and screenshots after dismissal.
 Application search scans bounded app directories, filters locally, and opens
@@ -443,7 +456,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `6567d5a0e46c74b68701b0163dc4a781a612410a6936f2725b6f7df6cee8ff3e`
+- Repository signal fingerprint: `3b6044e4a1455683da0d2691737a683757e83ca84f41599e27e6297ca9bd0c79`
 - Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (9 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

@@ -587,6 +587,7 @@ int main(int argc,const char **argv) { @autoreleasepool {
     alarm([mode isEqual:@"--request-access"] ? 90 : 12);
     NSDictionary *result=nil;
     if ([mode isEqual:@"--status"]) result=accessStatus();
+    else if ([mode isEqual:@"--workspace-diagnostics"] && (argc==2 || (argc==3 && strcmp(argv[2],"--capture")==0))) result=DFWorkspaceDiagnostics(argc==3);
     else if ([mode isEqual:@"--request-access"]) {
         // Stage the OS dialogs. An unconfirmed Accessibility request must not
         // be followed immediately by a second protected permission request.

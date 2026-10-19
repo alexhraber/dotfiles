@@ -7,3 +7,4 @@ void DFWorkspaceTick(double now, NSPoint pointer);
 void DFWorkspaceRefreshAppearance(void);
 NSDictionary *DFWorkspaceStatus(void);
 int DFWorkspaceSelfTest(void);
+NSDictionary *DFWorkspaceDiagnostics(BOOL capture);

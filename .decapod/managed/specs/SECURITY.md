@@ -48,7 +48,13 @@ window snapshots only in RAM. Only visible cards are captured, one at a time;
 offscreen images are discarded, and dismissal generations reject late results.
 Window-only ScreenCaptureKit filters avoid unrelated screen content. Clicks
 revalidate process/window identity, unminimize if needed and raise the chosen
-window; hover never executes an app action. Launcher searches installed .app
+AX window. Capture-only cards validate the current app/PID/window-ID/frame/title
+before native app activation and bounded AX resolution; ambiguous AX matches
+never raise another window. The all-Space inventory exposes other fullscreen
+windows in memory using existing Screen Recording consent, without private OS
+APIs or new permission requests. Read-only diagnostics emit counts and bundle
+identifiers, with optional transient captures; they omit private window titles,
+IDs, geometry and pixels. Hover never executes an app action. Launcher searches installed .app
 bundles only, bounded and deduplicated by bundle identity, with argv-free
 NSWorkspace launches. No document index, cloud lookup or global shortcut is added.
 Private IPC stores only requests/counts/geometry and fixed error codes, using
@@ -191,7 +197,7 @@ loads a model. Ollama remains manually started and is not enabled at login.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `6567d5a0e46c74b68701b0163dc4a781a612410a6936f2725b6f7df6cee8ff3e`
+- Repository signal fingerprint: `3b6044e4a1455683da0d2691737a683757e83ca84f41599e27e6297ca9bd0c79`
 - Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (9 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
