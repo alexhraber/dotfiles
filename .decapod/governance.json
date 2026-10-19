@@ -106,37 +106,46 @@
         "host_unit_suite",
         "registered_app_fullscreen_wifi"
       ]
+    },
+    {
+      "id": "wifi-final-prerequisite-epoch",
+      "summary": "Preserve prior journal in Git and start validator-requested fresh run. Bootstrap project-check now passes on the reviewed final inventory and writes a real prerequisite receipt; full source-contract readiness remains pending.",
+      "input_digest": "sha256:b284df1de2e4f34f1f22986021d922227ce9196394838fbd493f14587ac6a350",
+      "proof_refs": [
+        "host_unit_suite",
+        "registered_app_fullscreen_wifi"
+      ]
     }
   ],
   "intents": {
-    "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH": {
+    "intent:wifi-final-20261018": {
       "acceptance_criteria": [],
       "assumptions": [],
       "boundaries": [
-        "Current claimed task and isolated work branch"
+        "Location off; no network change; approved Desktop Controls unchanged; no secrets or machine state in Git; no PR or merge before full validation."
       ],
       "constraints": [
-        "root"
+        "Wi-Fi panes and required proof"
       ],
       "created_sequence": 1,
-      "id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
+      "id": "intent:wifi-final-20261018",
       "out_of_scope": [],
       "proof_requirements": [],
-      "raw_intent": "Show connected and recent available Wi-Fi SSIDs on hover\n\nThe Wi-Fi hover pane must directly show the connected SSID and up to three actually available previously used networks, ordered by recency. Location remains off. Investigate native accessibility state and direct native-picker hover using existing approved control access; never mislabel saved profiles as available, never request coordinates or Location permission. Keep literal network names private and preserve fullscreen behavior.",
-      "refined_intent": "Show connected and recent available Wi-Fi SSIDs on hover\n\nThe Wi-Fi hover pane must directly show the connected SSID and up to three actually available previously used networks, ordered by recency. Location remains off. Investigate native accessibility state and direct native-picker hover using existing approved control access; never mislabel saved profiles as available, never request coordinates or Location permission. Keep literal network names private and preserve fullscreen behavior.",
+      "raw_intent": "Themed interactive native Wi-Fi with actual connected/nearby names, actions and rates; Location off; authorized main publication.",
+      "refined_intent": "Exact candidate validation after actual registered-app fullscreen interaction proof and 120 tests. Prior source/CI/receipt evidence is now checkpointed and committed for explicit stale-epoch recovery.",
       "status": "refined",
       "updated_sequence": 3
     }
   },
   "epochs": {
-    "ve_231cd38f37c37e02": {
+    "ve_27644e4046ec0095": {
       "constitution_hash": "sha256:b063c612f27e8d1fb18a4caabc87a16cc769d408d88d30446455e36014f1843c",
       "constitution_version": "embedded-docs@0.119.1",
-      "epoch_id": "ve_231cd38f37c37e02",
+      "epoch_id": "ve_27644e4046ec0095",
       "evaluator_identity": "decapod-validate@0.119.1",
       "evaluator_set_hash": "sha256:d01110bf6e129b6d67cd8462424f4dd7d11d9655c4bf6a6a13c43dbdeede984e",
       "generated_specs_fingerprint": "53759c6499c5cbd224f07d2c14267eb91880ee3a875c5a979778d926055448cd",
-      "generated_specs_manifest_hash": "sha256:91c8500550235797a8602b60d4e9c5322b51892a79d28b9d421b3dc1c3b8a424",
+      "generated_specs_manifest_hash": "sha256:67609f3b30aca3ce0fe0f56ed4870561a82c2d183b4ed824a8a190fbb82fd631",
       "material_hashes": {
         "constitution:core/DECAPOD": "sha256:b063c612f27e8d1fb18a4caabc87a16cc769d408d88d30446455e36014f1843c",
         "generated_spec:.decapod/managed/specs/ARCHITECTURE.md": "sha256:3c2955cf2a960f84a02ca1fc67400fb241a6384057983764118875b884317b20",
@@ -146,9 +155,9 @@
         "generated_spec:.decapod/managed/specs/README.md": "sha256:e4fbfddf69dbc1242e5ab4018ec9907e03747ba7fd2caccb9a6d2a2a6289a4b1",
         "generated_spec:.decapod/managed/specs/SECURITY.md": "sha256:6a81011286d7bc99e0957911769ece9329da1b67474e0ccd9fc7473df0fe01b7",
         "generated_spec:.decapod/managed/specs/SEMANTICS.md": "sha256:750807a4792ba3c7411e7eebb1a27de9a13f42ad4c8a15a096b5282d3ab52f44",
-        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:306c17b96468d464499a57a5b0709b7aeaf5db31d1ffac49cf7c1b26d096c1a8",
+        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:12cb80e9cad881b45c3e65ae4325d27ae1480e13a5569aacce3b0526bfee673e",
         "generated_specs_fingerprint": "53759c6499c5cbd224f07d2c14267eb91880ee3a875c5a979778d926055448cd",
-        "generated_specs_manifest": "sha256:91c8500550235797a8602b60d4e9c5322b51892a79d28b9d421b3dc1c3b8a424",
+        "generated_specs_manifest": "sha256:67609f3b30aca3ce0fe0f56ed4870561a82c2d183b4ed824a8a190fbb82fd631",
         "governance_context": "sha256:d9232aae7e2aeed7f30cfc4f42d59e1ee8dc40abfd0146b2c4ceaf8e1a2a8796",
         "governance_material:.decapod/managed/Dockerfile.decapod": "sha256:c9bdb828ff9c9a9e00392d153434ecaaf4d507081ff453c5e838375c55c650e4",
         "governance_material:AGENTS.md": "sha256:4992240c6825701513873da48567d3560685511ff73827527f9152f7a25cd7e7",
@@ -156,7 +165,7 @@
         "governance_material:CODEX.md": "sha256:2ff1b008789940fc7871a84a6a38ac3eec5bef53f1444a4d387f0e4e04d0b975",
         "governance_material:GEMINI.md": "sha256:e2c5b404af6f21562159eb3be9fd955d9d9a52f1b6ac90fb24fcdf2b170f29fb",
         "governance_section:claims": "sha256:7498b3fc900d672e47ea39580eeb934a555e275ed1e2fffc83b83ea85b093127",
-        "governance_section:plan": "sha256:7f65e23fe9e9c469b072f3ba8b88b4824b8fbbb9248dd610def311ab91e7f0dc",
+        "governance_section:plan": "sha256:df1f2490328ac1353eea07761917359b09bfe75a8a658971df957f9108eb6e7d",
         "living_spec_material:.decapod/managed/specs/ARCHITECTURE.md": "sha256:cd1ced2453f64ec9a40a92429ae6850e10ce07711014fe99e8d10be4577ea3bd",
         "living_spec_material:.decapod/managed/specs/INTENT.md": "sha256:56e17b147ab3f99db26e24ba7349bf6a64d938a4401742fab7f65d091503a26b",
         "living_spec_material:.decapod/managed/specs/INTERFACES.md": "sha256:b2547d83a579d05a44f380c8194a342d6e7b967cf93face2d8477171fb3ddc2a",
@@ -164,7 +173,7 @@
         "living_spec_material:.decapod/managed/specs/README.md": "sha256:0988c85d6c05f02d52684c9aafae50e95fd5d5576739d3e9d995af682697fd99",
         "living_spec_material:.decapod/managed/specs/SECURITY.md": "sha256:8ce569d9793cd2b832eb083f86f33d1c38764aaa61833561aad66bcd4d9a8ca5",
         "living_spec_material:.decapod/managed/specs/SEMANTICS.md": "sha256:92bbe2607c6f8f94191a95ea977d9785f3472a0fae2835520dd86eae73130d5c",
-        "living_spec_material:.decapod/managed/specs/VALIDATION.md": "sha256:1fc2a9261d5bfd776bb868a8f5bed1148aed97624985d0024791cac9194658f9",
+        "living_spec_material:.decapod/managed/specs/VALIDATION.md": "sha256:7b572270543fa5c37e6c69994abcf2a04d9b1e4bc93835f163164a0fd11992a0",
         "proof_rubric": "sha256:99e8ef25629da391e9b479db9fff52b82f340224f7a69d8a88d2992ae8e90466",
         "validation_profile": "sha256:37a8eec1ce19687d132fe29051dca629d164e2c4958ba141d5f4133a33f0688f"
       },
@@ -224,69 +233,16 @@
     },
     "trajectory": {
       "active_boundaries": [
-        "Current claimed task and isolated work branch",
-        "Location remains off; no repeated permission question; preserve approved native app identity."
+        "Location off; no network change; approved Desktop Controls unchanged; no secrets or machine state in Git; no PR or merge before full validation."
       ],
-      "artifact_hash": "sha256:ddfbe204f56f0693f7c3af8414fe5e8a4cfc649e92c83a03e9683f5a57b58668",
+      "artifact_hash": "sha256:60e5c24d0e2c7c6a93f7bb3d46296f8387a59ebc137b1a6d6a9ace593666514d",
       "checks": [
-        {
-          "name": "bluetooth_header_installed",
-          "status": "passed"
-        },
-        {
-          "name": "bluetooth_live_header",
-          "status": "passed"
-        },
-        {
-          "name": "bluetooth_style_wifi_rows",
-          "status": "passed"
-        },
         {
           "name": "decapod validate",
           "status": "passed"
         },
         {
-          "name": "desktop-config-doctor",
-          "status": "passed"
-        },
-        {
-          "name": "diagnostic_host_fullscreen_hover",
-          "status": "passed"
-        },
-        {
-          "name": "diagnostic_host_real_wifi_handoff",
-          "status": "passed"
-        },
-        {
-          "name": "direct-native-fullscreen-hover",
-          "status": "passed"
-        },
-        {
-          "name": "full-exact-candidate-validation",
-          "status": "unavailable"
-        },
-        {
-          "name": "host-118-tests-and-native-selftests",
-          "status": "passed"
-        },
-        {
-          "name": "named-live-scan",
-          "status": "unavailable"
-        },
-        {
-          "name": "native-new-network-script-syntax",
-          "status": "passed"
-        },
-        {
-          "name": "native-wifi-closed-item-identity",
-          "status": "unavailable"
-        },
-        {
-          "name": "native-wifi-open-panel-identity",
-          "status": "passed"
-        },
-        {
-          "name": "native_compile",
+          "name": "host_unit_suite",
           "status": "passed"
         },
         {
@@ -298,63 +254,7 @@
           "status": "passed"
         },
         {
-          "name": "offscreen-native-ui-no-flicker",
-          "status": "failed"
-        },
-        {
-          "name": "permission-gated-hover",
-          "status": "failed"
-        },
-        {
-          "name": "pointer_exit",
-          "status": "passed"
-        },
-        {
-          "name": "portable_unit_suite",
-          "status": "passed"
-        },
-        {
-          "name": "public-network-report-ssid",
-          "status": "unavailable"
-        },
-        {
-          "name": "python_suite",
-          "status": "passed"
-        },
-        {
-          "name": "python_suite_109",
-          "status": "passed"
-        },
-        {
-          "name": "python_suite_116",
-          "status": "passed"
-        },
-        {
           "name": "registered_app_fullscreen_wifi",
-          "status": "passed"
-        },
-        {
-          "name": "registered_app_permissions",
-          "status": "unavailable"
-        },
-        {
-          "name": "registered_helper_access",
-          "status": "partial"
-        },
-        {
-          "name": "requested-custom-top-three",
-          "status": "unavailable"
-        },
-        {
-          "name": "signed-wifi-helper-permission-off",
-          "status": "passed"
-        },
-        {
-          "name": "signed_native_compile",
-          "status": "passed"
-        },
-        {
-          "name": "wifi-desktop-regressions-54",
           "status": "passed"
         }
       ],
@@ -363,361 +263,74 @@
         "events": [
           {
             "event_id": "event:2",
-            "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
+            "intent_id": "intent:wifi-final-20261018",
             "kind": "created",
             "sequence": 2
           },
           {
             "event_id": "event:3",
-            "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
+            "intent_id": "intent:wifi-final-20261018",
             "kind": "refined",
             "sequence": 3
           },
           {
-            "detail": "trajectory:branch_01M58C4V19X11MCFQMX6SWKW4V",
+            "detail": "trajectory:wifi-final-20261018",
             "event_id": "event:4",
-            "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
+            "intent_id": "intent:wifi-final-20261018",
             "kind": "trajectory_step_recorded",
             "sequence": 4
           },
           {
-            "detail": "trajectory:branch_01M58C4V19X11MCFQMX6SWKW4V",
+            "detail": "trajectory:wifi-final-20261018",
             "event_id": "event:5",
-            "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
+            "intent_id": "intent:wifi-final-20261018",
             "kind": "trajectory_step_recorded",
             "sequence": 5
-          },
-          {
-            "detail": "trajectory:branch_01M58C4V19X11MCFQMX6SWKW4V",
-            "event_id": "event:6",
-            "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
-            "kind": "trajectory_step_recorded",
-            "sequence": 6
-          },
-          {
-            "detail": "trajectory:branch_01M58C4V19X11MCFQMX6SWKW4V",
-            "event_id": "event:7",
-            "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
-            "kind": "trajectory_step_recorded",
-            "sequence": 7
-          },
-          {
-            "detail": "trajectory:branch_01M58C4V19X11MCFQMX6SWKW4V",
-            "event_id": "event:8",
-            "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
-            "kind": "trajectory_step_recorded",
-            "sequence": 8
-          },
-          {
-            "detail": "trajectory:branch_01M58C4V19X11MCFQMX6SWKW4V",
-            "event_id": "event:9",
-            "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
-            "kind": "trajectory_step_recorded",
-            "sequence": 9
-          },
-          {
-            "detail": "trajectory:branch_01M58C4V19X11MCFQMX6SWKW4V",
-            "event_id": "event:10",
-            "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
-            "kind": "trajectory_step_recorded",
-            "sequence": 10
-          },
-          {
-            "detail": "trajectory:branch_01M58C4V19X11MCFQMX6SWKW4V",
-            "event_id": "event:11",
-            "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
-            "kind": "trajectory_step_recorded",
-            "sequence": 11
-          },
-          {
-            "detail": "trajectory:branch_01M58C4V19X11MCFQMX6SWKW4V",
-            "event_id": "event:12",
-            "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
-            "kind": "trajectory_step_recorded",
-            "sequence": 12
-          },
-          {
-            "detail": "trajectory:branch_01M58C4V19X11MCFQMX6SWKW4V",
-            "event_id": "event:13",
-            "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
-            "kind": "trajectory_step_recorded",
-            "sequence": 13
-          },
-          {
-            "detail": "trajectory:branch_01M58C4V19X11MCFQMX6SWKW4V",
-            "event_id": "event:14",
-            "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
-            "kind": "trajectory_step_recorded",
-            "sequence": 14
-          },
-          {
-            "detail": "trajectory:branch_01M58C4V19X11MCFQMX6SWKW4V",
-            "event_id": "event:15",
-            "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
-            "kind": "trajectory_step_recorded",
-            "sequence": 15
           }
         ],
         "knowledge_candidates": [],
-        "next_sequence": 15,
+        "next_sequence": 5,
         "schema_version": "1.0.0",
         "trajectories": {
-          "branch_01M58C4V19X11MCFQMX6SWKW4V": {
+          "wifi-final-20261018": {
             "evidence_only": true,
-            "id": "branch_01M58C4V19X11MCFQMX6SWKW4V",
-            "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
+            "id": "wifi-final-20261018",
+            "intent_id": "intent:wifi-final-20261018",
             "steps": [
               {
-                "action": "investigation",
+                "action": "trajectory.record",
                 "custody_event_id": "event:4",
                 "observations": [
-                  ".config/sketchybar/plugins/controls.py",
-                  "scripts/app-menu.m",
-                  "/private/tmp/dotfiles-wifi-ax-item.txt",
-                  "/private/tmp/dotfiles-wifi-ax-panel.txt",
-                  "/private/tmp/dotfiles-wifi-network-state.txt"
+                  "120 host regression cases pass; private actual registered-app proof verifies own AX/capture approvals, Location off, fullscreen hover 1.267s, connected plus three real alternatives, rates and rescan, bar-hide survival, expansion persisting then collapsing and pointer exit. Existing cover pixel and Bluetooth header proofs retained in committed prior run. Network/auth changes untested."
                 ],
                 "proof_refs": [
-                  "native-wifi-closed-item-identity",
-                  "native-wifi-open-panel-identity",
-                  "public-network-report-ssid"
-                ],
-                "scope": [
-                  "root"
-                ],
-                "sequence": 4,
-                "validation_findings": [
-                  "Location remains off. Official CoreWLAN names require Location permission. Existing Accessibility can read names in an open native Wi-Fi panel; no named UI remains after close. A hidden custom-pane snapshot would require opening a second UI, violating no flicker. Native direct hover can show names but Apple owns its theme/order; user choice requested before substituting that behavior."
-                ]
-              },
-              {
-                "action": "investigation",
-                "custody_event_id": "event:5",
-                "observations": [],
-                "proof_refs": [],
-                "scope": [
-                  "root"
-                ],
-                "sequence": 5,
-                "validation_findings": [
-                  "User reaffirmed exact custom hover and authorizes lifting native picker contents. Earlier native-hover choice is superseded. Investigate a live Accessibility bridge under existing approval; Location remains off."
-                ]
-              },
-              {
-                "action": "verification",
-                "custody_event_id": "event:6",
-                "observations": [
-                  "scripts/wifi-access.m",
-                  "scripts/wifi-access-info.plist",
-                  ".config/sketchybar/plugins/wifi.py",
-                  ".config/sketchybar/plugins/controls.py",
-                  "scripts/desktop.py",
-                  "scripts/manage.py",
-                  "scripts/check.py",
-                  "tests/test_wifi.py",
-                  "tests/test_desktop.py",
-                  "/private/tmp/dotfiles-ssid-direct-host-check.txt",
-                  "/private/tmp/dotfiles-wifi-bridge-proof.json",
-                  "scripts/wifi-access.m",
-                  "tests/test_wifi.py"
-                ],
-                "proof_refs": [
-                  "host-118-tests-and-native-selftests",
-                  "native-new-network-script-syntax",
-                  "signed-wifi-helper-permission-off",
-                  "named-live-scan",
-                  "offscreen-native-ui-no-flicker"
-                ],
-                "scope": [
-                  "root"
-                ],
-                "sequence": 6,
-                "validation_findings": [
-                  "Rejected native UI bridge after compositor frames remained visible. Separate Wi-Fi helper is signed and installed; actual LaunchServices status reports notDetermined and services=false. No Location permission request or global setting change has occurred. Desktop Controls remains approved build423089378d446f54. User has been asked for explicit privacy opt-in; actual named scan/fullscreen proof and publication remain pending."
-                ]
-              },
-              {
-                "action": "Recover rejected Wi-Fi UX",
-                "custody_event_id": "event:7",
-                "observations": [
-                  "/private/tmp/dotfiles-wifi-permission-off-proof.json"
-                ],
-                "proof_refs": [
-                  "permission-gated-hover"
-                ],
-                "scope": [
-                  "root"
-                ],
-                "sequence": 7,
-                "validation_findings": [
-                  "The requested custom top-three list has not been achieved. Direct native picker hover is a functional fallback, not equivalent visual completion."
-                ]
-              },
-              {
-                "action": "Native Wi-Fi recovery installed; custom list incomplete",
-                "custody_event_id": "event:8",
-                "observations": [
-                  ".config/sketchybar/plugins/controls.py",
-                  "tests/test_desktop.py",
-                  "README.md",
-                  ".decapod/config.toml",
-                  "/private/tmp/dotfiles-wifi-hover-proof.json",
-                  "/Users/arx/.local/state/dotfiles/backups/wifi-recovery-e4l7byfm/manifest.json",
-                  "/private/tmp/dotfiles-wifi-ui-backup-a5uii2e9"
-                ],
-                "proof_refs": [
-                  "direct-native-fullscreen-hover",
-                  "wifi-desktop-regressions-54",
-                  "desktop-config-doctor",
-                  "requested-custom-top-three",
-                  "full-exact-candidate-validation"
-                ],
-                "scope": [
-                  "root"
-                ],
-                "sequence": 8,
-                "validation_findings": [
-                  "Complete reviewed source inventory differs only in the reviewed controls implementation and removal of the rejected helper; command contract remains unchanged. Exact candidate validation and CI have not run, so no PR, merge or publication readiness is claimed."
-                ]
-              },
-              {
-                "action": "verification",
-                "custody_event_id": "event:9",
-                "observations": [
-                  "scripts/wifi-pane.m",
-                  "scripts/control-panel.m",
-                  "scripts/desktop.py",
-                  "scripts/manage.py",
-                  ".config/sketchybar/plugins/controls.py",
-                  ".config/sketchybar/plugins/wifi_pane.py",
-                  "tests/test_wifi_pane.py",
-                  "108 Python tests pass; native signed helper compile -Wall -Wextra -Werror passes; live AX Bluetooth probe finds one header button, zero duplicate power rows, five device buttons. Existing DesktopControls-423089378d446f54 runtime link unchanged. Covered prototype rendered video has 39 identical covered frames and 22 uncovered positive-control frames; production LaunchServices Wi-Fi path awaits Screen Capture approval."
-                ],
-                "proof_refs": [
-                  "python_suite",
-                  "native_compile",
-                  "bluetooth_live_header",
-                  "registered_helper_access"
-                ],
-                "scope": [
-                  "root"
-                ],
-                "sequence": 9,
-                "validation_findings": []
-              },
-              {
-                "action": "trajectory.record",
-                "custody_event_id": "event:10",
-                "observations": [
-                  "/private/tmp/dotfiles-bluetooth-header-probe reports header_buttons=1 duplicate_power_rows=0 device_buttons=5; Python full suite 108 tests passes; existing Desktop Controls executable symlink unchanged."
-                ],
-                "proof_refs": [
-                  "bluetooth_header_installed"
-                ],
-                "scope": [
-                  "root"
-                ],
-                "sequence": 10,
-                "validation_findings": []
-              },
-              {
-                "action": "verification",
-                "custody_event_id": "event:11",
-                "observations": [
-                  ".config/sketchybar/plugins/wifi_pane.py",
-                  ".config/sketchybar/plugins/controls.py",
-                  "tests/test_wifi_pane.py",
-                  "Wi-Fi projection now matches Bluetooth flat rows: selected network first, three unselected native networks total, native options last, Connected/Not connected and Connect/Disconnect metadata. New regression covers network order across native headings and exact row renderer payload. All 109 Python tests pass; GUI activation remains unavailable because Screen Capture=false for registered Desktop Panels. No Location request, native app rebuild, SSID fabrication or final Wi-Fi acceptance claim."
-                ],
-                "proof_refs": [
-                  "bluetooth_style_wifi_rows",
-                  "python_suite_109"
-                ],
-                "scope": [
-                  "root"
-                ],
-                "sequence": 11,
-                "validation_findings": []
-              },
-              {
-                "action": "verification",
-                "custody_event_id": "event:12",
-                "observations": [
-                  ".config/sketchybar/plugins/controls.py",
-                  ".config/sketchybar/plugins/wifi_pane.py",
-                  "scripts/desktop.py",
-                  "scripts/wifi-pane.m",
-                  "scripts/wifi-pane-info.plist",
-                  "tests/test_wifi_pane.py",
-                  "tests/test_desktop.py",
-                  "Private activation proof reproduces native_panel_busy from an existing native picker, then verifies fixed transition, real selected SSID, actual interface rates, compositor presence, bar-autohide survival and pointer-exit closure. Prior fullscreen proof passed; latest required-fullscreen signed-build proof recorded privately. App permissions before and after remain false; existing approved Desktop Controls binary unchanged. CLI now reads actual access JSON and reports nonzero until all requirements hold; native request stages one permission per call. No TCC reset or privacy grant occurred."
-                ],
-                "proof_refs": [
-                  "python_suite_116",
-                  "signed_native_compile",
-                  "diagnostic_host_real_wifi_handoff",
-                  "diagnostic_host_fullscreen_hover",
-                  "registered_app_permissions"
-                ],
-                "scope": [
-                  "root"
-                ],
-                "sequence": 12,
-                "validation_findings": []
-              },
-              {
-                "action": "trajectory.record",
-                "custody_event_id": "event:13",
-                "observations": [
-                  "120 unittest cases passed on current source; signed DesktopPanels-b56f1b64415bbcd6 installed with stable requirement; user explicitly confirms both approvals and improved pane. Location unchanged/off. Final production expansion proof running."
-                ],
-                "proof_refs": [
-                  "portable_unit_suite"
-                ],
-                "scope": [
-                  "root"
-                ],
-                "sequence": 13,
-                "validation_findings": []
-              },
-              {
-                "action": "trajectory.record",
-                "custody_event_id": "event:14",
-                "observations": [
-                  ".config/sketchybar/plugins/wifi_pane.py",
-                  "scripts/wifi-pane.m",
-                  "scripts/control-panel.m",
-                  ".config/sketchybar/plugins/controls.py",
-                  "Private /private/tmp/dotfiles-wifi-production-proof.json: actual registered app AX/capture true, Location false, fullscreen hover 1.267s, 1 connected plus 3 alternatives, rates/rescan, bar-hide survival, expand/persist/collapse and pointer-exit all passed. Prior rushed callback and interrupted-rescan attempts retained. No network or power change. Authentication untested."
-                ],
-                "proof_refs": [
+                  "host_unit_suite",
                   "registered_app_fullscreen_wifi",
                   "native_disclosure_persistence",
-                  "native_disclosure_collapse",
-                  "pointer_exit"
+                  "native_disclosure_collapse"
                 ],
                 "scope": [
-                  "root"
+                  "Wi-Fi panes and required proof"
                 ],
-                "sequence": 14,
+                "sequence": 4,
                 "validation_findings": []
               },
               {
                 "action": "validation",
                 "command": "decapod validate",
-                "custody_event_id": "event:15",
+                "custody_event_id": "event:5",
                 "observations": [
                   ".decapod/governance.json",
                   ".decapod/governance.json",
-                  "validation epoch ve_231cd38f37c37e02 completed with zero failures"
+                  "validation epoch ve_27644e4046ec0095 completed with zero failures"
                 ],
                 "proof_refs": [
                   "decapod validate"
                 ],
                 "scope": [
-                  "root"
+                  "Wi-Fi panes and required proof"
                 ],
-                "sequence": 15,
+                "sequence": 5,
                 "validation_findings": []
               }
             ]
@@ -727,82 +340,27 @@
       "declared_commands": [
         "decapod validate"
       ],
-      "destination": "pull request",
       "evidence": [
-        "/Users/arx/.local/state/dotfiles/backups/wifi-recovery-e4l7byfm/manifest.json",
-        "/private/tmp/dotfiles-bluetooth-header-probe reports header_buttons=1 duplicate_power_rows=0 device_buttons=5; Python full suite 108 tests passes; existing Desktop Controls executable symlink unchanged.",
-        "/private/tmp/dotfiles-ssid-direct-host-check.txt",
-        "/private/tmp/dotfiles-wifi-ax-item.txt",
-        "/private/tmp/dotfiles-wifi-ax-panel.txt",
-        "/private/tmp/dotfiles-wifi-bridge-proof.json",
-        "/private/tmp/dotfiles-wifi-hover-proof.json",
-        "/private/tmp/dotfiles-wifi-network-state.txt",
-        "/private/tmp/dotfiles-wifi-permission-off-proof.json",
-        "/private/tmp/dotfiles-wifi-ui-backup-a5uii2e9",
-        "108 Python tests pass; native signed helper compile -Wall -Wextra -Werror passes; live AX Bluetooth probe finds one header button, zero duplicate power rows, five device buttons. Existing DesktopControls-423089378d446f54 runtime link unchanged. Covered prototype rendered video has 39 identical covered frames and 22 uncovered positive-control frames; production LaunchServices Wi-Fi path awaits Screen Capture approval.",
-        "120 unittest cases passed on current source; signed DesktopPanels-b56f1b64415bbcd6 installed with stable requirement; user explicitly confirms both approvals and improved pane. Location unchanged/off. Final production expansion proof running.",
-        "Private /private/tmp/dotfiles-wifi-production-proof.json: actual registered app AX/capture true, Location false, fullscreen hover 1.267s, 1 connected plus 3 alternatives, rates/rescan, bar-hide survival, expand/persist/collapse and pointer-exit all passed. Prior rushed callback and interrupted-rescan attempts retained. No network or power change. Authentication untested.",
-        "Private activation proof reproduces native_panel_busy from an existing native picker, then verifies fixed transition, real selected SSID, actual interface rates, compositor presence, bar-autohide survival and pointer-exit closure. Prior fullscreen proof passed; latest required-fullscreen signed-build proof recorded privately. App permissions before and after remain false; existing approved Desktop Controls binary unchanged. CLI now reads actual access JSON and reports nonzero until all requirements hold; native request stages one permission per call. No TCC reset or privacy grant occurred.",
-        "Wi-Fi projection now matches Bluetooth flat rows: selected network first, three unselected native networks total, native options last, Connected/Not connected and Connect/Disconnect metadata. New regression covers network order across native headings and exact row renderer payload. All 109 Python tests pass; GUI activation remains unavailable because Screen Capture=false for registered Desktop Panels. No Location request, native app rebuild, SSID fabrication or final Wi-Fi acceptance claim.",
-        "scripts/wifi-access.m",
-        "tests/test_wifi.py",
-        "validation epoch ve_231cd38f37c37e02 completed with zero failures"
+        "120 host regression cases pass; private actual registered-app proof verifies own AX/capture approvals, Location off, fullscreen hover 1.267s, connected plus three real alternatives, rates and rescan, bar-hide survival, expansion persisting then collapsing and pointer exit. Existing cover pixel and Bluetooth header proofs retained in committed prior run. Network/auth changes untested.",
+        "validation epoch ve_27644e4046ec0095 completed with zero failures"
       ],
-      "inspected_files": [
-        ".config/sketchybar/plugins/controls.py",
-        ".config/sketchybar/plugins/wifi.py",
-        "scripts/app-menu.m",
-        "scripts/check.py",
-        "scripts/desktop.py",
-        "scripts/manage.py",
-        "scripts/wifi-access-info.plist",
-        "scripts/wifi-access.m",
-        "tests/test_desktop.py",
-        "tests/test_wifi.py"
-      ],
-      "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
+      "inspected_files": [],
+      "intent_id": "intent:wifi-final-20261018",
       "modified_files": [
-        ".config/sketchybar/plugins/controls.py",
-        ".config/sketchybar/plugins/wifi_pane.py",
-        ".decapod/config.toml",
-        ".decapod/governance.json",
-        "README.md",
-        "scripts/control-panel.m",
-        "scripts/desktop.py",
-        "scripts/manage.py",
-        "scripts/wifi-pane-info.plist",
-        "scripts/wifi-pane.m",
-        "tests/test_desktop.py",
-        "tests/test_wifi_pane.py"
+        ".decapod/governance.json"
       ],
       "next_transitions": [
-        "After explicit owner opt-in, stage OS consent and verify actual named hover; then exact-candidate validation, platform CI and merge. Preserve current implementation otherwise.",
-        "After manual Screen Recording approval, verify real hover, native actions, rate updates, no visible flash, fullscreen and lifecycle; then finish exact-candidate validation before any PR/merge.",
-        "Checkpoint local recovery; report remaining visual/list limitation candidly. Preserve Location off and existing native consent.",
-        "Finish checkpoint. Only after concrete verified fixes, stage one required OS approval at a time and read actual registered-app status; normal mouse-hover and native-action proof remain required before full exact-candidate validation, PR or merge.",
-        "Finish live actions and expansion persistence, specs, candidate validation and authorized merge.",
-        "Probe native panel lifetime and geometry capabilities, then implement and test viable bridge.",
-        "Refine plan and declare falsifiable checks",
-        "Remove setup wall and unused consent helper; verify real native picker on hover before claiming functional improvement.",
-        "Review final source contract and living specs, checkpoint candidate, full validation.",
-        "Wait for UI choice; then implement and verify the authorized behavior without Location requests.",
         "publish"
       ],
       "repo_scope": [
-        "root"
+        "Wi-Fi panes and required proof"
       ],
-      "run_id": "branch_01M58C4V19X11MCFQMX6SWKW4V",
+      "run_id": "wifi-final-20261018",
       "schema_version": "1.1.0",
       "shortcut_risk_signals": [],
       "task_id": "bend_01m58c43xxb21mve",
       "tool_calls": [],
-      "unresolved_assumptions": [
-        "Complete reviewed source inventory differs only in the reviewed controls implementation and removal of the rejected helper; command contract remains unchanged. Exact candidate validation and CI have not run, so no PR, merge or publication readiness is claimed.",
-        "Location remains off. Official CoreWLAN names require Location permission. Existing Accessibility can read names in an open native Wi-Fi panel; no named UI remains after close. A hidden custom-pane snapshot would require opening a second UI, violating no flicker. Native direct hover can show names but Apple owns its theme/order; user choice requested before substituting that behavior.",
-        "Rejected native UI bridge after compositor frames remained visible. Separate Wi-Fi helper is signed and installed; actual LaunchServices status reports notDetermined and services=false. No Location permission request or global setting change has occurred. Desktop Controls remains approved build423089378d446f54. User has been asked for explicit privacy opt-in; actual named scan/fullscreen proof and publication remain pending.",
-        "The requested custom top-three list has not been achieved. Direct native picker hover is a functional fallback, not equivalent visual completion.",
-        "User reaffirmed exact custom hover and authorizes lifting native picker contents. Earlier native-hover choice is superseded. Investigate a live Accessibility bridge under existing approval; Location remains off."
-      ]
+      "unresolved_assumptions": []
     },
     "validation": {
       "ci_prediction": {
@@ -815,37 +373,37 @@
       },
       "decapod_release": "0.119.1",
       "drift_findings": [],
-      "elapsed_ms": 3091,
-      "epoch_ref": "ve_231cd38f37c37e02",
+      "elapsed_ms": 2586,
+      "epoch_ref": "ve_27644e4046ec0095",
       "fail_count": 0,
       "failures": [],
       "gate_timings": [
         {
-          "elapsed_ms": 1093,
+          "elapsed_ms": 882,
           "name": "validate_project_specs_docs"
         },
         {
-          "elapsed_ms": 519,
+          "elapsed_ms": 436,
           "name": "validate_stale_workspaces"
         },
         {
-          "elapsed_ms": 345,
-          "name": "validate_machine_contract"
-        },
-        {
-          "elapsed_ms": 332,
+          "elapsed_ms": 324,
           "name": "validate_markdown_primitives_roundtrip_gate"
         },
         {
-          "elapsed_ms": 181,
+          "elapsed_ms": 208,
+          "name": "validate_machine_contract"
+        },
+        {
+          "elapsed_ms": 148,
           "name": "validate_git_workspace_context"
         },
         {
-          "elapsed_ms": 103,
+          "elapsed_ms": 98,
           "name": "validate_obligations"
         },
         {
-          "elapsed_ms": 59,
+          "elapsed_ms": 58,
           "name": "validate_legacy_jsonl_retired"
         },
         {
@@ -853,16 +411,12 @@
           "name": "validate_archive_integrity"
         },
         {
-          "elapsed_ms": 21,
+          "elapsed_ms": 19,
           "name": "validate_repomap_determinism"
         },
         {
-          "elapsed_ms": 18,
-          "name": "validate_git_protected_branch"
-        },
-        {
-          "elapsed_ms": 17,
-          "name": "validate_git_push_pr_gate"
+          "elapsed_ms": 15,
+          "name": "validate_control_plane_contract"
         },
         {
           "elapsed_ms": 15,
@@ -874,27 +428,31 @@
         },
         {
           "elapsed_ms": 13,
-          "name": "validate_control_plane_contract"
+          "name": "validate_git_push_pr_gate"
         },
         {
-          "elapsed_ms": 10,
+          "elapsed_ms": 12,
+          "name": "validate_git_protected_branch"
+        },
+        {
+          "elapsed_ms": 12,
           "name": "validate_no_legacy_namespaces"
-        },
-        {
-          "elapsed_ms": 10,
-          "name": "validate_gatekeeper_gate"
         },
         {
           "elapsed_ms": 10,
           "name": "validate_lineage_hard_gate"
         },
         {
-          "elapsed_ms": 3,
-          "name": "validate_generated_artifact_whitelist"
+          "elapsed_ms": 6,
+          "name": "validate_gatekeeper_gate"
         },
         {
-          "elapsed_ms": 3,
-          "name": "validate_watcher_audit"
+          "elapsed_ms": 4,
+          "name": "validate_knowledge_integrity"
+        },
+        {
+          "elapsed_ms": 4,
+          "name": "validate_generated_artifact_whitelist"
         },
         {
           "elapsed_ms": 3,
@@ -902,15 +460,19 @@
         },
         {
           "elapsed_ms": 3,
-          "name": "validate_plan_governed_execution_gate"
-        },
-        {
-          "elapsed_ms": 3,
-          "name": "validate_knowledge_integrity"
+          "name": "validate_watcher_audit"
         },
         {
           "elapsed_ms": 3,
           "name": "validate_knowledge_promotions_if_present"
+        },
+        {
+          "elapsed_ms": 2,
+          "name": "validate_entrypoint_invariants"
+        },
+        {
+          "elapsed_ms": 2,
+          "name": "validate_plan_governed_execution_gate"
         },
         {
           "elapsed_ms": 2,
@@ -921,36 +483,8 @@
           "name": "validate_policy_integrity"
         },
         {
-          "elapsed_ms": 2,
-          "name": "validate_entrypoint_invariants"
-        },
-        {
           "elapsed_ms": 1,
           "name": "validate_trajectory_artifacts_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_jev_history_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_override_authority"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_canon_mutation"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_database_schema_versions"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_research_claims_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_watcher_purity"
         },
         {
           "elapsed_ms": 1,
@@ -958,15 +492,39 @@
         },
         {
           "elapsed_ms": 1,
-          "name": "validate_recursive_improvement_passes_if_present"
-        },
-        {
-          "elapsed_ms": 1,
           "name": "validate_health_purity"
         },
         {
           "elapsed_ms": 1,
+          "name": "validate_canon_mutation"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_research_claims_if_present"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_override_authority"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_watcher_purity"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_jev_history_if_present"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_recursive_improvement_passes_if_present"
+        },
+        {
+          "elapsed_ms": 1,
           "name": "validate_risk_map_violations"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_database_schema_versions"
         },
         {
           "elapsed_ms": 0,
@@ -990,19 +548,11 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_context_capsule_policy_contract"
-        },
-        {
-          "elapsed_ms": 0,
           "name": "validate_docs_templates_bucket"
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_repo_map"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_root_dockerfile_seed_detection"
+          "name": "validate_context_capsule_policy_contract"
         },
         {
           "elapsed_ms": 0,
@@ -1010,15 +560,7 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_state_commit_gate"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_interface_contract_bootstrap"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_embedded_self_contained"
+          "name": "validate_repo_map"
         },
         {
           "elapsed_ms": 0,
@@ -1026,7 +568,23 @@
         },
         {
           "elapsed_ms": 0,
+          "name": "validate_interface_contract_bootstrap"
+        },
+        {
+          "elapsed_ms": 0,
           "name": "validate_context_capsules_if_present"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_embedded_self_contained"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_state_commit_gate"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_root_dockerfile_seed_detection"
         },
         {
           "elapsed_ms": 0,
@@ -1034,29 +592,29 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_coplayer_policy_tightening"
+          "name": "validate_risk_map"
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_risk_map"
+          "name": "validate_coplayer_policy_tightening"
         },
         {
           "elapsed_ms": 0,
           "name": "validate_tooling_gate"
         }
       ],
-      "git_revision": "84c3aa42d7e45d650c8ec1663b3942f0eb31194d",
+      "git_revision": "50090dadb4f2dafb6ca62672672fe5b82fde8850",
       "kind": "validation_receipt",
       "parallelism": 1,
-      "pass_count": 187,
+      "pass_count": 188,
       "prediction_uses_warnings": true,
-      "receipt_hash": "sha256:d3fede55e9263ecb2c77fbdc337db63afe732efc0a69e83ad1a2609b00615686",
+      "receipt_hash": "sha256:22a832f15efed36288ba37d28af34939c9b04a1d33518ce43cc31a8cf6fbe038",
       "repo_signal_fingerprint": "53759c6499c5cbd224f07d2c14267eb91880ee3a875c5a979778d926055448cd",
       "schema_version": "1.0.0",
       "status": "ok",
       "temporary_artifacts_cleaned": 0,
-      "trajectory_artifact_hash": "sha256:ddfbe204f56f0693f7c3af8414fe5e8a4cfc649e92c83a03e9683f5a57b58668",
-      "trajectory_run_id": "branch_01M58C4V19X11MCFQMX6SWKW4V",
+      "trajectory_artifact_hash": "sha256:60e5c24d0e2c7c6a93f7bb3d46296f8387a59ebc137b1a6d6a9ace593666514d",
+      "trajectory_run_id": "wifi-final-20261018",
       "warn_count": 4,
       "warnings": [
         "Risk map missing (run `decapod riskmap init`)",
