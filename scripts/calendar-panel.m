@@ -1,6 +1,7 @@
 #import "calendar-panel.h"
 #import "control-panel.h"
 #import "app-menu.h"
+#import "panel-style.h"
 #import <EventKit/EventKit.h>
 #import <QuartzCore/QuartzCore.h>
 #include <sys/stat.h>
@@ -308,7 +309,7 @@ void DFCalendarShow(void) {
     CGFloat x=MAX(NSMinX(frame)+12,MIN(pointer.x-296,NSMaxX(frame)-352));
     [calendarPanel setFrameOrigin:NSMakePoint(x,MAX(NSMinY(frame)+12,top-536))];
     calendarAnchor=NSMakeRect(pointer.x-50,top,100,NSMaxY(frame)-top);
-    calendarAway=0; [calendarView refresh]; [calendarPanel orderFrontRegardless];
+    calendarAway=0; [calendarView refresh]; DFPanelPrepare(calendarPanel);DFPanelPresent(calendarPanel);
 }
 void DFCalendarHide(void) { [calendarPanel orderOut:nil]; calendarAway=0; }
 BOOL DFCalendarContainsPointer(NSPoint pointer) {

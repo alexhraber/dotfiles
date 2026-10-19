@@ -58,6 +58,7 @@ bindkey -e
 # ── Fuzzy finding ────────────────────────────────────────────────────────────
 export FZF_DEFAULT_OPTS='--height=40% --layout=reverse --border=rounded --info=inline --prompt="❯ " --pointer="▶" --marker="┃"'
 export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS --color=bg+:#3b4261,fg:#c0caf5,fg+:#c0caf5,hl:#7dcfff,hl+:#7dcfff,border:#565f89,prompt:#7aa2f7,pointer:#bb9af7,marker:#9ece6a,spinner:#e0af68,header:#565f89"
+[[ -r ${XDG_CONFIG_HOME:-$HOME/.config}/zsh/theme.zsh ]] && source "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/theme.zsh"
 if (( $+commands[bat] )); then
   export FZF_CTRL_T_OPTS="--preview 'bat --color=always --style=numbers --line-range=:200 {}' --preview-window=right:55%:wrap --bind='ctrl-/:toggle-preview'"
 fi

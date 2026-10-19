@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
-  <key>CFBundleIdentifier</key><string>local.dotfiles.desktop-edge</string>
+  <key>CFBundleIdentifier</key><string>local.dotfiles.desktop-controls</string>
   <key>CFBundleName</key><string>Desktop Controls</string>
   <key>CFBundleDisplayName</key><string>Desktop Controls</string>
   <key>CFBundleExecutable</key><string>desktop-edge</string>

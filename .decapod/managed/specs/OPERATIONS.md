@@ -60,7 +60,25 @@ Opening another pane closes Wi-Fi, while bar autohide retains it.
 Rollback is the scoped installer backup plus the preceding committed branch
 state; do not rebuild Desktop Controls or reset its working OS permissions.
 Only SketchyBar and local.dotfiles.desktop-edge start with this profile;
-Borders stays stopped and AeroSpace starts disabled. Models stay manual.
+Borders stays stopped; AeroSpace is disabled, quit and not a dependency. Models stay manual.
+
+For main-app updates, controls-setup stages a registered bundle and
+controls-permissions requests that build's own AX, then Calendar permission.
+An active apply refuses a not-yet-approved replacement before changing live
+state. Available local development signing identity stays in Keychain; a distinct
+bundle ID separates this signed migration from legacy ad-hoc approvals. Runtime
+updates save their previous helper link, LaunchAgent, manifest and appearance
+under private desktop/updates/. On owner request, obsolete cached builds may be
+archived; removing a legacy consent record means that old binary would require
+approval again if restored. Never reset the current app's records for an update.
+Desktop Panels keeps its existing identity for Wi-Fi and window-only previews.
+
+The selected palette generates backed-up application files and a private contour
+wallpaper. Ghostty's Reload Configuration applies it to existing terminals;
+Neovim reloads on FocusGained and a new shell loads prompt/fzf colors. Only an
+already-running tmux server receives theme changes. Launcher and previews are
+short-lived auxiliary modes, not login services. The original wallpaper archive
+remains the desktop undo baseline; installer restore is a separate transaction.
 
 desktop undo restores the native menu first, then original typed Dock/menu
 defaults, matching connected displays' wallpaper/options and service state.
@@ -103,7 +121,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `8f0447a89547abc97705e14f3aad05122eaa25292f5da8f670f31805a6a63068`
-- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (7 files)
+- Repository signal fingerprint: `2eaddf2e356ec39c8e3e614a58c633c545357dcf80067322db990de53762f62e`
+- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (8 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

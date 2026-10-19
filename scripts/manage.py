@@ -3,6 +3,7 @@
 import argparse
 from datetime import datetime
 import hashlib
+import importlib.util
 import json
 import os
 from pathlib import Path
@@ -11,6 +12,7 @@ import subprocess
 import sys
 import tempfile
 import macos_preferences
+import workstation_theme
 
 REPO = Path(__file__).resolve().parents[1]
 GROUPS = ('terminal', 'git', 'codex', 'workspace', 'dev', 'reverse', 'apple', 'infra', 'ai', 'apps', 'desktop', 'macos')
@@ -61,6 +63,12 @@ def plan(groups, args):
     home, config, codex = homes()
     ops = []
     if 'terminal' in groups:
+        spec = importlib.util.spec_from_file_location(
+            'installed_appearance', REPO/'.config/sketchybar/plugins/appearance.py')
+        appearance = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(appearance)
+        for rel, content in workstation_theme.render(appearance.resolve(), REPO).items():
+            ops.append(operation(config / rel, content=content))
         for rel in ('.zprofile', '.zshrc'):
             ops.append(operation(home / rel, rel))
         ops.append(operation(home / '.tmux.conf', '.config/tmux/tmux.conf'))
@@ -354,8 +362,8 @@ def main():
         import local_ai
         return local_ai.main(args.manifest, args.dry_run)
     if args.command == 'desktop':
-        if args.manifest not in ('apply', 'undo', 'status', 'permissions', 'theme', 'panels-setup', 'panels-permissions'):
-            parser.error('desktop requires apply, undo, status, permissions, theme, panels-setup, or panels-permissions')
+        if args.manifest not in ('apply', 'undo', 'status', 'permissions', 'theme', 'panels-setup', 'panels-permissions', 'controls-setup', 'controls-permissions', 'launcher'):
+            parser.error('desktop requires apply, undo, status, permissions, theme, panels-setup, panels-permissions, controls-setup, controls-permissions, or launcher')
         if args.dry_run:
             parser.error('Use install --groups desktop --dry-run to preview configuration')
         import desktop

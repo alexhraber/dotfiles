@@ -43,13 +43,28 @@ they do not grant access to host credentials or start machines at login.
 
 ## Desktop and inference boundaries
 
+Workspace previews keep actual AX references, window titles and low-resolution
+window snapshots only in RAM. Only visible cards are captured, one at a time;
+offscreen images are discarded, and dismissal generations reject late results.
+Window-only ScreenCaptureKit filters avoid unrelated screen content. Clicks
+revalidate process/window identity, unminimize if needed and raise the chosen
+window; hover never executes an app action. Launcher searches installed .app
+bundles only, bounded and deduplicated by bundle identity, with argv-free
+NSWorkspace launches. No document index, cloud lookup or global shortcut is added.
+Private IPC stores only requests/counts/geometry and fixed error codes, using
+owner/mode/symlink/type/age checks. Screen capture and Accessibility remain OS
+permissions; no Location framework or authorization request is added. Generated
+application palette files and wallpaper caches contain colors, not identities.
+
 Calendar authentication belongs to macOS Internet Accounts. EventKit requires
 Full Calendar Access on macOS 14+, requested only by explicit user action; the
 helper uses read APIs and offers no event mutations. Event titles/dates/source
 objects stay in memory. Only selected calendar IDs are saved in private state.
 Generic native bundles contain permission purpose strings, never a personal
-team, certificate or account. They are ad-hoc signed locally; binary updates
-may require fresh OS consent. Dotfiles never writes TCC databases or bypasses
+team, certificate or account. Main bundles use a locally selected development
+identity when available, with an ad-hoc fallback for other hosts. The signed
+migration uses a distinct bundle identifier; exact-app permission checks protect
+the active helper until approved. Auxiliary bundles retain their existing identity. Dotfiles never writes TCC databases or bypasses
 OS permission prompts.
 
 The click-open current-app pane and its File/Edit/View/etc. hover submenus
@@ -177,7 +192,7 @@ loads a model. Ollama remains manually started and is not enabled at login.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `8f0447a89547abc97705e14f3aad05122eaa25292f5da8f670f31805a6a63068`
-- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (7 files)
+- Repository signal fingerprint: `2eaddf2e356ec39c8e3e614a58c633c545357dcf80067322db990de53762f62e`
+- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (8 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

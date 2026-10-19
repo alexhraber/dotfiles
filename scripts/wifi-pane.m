@@ -3,6 +3,8 @@
 #import <ScreenCaptureKit/ScreenCaptureKit.h>
 #import <QuartzCore/QuartzCore.h>
 #import "control-panel.h"
+#import "workspace-panels.h"
+#import "panel-request.h"
 #include <fcntl.h>
 #include <sys/file.h>
 #include <unistd.h>
@@ -134,7 +136,7 @@ static NSDictionary *readJSON(NSString *path) {
     id result=data.length<131072 ? [NSJSONSerialization JSONObjectWithData:data ?: NSData.data options:0 error:nil] : nil;
     return [result isKindOfClass:NSDictionary.class] ? result : @{};
 }
-static int runPanelUI(void) {
+static int runPanelUI(BOOL workspaceMode) {
     NSString *directory=stateDirectory(),*bar=[directory stringByAppendingPathComponent:@"bar"];
     [NSFileManager.defaultManager createDirectoryAtPath:bar withIntermediateDirectories:YES attributes:@{NSFilePosixPermissions:@0700} error:nil];
     int lock=open([[bar stringByAppendingPathComponent:@"panel-ui.lock"] fileSystemRepresentation],O_CREAT|O_RDWR|O_NOFOLLOW,0600);
@@ -143,38 +145,60 @@ static int runPanelUI(void) {
     // duplicate window. If it is exiting, acquire its lock and replace it.
     CFAbsoluteTime deadline=CFAbsoluteTimeGetCurrent()+2;
     while (flock(lock,LOCK_EX|LOCK_NB)!=0) {
-        DFControlsNotify(@"show");pump(.05);
-        NSDictionary *status=readJSON([bar stringByAppendingPathComponent:@"panel-ui-status.json"]);
-        NSDictionary *document=readJSON([bar stringByAppendingPathComponent:@"native-panel.json"]);
+        if (workspaceMode) [NSDistributedNotificationCenter.defaultCenter postNotificationName:@"local.dotfiles.desktop.workspace" object:@"show" userInfo:nil deliverImmediately:YES];
+        else DFControlsNotify(@"show");pump(.05);
+        NSDictionary *status=readJSON([bar stringByAppendingPathComponent:workspaceMode ? @"workspace-status.json" : @"panel-ui-status.json"]);
+        NSDictionary *document=readJSON([bar stringByAppendingPathComponent:workspaceMode ? @"workspace-request.json" : @"native-panel.json"]);
         if ([status[@"request"] isEqual:document[@"request"]] && [status[@"visible"] boolValue]
             && NSDate.date.timeIntervalSince1970-[status[@"updated"] doubleValue]<1) {close(lock);return 0;}
         if (CFAbsoluteTimeGetCurrent()>deadline) {close(lock);return 1;}
     }
     alarm(0);
     DFControlsAppearance([directory stringByAppendingPathComponent:@"appearance.json"]);
-    DFControlsInitialize(directory);DFControlsNotify(@"show");
+    DFControlsInitialize(directory);DFWorkspaceInitialize(directory);
+    DFControlsSetWillShow(^{DFWorkspaceHide();});
+    if (workspaceMode) DFWorkspaceShow();else DFControlsNotify(@"show");
     __block double lastVisible=NSProcessInfo.processInfo.systemUptime;
     __block BOOL seen=NO;
     __block double lastReport=0;
-    id observer=[NSWorkspace.sharedWorkspace.notificationCenter addObserverForName:NSWorkspaceActiveSpaceDidChangeNotification object:nil queue:NSOperationQueue.mainQueue usingBlock:^(__unused NSNotification *note){DFControlsHide();}];
+    __block double nextAppearance=0;
+    __block NSData *lastAppearance=nil;
+    __block BOOL lastControlVisible=NO,lastWorkspaceVisible=NO;
+    id observer=[NSWorkspace.sharedWorkspace.notificationCenter addObserverForName:NSWorkspaceActiveSpaceDidChangeNotification object:nil queue:NSOperationQueue.mainQueue usingBlock:^(__unused NSNotification *note){DFControlsHide();DFWorkspaceHide();}];
     NSTimer *timer=[NSTimer scheduledTimerWithTimeInterval:.033 repeats:YES block:^(__unused NSTimer *timer) {
         double now=NSProcessInfo.processInfo.systemUptime;
+        if (now>=nextAppearance) {
+            nextAppearance=now+.5;
+            NSString *path=[directory stringByAppendingPathComponent:@"appearance.json"];
+            NSData *appearance=[NSData dataWithContentsOfFile:path];
+            if (![appearance isEqual:lastAppearance]) {lastAppearance=appearance;DFControlsAppearance(path);DFWorkspaceRefreshAppearance();}
+        }
         DFControlsTick(now,NSEvent.mouseLocation);
+        DFWorkspaceTick(now,NSEvent.mouseLocation);
         NSMutableDictionary *status=DFControlsStatus().mutableCopy;
         status[@"updated"]=@(NSDate.date.timeIntervalSince1970);status[@"pid"]=@(getpid());status[@"healthy"]=@YES;
-        if (now-lastReport>=.2 || ![status[@"visible"] boolValue]) {
+        BOOL controlVisible=[status[@"visible"] boolValue],workspaceVisible=[DFWorkspaceStatus()[@"visible"] boolValue];
+        if (now-lastReport>=.2 || lastControlVisible!=controlVisible || lastWorkspaceVisible!=workspaceVisible) {
+        lastControlVisible=controlVisible;lastWorkspaceVisible=workspaceVisible;
         lastReport=now;
         NSData *data=[NSJSONSerialization dataWithJSONObject:status options:0 error:nil];
         NSString *temporary=[bar stringByAppendingPathComponent:[@".panel-status-" stringByAppendingString:NSUUID.UUID.UUIDString]];
         int fd=open(temporary.fileSystemRepresentation,O_CREAT|O_EXCL|O_WRONLY|O_NOFOLLOW,0600);
         if (fd>=0) {BOOL written=write(fd,data.bytes,data.length)==(ssize_t)data.length;close(fd);
             if (written) rename(temporary.fileSystemRepresentation,[[bar stringByAppendingPathComponent:@"panel-ui-status.json"] fileSystemRepresentation]);unlink(temporary.fileSystemRepresentation);}
+        NSMutableDictionary *workspace=DFWorkspaceStatus().mutableCopy;
+        workspace[@"updated"]=status[@"updated"];workspace[@"pid"]=@(getpid());
+        NSData *workspaceData=[NSJSONSerialization dataWithJSONObject:workspace options:0 error:nil];
+        NSString *workspaceTemporary=[bar stringByAppendingPathComponent:[@".workspace-status-" stringByAppendingString:NSUUID.UUID.UUIDString]];
+        int workspaceFD=open(workspaceTemporary.fileSystemRepresentation,O_CREAT|O_EXCL|O_WRONLY|O_NOFOLLOW,0600);
+        if (workspaceFD>=0) {BOOL written=write(workspaceFD,workspaceData.bytes,workspaceData.length)==(ssize_t)workspaceData.length;close(workspaceFD);
+            if (written) rename(workspaceTemporary.fileSystemRepresentation,[[bar stringByAppendingPathComponent:@"workspace-status.json"] fileSystemRepresentation]);unlink(workspaceTemporary.fileSystemRepresentation);}
         }
-        if ([status[@"visible"] boolValue]) {seen=YES;lastVisible=now;}
+        if ([status[@"visible"] boolValue] || [DFWorkspaceStatus()[@"visible"] boolValue]) {seen=YES;lastVisible=now;}
         if (now-lastVisible>(seen ? .4 : 2)) {[NSApp stop:nil];[NSApp postEvent:[NSEvent otherEventWithType:NSEventTypeApplicationDefined location:NSZeroPoint modifierFlags:0 timestamp:0 windowNumber:0 context:nil subtype:0 data1:0 data2:0] atStart:NO];}
     }];
     [NSApp run];[timer invalidate];[NSWorkspace.sharedWorkspace.notificationCenter removeObserver:observer];
-    DFControlsHide();close(lock);return 0;
+    DFControlsHide();DFWorkspaceHide();close(lock);return 0;
 }
 static NSDictionary *accessStatus(void) {
     BOOL supported=NO;if (@available(macOS 15.2,*)) supported=NSScreen.screens.count==1;
@@ -297,7 +321,10 @@ int main(int argc,const char **argv) { @autoreleasepool {
     [NSApplication.sharedApplication setActivationPolicy:NSApplicationActivationPolicyAccessory];
     NSString *mode=argc>1 ? [NSString stringWithUTF8String:argv[1]] : @"--status";
     BOOL expanded=argc>2 && strcmp(argv[argc-1],"--expanded")==0;
-    if ([mode isEqual:@"--ui"]) return runPanelUI();
+    if ([mode isEqual:@"--ui"]) return runPanelUI(NO);
+    if ([mode isEqual:@"--workspace-ui"]) return runPanelUI(YES);
+    if ([mode isEqual:@"--workspace-hide"]) {DFWorkspaceCancelAll(stateDirectory());return 0;}
+    if ([mode isEqual:@"--workspace-self-test"]) return DFWorkspaceSelfTest();
     if ([mode isEqual:@"--ui-hide"]) {DFControlsNotify(@"hide");return 0;}
     alarm([mode isEqual:@"--request-access"] ? 90 : 12);
     NSDictionary *result=nil;
