@@ -602,7 +602,7 @@ static void tick(void) {
                     && [state[@"show_in_fullscreen"] isEqual:@"on"];
                 if (!healthy) { releaseNativeDockGuard(); nativeMenu(NO); visible=NO; return; }
                 if (![state[@"hidden"] isEqual:visible ? @"off" : @"on"]) setVisible(visible);
-                if (!nativeMenu(YES)) { healthy=NO; releaseNativeDockGuard(); nativeMenu(NO); }
+                if (!DFNativeUIBusy(desktopDirectory) && !nativeMenu(YES)) { healthy=NO; releaseNativeDockGuard(); nativeMenu(NO); }
                 else ensureNativeDockGuard();
             });
         });

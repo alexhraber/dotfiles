@@ -108,11 +108,42 @@ class DisplayTests(unittest.TestCase):
                 refresh.assert_not_called()
                 self.assertIsNone(controls.read('display-snapshot.json'))
 
+    def test_partial_discovery_keeps_real_nearby_devices_and_connected_screens(self):
+        value = snapshot()
+        value['partial'] = True
+        value['rows'] = [row for row in value['rows'] if row['kind'] != 'toggle']
+        rows = display_pane.panel_rows(value, 54)
+        self.assertTrue(any(action and action[1]['kind'] == 'device' for _, action in rows))
+        self.assertIn(('Built-in display', None), rows)
+        value['rows'] = [row for row in snapshot()['rows'] if row['kind'] == 'toggle']
+        rows = display_pane.panel_rows(value, 54)
+        self.assertIn(('Nearby display discovery unavailable', None), rows)
+        self.assertNotIn(('No nearby displays found', None), rows)
+        empty = dict(value, rows=[])
+        with self.assertRaises(ValueError):
+            display_pane.validate(empty)
+        value['partial'] = 1
+        with self.assertRaises(ValueError):
+            display_pane.validate(value)
+
+    def test_fresh_cache_survives_a_temporary_discovery_failure(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(controls, 'STATE', Path(temp)), \
+             patch.object(controls, 'visible_control', return_value=True), \
+             patch.object(controls.time, 'sleep'), patch.object(controls, 'brightness', return_value='54'), \
+             patch.object(controls, '_render_rows') as render, \
+             patch.object(display_pane, 'query', side_effect=ValueError('Temporary failure')):
+            controls.store('panel-ui-status.json', {'request': '1', 'name': 'brightness',
+                           'visible': True, 'updated': time.time()})
+            controls.store('display-snapshot.json', snapshot())
+            controls.display_watch('1')
+            rows = render.call_args.args[1]
+            self.assertTrue(any(action and action[1]['kind'] == 'device' for _, action in rows))
+
     def test_native_response_rejects_stale_or_forged_controls_and_topology(self):
         good = snapshot()
         self.assertIs(display_pane.validate(good), good)
         bad_values = []
-        for stamp in (time.time()-10, time.time()+20, float('nan'), True):
+        for stamp in (time.time()-31, time.time()+20, float('nan'), True):
             bad = copy.deepcopy(good); bad['sampled'] = stamp; bad_values.append(bad)
         for key, value in (('identifier', 'wifi-header'), ('page', 'wifi'), ('role', 'AXTextField'),
                            ('selected', 1), ('text', 'Name\nsecret')):

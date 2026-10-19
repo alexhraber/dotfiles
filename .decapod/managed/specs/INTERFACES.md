@@ -258,7 +258,7 @@ can leave partial state; the backup manifest remains the recovery input.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `c651940cee68383c9f25d55e5530df3d639c5b9eeeffbcda48ab3da369c9c502`
+- Repository signal fingerprint: `8838451aa0625316cf53a96f436fbc8e1769588dbc349533b3f65d968fd9fe01`
 - Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (9 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
@@ -272,7 +272,7 @@ Responses have sampled time, at most 32 typed native rows, at most eight connect
 screens, and a Boolean handoff. Rows contain kind (toggle/device/settings), page
 (display/mirroring), role, identifier, text, selected and enabled. The native helper
 revalidates observed controls at action time. Python rejects responses older than
-eight seconds, malformed metadata, duplicate identifiers and unexpected controls.
+thirty seconds, malformed metadata, duplicate identifiers and unexpected controls.
 Screen records contain name, width/height in pixels, main/extended/mirror mode and
 an optional measured refresh rate; unknown refresh rates are omitted.
 
@@ -286,3 +286,18 @@ discovery label. The watcher waits at most three seconds for a fresh matching
 `panel-ui-status.json` request/name/visible acknowledgement before native reads.
 Pointer exit, a newer request or failed renderer startup cancels pending work;
 late failures do not reopen a dismissed pane.
+
+Display responses may include a Boolean `partial`. Only incomplete responses
+may omit the native Settings row; malformed rows are always rejected. A failed
+nearby scan is labeled unavailable, never interpreted as no nearby displays.
+`panel-ui-status.json` reports `display_cover` and window `level` for verifying
+actual stacking. Cover begin/end notifications carry a separate bounded token;
+only a matching Display request can begin, and stale end notifications cannot
+clear a newer transaction. Visible refresh is twenty seconds, not four.
+
+`bar/native-ui-lease.json` is a 0600, request-token-owned record of PID and
+expiry. The native-menu watchdog accepts only an owned private regular file,
+a live PID, and expiry within twelve seconds. Display writes it atomically
+after its live cover is ready and clears only its own token during cleanup.
+Native workspace self-tests cover active ownership, stale end notifications,
+unsafe file mode, expiration, and a missing process.

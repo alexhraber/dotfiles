@@ -4,3 +4,7 @@ BOOL DFWorkspaceRequest(NSString *directory, NSString *kind, pid_t pid, NSRect a
 void DFWorkspaceCancel(NSString *directory);
 void DFWorkspaceCancelAll(NSString *directory);
 NSDictionary *DFWorkspaceReadStatus(NSString *directory);
+
+BOOL DFNativeUIBusy(NSString *directory);
+BOOL DFNativeUIBegin(NSString *directory, NSString *token);
+void DFNativeUIEnd(NSString *directory, NSString *token);

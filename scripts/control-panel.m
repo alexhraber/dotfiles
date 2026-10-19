@@ -14,9 +14,11 @@ static double controlAway;
 static BOOL controlBusy;
 static NSUInteger controlButtons;
 static BOOL renderPending;
-static double passthroughUntil;
+static double passthroughUntil, displayCoverUntil;
+static NSString *displayCoverToken;
 static NSDictionary *controlDocument, *controlPalette;
 static NSString *dismissedRequest;
+static NSString *controlDismissal;
 static BOOL colorsChanged;
 static void (^controlWillShow)(void);
 void DFControlsSetWillShow(void (^callback)(void)) {controlWillShow=[callback copy];}
@@ -309,7 +311,8 @@ static CGFloat bodyHeight(NSDictionary *document) {
     CGFloat height=statPanel(document) ? ceil(count/2.0)*64 : rowsHeight(document[@"rows"]);
     NSArray *rows=document[@"rows"];
     if ([document[@"name"] isEqual:@"weather"] && rows.count>2 && [rows[2][@"text"] isEqual:document[@"subtitle"]]) height-=rowHeight(rows[2]);
-    return height;
+    // Stable discovery target while preserving scrolling for long device lists.
+    return [document[@"name"] isEqual:@"brightness"] ? MAX(336,height) : height;
 }
 static CGFloat headerHeight(NSDictionary *document) {
     if ([document[@"name"] isEqual:@"weather"]) return 110+([document[@"forecast"] count] ? 108 : 0)+([document[@"daily"] count] ? 124 : 0);
@@ -488,6 +491,7 @@ static void showControls(void) {
     if ([document[@"request"] isEqual:dismissedRequest]) return;
     if (controlWillShow) controlWillShow();
     if (![document[@"request"] isEqual:controlDocument[@"request"]]) controlPanel.ignoresMouseEvents=NO;
+    controlDismissal=@"";
     BOOL same=[controlDocument[@"name"] isEqual:document[@"name"]] && controlPanel.visible;
     BOOL redraw=!same || ![renderIdentity(controlDocument) isEqual:renderIdentity(document)];
     controlDocument=document; DFCalendarHide(); DFMenusHide();
@@ -531,9 +535,19 @@ static void showControls(void) {
 void DFControlsInitialize(NSString *directory) {
     controlDirectory=directory;
     [NSDistributedNotificationCenter.defaultCenter addObserverForName:controlNotification object:nil queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification *note) {
+        NSString *cover=note.userInfo[@"cover"];
+        if ([note.object isEqual:@"display-cover-begin"] || [note.object isEqual:@"display-cover-end"]) {
+            if (![cover isKindOfClass:NSString.class] || cover.length>64) return;
+            if ([note.object isEqual:@"display-cover-begin"]) {
+                if (![note.userInfo[@"request"] isEqual:controlDocument[@"request"]]) return;
+                displayCoverToken=cover;displayCoverUntil=NSProcessInfo.processInfo.systemUptime+12;
+            } else if ([cover isEqual:displayCoverToken]) {displayCoverToken=nil;displayCoverUntil=0;}
+            controlPanel.level=displayCoverToken ? CGWindowLevelForKey(kCGPopUpMenuWindowLevelKey)+2 : CGWindowLevelForKey(kCGStatusWindowLevelKey)+2;
+            return;
+        }
         NSString *request=note.userInfo[@"request"];
         if (request && ![request isEqual:controlDocument[@"request"]]) return;
-        if ([note.object isEqual:@"show"]) showControls(); else if ([note.object isEqual:@"hide"]) DFControlsHide();
+        if ([note.object isEqual:@"show"]) showControls(); else if ([note.object isEqual:@"hide"]) {controlDismissal=@"request";DFControlsHide();}
         else if ([note.object isEqual:@"passthrough"] && [@[@"wifi",@"brightness"] containsObject:controlDocument[@"name"]]) {controlPanel.ignoresMouseEvents=YES;passthroughUntil=NSProcessInfo.processInfo.systemUptime+8;}
         else if ([note.object isEqual:@"resume"]) {controlPanel.ignoresMouseEvents=NO;passthroughUntil=0;}
     }];
@@ -566,26 +580,30 @@ void DFControlsHide(void) {
     }
     [controlPanel orderOut:nil]; controlPanel.ignoresMouseEvents=NO; controlAway=0; renderPending=NO;
 }
+void DFControlsSpaceChanged(void) {controlDismissal=@"space_changed";DFControlsHide();}
 BOOL DFControlsContainsPointer(NSPoint pointer) {
     return controlPanel.visible && ([controlDocument[@"pinned"] boolValue] || NSPointInRect(pointer,NSInsetRect(controlPanel.frame,-4,-4)) || NSPointInRect(pointer,controlAnchor));
 }
 void DFControlsTick(double now, NSPoint pointer) {
+    if (displayCoverToken && NSProcessInfo.processInfo.systemUptime>displayCoverUntil) {
+        displayCoverToken=nil;displayCoverUntil=0;controlPanel.level=CGWindowLevelForKey(kCGStatusWindowLevelKey)+2;
+    }
     if (controlPanel.ignoresMouseEvents && NSProcessInfo.processInfo.systemUptime>passthroughUntil) controlPanel.ignoresMouseEvents=NO;
     if (colorsChanged) { colorsChanged=NO; DFCalendarAppearance(); if (controlPanel.visible) [controlView render]; DFMenusHide(); }
     if (!controlPanel.visible) return;
     NSUInteger buttons=NSEvent.pressedMouseButtons;
     if (renderPending && !(buttons&1)) { renderPending=NO; [controlView render]; }
     if ([controlDocument[@"pinned"] boolValue]) {
-        if (outsidePress(controlButtons,buttons,pointer,controlPanel.frame,controlAnchor)) DFControlsHide();
+        if (outsidePress(controlButtons,buttons,pointer,controlPanel.frame,controlAnchor)) {controlDismissal=@"outside_click";DFControlsHide();}
         controlButtons=buttons; return;
     }
     if (DFControlsContainsPointer(pointer)) controlAway=0;
     else if (!controlAway) controlAway=now;
-    else if (now-controlAway>0.32) DFControlsHide();
+    else if (now-controlAway>0.32) {controlDismissal=@"pointer_exit";DFControlsHide();}
 }
 NSDictionary *DFControlsStatus(void) {
     NSRect frame=controlPanel.frame;
-    return @{@"visible":@(controlPanel.visible),@"input_passthrough":@(controlPanel.ignoresMouseEvents),@"name":controlDocument[@"name"] ?: @"",@"request":controlDocument[@"request"] ?: @"",@"backend_available":@(installedPython()!=nil),
+    return @{@"visible":@(controlPanel.visible),@"dismissal":controlDismissal ?: @"",@"display_cover":@((BOOL)(displayCoverToken!=nil)),@"level":@(controlPanel.level),@"input_passthrough":@(controlPanel.ignoresMouseEvents),@"name":controlDocument[@"name"] ?: @"",@"request":controlDocument[@"request"] ?: @"",@"backend_available":@(installedPython()!=nil),
              @"pinned":@([controlDocument[@"pinned"] boolValue]),@"frame":@[@(frame.origin.x),@(frame.origin.y),@(frame.size.width),@(frame.size.height)]};
 }
 int DFControlsSelfTest(void) {

@@ -99,7 +99,7 @@ def setup_panels(directory):
             executable.parent.mkdir(parents=True)
             command = ['xcrun', 'clang', '-fobjc-arc', '-Wall', '-Wextra', '-Werror',
                        '-mmacosx-version-min=14.0', '-DDF_CONTROL_NOTIFICATION="local.dotfiles.desktop.panels"']
-            for framework in ('AppKit', 'QuartzCore', 'EventKit', 'ApplicationServices', 'ScreenCaptureKit', 'SystemConfiguration'):
+            for framework in ('AppKit', 'QuartzCore', 'EventKit', 'ApplicationServices', 'ScreenCaptureKit', 'SystemConfiguration', 'AVFoundation', 'CoreMedia'):
                 command += ['-framework', framework]
             run(*command, *(ROOT/'scripts'/name for name in ('wifi-pane.m', 'control-panel.m', 'calendar-panel.m', 'app-menu.m', 'panel-style.m', 'workspace-panels.m', 'panel-request.m')), '-o', executable)
             executable.chmod(0o700)
