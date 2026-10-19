@@ -24,6 +24,57 @@ spec.loader.exec_module(metrics)
 
 
 class DesktopTests(unittest.TestCase):
+    def test_staged_controls_setup_never_replaces_or_restarts_the_working_helper(self):
+        with tempfile.TemporaryDirectory() as temp:
+            directory=Path(temp)
+            current=directory/'desktop-edge';current.symlink_to('approved-build')
+            staged=directory/'Staged.app/Contents/MacOS/desktop-edge'
+            with patch.object(desktop,'state_dir',return_value=directory), \
+                 patch.object(desktop.os,'uname',return_value=SimpleNamespace(sysname='Darwin')), \
+                 patch.object(desktop,'compile_tools',return_value={'desktop-edge':str(staged)}) as compile_tools, \
+                 patch.object(desktop,'register_bundle') as register, \
+                 patch.object(desktop,'controls_access') as access, patch.object(desktop,'run') as run:
+                self.assertEqual(desktop.main('controls-setup'),0)
+                compile_tools.assert_called_once_with(directory,names=('desktop-edge',))
+                register.assert_called_once_with(staged)
+                access.assert_not_called();run.assert_not_called()
+            self.assertEqual(current.readlink(),Path('approved-build'))
+
+    def test_upgrade_without_staged_permissions_preserves_live_runtime_and_palette(self):
+        with tempfile.TemporaryDirectory() as temp:
+            directory=Path(temp)
+            (directory/'manifest.json').write_text(json.dumps({'active':True}))
+            current=directory/'desktop-edge';current.symlink_to('approved-build')
+            staged=directory/'Staged.app/Contents/MacOS/desktop-edge'
+            with patch.object(desktop,'state_dir',return_value=directory), \
+                 patch.object(desktop.os,'uname',return_value=SimpleNamespace(sysname='Darwin')), \
+                 patch.object(desktop,'compile_tools',return_value={'desktop-edge':str(staged)}), \
+                 patch.object(desktop,'register_bundle'), \
+                 patch.object(desktop,'controls_access',return_value={'accessibility':False,'calendar':True}), \
+                 patch.object(desktop.appearance,'save') as save, patch.object(desktop,'write_agent') as activate:
+                with self.assertRaisesRegex(ValueError,'working helper is retained'):
+                    desktop.main('apply')
+                save.assert_not_called();activate.assert_not_called()
+            self.assertEqual(current.readlink(),Path('approved-build'))
+            self.assertEqual(json.loads((directory/'manifest.json').read_text()),{'active':True})
+
+    def test_controls_permission_probe_launches_exact_bundle_and_protects_result(self):
+        with tempfile.TemporaryDirectory() as temp:
+            directory=Path(temp)
+            target=directory/'Staged.app/Contents/MacOS/desktop-edge'
+            def respond(*args,**kwargs):
+                output=Path(args[args.index('--stdout')+1])
+                self.assertEqual(output.stat().st_mode & 0o777,0o600)
+                output.write_text(json.dumps({'accessibility':True,'calendar':False}))
+                self.assertEqual(args[args.index('-a')+1],str(directory/'Staged.app'))
+            with patch.object(desktop,'state_dir',return_value=directory),patch.object(desktop,'run',side_effect=respond) as run:
+                self.assertEqual(desktop.controls_access(target),{'accessibility':True,'calendar':False})
+                self.assertIn('--access-status',run.call_args.args)
+                self.assertIn('-g',run.call_args.args)
+                desktop.controls_access(target,request=True)
+                self.assertIn('--request-access',run.call_args.args)
+                self.assertNotIn('-g',run.call_args.args)
+
     def test_panel_permission_request_reports_actual_readiness_without_claiming_a_grant(self):
         for accessibility, capture in ((False, False), (True, False), (True, True)):
             with self.subTest(accessibility=accessibility, capture=capture), tempfile.TemporaryDirectory() as temp:

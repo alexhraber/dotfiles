@@ -2,9 +2,11 @@
 #import <QuartzCore/QuartzCore.h>
 #import <ApplicationServices/ApplicationServices.h>
 #import <SystemConfiguration/SystemConfiguration.h>
+#import <EventKit/EventKit.h>
 #import "calendar-panel.h"
 #import "control-panel.h"
 #import "app-menu.h"
+#import "panel-request.h"
 #include <dlfcn.h>
 #include <signal.h>
 #include <sys/file.h>
@@ -37,7 +39,19 @@ static CFRunLoopSourceRef networkSource;
 static double missionControlSince = 0, nextMissionCheck = 0;
 static BOOL setVisible(BOOL show);
 static NSString *appearancePath, *themeName;
+static NSString *desktopDirectory;
+static pid_t previewCandidate,previewRequested;
+static double previewSince;
 static volatile sig_atomic_t appearanceChanged = 0;
+static NSDictionary *controlsAccessStatus(void) {
+    return @{@"accessibility":[NSNumber numberWithBool:AXIsProcessTrusted()],
+             @"calendar":[NSNumber numberWithBool:[EKEventStore authorizationStatusForEntityType:EKEntityTypeEvent]==EKAuthorizationStatusFullAccess]};
+}
+static int accessStatusSelfTest(void) {
+    for (NSNumber *value in controlsAccessStatus().allValues)
+        if (CFGetTypeID((__bridge CFTypeRef)value)!=CFBooleanGetTypeID()) return 1;
+    return 0;
+}
 static void appearanceSignal(__unused int sig) { appearanceChanged=1; }
 
 static void loadAppearance(void) {
@@ -203,6 +217,39 @@ static int layoutSelfTest(void) {
     return 0;
 }
 
+// Mission Control/Space strips change WindowServer levels across OS releases.
+// Require Dock ownership and display-sized geometry, not a single magic level.
+static BOOL overviewWindow(NSDictionary *window,NSArray<NSValue *> *screens) {
+    NSInteger level=[window[(id)kCGWindowLayer] integerValue];CGRect bounds;
+    if (![window[(id)kCGWindowOwnerName] isEqual:@"Dock"] || level<18 || level>24
+        || (window[(id)kCGWindowAlpha] && [window[(id)kCGWindowAlpha] doubleValue]<=.01)
+        || !CGRectMakeWithDictionaryRepresentation((__bridge CFDictionaryRef)window[(id)kCGWindowBounds],&bounds)) return NO;
+    for (NSValue *value in screens) {
+        CGRect screen=NSRectToCGRect(value.rectValue),intersection=CGRectIntersection(screen,bounds);
+        if (CGRectIsNull(intersection) || intersection.size.width<screen.size.width*.8) continue;
+        BOOL large=intersection.size.height>screen.size.height*.4;
+        BOOL strip=intersection.size.height>=100 && intersection.size.height<screen.size.height*.35
+            && fabs(CGRectGetMinY(intersection)-CGRectGetMinY(screen))<=36;
+        if (large || strip) return YES;
+    }
+    return NO;
+}
+static int overviewSelfTest(void) {
+    NSArray *screens=@[[NSValue valueWithRect:NSMakeRect(0,0,1440,900)]];
+    NSMutableDictionary *window=[@{(id)kCGWindowOwnerName:@"Dock",(id)kCGWindowLayer:@20,
+        (id)kCGWindowBounds:CFBridgingRelease(CGRectCreateDictionaryRepresentation(CGRectMake(0,0,1440,900)))} mutableCopy];
+    if (!overviewWindow(window,screens)) return 1;
+    for (NSNumber *level in @[@18,@19,@20,@21]) {window[(id)kCGWindowLayer]=level;if (!overviewWindow(window,screens)) return 1;}
+    window[(id)kCGWindowBounds]=CFBridgingRelease(CGRectCreateDictionaryRepresentation(CGRectMake(0,0,1440,140)));
+    if (!overviewWindow(window,screens)) return 1;
+    window[(id)kCGWindowBounds]=CFBridgingRelease(CGRectCreateDictionaryRepresentation(CGRectMake(0,800,1440,100)));
+    if (overviewWindow(window,screens)) return 1;
+    window[(id)kCGWindowBounds]=CFBridgingRelease(CGRectCreateDictionaryRepresentation(CGRectMake(0,0,1440,900)));
+    window[(id)kCGWindowOwnerName]=@"Other App";if (overviewWindow(window,screens)) return 1;
+    window[(id)kCGWindowOwnerName]=@"Dock";window[(id)kCGWindowAlpha]=@0;if (overviewWindow(window,screens)) return 1;
+    puts("Overview detection: modern/legacy Dock overlays and Space strips; native dock/other apps/transparent windows excluded.");return 0;
+}
+
 static NSWorkspaceOpenConfiguration *dockOpenConfiguration(void) {
     NSWorkspaceOpenConfiguration *configuration=NSWorkspaceOpenConfiguration.configuration;
     configuration.activates=YES; configuration.createsNewApplicationInstance=NO;
@@ -309,16 +356,23 @@ static NSTimer *dockAnimationTimer;
 
 static BOOL missionControlWindow(void) {
     NSArray *windows = CFBridgingRelease(CGWindowListCopyWindowInfo(kCGWindowListOptionOnScreenOnly,kCGNullWindowID));
+    NSMutableArray *screens=NSMutableArray.new;
+    for (NSScreen *screen in NSScreen.screens) {
+        CGDirectDisplayID display=[screen.deviceDescription[@"NSScreenNumber"] unsignedIntValue];
+        [screens addObject:[NSValue valueWithRect:NSRectFromCGRect(CGDisplayBounds(display))]];
+    }
+    pid_t dock=[[NSRunningApplication runningApplicationsWithBundleIdentifier:@"com.apple.dock"].firstObject processIdentifier];
     for (NSDictionary *window in windows)
-        if ([window[(id)kCGWindowOwnerName] isEqual:@"Dock"] && [window[(id)kCGWindowLayer] intValue]==18)
+        if ([window[(id)kCGWindowOwnerPID] intValue]==dock && overviewWindow(window,screens))
             return YES;
     return NO;
 }
 static void enterMissionControl(void) {
-    DFCalendarHide();
+    DFCalendarHide();DFControlsHide();DFMenusHide();DFWorkspaceCancelAll(desktopDirectory);
     missionControl=YES; missionControlSince=NSProcessInfo.processInfo.systemUptime;
     dockPresented=NO; dockRevision++; dockEdgeSince=0;
     [dockPanel orderOut:nil]; [dockAnimationTimer invalidate]; dockAnimationTimer=nil;
+    previewCandidate=0;previewRequested=0;previewSince=0;
     if (visible) setVisible(NO);
 }
 typedef void ConnectionNotification(uint32_t, void *, size_t, void *, int);
@@ -372,6 +426,7 @@ static void dockTick(double now, NSPoint pointer) {
         dockPanel.alphaValue = 0;
         [dockPanel orderFrontRegardless];
         dockPresented = YES; dockRevision++; dockAway = 0;
+        previewCandidate=0;previewRequested=0;previewSince=0;
         [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
             context.duration = NSWorkspace.sharedWorkspace.accessibilityDisplayShouldReduceMotion ? 0 : 0.16;
             context.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
@@ -396,14 +451,32 @@ static void dockTick(double now, NSPoint pointer) {
     NSRect shelf = dockRects(dockPanel.frame.size.width,dockView.apps.count,dockView.smoothedHover,dockView.zoom,rects);
     NSRect active = NSOffsetRect(NSInsetRect(shelf,-12,-10),NSMinX(dockPanel.frame),NSMinY(dockPanel.frame));
     active.size.height = 92;
-    BOOL inside = NSPointInRect(pointer,active) || target!=nil;
+    NSDictionary *workspace=DFWorkspaceReadStatus(desktopDirectory);
+    NSArray *workspaceFrame=workspace[@"frame"];
+    NSRect preview=workspaceFrame.count==4 ? NSMakeRect([workspaceFrame[0] doubleValue],[workspaceFrame[1] doubleValue],[workspaceFrame[2] doubleValue],[workspaceFrame[3] doubleValue]) : NSZeroRect;
+    BOOL previewVisible=[workspace[@"visible"] boolValue] && [workspace[@"kind"] isEqual:@"dock"];
+    BOOL inside = NSPointInRect(pointer,active) || target!=nil || (previewVisible && NSPointInRect(pointer,NSInsetRect(preview,-8,-8)));
     NSPoint local = NSMakePoint(pointer.x-NSMinX(dockPanel.frame),pointer.y-NSMinY(dockPanel.frame));
     dockPanel.ignoresMouseEvents = !dockMenuOpen && [dockView indexAt:local]<0;
+    NSInteger index=[dockView indexAt:local];
+    if (index>=0 && !dockMenuOpen && NSPointInRect(pointer,active)) {
+        pid_t candidate=dockView.apps[index].processIdentifier;
+        if (previewCandidate!=candidate) {previewCandidate=candidate;previewSince=now;}
+        if (candidate!=previewRequested && now-previewSince>=.28) {
+            NSRect anchor=NSOffsetRect(rects[index],dockPanel.frame.origin.x,dockPanel.frame.origin.y);
+            DFCalendarHide();DFControlsHide();DFMenusHide();
+            if (DFWorkspaceRequest(desktopDirectory,@"dock",candidate,anchor)) previewRequested=candidate;
+        }
+    } else if (!inside) {
+        previewCandidate=0;previewSince=0;
+        if (previewRequested) {DFWorkspaceCancel(desktopDirectory);previewRequested=0;}
+    }
     if (inside || dockMenuOpen) dockAway = 0;
     else {
         if (!dockAway) dockAway = now;
         if (now-dockAway > 0.32) {
             dockPresented = NO; dockAway = 0;
+            DFWorkspaceCancel(desktopDirectory);previewRequested=0;previewCandidate=0;
             NSUInteger revision = ++dockRevision;
             [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
                 context.duration = NSWorkspace.sharedWorkspace.accessibilityDisplayShouldReduceMotion ? 0 : 0.14;
@@ -502,6 +575,9 @@ static BOOL setVisible(BOOL show) {
         [args addObjectsFromArray:@[@"--bar", @"hidden=on"]];
     }
     dispatch_async(barQueue, ^{
+        __block BOOL current=NO;
+        dispatch_sync(dispatch_get_main_queue(),^{current=revision==barRevision;});
+        if (!current) return;
         BOOL ok = bar(args) != nil;
         dispatch_async(dispatch_get_main_queue(), ^{
             if (!ok && revision==barRevision) { healthy=NO; nativeMenu(NO); }
@@ -532,6 +608,10 @@ static void tick(void) {
         });
     }
     NSPoint pointer = NSEvent.mouseLocation;
+    if (!missionControl && now>=nextMissionCheck) {
+        nextMissionCheck=now+((visible || dockPresented) ? .1 : .25);
+        if (missionControlWindow()) enterMissionControl();
+    }
     DFCalendarTick(now,pointer);
     DFControlsTick(now,pointer);
     DFMenusTick(now,pointer,visible);
@@ -569,7 +649,32 @@ static void tick(void) {
 }
 
 int main(int argc, const char **argv) { @autoreleasepool {
-    if (argc==2 && strcmp(argv[1],"--self-test")==0) return layoutSelfTest() || dockOpenSelfTest() || DFCalendarSelfTest() || DFControlsSelfTest() || DFMenusSelfTest();
+    if (argc==2 && strcmp(argv[1],"--overview-status")==0) {
+        [NSApplication sharedApplication];printf("{\"overview\":%s}\n",missionControlWindow() ? "true" : "false");return 0;
+    }
+    if (argc==2 && (strcmp(argv[1],"--access-status")==0 || strcmp(argv[1],"--request-access")==0)) {
+        [NSApplication sharedApplication];[NSApp setActivationPolicy:NSApplicationActivationPolicyAccessory];
+        if (strcmp(argv[1],"--request-access")==0) {
+            if (!AXIsProcessTrusted()) AXIsProcessTrustedWithOptions((__bridge CFDictionaryRef)@{(__bridge NSString *)kAXTrustedCheckOptionPrompt:@YES});
+            else if ([EKEventStore authorizationStatusForEntityType:EKEntityTypeEvent]!=EKAuthorizationStatusFullAccess) {
+                EKEventStore *store=EKEventStore.new;__block BOOL finished=NO;
+                [store requestFullAccessToEventsWithCompletion:^(__unused BOOL granted,__unused NSError *error) {
+                    dispatch_async(dispatch_get_main_queue(),^{finished=YES;});
+                }];
+                double deadline=NSProcessInfo.processInfo.systemUptime+85;
+                while (!finished && NSProcessInfo.processInfo.systemUptime<deadline)
+                    [NSRunLoop.currentRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:.02]];
+            }
+        }
+        NSDictionary *status=controlsAccessStatus();
+        NSData *json=[NSJSONSerialization dataWithJSONObject:status options:0 error:nil];fwrite(json.bytes,1,json.length,stdout);fputc('\n',stdout);return 0;
+    }
+    if (argc==2 && strcmp(argv[1],"--self-test")==0) return layoutSelfTest() || dockOpenSelfTest() || overviewSelfTest() || accessStatusSelfTest() || DFCalendarSelfTest() || DFControlsSelfTest() || DFMenusSelfTest();
+    if (argc==2 && strcmp(argv[1],"--launcher")==0) {
+        NSString *state=NSProcessInfo.processInfo.environment[@"XDG_STATE_HOME"] ?: [NSHomeDirectory() stringByAppendingPathComponent:@".local/state"];
+        NSPoint pointer=NSEvent.mouseLocation;
+        return DFWorkspaceRequest([state stringByAppendingPathComponent:@"dotfiles/desktop"],@"launcher",0,NSMakeRect(pointer.x,pointer.y,1,1)) ? 0 : 1;
+    }
     if (argc==3 && strcmp(argv[1],"--app-menu")==0) { DFMenusNotify([NSString stringWithUTF8String:argv[2]]); return 0; }
     if (argc==2 && (strcmp(argv[1],"--controls")==0 || strcmp(argv[1],"--controls-hide")==0)) {
         DFControlsNotify(strcmp(argv[1],"--controls")==0 ? @"show" : @"hide"); return 0;
@@ -612,6 +717,7 @@ int main(int argc, const char **argv) { @autoreleasepool {
     [NSApp setActivationPolicy:NSApplicationActivationPolicyAccessory];
     if (!preview) {
         NSString *directory=[[NSString stringWithUTF8String:argv[3]] stringByDeletingLastPathComponent];
+        desktopDirectory=directory;
         DFCalendarInitialize(directory); DFControlsInitialize(directory);
         DFMenusInitialize(barPath);
     }
@@ -655,7 +761,15 @@ int main(int argc, const char **argv) { @autoreleasepool {
                              NSWorkspaceDidWakeNotification,
                              NSWorkspaceDidActivateApplicationNotification]) {
         [center addObserverForName:name object:nil queue:NSOperationQueue.mainQueue
-            usingBlock:^(__unused NSNotification *note) { nextHealth = 0; DFCalendarHide(); DFControlsHide(); DFMenusHide(); }];
+            usingBlock:^(NSNotification *note) {
+                nextHealth=0;DFCalendarHide();DFControlsHide();DFMenusHide();
+                if ([note.name isEqual:NSWorkspaceActiveSpaceDidChangeNotification] || [note.name isEqual:NSWorkspaceDidWakeNotification]) {
+                    DFWorkspaceCancelAll(desktopDirectory);dockRevision++;dockPresented=NO;dockAway=0;dockEdgeSince=0;
+                    previewCandidate=0;previewRequested=0;previewSince=0;
+                    [dockPanel orderOut:nil];[dockAnimationTimer invalidate];dockAnimationTimer=nil;
+                    setVisible(NO);
+                }
+            }];
     }
     [NSNotificationCenter.defaultCenter addObserverForName:NSApplicationDidChangeScreenParametersNotification
         object:nil queue:NSOperationQueue.mainQueue usingBlock:^(__unused NSNotification *note) { nextHealth = 0; }];

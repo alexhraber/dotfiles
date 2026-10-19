@@ -68,8 +68,9 @@ state; a stable executable symlink lets LaunchAgent upgrades restart the new
 build without changing its plist. Health binds a fresh status record to the
 actual launchctl PID. Reapply retains the original recovery baseline.
 compile_tools hashes all native sources/headers and the generic permission
-plist, builds in a temporary private directory, ad-hoc signs and verifies the
-complete bundle, then atomically publishes it. Failed builds leave no cached
+plist and local signing identity, builds in a temporary private directory, signs
+and verifies the complete bundle, then atomically publishes it. It selects the
+single available local development certificate or uses an ad-hoc fallback. Failed builds leave no cached
 partial bundle or changed active link. No team identity is embedded in source.
 
 scripts/desktop-edge.m uses AppKit/QuartzCore for an open-app dock. One pure
@@ -333,6 +334,44 @@ plugin downloads and repository updates are outside configuration restoration.
 The installer assumes a single writer; it detects destination changes during
 installation but does not coordinate simultaneous independent installers.
 
+## Shared appearance and transient workspace panels
+
+scripts/workstation_theme.py validates the twelve semantic hex colors and renders
+private Ghostty, tmux, Neovim, Starship and fzf projections through manage.apply's
+backup/restore operations. desktop theme also renders a cached deterministic
+palette wallpaper through set-wallpaper.swift. Neovim's pinned Tokyo Night engine
+accepts on_colors overrides and reloads changed palette bytes on FocusGained.
+Ghostty needs its normal configuration reload; new shells source the prompt/fzf
+projection. Theme switching updates only an already-running tmux server.
+
+panel-style.m supplies stable anchored fades, common row hover and Reduce Motion
+handling to menus, calendar, controls and workspace panes. ControlView binds its
+callback name/revision when rendered, so a held click cannot target a newer row
+mapping during a deferred refresh. desktop-edge.m classifies Dock-owned overview
+windows by observed level range and display geometry, clears auxiliary requests
+on overview/Space transitions, and rejects obsolete bar visibility commands.
+
+panel-request.m atomically writes private bounded requests and launches/reuses
+Desktop Panels on demand. workspace-panels.m enumerates AX windows off the main
+thread with per-call timeouts, limits windows to 32, and retains AX objects only
+in memory. Public ScreenCaptureKit window filters capture one visible card at a
+time; unique PID/frame/title matching gates images, while exact AX object identity
+gates selection independently. Offscreen images are evicted. Cards scroll beyond
+four visible columns; pointer bridges retain the dock until the pane is left.
+Generation checks discard late window lists and screenshots after dismissal.
+Application search scans bounded app directories, filters locally, and opens
+existing bundles through NSWorkspace. It adds no document index or service.
+The auxiliary process exits after both pane modes have closed.
+
+Desktop Controls' new bundle ID is local.dotfiles.desktop-controls; its LaunchAgent
+label and stable executable link remain local.dotfiles.desktop-edge. Explicit
+controls-setup/controls-permissions stage and probe the exact bundle through
+LaunchServices. Active upgrades require its own AX and Calendar approval before
+changing palette/config/live links, and snapshot prior runtime files privately.
+The owner approved migration and removal of the unused legacy Accessibility
+record after activation; restoring an old ad-hoc binary may therefore need fresh
+OS consent. The current signed identity supports subsequent same-identity updates.
+
 ## Concurrency and Runtime Model
 
 Decapod uses a claimed task and isolated workspace. Container policy is
@@ -404,7 +443,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `8f0447a89547abc97705e14f3aad05122eaa25292f5da8f670f31805a6a63068`
-- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (7 files)
+- Repository signal fingerprint: `2eaddf2e356ec39c8e3e614a58c633c545357dcf80067322db990de53762f62e`
+- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (8 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

@@ -1,7 +1,7 @@
-# Ghostty — Tokyo Night Storm, with a little breathing room.
+# Ghostty — shared desktop palette, with a little breathing room.
 # Reload with Cmd+Shift+, after editing.
 
-theme = TokyoNight Storm
+theme = dotfiles
 font-family = JetBrainsMono Nerd Font
 font-size = 15
 font-thicken = true

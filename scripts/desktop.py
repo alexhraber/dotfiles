@@ -20,6 +20,7 @@ _spec = importlib.util.spec_from_file_location('desktop_appearance', ROOT / '.co
 appearance = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(appearance)
 LABEL = 'local.dotfiles.desktop-edge'
+BUNDLE_ID = 'local.dotfiles.desktop-controls'
 SERVICES = ('felixkratz/formulae/sketchybar',)
 PREFERENCES = [
     {'domain': 'NSGlobalDomain', 'key': '_HIHideMenuBar', 'installed': {'type': 'bool', 'value': True}},
@@ -65,17 +66,29 @@ def register_bundle(executable):
         cf.CFRelease(url)
 
 
-def setup_panels(directory):
-    """Build auxiliary panes without changing Desktop Controls or its approvals."""
+def signing_identity(required=False):
     identity = os.environ.get('DOTFILES_SIGNING_IDENTITY', '')
     if not identity:
-        result = subprocess.check_output(['security', 'find-identity', '-v', '-p', 'codesigning'], text=True)
+        try:
+            result = subprocess.check_output(['security', 'find-identity', '-v', '-p', 'codesigning'], text=True,
+                                             stderr=subprocess.DEVNULL)
+        except (OSError, subprocess.SubprocessError):
+            result = ''
         matches = re.findall(r'\b([A-F0-9]{40}) "Apple Development:', result)
         if len(matches) != 1:
-            raise ValueError('Set DOTFILES_SIGNING_IDENTITY to one local signing identity')
+            if required:
+                raise ValueError('Set DOTFILES_SIGNING_IDENTITY to one local signing identity')
+            return '-'
         identity = matches[0]
+    return identity
+
+
+def setup_panels(directory):
+    """Build auxiliary panes without changing Desktop Controls or its approvals."""
+    identity = signing_identity(required=True)
     sources = ('wifi-pane.m', 'wifi-pane-info.plist', 'control-panel.m', 'control-panel.h',
-               'calendar-panel.m', 'calendar-panel.h', 'app-menu.m', 'app-menu.h')
+               'calendar-panel.m', 'calendar-panel.h', 'app-menu.m', 'app-menu.h', 'panel-style.m', 'panel-style.h',
+               'workspace-panels.m', 'workspace-panels.h', 'panel-request.m', 'panel-request.h')
     digest = hashlib.sha256(identity.encode() + b''.join((ROOT/'scripts'/name).read_bytes() for name in sources)).hexdigest()[:16]
     bundle = directory / ('DesktopPanels-' + digest + '.app')
     target = bundle / 'Contents/MacOS/wifi-pane'
@@ -88,7 +101,7 @@ def setup_panels(directory):
                        '-mmacosx-version-min=14.0', '-DDF_CONTROL_NOTIFICATION="local.dotfiles.desktop.panels"']
             for framework in ('AppKit', 'QuartzCore', 'EventKit', 'ApplicationServices', 'ScreenCaptureKit', 'SystemConfiguration'):
                 command += ['-framework', framework]
-            run(*command, *(ROOT/'scripts'/name for name in ('wifi-pane.m', 'control-panel.m', 'calendar-panel.m', 'app-menu.m')), '-o', executable)
+            run(*command, *(ROOT/'scripts'/name for name in ('wifi-pane.m', 'control-panel.m', 'calendar-panel.m', 'app-menu.m', 'panel-style.m', 'workspace-panels.m', 'panel-request.m')), '-o', executable)
             executable.chmod(0o700)
             shutil.copyfile(ROOT/'scripts/wifi-pane-info.plist', staged/'Contents/Info.plist')
             run('codesign', '--force', '--sign', identity, '--identifier', 'local.dotfiles.wifi-pane', staged)
@@ -110,17 +123,21 @@ def setup_panels(directory):
     return target
 
 
-def compile_tools(directory):
+def compile_tools(directory, names=None):
     tools = {}
     for source, name, command in (
         ('desktop-edge.m', 'desktop-edge', ['xcrun', 'clang', '-fobjc-arc', '-Wall', '-Wextra', '-Werror', '-mmacosx-version-min=14.0', '-framework', 'AppKit', '-framework', 'QuartzCore', '-framework', 'EventKit', '-framework', 'ApplicationServices', '-framework', 'SystemConfiguration']),
         ('set-wallpaper.swift', 'wallpaper', ['xcrun', 'swiftc']),
     ):
+        if names is not None and name not in names:
+            continue
         path = ROOT / 'scripts' / source
         material = path.read_bytes()
         if name == 'desktop-edge':
+            identity = signing_identity()
+            material += identity.encode()
             material += b''.join((ROOT / 'scripts' / extra).read_bytes()
-                                 for extra in ('calendar-panel.m', 'calendar-panel.h', 'control-panel.m', 'control-panel.h', 'app-menu.m', 'app-menu.h', 'desktop-edge-info.plist'))
+                                 for extra in ('calendar-panel.m', 'calendar-panel.h', 'control-panel.m', 'control-panel.h', 'app-menu.m', 'app-menu.h', 'panel-style.m', 'panel-style.h', 'panel-request.m', 'panel-request.h', 'desktop-edge-info.plist'))
         digest = hashlib.sha256(material).hexdigest()[:16]
         bundle = directory / ('DesktopControls-' + digest + '.app')
         target = bundle / 'Contents/MacOS/desktop-edge' if name == 'desktop-edge' else directory / (name + '-' + digest)
@@ -132,10 +149,10 @@ def compile_tools(directory):
                     staged = Path(temp) / 'Desktop Controls.app'
                     executable = staged / 'Contents/MacOS/desktop-edge'
                     executable.parent.mkdir(parents=True)
-                    run(*command, path, ROOT / 'scripts/calendar-panel.m', ROOT / 'scripts/control-panel.m', ROOT / 'scripts/app-menu.m', '-o', executable)
+                    run(*command, path, ROOT / 'scripts/calendar-panel.m', ROOT / 'scripts/control-panel.m', ROOT / 'scripts/app-menu.m', ROOT/'scripts/panel-style.m', ROOT/'scripts/panel-request.m', '-o', executable)
                     executable.chmod(0o700)
                     shutil.copyfile(ROOT / 'scripts/desktop-edge-info.plist', staged / 'Contents/Info.plist')
-                    run('codesign', '--force', '--sign', '-', '--identifier', LABEL, staged)
+                    run('codesign', '--force', '--sign', identity, '--identifier', BUNDLE_ID, staged)
                     run('codesign', '--verify', '--strict', staged)
                     os.replace(staged, bundle)
             else:
@@ -145,6 +162,38 @@ def compile_tools(directory):
                 os.replace(temporary, target)
         tools[name] = str(target)
     return tools
+
+
+def controls_access(executable, request=False):
+    """Ask the exact staged, registered bundle; never broadcast to an old build."""
+    with tempfile.TemporaryDirectory(prefix='controls-access-', dir=state_dir()) as temp:
+        output = Path(temp)/'result.json'
+        output.touch(mode=0o600)
+        args = ['open', '-W', '-n', '-a', str(Path(executable).parents[2]),
+                '--stdout', str(output), '--stderr', '/dev/null']
+        if not request:
+            args += ['-g']
+        args += ['--args', '--request-access' if request else '--access-status']
+        run(*args, timeout=95, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        if output.stat().st_size>4096:
+            raise ValueError('Invalid controls access response')
+        value = json.loads(output.read_text())
+        if not isinstance(value, dict) or not all(isinstance(value.get(key), bool) for key in ('accessibility', 'calendar')):
+            raise ValueError('Invalid controls access response')
+        return value
+
+
+def themed_wallpaper(directory, palette):
+    tool = compile_tools(directory, names=('wallpaper',))['wallpaper']
+    digest = hashlib.sha256((ROOT/'scripts/set-wallpaper.swift').read_bytes()
+                            + json.dumps(palette, sort_keys=True).encode()).hexdigest()[:16]
+    target = directory/('wallpaper-theme-' + digest + '.png')
+    if not target.is_file():
+        with tempfile.TemporaryDirectory(prefix='wallpaper-palette-', dir=directory) as temp:
+            source = Path(temp)/'palette.json'
+            save(source, {key:value for key, value in palette.items() if isinstance(value, str)})
+            run(tool, 'render', source, target)
+    return tool, target
 
 
 def service_state():
@@ -251,6 +300,10 @@ def validate_preferences(document):
 
 
 def restore_runtime(directory, document):
+    auxiliary = directory/'wifi-pane'
+    if auxiliary.is_file():
+        run(auxiliary, '--ui-hide')
+        run(auxiliary, '--workspace-hide')
     # Recover the native menu first, even if a guarded preference restore fails.
     unload()
     run(document['tools']['desktop-edge'], '--restore')
@@ -281,6 +334,20 @@ def main(action, theme=None, layout=None):
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         manifest = directory / 'manifest.json'
         document = json.loads(manifest.read_text()) if manifest.exists() else None
+        prepared_tools = None
+        if action in ('controls-setup', 'controls-permissions'):
+            target = Path(compile_tools(directory, names=('desktop-edge',))['desktop-edge'])
+            register_bundle(target)
+            print('Staged Desktop Controls: ' + str(target.parents[2]))
+            print('The running helper is retained until desktop apply.')
+            if action == 'controls-permissions':
+                access = controls_access(target, request=True)
+                print(json.dumps(access))
+                return 0 if all(access.values()) else 1
+            return 0
+        if action == 'launcher':
+            run(directory/'desktop-edge', '--launcher')
+            return 0
         if action in ('panels-setup', 'panels-permissions'):
             target = setup_panels(directory)
             print('Desktop Panels: ' + str(target.parents[2]))
@@ -297,15 +364,46 @@ def main(action, theme=None, layout=None):
                 return 0 if all(access[key] for key in ('accessibility', 'screen_capture', 'supported')) else 1
             return 0
         if action in ('apply', 'theme'):
+            if action == 'apply' and document and document.get('active'):
+                prepared_tools = compile_tools(directory)
+                candidate = Path(prepared_tools['desktop-edge'])
+                current = directory/'desktop-edge'
+                if not current.is_symlink() or current.resolve() != candidate:
+                    register_bundle(candidate)
+                    if not all(controls_access(candidate).values()):
+                        raise ValueError('The staged Desktop Controls needs its own Accessibility/Calendar approval. '
+                                         'Run desktop controls-permissions before apply. The working helper is retained.')
+                    backup = directory/'updates'/str(time.time_ns())
+                    backup.mkdir(parents=True, mode=0o700)
+                    shutil.copy2(manifest, backup/'manifest.json')
+                    if agent_path().is_file():
+                        shutil.copy2(agent_path(), backup/'LaunchAgent.plist')
+                    if current.is_symlink():
+                        (backup/'desktop-edge').symlink_to(current.resolve())
+                    if (directory/'appearance.json').is_file():
+                        shutil.copy2(directory/'appearance.json', backup/'appearance.json')
+                    print('Prior desktop runtime backup: ' + str(backup))
             palette = appearance.resolve(theme, layout)
             if action == 'theme' and (not document or not document['active']):
                 raise ValueError('Enable the desktop profile before changing its appearance')
+            import manage
+            import workstation_theme
+            config = Path(os.environ.get('XDG_CONFIG_HOME', Path.home()/'.config'))
+            projections = [manage.operation(config/rel, content=content)
+                           for rel, content in workstation_theme.render(palette, ROOT).items()]
+            manage.apply(projections)
             appearance.save(palette)
             if action == 'theme':
+                wallpaper, image = themed_wallpaper(directory, palette)
+                run(wallpaper, 'set', image)
                 appearance.apply()
                 pid = agent_pid()
                 if pid:
                     os.kill(pid, signal.SIGUSR1)
+                # Only update an existing tmux server; never start one for theming.
+                if shutil.which('tmux') and subprocess.run(['tmux', 'has-session'],
+                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0:
+                    run('tmux', 'source-file', config/'tmux/dotfiles-theme.conf')
                 print('Desktop appearance: ' + palette['name'] + ' / ' + palette['layout'])
                 return 0
         if action == 'permissions':
@@ -347,7 +445,7 @@ def main(action, theme=None, layout=None):
                 run(tools['desktop-edge'], '--restore')
                 print('Native menu restored; desktop profile is inactive.')
             return 0
-        tools = compile_tools(directory)
+        tools = prepared_tools or compile_tools(directory)
         register_bundle(tools['desktop-edge'])
         if not document or not document['active']:
             if agent_path().exists() or agent_loaded():
@@ -371,7 +469,8 @@ def main(action, theme=None, layout=None):
             for item in document['preferences']:
                 changed |= item['domain'] == 'com.apple.dock' and macos_preferences.current(item) != item['installed']
                 macos_preferences.write(item, item['installed'])
-            run(tools['wallpaper'], 'set', ROOT / 'assets/wallpapers/storm-geometry.png')
+            wallpaper, image = themed_wallpaper(directory, palette)
+            run(wallpaper, 'set', image)
             write_agent(directory, tools)
             wait_healthy(directory)
             if changed:

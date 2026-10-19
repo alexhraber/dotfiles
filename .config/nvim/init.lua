@@ -34,8 +34,41 @@ vim.pack.add({
   { src = 'https://github.com/folke/tokyonight.nvim', version = 'cdc07ac78467a233fd62c493de29a17e0cf2b2b6' },
   { src = 'https://github.com/nvim-mini/mini.nvim', version = '1345d191bb3da9c7b0e977f4387c5761f9bff68d' },
 }, { confirm = false })
-require('tokyonight').setup({ style = 'storm' })
+local palette_path = vim.fn.stdpath('config') .. '/dotfiles-theme.json'
+local desktop_palette, palette_stamp = {}, ''
+local function read_palette()
+  local ok, data = pcall(vim.fn.readfile, palette_path)
+  if not ok then return end
+  local parsed, value = pcall(vim.json.decode, table.concat(data, '\n'))
+  if not parsed or type(value) ~= 'table' then return end
+  for _, key in ipairs({ 'surface', 'popup', 'foreground', 'muted', 'accent', 'secondary',
+      'border', 'highlight', 'selection', 'success', 'warning', 'danger' }) do
+    if type(value[key]) ~= 'string' or not value[key]:match('^#%x%x%x%x%x%x$') then return end
+  end
+  desktop_palette = value
+  palette_stamp = table.concat(data, '\n')
+end
+read_palette()
+require('tokyonight').setup({ style = 'storm', cache = false, on_colors = function(colors)
+  local mappings = { bg = 'surface', bg_dark = 'popup', bg_float = 'popup', bg_popup = 'popup',
+    bg_highlight = 'highlight', bg_search = 'selection', bg_statusline = 'popup',
+    fg = 'foreground', fg_dark = 'muted', fg_float = 'foreground', comment = 'muted',
+    border = 'border', blue = 'accent', blue0 = 'accent', blue1 = 'accent', cyan = 'secondary',
+    magenta = 'secondary', magenta2 = 'secondary', green = 'success', green1 = 'success',
+    yellow = 'warning', orange = 'warning', red = 'danger', red1 = 'danger', terminal_black = 'highlight' }
+  for name, key in pairs(mappings) do
+    if desktop_palette[key] then colors[name] = desktop_palette[key] end
+  end
+end })
 vim.cmd.colorscheme('tokyonight-storm')
+vim.api.nvim_create_autocmd('FocusGained', {
+  group = vim.api.nvim_create_augroup('DotfilesPalette', { clear = true }),
+  callback = function()
+    local previous = palette_stamp
+    read_palette()
+    if palette_stamp ~= previous then vim.cmd.colorscheme('tokyonight-storm') end
+  end,
+})
 for _, module in ipairs({ 'icons', 'statusline', 'pick', 'extra', 'files', 'surround', 'pairs', 'diff', 'completion' }) do
   require('mini.' .. module).setup()
 end

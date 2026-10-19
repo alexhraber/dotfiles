@@ -20,15 +20,16 @@ def main():
         with tempfile.TemporaryDirectory(prefix='dotfiles-native-check-') as temp:
             subprocess.run(['xcrun', 'clang', '-fobjc-arc', '-Wall', '-Wextra', '-Werror',
                             '-mmacosx-version-min=14.0', '-framework', 'AppKit', '-framework', 'QuartzCore', '-framework', 'EventKit', '-framework', 'ApplicationServices', '-framework', 'SystemConfiguration',
-                            'scripts/desktop-edge.m', 'scripts/calendar-panel.m', 'scripts/control-panel.m', 'scripts/app-menu.m',
+                            'scripts/desktop-edge.m', 'scripts/calendar-panel.m', 'scripts/control-panel.m', 'scripts/app-menu.m', 'scripts/panel-style.m', 'scripts/panel-request.m',
                             '-o', str(Path(temp) / 'desktop-edge')], cwd=ROOT, check=True)
             subprocess.run([str(Path(temp) / 'desktop-edge'), '--self-test'], check=True)
             subprocess.run(['xcrun', 'clang', '-fobjc-arc', '-Wall', '-Wextra', '-Werror',
                             '-mmacosx-version-min=14.0', '-DDF_CONTROL_NOTIFICATION="local.dotfiles.desktop.panels"',
                             '-framework', 'AppKit', '-framework', 'QuartzCore', '-framework', 'EventKit',
                             '-framework', 'ApplicationServices', '-framework', 'ScreenCaptureKit', '-framework', 'SystemConfiguration',
-                            'scripts/wifi-pane.m', 'scripts/calendar-panel.m', 'scripts/control-panel.m', 'scripts/app-menu.m',
+                            'scripts/wifi-pane.m', 'scripts/calendar-panel.m', 'scripts/control-panel.m', 'scripts/app-menu.m', 'scripts/panel-style.m', 'scripts/panel-request.m', 'scripts/workspace-panels.m',
                             '-o', str(Path(temp) / 'wifi-pane')], cwd=ROOT, check=True)
+            subprocess.run([str(Path(temp) / 'wifi-pane'), '--workspace-self-test'], check=True)
             subprocess.run(['xcrun', 'swiftc', '-typecheck', 'scripts/set-wallpaper.swift'],
                            cwd=ROOT, check=True)
     suite = unittest.defaultTestLoader.discover(str(ROOT / 'tests'))

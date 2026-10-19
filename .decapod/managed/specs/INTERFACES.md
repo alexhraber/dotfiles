@@ -48,7 +48,7 @@ README.md. Codex profiles use separate top-level TOML files.
 Ctrl-T previews files with bat, Alt-C previews directories with eza, and Ctrl-/
 toggles previews. Tmux retains Ctrl-b: h/j/k/l select panes, Shift-h/j/k/l resize,
 Tab switches to the previous window. Neovim Space ss opens the workbench;
-[b and ]b switch buffers. The default theme is Tokyo Night Storm throughout.
+[b and ]b switch buffers. The selected desktop palette is projected into the terminal, editor, tmux and shell.
 
 Routine workflows invoke install.sh, scripts/check, scripts/dotfiles doctor,
 scripts/editor_check.py and Homebrew directly. No Just task runner or wrapper
@@ -76,6 +76,29 @@ commits on first startup. The optional desktop profile authors a local user
 LaunchAgent and SketchyBar events; it exposes no network service API.
 
 ## Desktop and inference lifecycle
+
+controls-setup builds/registers a staged main app without changing the active
+helper. controls-permissions requests its Accessibility first and Calendar only
+on a subsequent approved invocation, returning nonzero until both are true.
+An active apply checks the exact candidate's normal registered-app status before
+any appearance/live-helper change. Main bundle and launchd identities are
+separate, allowing signed migration without resetting the working app's records.
+launcher requests the themed installed-application search; no global binding is
+registered. Apple Search Applications opens the same pane.
+
+panel-request.m exchanges mode, random request ID, PID, Cocoa anchor and timestamp
+in private JSON. Reads reject symlinks, wrong ownership/mode, malformed fields and
+stale requests. Hide writes a fresh cancellation request before broadcasting;
+dock autohide preserves an explicit launcher, while Space/overview/undo cancels
+all pending modes. workspace-status.json reports only counts, visibility, geometry,
+request freshness and fixed error codes, never app/window titles or image pixels.
+
+Dock hover cards select retained AX windows after revalidating process and window
+membership; minimized windows are restored. Snapshots use a unique window match
+and existing Screen Recording approval, with no display recording stream. The
+application picker uses case/diacritic-insensitive local matching, arrows, Return,
+Escape and click, opening existing instances. AppKit pane animation is anchored
+and respects Reduce Motion. No Space creation/deletion or navigation remapping occurs.
 
 scripts/dotfiles desktop apply explicitly starts SketchyBar and the native
 edge helper, sets backed-up menu/Dock defaults and wallpaper, then requires
@@ -235,7 +258,7 @@ can leave partial state; the backup manifest remains the recovery input.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `8f0447a89547abc97705e14f3aad05122eaa25292f5da8f670f31805a6a63068`
-- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (7 files)
+- Repository signal fingerprint: `2eaddf2e356ec39c8e3e614a58c633c545357dcf80067322db990de53762f62e`
+- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (8 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

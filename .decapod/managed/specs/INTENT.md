@@ -3,7 +3,7 @@
 ## Product Outcome
 
 Provide a repeatable macOS terminal and development environment for Alex:
-Ghostty with Tokyo Night Storm and Nerd Font, zsh navigation and feedback,
+Ghostty with a shared desktop palette and Nerd Font, zsh navigation and feedback,
 polyglot Neovim editing, tmux, Git diff and signing, portable Codex preferences,
 development and infrastructure tools, and reversible macOS preferences. Existing
 Rust and Ollama installations are integrated without replacing their runtimes
@@ -56,8 +56,8 @@ Routine operations use the existing installer, check, doctor and editor scripts
 directly. The owner does not use Just; its convenience wrapper and dependency
 are removed without removing any underlying operation or required check.
 
-The workstation rice keeps Tokyo Night Storm consistent across Ghostty, fzf,
-Starship, tmux, Neovim and Git tools. It adds a quieter local prompt, a steady
+The workstation projects the selected desktop palette into Ghostty, fzf,
+Starship, tmux and Neovim, with the existing vendored Git themes retained. It adds a quieter local prompt, a steady
 cursor, file/directory previews, a top tmux bar with pane navigation, a Neovim
 workbench/tabline/static indent guide, a shorter hardware summary, Finder list
 view and a compact Dock. Configuration is applied through the backed-up installer
@@ -68,6 +68,17 @@ Excluded: Herdr, Tailscale/AMP services, secret migration, unsolicited model
 downloads, account setup, VM startup troubleshooting and modifying Decapod itself.
 
 ## Fullscreen desktop and on-demand inference
+
+The owner requested all four refinements: transparent dock window previews,
+reliable native fullscreen transitions, coordinated application/wallpaper styling,
+and consistent native pane interactions. AeroSpace stays disabled and quit;
+no tiling manager or alternate Space shortcut is introduced. Window cards use
+actual AX windows and on-demand in-memory captures, with exact selection and
+minimized-window restoration. The themed application search opens installed
+bundles from the Apple pane or explicit CLI, without a global shortcut or daemon.
+The six-hour/six-day weather layout and Location-off Wi-Fi behavior are retained.
+Signed main-app migration has a distinct bundle identity and stages permissions
+before replacing the working helper. Local signing identities remain untracked.
 
 The refined desktop offers Graphite slate/champagne/ice-blue styling across native
 controls. From the far right inward: notifications, clock, weather, then all
@@ -203,7 +214,7 @@ These declarations select authoring and proof obligations; they do not attest im
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `8f0447a89547abc97705e14f3aad05122eaa25292f5da8f670f31805a6a63068`
-- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (7 files)
+- Repository signal fingerprint: `2eaddf2e356ec39c8e3e614a58c633c545357dcf80067322db990de53762f62e`
+- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (8 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

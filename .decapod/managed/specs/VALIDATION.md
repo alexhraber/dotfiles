@@ -2,7 +2,40 @@
 
 ## Proof Surfaces
 
-The current Wi-Fi candidate passes 120 portable unit tests, including stable
+The current refinement passes 126 portable tests, native warnings-as-errors
+compilation and native geometry, overview, menu, calendar, controls and workspace
+self-tests, plus Swift typechecking. All five palette projections preserve
+semantic colors; malformed/injection colors are rejected; generated-file install
+and guarded restoration preserve unrelated configuration. Staged setup leaves
+the active helper untouched and denied upgrade leaves runtime/palette unchanged.
+Ghostty validates the installed config and headless Neovim Normal foreground/
+background match the selected palette.
+
+A real registered-app test filters the launcher and opens the existing Ghostty
+instance. Two disposable AppKit windows produce two real thumbnail cards, and
+each exact window is selected independently. Initial keyboard tests failed
+because input came from a separate test executable; sending events directly
+from the authorized test process passed. Repeated cold fixture hover attempts exposed empty AX window lists. The scanner
+now retries only the bounded read and retains private count/error diagnostics;
+no action is retried. A subsequent actual hover over existing fullscreen Ghostty
+produced a real window thumbnail, visually inspected, and closed on pointer exit.
+Earlier failed attempts remain private evidence; the one passing two-window
+fixture selection does not imply every cold-start app was verified.
+The staged main app independently reports both AX and Calendar access after
+manual approval; activation saved the prior runtime. A private real Mission
+Control test verifies overview detection, both custom surfaces hidden, and
+healthy native Dock guard after exit. AeroSpace was disabled and quit, and the
+obsolete legacy Accessibility record was removed under explicit owner request.
+The installed tmux projection parses on a disposable server that was stopped.
+Ghostty reload_config returned true through its supported AppleScript action.
+The final launcher filter is visually inspected over fullscreen, with the pane
+shrinking to its results while retaining its top edge. A Wi-Fi regression over
+fullscreen opens in 1.244 seconds with one connected and one alternate real
+network, live rates, periodic rescan, bar-autohide survival and pointer exit.
+Location remains off. This run had no disclosure action, so it does not newly
+claim expansion/collapse proof. Host evidence does not replace full exact-candidate readiness and hosted CI.
+
+The previously merged Wi-Fi candidate passed 120 portable unit tests, including stable
 callbacks during rate refresh, changed-map rejection, request-bound expansion
 replay/reset, default top-three alternatives, explicit other choices, native
 handoff without inline rows, fixed-code diagnostics and staged permission readback.
@@ -359,7 +392,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `8f0447a89547abc97705e14f3aad05122eaa25292f5da8f670f31805a6a63068`
-- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (7 files)
+- Repository signal fingerprint: `2eaddf2e356ec39c8e3e614a58c633c545357dcf80067322db990de53762f62e`
+- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (8 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

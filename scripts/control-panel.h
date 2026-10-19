@@ -1,6 +1,7 @@
 #import <AppKit/AppKit.h>
 
 void DFControlsInitialize(NSString *directory);
+void DFControlsSetWillShow(void (^callback)(void));
 void DFControlsAppearance(NSString *path);
 NSColor *DFPanelColor(unsigned fallback);
 void DFControlsNotify(NSString *action);

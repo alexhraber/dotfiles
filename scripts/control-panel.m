@@ -1,4 +1,5 @@
 #import "control-panel.h"
+#import "panel-style.h"
 #import "calendar-panel.h"
 #import "app-menu.h"
 #include <sys/stat.h>
@@ -17,6 +18,8 @@ static double passthroughUntil;
 static NSDictionary *controlDocument, *controlPalette;
 static NSString *dismissedRequest;
 static BOOL colorsChanged;
+static void (^controlWillShow)(void);
+void DFControlsSetWillShow(void (^callback)(void)) {controlWillShow=[callback copy];}
 #ifndef DF_CONTROL_NOTIFICATION
 #define DF_CONTROL_NOTIFICATION "local.dotfiles.desktop.controls"
 #endif
@@ -165,22 +168,14 @@ static NSDictionary *readDocument(void) {
 - (BOOL)isFlipped { return YES; }
 @end
 
-@interface ControlRow : NSButton
-@property BOOL hovered;
+@interface ControlRow : DFPanelButton
 @property BOOL selected;
 @property NSString *detail;
 @property NSString *hint;
 @end
 @implementation ControlRow
-- (void)updateTrackingAreas {
-    [super updateTrackingAreas];
-    for (NSTrackingArea *area in self.trackingAreas.copy) [self removeTrackingArea:area];
-    [self addTrackingArea:[[NSTrackingArea alloc] initWithRect:self.bounds options:NSTrackingMouseEnteredAndExited|NSTrackingActiveAlways|NSTrackingInVisibleRect owner:self userInfo:nil]];
-}
-- (void)mouseEntered:(__unused NSEvent *)event { self.hovered=YES; self.needsDisplay=YES; }
-- (void)mouseExited:(__unused NSEvent *)event { self.hovered=NO; self.needsDisplay=YES; }
 - (void)drawRect:(__unused NSRect)dirty {
-    if (self.hovered || self.highlighted) {
+    if (self.highlighted) {
         [DFPanelColor(0x202735) setFill];
         [[NSBezierPath bezierPathWithRoundedRect:NSInsetRect(self.bounds,2,1) xRadius:7 yRadius:7] fill];
     }
@@ -262,6 +257,8 @@ static NSDictionary *readDocument(void) {
 
 @interface ControlView : ControlSurface
 @property NSString *documentName;
+@property NSString *callbackName;
+@property NSString *callbackRevision;
 - (void)render;
 - (void)clicked:(NSButton *)sender;
 - (void)slid:(NSSlider *)sender;
@@ -295,13 +292,13 @@ static CGFloat headerHeight(NSDictionary *document) {
     return 74+(document[@"slider"] ? 48 : 0)+([document[@"history"] count] ? 88 : 0)
         +(document[@"meter"] ? 14 : 0)+([document[@"forecast"] count] ? 100 : 0);
 }
-static void runControl(NSString *kind, NSString *argument) {
+static void runControl(NSString *kind, NSString *argument, NSString *name, NSString *revision) {
     if (controlBusy || !controlDocument) return;
     NSString *python=installedPython();
     if (!python) return;
     NSTask *task=[NSTask new]; task.executableURL=[NSURL fileURLWithPath:python];
     NSString *script=[NSHomeDirectory() stringByAppendingPathComponent:@".config/sketchybar/plugins/controls.py"];
-    task.arguments=@[@"-B",script,kind,controlDocument[@"name"],argument,controlDocument[@"revision"]];
+    task.arguments=@[@"-B",script,kind,name,argument,revision];
     NSMutableDictionary *environment=NSProcessInfo.processInfo.environment.mutableCopy;
     environment[@"PATH"]=@"/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"; task.environment=environment;
     task.standardInput=NSFileHandle.fileHandleWithNullDevice; task.standardOutput=NSFileHandle.fileHandleWithNullDevice; task.standardError=NSFileHandle.fileHandleWithNullDevice;
@@ -309,9 +306,10 @@ static void runControl(NSString *kind, NSString *argument) {
     controlBusy=[task launchAndReturnError:nil];
 }
 @implementation ControlView
-- (void)clicked:(NSButton *)sender { runControl(@"native-action",[@(sender.tag) stringValue]); }
-- (void)slid:(NSSlider *)sender { runControl(@"native-slider",[NSString stringWithFormat:@"%.0f",sender.doubleValue]); }
+- (void)clicked:(NSButton *)sender { runControl(@"native-action",[@(sender.tag) stringValue],self.callbackName,self.callbackRevision); }
+- (void)slid:(NSSlider *)sender { runControl(@"native-slider",[NSString stringWithFormat:@"%.0f",sender.doubleValue],self.callbackName,self.callbackRevision); }
 - (void)render {
+    self.callbackName=controlDocument[@"name"];self.callbackRevision=controlDocument[@"revision"];
     CGFloat oldScroll=0;
     if ([self.documentName isEqual:controlDocument[@"name"]])
         for (NSView *view in self.subviews) if ([view isKindOfClass:NSScrollView.class]) oldScroll=[(NSScrollView *)view contentView].bounds.origin.y;
@@ -333,6 +331,7 @@ static void runControl(NSString *kind, NSString *argument) {
     NSString *primaryTitle=hero.count>1 ? [[hero subarrayWithRange:NSMakeRange(1,hero.count-1)] componentsJoinedByString:@" · "] : @"";
     if ([@[@"bluetooth",@"wifi"] containsObject:controlDocument[@"name"]] && [rows.firstObject[@"action"] boolValue]) {
         HeaderPower *power=[[HeaderPower alloc] initWithFrame:NSMakeRect(width-174,14,154,34)];
+        power.showsHover=NO;
         power.title=primaryTitle;power.tag=0;power.target=self;power.action=@selector(clicked:);
         power.toolTip=[primaryTitle isEqual:@"On"] ? @"Turn off" : @"Turn on";
         power.accessibilityLabel=[NSString stringWithFormat:@"%@: %@",hero.firstObject,power.toolTip];
@@ -458,6 +457,7 @@ static NSDictionary *renderIdentity(NSDictionary *document) {
 static void showControls(void) {
     NSDictionary *document=readDocument(); if (!document) return;
     if ([document[@"request"] isEqual:dismissedRequest]) return;
+    if (controlWillShow) controlWillShow();
     if (![document[@"request"] isEqual:controlDocument[@"request"]]) controlPanel.ignoresMouseEvents=NO;
     BOOL same=[controlDocument[@"name"] isEqual:document[@"name"]] && controlPanel.visible;
     BOOL redraw=!same || ![renderIdentity(controlDocument) isEqual:renderIdentity(document)];
@@ -496,7 +496,7 @@ static void showControls(void) {
     if (redraw && !tracking) [controlView render];
     renderPending=redraw && tracking;
     controlAway=0; controlButtons=NSEvent.pressedMouseButtons;
-    if (!same) [controlPanel orderFrontRegardless];
+    if (!same) DFPanelPresent(controlPanel);
     if ([document[@"pinned"] boolValue]) [controlPanel makeKeyWindow];
 }
 void DFControlsInitialize(NSString *directory) {

@@ -1,6 +1,8 @@
 #import "app-menu.h"
 #import "control-panel.h"
 #import "calendar-panel.h"
+#import "panel-style.h"
+#import "panel-request.h"
 #import <ApplicationServices/ApplicationServices.h>
 #include <dlfcn.h>
 
@@ -24,7 +26,7 @@ static id menuMouseMonitor, menuKeyMonitor, menuLocalMonitor;
 
 typedef NS_ENUM(NSInteger, AppleAction) {
     AppleAbout=1, AppleSettings, AppleStore, AppleInformation, AppleForceQuit,
-    AppleSleep, AppleRestart, AppleShutdown, AppleLock, AppleLogout
+    AppleSleep, AppleRestart, AppleShutdown, AppleLock, AppleLogout, AppleLauncher
 };
 static NSString *appleBundle(NSInteger action) {
     return @{@(AppleAbout):@"com.apple.AboutThisMacLauncher", @(AppleSettings):@"com.apple.systempreferences",
@@ -89,6 +91,11 @@ static void forceQuitChooser(void) {
     if (!app.terminated && ![app forceTerminate]) appleError(@"This app could not be force quit.");
 }
 static void runAppleAction(NSInteger action) {
+    if (action==AppleLauncher) {
+        NSString *state=NSProcessInfo.processInfo.environment[@"XDG_STATE_HOME"] ?: [NSHomeDirectory() stringByAppendingPathComponent:@".local/state"];
+        NSPoint pointer=NSEvent.mouseLocation;
+        DFWorkspaceRequest([state stringByAppendingPathComponent:@"dotfiles/desktop"],@"launcher",0,NSMakeRect(pointer.x,pointer.y,1,1));return;
+    }
     NSURL *url=appleApplication(action);
     if (url) {
         [NSWorkspace.sharedWorkspace openApplicationAtURL:url configuration:NSWorkspaceOpenConfiguration.configuration completionHandler:^(__unused NSRunningApplication *app,NSError *error) {
@@ -114,12 +121,12 @@ static void runAppleAction(NSInteger action) {
 }
 
 static NSArray *appleEntries(void) {
-    return @[@[@"About This Mac",@(AppleAbout)], @[@"System Settings…",@(AppleSettings)], @[@"App Store…",@(AppleStore)],
+    return @[@[@"About This Mac",@(AppleAbout)], @[@"Search Applications…",@(AppleLauncher)], @[@"System Settings…",@(AppleSettings)], @[@"App Store…",@(AppleStore)],
              @[@"",@0], @[@"System Information…",@(AppleInformation)], @[@"Force Quit…",@(AppleForceQuit)],
              @[@"",@0], @[@"Sleep",@(AppleSleep)], @[@"Restart…",@(AppleRestart)], @[@"Shut Down…",@(AppleShutdown)],
              @[@"",@0], @[@"Lock Screen",@(AppleLock)], @[@"Log Out…",@(AppleLogout)]];
 }
-static BOOL validAppleAction(NSInteger action) { return action>=AppleAbout && action<=AppleLogout; }
+static BOOL validAppleAction(NSInteger action) { return action>=AppleAbout && action<=AppleLauncher; }
 static NSArray *appleRows(void) {
     NSMutableArray *rows=[NSMutableArray array];
     for (NSArray *entry in appleEntries()) {
@@ -192,12 +199,11 @@ static NSArray *readMenus(pid_t pid) {
 - (BOOL)isFlipped { return YES; }
 @end
 
-@interface MenuRow : NSButton
+@interface MenuRow : DFPanelButton
 @property id element;
 @property pid_t pid;
 @property NSUInteger depth;
 @property BOOL submenu;
-@property BOOL hovered;
 @property NSInteger appleAction;
 @property NSString *shortcut;
 @property NSString *mark;
@@ -208,11 +214,6 @@ static void dismissAfter(NSUInteger depth) {
     while (menuPanels.count>depth) { [menuPanels.lastObject orderOut:nil]; [menuPanels removeLastObject]; }
 }
 @implementation MenuRow
-- (void)updateTrackingAreas {
-    [super updateTrackingAreas];
-    for (NSTrackingArea *area in self.trackingAreas.copy) [self removeTrackingArea:area];
-    [self addTrackingArea:[[NSTrackingArea alloc] initWithRect:self.bounds options:NSTrackingMouseEnteredAndExited|NSTrackingActiveAlways|NSTrackingInVisibleRect owner:self userInfo:nil]];
-}
 - (void)mouseEntered:(__unused NSEvent *)event {
     self.hovered=YES; self.needsDisplay=YES;
     if (!self.enabled) return;
@@ -223,9 +224,6 @@ static void dismissAfter(NSUInteger depth) {
 }
 - (void)mouseExited:(__unused NSEvent *)event { self.hovered=NO; self.needsDisplay=YES; }
 - (void)drawRect:(__unused NSRect)dirty {
-    if (self.hovered && self.enabled) {
-        [DFPanelColor(0x202735) setFill]; [[NSBezierPath bezierPathWithRoundedRect:NSInsetRect(self.bounds,2,1) xRadius:7 yRadius:7] fill];
-    }
     NSColor *color=DFPanelColor(self.enabled ? 0xe6edf7 : 0x94a3b8);
     NSMutableParagraphStyle *paragraph=[NSMutableParagraphStyle new]; paragraph.lineBreakMode=NSLineBreakByTruncatingTail;
     NSDictionary *style=@{NSFontAttributeName:[NSFont systemFontOfSize:12 weight:NSFontWeightMedium],NSForegroundColorAttributeName:color,NSParagraphStyleAttributeName:paragraph};
@@ -323,7 +321,7 @@ static void showEntries(NSArray *items, NSString *heading, NSUInteger depth, NSP
     NSScreen *screen=NSScreen.mainScreen; for (NSScreen *candidate in NSScreen.screens) if (NSPointInRect(NSEvent.mouseLocation,candidate.frame)) screen=candidate;
     CGFloat x=origin.x; if (x+310>NSMaxX(screen.frame)-12) x=depth ? NSMinX(menuPanels.lastObject.frame)-307 : NSMaxX(screen.frame)-322;
     [panel setFrame:NSMakeRect(MAX(NSMinX(screen.frame)+12,x),MAX(NSMinY(screen.frame)+12,origin.y-height),310,height) display:NO];
-    surface.frame=NSMakeRect(0,0,310,height); [menuPanels addObject:panel]; [panel orderFrontRegardless];
+    surface.frame=NSMakeRect(0,0,310,height); [menuPanels addObject:panel]; DFPanelPrepare(panel);DFPanelPresent(panel);
     if (!depth) [panel makeKeyWindow];
 }
 static void updateBar(NSArray *menus, pid_t pid, BOOL force) {
@@ -432,8 +430,8 @@ int DFMenusSelfTest(void) {
     NSMutableArray *many=[fixture mutableCopy]; for (NSUInteger i=0;i<20;i++) [many addObject:@(i)];
     if (applicationMenus(many).count!=many.count-1 || applicationMenus(many).lastObject!=many.lastObject) return 1;
     if (!canInvoke(42,42,YES,NO) || canInvoke(42,43,YES,NO) || canInvoke(42,42,NO,NO) || canInvoke(42,42,YES,YES) || canInvoke(0,0,YES,NO)) return 1;
-    if (!validAppleAction(AppleAbout) || !validAppleAction(AppleLogout) || validAppleAction(0) || validAppleAction(AppleLogout+1)) return 1;
-    if (appleEntries().count!=13 || ![appleBundle(AppleAbout) isEqual:@"com.apple.AboutThisMacLauncher"] || ![appleBundle(AppleSettings) isEqual:@"com.apple.systempreferences"] || appleBundle(-1)) return 1;
+    if (!validAppleAction(AppleAbout) || !validAppleAction(AppleLogout) || !validAppleAction(AppleLauncher) || validAppleAction(0) || validAppleAction(AppleLauncher+1)) return 1;
+    if (appleEntries().count!=14 || ![appleBundle(AppleAbout) isEqual:@"com.apple.AboutThisMacLauncher"] || ![appleBundle(AppleSettings) isEqual:@"com.apple.systempreferences"] || appleBundle(-1) || applePowerEvent(AppleLauncher)) return 1;
     if (applePowerEvent(AppleRestart)!=kAEShowRestartDialog || applePowerEvent(AppleShutdown)!=kAEShowShutdownDialog
         || applePowerEvent(AppleLogout)!=kAELogOut || applePowerEvent(AppleSettings) || applePowerEvent(-1)) return 1;
     if (applePowerEvent(AppleRestart)==kAERestart || applePowerEvent(AppleShutdown)==kAEShutDown || applePowerEvent(AppleLogout)==kAEReallyLogOut) return 1;

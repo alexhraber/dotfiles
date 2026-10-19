@@ -1,6 +1,6 @@
 # alexhraber/dotfiles
 
-A reproducible engineering workstation: Ghostty, Tokyo Night Storm,
+A reproducible engineering workstation: Ghostty, a shared desktop palette,
 JetBrainsMono Nerd Font, Starship, zsh, tmux, polyglot Neovim, Git, Codex,
 local AI, infrastructure tools, and reversible macOS preferences. Podman is
 the intended container runtime; Decapod is initialized for isolated workspaces.
@@ -168,8 +168,8 @@ permissions and browser profiles remain locally managed.
 ## Workstation design
 
 The desktop follows the fullscreen workflow: content fills the screen, and
-controls appear at the edges only when needed. Tokyo Night Storm grounds the
-terminal and editor; the desktop defaults to Graphite with champagne and ice-blue accents.
+controls appear at the edges only when needed. Graphite's champagne and ice-blue accents
+coordinate the desktop, Ghostty, Neovim, tmux, Starship, fzf and application launcher.
 Four alternate palettes remain available. Nocturne uses charcoal, violet and cyan. Tidal
 pairs deep petrol with seafoam and brass; Ember uses warm charcoal, copper and
 rose; Iris combines plum, lavender and mint. SF Pro gives system controls a native feel, while monospaced
@@ -230,7 +230,7 @@ reveal can return; `desktop undo` stops the helper and removes the filter.
 
 | Control | Hover / interaction |
 | --- | --- |
-| Apple | Click for a themed system pane: About This Mac, System Settings, App Store, System Information, Force Quit and session/power actions |
+| Apple | Click for a themed system pane: About This Mac, Search Applications, System Settings, App Store, System Information, Force Quit and session/power actions |
 | Active app | Click for the app’s menu headings; hover File, Edit, View, Window, Help or another heading for its real commands |
 | Clock | Current macOS time; native month grid, date selection, previous/next month, today and synced calendar agenda |
 | Weather | ZIP 97750 forecast, wind in mph, precipitation chance, upcoming hours and extended outlook |
@@ -247,6 +247,34 @@ The hardware icons replace CPU / GPU / RAM words in the main bar; panel headings
 retain descriptive names. `G` beside the memory icon means used GiB; full capacity
 and swap stay in the panel, with swap warnings retained. Panel surfaces are opaque
 and blur-free for predictable rendering and readability.
+
+Dock icon hover opens window cards after an intentional dwell. Up to four cards
+fit across; additional windows scroll horizontally. Screen Recording enables
+window-only snapshots held in memory, while Accessibility selects the actual
+retained window rather than guessing from its title. Minimized windows keep an
+icon card and are restored on selection. Capture is on demand, with one small
+snapshot at a time; previews disappear on pointer exit, Space changes or overview.
+The dock itself remains fully transparent and shows only open-app artwork.
+
+Search Applications in the Apple pane opens the matching launcher. Type to filter,
+use arrows and Return, or click a result; Escape closes it. It scans installed app
+bundles only, adds no service or global shortcut, and opens existing instances.
+`scripts/dotfiles desktop launcher` opens the same pane from a terminal.
+
+Native panes share a short anchored fade and row hover treatment, with no slide
+on refresh. Reduce Motion removes these transitions. Mission Control detection
+handles the observed Dock overlay levels and top Spaces strip, suppressing custom
+surfaces until the overview closes. The required spare native Desktop remains.
+
+Desktop Controls now uses the available local development identity for stable
+signing, with no identity or team checked in. Its application identifier is separate
+from the old ad-hoc bundle so migration preserves the working app's approvals.
+`desktop controls-setup` stages a registered build without replacing the active one;
+`desktop controls-permissions` requests its own Accessibility, then Calendar access.
+An active-profile upgrade refuses to switch until that exact build reports both.
+It saves the prior helper link, LaunchAgent, manifest and appearance under private
+`desktop/updates/` before activation. Auxiliary Desktop Panels keeps its existing
+signing identity and approvals. macOS grants remain manual; Location stays off.
 
 Common controls work in the popovers instead of launching Settings. Native
 Wi-Fi, notification and Focus quick panels and App Exposé require local
@@ -316,8 +344,12 @@ Use `desktop theme --theme graphite|nocturne|tidal|ember|iris --layout islands|r
 to change the live appearance. The dock always renders only application artwork,
 independent of the bar theme. Text/control contrast is checked against the declared surfaces.
 `themes.json` declares the fresh-machine default; local selections stay in
-private state and survive apply. `desktop theme` changes only appearance,
-without resetting wallpaper or desktop preferences.
+private state and survive apply. `desktop theme` writes backed-up application palette
+projections and renders a matching quiet contour wallpaper. It preserves desktop
+preferences and the original wallpaper recovery baseline. Ghostty consumes the local
+`dotfiles` theme after Reload Configuration (Command+Shift+,); Neovim reloads its
+palette when focused again, new shells load the prompt/fzf palette, and an existing
+tmux server receives the new styles without starting a server.
 
 All hover controls use native AppKit panels with SF Symbol headings, clear
 current readings, a violet accent rule and cyan detail graphs. CPU, GPU, memory
@@ -432,7 +464,9 @@ packages are retained; use the installer's printed manifests to restore files.
 If a newer wallpaper was chosen manually, save that choice before undo, which
 restores the captured wallpaper on matching connected displays.
 
-The wallpaper's authored SVG and exported PNG live in `assets/wallpapers/`.
+The original wallpaper's authored SVG and exported PNG live in `assets/wallpapers/`.
+The active palette's wallpaper is generated by `scripts/set-wallpaper.swift render`
+and cached privately; no generated images need to be tracked.
 The bar and border configuration live under `.config/sketchybar/` and
 `.config/borders/`; compilation products, telemetry, device state, logs,
 LaunchAgents and wallpaper backups stay outside Git. Native compiles run in
@@ -446,9 +480,9 @@ fullscreen apps. This setup does not destroy that required Space or move your
 fullscreen apps. Keep the spare Desktop at the far right and use the trackpad.
 Command+number is not mapped to ordinary Desktop shortcuts, which would not
 target fullscreen Spaces. No Alt/Control-number substitutes are installed.
-AeroSpace is installed for an explicit trial, starts disabled, and has no login
-startup or workspace navigation bindings. Launch it manually and use
-`aerospace enable on` to try tiling; `aerospace enable off` pauses it.
+AeroSpace is an unused optional trial: disabled, quit, and excluded from login
+startup. The desktop, previews and launcher use native macOS Spaces and do not
+depend on it. Configuration installation does not launch it.
 
 LuLu is installed as the outbound firewall option. Launch it once and approve
 its macOS system extension and network filter locally. Rules and approvals are
@@ -523,8 +557,11 @@ Neovim opens a centered workbench with file search, project search and recent
 files. Space ss reopens it; [b / ]b switches buffers. A tabline, static indent
 guides and rounded floating windows use the same pinned mini.nvim package.
 
-Tokyo Night Storm is shared by Ghostty, Neovim, Starship, bat, delta, and Lazygit.
-The installer builds bat's theme cache. Its vendored theme is attributed and
+Neovim retains the pinned Tokyo Night syntax engine with the selected desktop's
+semantic colors. Ghostty, tmux, Starship and fzf consume generated local palette
+files from `scripts/workstation_theme.py`; all five declared palettes are supported.
+The Git viewers retain their vendored Tokyo Night theme. The installer builds
+bat's theme cache. Its vendored theme is attributed and
 licensed in `.config/bat/themes/NOTICE` and `LICENSE`.
 
 ## Git and signing
