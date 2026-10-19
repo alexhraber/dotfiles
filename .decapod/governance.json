@@ -76,6 +76,14 @@
       "proof_refs": [
         "full host/live evidence cited in current trajectory; actual container project-check successful; exact-candidate readiness next"
       ]
+    },
+    {
+      "id": "desktop-refinement-task-branch",
+      "summary": "Bind the owned work branch unambiguously to its actual claimed task after validator reported shorthand-prefix parsing mismatch.",
+      "input_digest": "sha256:08c9eb6c28976734306ccf5de35c9506e764f131eac197943a27315684705692",
+      "proof_refs": [
+        "Actual readiness failure retained in trajectory; current task identity preserved; prerequisite checks rerun before full readiness retry"
+      ]
     }
   ],
   "intents": {
@@ -196,7 +204,7 @@
       "active_boundaries": [
         "AeroSpace disabled and quit; native fullscreen Spaces, transparent dock and Location off retained; no unrelated repos or credentials"
       ],
-      "artifact_hash": "sha256:419f0be487925979429a36b37c44eb33b5a7901db48c05c15d9be6055cdd0227",
+      "artifact_hash": "sha256:83686a997ae7c63e0f6c68dab496dc2ecc5d7c8f394a099e0383964df9e44dca",
       "checks": [
         {
           "name": "decapod validate",
@@ -213,9 +221,13 @@
         {
           "name": "native-builds",
           "status": "passed"
+        },
+        {
+          "name": "publication-readiness",
+          "status": "failed"
         }
       ],
-      "current_phase": "validation",
+      "current_phase": "verification",
       "custody": {
         "events": [
           {
@@ -243,10 +255,17 @@
             "intent_id": "intent:desktop-refinement-final-20261018",
             "kind": "trajectory_step_recorded",
             "sequence": 5
+          },
+          {
+            "detail": "trajectory:desktop-refinement-final-20261018",
+            "event_id": "event:6",
+            "intent_id": "intent:desktop-refinement-final-20261018",
+            "kind": "trajectory_step_recorded",
+            "sequence": 6
           }
         ],
         "knowledge_candidates": [],
-        "next_sequence": 5,
+        "next_sequence": 6,
         "schema_version": "1.0.0",
         "trajectories": {
           "desktop-refinement-final-20261018": {
@@ -293,6 +312,21 @@
                 ],
                 "sequence": 5,
                 "validation_findings": []
+              },
+              {
+                "action": "verification",
+                "custody_event_id": "event:6",
+                "observations": [
+                  "Full readiness reported branch-derived task mismatch: the shorthand todo-01m595 prefix was parsed as todo_01m595 instead of the actual claimed docs_01m5956rfgdprk10. Renamed only this owned work branch to agent/unknown/docs_01m5956rfgdprk10-desktop-refinement so it unambiguously names the real task; no task identity or proof was fabricated."
+                ],
+                "proof_refs": [
+                  "publication-readiness"
+                ],
+                "scope": [
+                  "dotfiles-desktop"
+                ],
+                "sequence": 6,
+                "validation_findings": []
               }
             ]
           }
@@ -304,6 +338,7 @@
       "destination": "pull request",
       "evidence": [
         "Committed implementation ffc7265 and recovery 80889d8 retain all earlier failed and partial attempts. 126 unit tests, native compilation/self-tests and final auxiliary warnings-as-errors builds passed. Real fullscreen Ghostty dock thumbnail and pointer-exit closure, exact two-window selection, compact launcher keyboard/filter/visual, Mission Control suppression/recovery, Location-off Wi-Fi regression, installed Ghostty/Neovim/tmux palette checks and staged AX/Calendar activation are evidenced by private host results and authored validation spec. No universal cold-start AX support claim. Final full readiness must still pass.",
+        "Full readiness reported branch-derived task mismatch: the shorthand todo-01m595 prefix was parsed as todo_01m595 instead of the actual claimed docs_01m5956rfgdprk10. Renamed only this owned work branch to agent/unknown/docs_01m5956rfgdprk10-desktop-refinement so it unambiguously names the real task; no task identity or proof was fabricated.",
         "validation epoch ve_7d27cbfa89cd774a completed with zero failures"
       ],
       "inspected_files": [
@@ -341,98 +376,98 @@
       },
       "decapod_release": "0.119.1",
       "drift_findings": [],
-      "elapsed_ms": 2736,
+      "elapsed_ms": 2932,
       "epoch_ref": "ve_7d27cbfa89cd774a",
       "fail_count": 0,
       "failures": [],
       "gate_timings": [
         {
-          "elapsed_ms": 657,
-          "name": "validate_project_specs_docs"
-        },
-        {
-          "elapsed_ms": 571,
+          "elapsed_ms": 821,
           "name": "validate_stale_workspaces"
         },
         {
-          "elapsed_ms": 366,
+          "elapsed_ms": 594,
+          "name": "validate_project_specs_docs"
+        },
+        {
+          "elapsed_ms": 437,
           "name": "validate_markdown_primitives_roundtrip_gate"
         },
         {
-          "elapsed_ms": 220,
+          "elapsed_ms": 189,
           "name": "validate_machine_contract"
         },
         {
-          "elapsed_ms": 160,
+          "elapsed_ms": 168,
           "name": "validate_git_workspace_context"
         },
         {
-          "elapsed_ms": 114,
+          "elapsed_ms": 118,
           "name": "validate_obligations"
         },
         {
-          "elapsed_ms": 71,
+          "elapsed_ms": 74,
           "name": "validate_legacy_jsonl_retired"
         },
         {
-          "elapsed_ms": 39,
+          "elapsed_ms": 46,
           "name": "validate_archive_integrity"
         },
         {
-          "elapsed_ms": 22,
-          "name": "validate_no_legacy_namespaces"
-        },
-        {
-          "elapsed_ms": 21,
+          "elapsed_ms": 32,
           "name": "validate_repomap_determinism"
         },
         {
-          "elapsed_ms": 19,
-          "name": "validate_generated_artifact_whitelist"
-        },
-        {
-          "elapsed_ms": 18,
-          "name": "validate_schema_determinism"
-        },
-        {
-          "elapsed_ms": 16,
-          "name": "validate_federation_gates"
-        },
-        {
-          "elapsed_ms": 16,
+          "elapsed_ms": 25,
           "name": "validate_control_plane_contract"
         },
         {
-          "elapsed_ms": 12,
+          "elapsed_ms": 19,
+          "name": "validate_schema_determinism"
+        },
+        {
+          "elapsed_ms": 17,
+          "name": "validate_federation_gates"
+        },
+        {
+          "elapsed_ms": 15,
+          "name": "validate_git_push_pr_gate"
+        },
+        {
+          "elapsed_ms": 14,
+          "name": "validate_git_protected_branch"
+        },
+        {
+          "elapsed_ms": 13,
           "name": "validate_lineage_hard_gate"
         },
         {
           "elapsed_ms": 11,
-          "name": "validate_git_push_pr_gate"
-        },
-        {
-          "elapsed_ms": 11,
-          "name": "validate_git_protected_branch"
+          "name": "validate_no_legacy_namespaces"
         },
         {
           "elapsed_ms": 7,
           "name": "validate_gatekeeper_gate"
         },
         {
-          "elapsed_ms": 6,
-          "name": "validate_entrypoint_invariants"
-        },
-        {
-          "elapsed_ms": 4,
-          "name": "validate_lcm_immutability"
-        },
-        {
           "elapsed_ms": 4,
           "name": "validate_knowledge_integrity"
         },
         {
-          "elapsed_ms": 3,
+          "elapsed_ms": 4,
+          "name": "validate_knowledge_promotions_if_present"
+        },
+        {
+          "elapsed_ms": 4,
+          "name": "validate_generated_artifact_whitelist"
+        },
+        {
+          "elapsed_ms": 4,
           "name": "validate_watcher_audit"
+        },
+        {
+          "elapsed_ms": 4,
+          "name": "validate_lcm_immutability"
         },
         {
           "elapsed_ms": 3,
@@ -440,15 +475,11 @@
         },
         {
           "elapsed_ms": 3,
-          "name": "validate_knowledge_promotions_if_present"
-        },
-        {
-          "elapsed_ms": 3,
-          "name": "validate_health_purity"
-        },
-        {
-          "elapsed_ms": 3,
           "name": "validate_plan_governed_execution_gate"
+        },
+        {
+          "elapsed_ms": 2,
+          "name": "validate_trajectory_artifacts_if_present"
         },
         {
           "elapsed_ms": 2,
@@ -456,26 +487,22 @@
         },
         {
           "elapsed_ms": 2,
-          "name": "validate_override_authority"
-        },
-        {
-          "elapsed_ms": 1,
           "name": "validate_canon_mutation"
         },
         {
-          "elapsed_ms": 1,
-          "name": "validate_trajectory_artifacts_if_present"
+          "elapsed_ms": 2,
+          "name": "validate_entrypoint_invariants"
         },
         {
-          "elapsed_ms": 1,
+          "elapsed_ms": 2,
           "name": "validate_jev_history_if_present"
         },
         {
-          "elapsed_ms": 1,
-          "name": "validate_watcher_purity"
+          "elapsed_ms": 2,
+          "name": "validate_research_claims_if_present"
         },
         {
-          "elapsed_ms": 1,
+          "elapsed_ms": 2,
           "name": "validate_validation_receipt_if_present"
         },
         {
@@ -484,11 +511,19 @@
         },
         {
           "elapsed_ms": 1,
-          "name": "validate_research_claims_if_present"
+          "name": "validate_watcher_purity"
         },
         {
           "elapsed_ms": 1,
           "name": "validate_database_schema_versions"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_override_authority"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_health_purity"
         },
         {
           "elapsed_ms": 1,
@@ -499,24 +534,8 @@
           "name": "validate_health_cache_integrity"
         },
         {
-          "elapsed_ms": 1,
-          "name": "validate_project_config_toml"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_docs_templates_bucket"
-        },
-        {
           "elapsed_ms": 0,
           "name": "validate_spec_drift"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_project_scoped_state"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_context_capsule_policy_contract"
         },
         {
           "elapsed_ms": 0,
@@ -524,11 +543,19 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_internalization_artifacts_if_present"
+          "name": "validate_project_config_toml"
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_workunit_manifests_if_present"
+          "name": "validate_context_capsule_policy_contract"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_project_scoped_state"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_docs_templates_bucket"
         },
         {
           "elapsed_ms": 0,
@@ -536,7 +563,23 @@
         },
         {
           "elapsed_ms": 0,
+          "name": "validate_workunit_manifests_if_present"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_internalization_artifacts_if_present"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_state_commit_gate"
+        },
+        {
+          "elapsed_ms": 0,
           "name": "validate_interface_contract_bootstrap"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_context_capsules_if_present"
         },
         {
           "elapsed_ms": 0,
@@ -545,14 +588,6 @@
         {
           "elapsed_ms": 0,
           "name": "validate_root_dockerfile_seed_detection"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_context_capsules_if_present"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_state_commit_gate"
         },
         {
           "elapsed_ms": 0,
@@ -571,24 +606,24 @@
           "name": "validate_tooling_gate"
         }
       ],
-      "git_revision": "80889d8eec8e3daed053302b9ef98cfb56769c34",
+      "git_revision": "0394cc40deaeecfafc4f695ae4f6452b7a090614",
       "kind": "validation_receipt",
       "parallelism": 1,
       "pass_count": 188,
       "prediction_uses_warnings": true,
-      "receipt_hash": "sha256:7f27cdba7423235c6d00c19741aca65ad932dd1dbbe8be62e6544ce27bc81c28",
+      "receipt_hash": "sha256:d966f0f3b0c482eb8889d99ef32db495d80630bbfe1022dd92cd144659b3b3d3",
       "repo_signal_fingerprint": "2eaddf2e356ec39c8e3e614a58c633c545357dcf80067322db990de53762f62e",
       "schema_version": "1.0.0",
       "status": "ok",
       "temporary_artifacts_cleaned": 0,
-      "trajectory_artifact_hash": "sha256:419f0be487925979429a36b37c44eb33b5a7901db48c05c15d9be6055cdd0227",
+      "trajectory_artifact_hash": "sha256:83686a997ae7c63e0f6c68dab496dc2ecc5d7c8f394a099e0383964df9e44dca",
       "trajectory_run_id": "desktop-refinement-final-20261018",
       "warn_count": 4,
       "warnings": [
         "Risk map missing (run `decapod riskmap init`)",
         "Stale workspaces preserved for explicit review: <external-path> (current_workspace: workspace contains the current process; rerun prune from the host checkout after leaving this workspace so Git can release the branch), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.)",
         "Watcher audit trail missing (run `decapod govern watcher run`)",
-        "Workspace branch 'agent/unknown/todo-01m595-docs_01m5956rfgdprk10-1792382573' has unpushed commits or does not exist on origin. Branch pushes and iteration are allowed before preflight; hold PR creation until intent is converged, the branch is mergeable, and full `decapod validate` succeeds against the exact current candidate and accepted target."
+        "Workspace branch 'agent/unknown/docs_01m5956rfgdprk10-desktop-refinement' has unpushed commits or does not exist on origin. Branch pushes and iteration are allowed before preflight; hold PR creation until intent is converged, the branch is mergeable, and full `decapod validate` succeeds against the exact current candidate and accepted target."
       ]
     }
   }
