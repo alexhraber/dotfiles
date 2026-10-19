@@ -211,11 +211,12 @@ createsNewApplicationInstance disabled, preserving normal reopen semantics.
 desktop.py registers the complete signed bundle through public LSRegisterURL
 before activation, including cached builds launched directly by launchd.
 controls.py reads Wi-Fi power through networksetup for the bar icon only.
-show('wifi') uses the ordinary dwell/request cancellation, hides custom windows,
-then opens Apple's real Wi-Fi picker directly using native_item(ensure='open').
+When auxiliary access is unavailable, show('wifi') uses the ordinary dwell/request
+cancellation, hides custom windows, then opens Apple's real Wi-Fi picker
+directly using native_item(ensure='open').
 A fixed wifi-header AX lookup makes opening idempotent and closing conditional:
 a different system panel is never toggled by Wi-Fi cleanup. No SSID is extracted,
-no saved-profile choices are synthesized and no scan/consent helper is installed.
+no saved-profile choices are synthesized and this fallback requests no scan.
 active.json marks native_wifi so level/network refresh cannot replace the picker.
 Bar conceal retains it while the pointer enters; another themed pane or explicit
 cancel closes only a visible Wi-Fi picker. Native outside-click/Escape behavior
@@ -251,7 +252,11 @@ status. It captures one display into memory, covers native popup creation and
 closing, reads bounded native controls while skipping credential fields, and
 returns fresh typed rows. Actions match a fresh role/identifier/text/selected
 state before AXPress. Python serializes queries, validates results, preserves
-native buttons and the connected network within the 14-row budget, and samples
+native buttons and the connected network within the 14-row budget.
+Wi-Fi's row projection shares Bluetooth's flat list: connected controls first,
+then three unselected native network controls total, followed by native
+disclosure/buttons. Labels use the same selected/detail/hint renderer; unselected
+networks explicitly say Not connected. The sampler reads
 netstat link counters each second only while its request remains visible. A
 four-second snapshot refresh reopens the native controls behind the cover;
 performance, connection/authentication handoff and full mouse-hover acceptance
@@ -373,7 +378,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `bbaaa250dd601e1ba58a43bf226c431cad5c743e9e17c15eaae8ac775a8d4d53`
+- Repository signal fingerprint: `9cb113537f5e7d4aa4de4f8bc3955cd8a641152d7d6e5b24e31f26a5b082b7d6`
 - Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (7 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

@@ -55,6 +55,14 @@
         "/private/tmp/dotfiles-bluetooth-header-probe.m",
         "/private/tmp/dotfiles-wifi-covered-proof.json"
       ]
+    },
+    {
+      "id": "wifi-bluetooth-style",
+      "summary": "Match Wi-Fi to Bluetooth flat connected-first rows, three nearby alternatives total, native options beneath and explicit connection state/action labels; 109 tests pass. Live themed Wi-Fi remains pending manual Screen Capture approval; no publication readiness claim.",
+      "input_digest": "sha256:7f7be739ace1928a129d75de9a42689fe27a0631034a44d05e0884e6f173b10a",
+      "proof_refs": [
+        "tests/test_wifi_pane.py"
+      ]
     }
   ],
   "intents": {
@@ -95,23 +103,23 @@
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/ARCHITECTURE.md",
-          "reason": "Reviewed isolated Desktop Panels renderer, native AX adapter behind memory-only cover, private request lifecycle, local certificate build and new native CI compile. Bluetooth installed/live AX verified; full Wi-Fi route remains explicitly pending Screen Capture approval and action/performance proof.",
-          "reviewed_code_fingerprint": "bbaaa250dd601e1ba58a43bf226c431cad5c743e9e17c15eaae8ac775a8d4d53",
-          "spec_material_hash": "75aa1cb0d8c26f8e11a453e0ab6c3f84d341383e87558da35308753d08bc8fbc"
+          "reason": "Reviewed Wi-Fi flat connected-first projection matching Bluetooth, three unselected choices total, native options retained and shared row metadata. Existing capture adapter and app identities unchanged; Screen Capture live proof still pending.",
+          "reviewed_code_fingerprint": "9cb113537f5e7d4aa4de4f8bc3955cd8a641152d7d6e5b24e31f26a5b082b7d6",
+          "spec_material_hash": "c815705970d337d3b2de6b26107a50a4289cc8ab5fdbe53a09252984624e3bb5"
         },
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/INTERFACES.md",
-          "reason": "Bluetooth header index zero owns power action with device actions unchanged. Documented explicit panels setup/permission commands and fresh bounded native descriptors, rates and native fallback. No end-to-end themed Wi-Fi acceptance or recency rank claim.",
-          "reviewed_code_fingerprint": "bbaaa250dd601e1ba58a43bf226c431cad5c743e9e17c15eaae8ac775a8d4d53",
-          "spec_material_hash": "d27baf07ab1602abd95052f97e201618ba32b7fcc3e379eadc355f95e92bf520"
+          "reason": "Reviewed exact Bluetooth-style Wi-Fi row order, header power action, Connected/Not connected labels and hover actions. New projection/render regression and all 109 Python tests pass; native fallback remains while Screen Capture false.",
+          "reviewed_code_fingerprint": "9cb113537f5e7d4aa4de4f8bc3955cd8a641152d7d6e5b24e31f26a5b082b7d6",
+          "spec_material_hash": "5bb9a3e1e26ac8ec5a0240d99401bf1cbe3f08f0d72b972b25a79941bedb588e"
         },
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/SECURITY.md",
-          "reason": "Location remains off; separate registered app AX approved, Screen Capture pending. No password/text-field reads or persisted screen images. Local Keychain signing identity is never recorded in Git. Existing Desktop Controls Calendar/AX identity unchanged; full Wi-Fi handoff still unverified.",
-          "reviewed_code_fingerprint": "bbaaa250dd601e1ba58a43bf226c431cad5c743e9e17c15eaae8ac775a8d4d53",
-          "spec_material_hash": "03322ce20e723eff9148676449185f57a7f6f431ce08fbea89227748f6df9cd8"
+          "reason": "Reviewed unchanged Location-off boundary and explicit fallback vs optional AX/capture adapter. No native rebuild, added consent request, persisted image or fabricated nearby network. Live custom Wi-Fi remains unverified until manual macOS approval.",
+          "reviewed_code_fingerprint": "9cb113537f5e7d4aa4de4f8bc3955cd8a641152d7d6e5b24e31f26a5b082b7d6",
+          "spec_material_hash": "93af56655647cf23922e25425ad5528e935586953ea8674335d72048e5eaca2f"
         }
       ],
       "state": "APPROVED",
@@ -122,14 +130,14 @@
       ],
       "unknowns": [],
       "unresolved_contradictions": [],
-      "updated_at": "1792373074Z"
+      "updated_at": "1792373267Z"
     },
     "trajectory": {
       "active_boundaries": [
         "Current claimed task and isolated work branch",
         "Location remains off; no repeated permission question; preserve approved native app identity."
       ],
-      "artifact_hash": "sha256:4c6017743dff8cd018622d88fd2fb00cd4762f913932141361368ab90d26aaff",
+      "artifact_hash": "sha256:c42a8571e1ebc7a8a0da4b1c19e2a57f35bb9ce29fbd8d3aa949105cc1a53093",
       "blockers": [
         "Registered Desktop Panels has Accessibility approval but Screen Capture remains false; only the user can approve that macOS switch. Native Wi-Fi fallback remains active, themed Wi-Fi live/action/authentication and recency acceptance unverified."
       ],
@@ -140,6 +148,10 @@
         },
         {
           "name": "bluetooth_live_header",
+          "status": "passed"
+        },
+        {
+          "name": "bluetooth_style_wifi_rows",
           "status": "passed"
         },
         {
@@ -192,6 +204,10 @@
         },
         {
           "name": "python_suite",
+          "status": "passed"
+        },
+        {
+          "name": "python_suite_109",
           "status": "passed"
         },
         {
@@ -274,10 +290,17 @@
             "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
             "kind": "trajectory_step_recorded",
             "sequence": 10
+          },
+          {
+            "detail": "trajectory:branch_01M58C4V19X11MCFQMX6SWKW4V",
+            "event_id": "event:11",
+            "intent_id": "intent:change_01M58C4TYTR1RQDG8H2ED3BKEH",
+            "kind": "trajectory_step_recorded",
+            "sequence": 11
           }
         ],
         "knowledge_candidates": [],
-        "next_sequence": 10,
+        "next_sequence": 11,
         "schema_version": "1.0.0",
         "trajectories": {
           "branch_01M58C4V19X11MCFQMX6SWKW4V": {
@@ -437,6 +460,25 @@
                 ],
                 "sequence": 10,
                 "validation_findings": []
+              },
+              {
+                "action": "verification",
+                "custody_event_id": "event:11",
+                "observations": [
+                  ".config/sketchybar/plugins/wifi_pane.py",
+                  ".config/sketchybar/plugins/controls.py",
+                  "tests/test_wifi_pane.py",
+                  "Wi-Fi projection now matches Bluetooth flat rows: selected network first, three unselected native networks total, native options last, Connected/Not connected and Connect/Disconnect metadata. New regression covers network order across native headings and exact row renderer payload. All 109 Python tests pass; GUI activation remains unavailable because Screen Capture=false for registered Desktop Panels. No Location request, native app rebuild, SSID fabrication or final Wi-Fi acceptance claim."
+                ],
+                "proof_refs": [
+                  "bluetooth_style_wifi_rows",
+                  "python_suite_109"
+                ],
+                "scope": [
+                  "root"
+                ],
+                "sequence": 11,
+                "validation_findings": []
               }
             ]
           }
@@ -456,6 +498,7 @@
         "/private/tmp/dotfiles-wifi-permission-off-proof.json",
         "/private/tmp/dotfiles-wifi-ui-backup-a5uii2e9",
         "108 Python tests pass; native signed helper compile -Wall -Wextra -Werror passes; live AX Bluetooth probe finds one header button, zero duplicate power rows, five device buttons. Existing DesktopControls-423089378d446f54 runtime link unchanged. Covered prototype rendered video has 39 identical covered frames and 22 uncovered positive-control frames; production LaunchServices Wi-Fi path awaits Screen Capture approval.",
+        "Wi-Fi projection now matches Bluetooth flat rows: selected network first, three unselected native networks total, native options last, Connected/Not connected and Connect/Disconnect metadata. New regression covers network order across native headings and exact row renderer payload. All 109 Python tests pass; GUI activation remains unavailable because Screen Capture=false for registered Desktop Panels. No Location request, native app rebuild, SSID fabrication or final Wi-Fi acceptance claim.",
         "scripts/wifi-access.m",
         "tests/test_wifi.py"
       ],

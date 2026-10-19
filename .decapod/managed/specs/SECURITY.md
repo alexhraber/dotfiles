@@ -118,9 +118,9 @@ An OS update may change these interfaces. Ordinary failure restores the native
 menu; SIGKILL cannot run cleanup, and the owned LaunchAgent restarts the helper.
 Undo recovers the menu before checking guarded preference restoration.
 
-Wi-Fi does not link CoreLocation/CoreWLAN, install a consent helper or contain a
-Location purpose string. The native picker displays its own real network names
-directly on hover; production code does not scrape or retain them. Saved
+The native-picker fallback does not link CoreLocation/CoreWLAN, request additional
+consent or contain a Location purpose string. The native picker displays its own
+real network names directly on hover; that fallback does not read or retain them. Saved
 profiles never stand in for availability. Bounded AX traversal uses only fixed
 status-item and wifi-header identifiers to open idempotently and close only the
 Wi-Fi panel. Passwords are neither read nor passed. SystemConfiguration emits a
@@ -168,7 +168,7 @@ loads a model. Ollama remains manually started and is not enabled at login.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `bbaaa250dd601e1ba58a43bf226c431cad5c743e9e17c15eaae8ac775a8d4d53`
+- Repository signal fingerprint: `9cb113537f5e7d4aa4de4f8bc3955cd8a641152d7d6e5b24e31f26a5b082b7d6`
 - Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (10 files), `tests/` (7 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

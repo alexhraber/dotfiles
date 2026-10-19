@@ -39,8 +39,30 @@ class WifiPaneTests(unittest.TestCase):
             rows += [option('section', f'Group {i}')] + [option('network', f'Network {i}-{j}') for j in range(3)]
         rows += [option('button', 'Wi-Fi Settings…')]
         result = wifi_pane.panel_rows(snapshot(rows), budget=12)
-        self.assertEqual(len(result), 12)
+        self.assertLessEqual(len(result), 12)
         self.assertEqual(result[-1][0], 'Wi-Fi Settings…')
+
+    def test_wifi_matches_bluetooth_connected_first_without_duplicate_groups(self):
+        connected = option('network', 'Connected network', True)
+        native = snapshot([option('section', 'Known Networks'), option('network', 'Saved nearby'),
+                           option('disclosure', 'Other Networks'), option('section', 'Nearby'),
+                           option('network', 'Nearby 1'), connected, option('network', 'Nearby 2'),
+                           option('network', 'Nearby 3'), option('button', 'Wi-Fi Settings…')])
+        rows = wifi_pane.panel_rows(native)
+        self.assertEqual(rows[1], ('Connected network', ['wifi-pane', connected]))
+        self.assertEqual(sum(a[1]['kind'] == 'network' for _, a in rows if a), 4)
+        self.assertFalse(any(label in ('Known Networks', 'Nearby') for label, _ in rows))
+        self.assertEqual(rows[-2][0], 'Other Networks')
+        with tempfile.TemporaryDirectory() as temp, patch.object(controls, 'STATE', Path(temp)), \
+             patch.object(controls, 'native_controls'):
+            controls.store('hover.json', [102, 'wifi'])
+            controls.render_rows('wifi', rows)
+            rendered = controls.read('native-panel.json')['rows']
+            self.assertTrue(rendered[0]['action'])
+            self.assertEqual((rendered[1]['selected'], rendered[1]['detail'], rendered[1]['hint']),
+                             (True, 'Connected', 'Disconnect'))
+            self.assertEqual((rendered[2]['selected'], rendered[2]['detail'], rendered[2]['hint']),
+                             (False, 'Not connected', 'Connect'))
 
     def test_protocol_rejects_stale_malformed_and_control_character_names(self):
         valid = snapshot([option('network', 'Example')])

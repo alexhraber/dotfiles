@@ -87,23 +87,15 @@ def validate(value, now=None):
 
 
 def panel_rows(value, budget=14):
-    """Keep native group/order/actions, with a compact nearby-network list."""
+    """Use Bluetooth's connected-first list, backed by real native actions."""
     native = validate(value)['rows']
     power = next(row for row in native if row['kind'] == 'power')
     result = [('Wi-Fi · ' + ('On' if power['selected'] else 'Off'), ['wifi-pane', power])]
-    group_count = 0
-    body = []
-    for row in native:
-        kind = row['kind']
-        if kind == 'power':
-            continue
-        if kind in ('section', 'disclosure'):
-            group_count = 0
-        if kind == 'network' and not row['selected']:
-            group_count += 1
-            if group_count > 3:
-                continue
-        body.append(row)
+    networks = [row for row in native if row['kind'] == 'network']
+    connected = [row for row in networks if row['selected']]
+    nearby = [row for row in networks if not row['selected']][:3]
+    options = [row for row in native if row['kind'] in ('disclosure', 'button')]
+    body = connected + nearby + options
     # Preserve native buttons and the connected network when the fixed-size
     # renderer's budget is exceeded; only extra network choices are trimmed.
     while len(body) > budget - 1:

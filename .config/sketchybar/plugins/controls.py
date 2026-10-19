@@ -452,7 +452,7 @@ def _render_rows(name, rows):
             selector = action[1]
             if selector['kind'] == 'network':
                 row['selected'] = selector['selected']
-                row['detail'] = 'Connected' if selector['selected'] else ''
+                row['detail'] = 'Connected' if selector['selected'] else 'Not connected'
                 row['hint'] = 'Disconnect' if selector['selected'] else 'Connect'
             elif selector['kind'] == 'disclosure':
                 row['hint'] = 'Hide networks' if selector['selected'] else 'Show networks'

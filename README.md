@@ -273,11 +273,14 @@ On/Off label is the sole power button. `desktop panels-permissions` sends the
 adapter's own Accessibility and Screen Recording requests. With both approved,
 the Wi-Fi adapter reads Apple's actual nearby/connected controls and translates
 their actions into themed rows, with live interface download/upload rates. Its
+layout follows Bluetooth: the connected network comes first, up to three nearby
+alternatives follow, and rows show Connected/Not connected with hover actions.
+Native network controls remain below the network list. Its
 temporary screen cover exists only in memory; it writes no screen images or
 credentials. Location stays off. Without these approvals, Wi-Fi continues using
 the native picker. The adapter currently supports one display on macOS 15.2 or
 later. End-to-end themed Wi-Fi acceptance remains pending those OS approvals;
-the native list supplies grouping/order, not a separately verified recency rank.
+the native list supplies choice order, not a separately verified recency rank.
 
 Sound separates output selection from its level/mute controls and marks the
 current output once. Bluetooth lists connected devices first, shows connection
