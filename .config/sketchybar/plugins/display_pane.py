@@ -18,7 +18,7 @@ def validate(value, now=None):
     now = time.time() if now is None else now
     stamp = value.get('sampled')
     if (isinstance(stamp, bool) or not isinstance(stamp, (int, float))
-            or not math.isfinite(stamp) or not 0 <= now-stamp < 8):
+            or not math.isfinite(stamp) or not 0 <= now-stamp < 30):
         raise ValueError('Stale display discovery')
     rows, screens = value.get('rows'), value.get('screens')
     if not isinstance(rows, list) or len(rows) > 32 or not isinstance(screens, list) or len(screens) > 8:
@@ -59,7 +59,11 @@ def validate(value, now=None):
             raise ValueError('Invalid refresh rate')
     if not isinstance(value.get('handoff', False), bool):
         raise ValueError('Invalid display handoff')
-    if not value.get('handoff') and not any(row['kind'] == 'settings' for row in rows):
+    if not isinstance(value.get('partial', False), bool):
+        raise ValueError('Invalid discovery completeness')
+    if value.get('partial') and not rows:
+        raise ValueError('Empty partial display discovery')
+    if not value.get('handoff') and not value.get('partial') and not any(row['kind'] == 'settings' for row in rows):
         raise ValueError('Native display discovery is incomplete')
     return value
 
@@ -81,7 +85,9 @@ def panel_rows(value, brightness):
     room = max(0, 13-len(rows))
     rows += [(row['text'], ['display-pane', row] if row['enabled'] else None) for row in devices[:room]]
     if not devices:
-        rows.append(('No nearby displays found', None))
-    settings = next(row for row in value['rows'] if row['kind'] == 'settings')
-    rows.append(('Display settings…', ['display-pane', settings] if settings['enabled'] else None))
+        available = any(row['kind'] == 'settings' for row in value['rows'])
+        rows.append(('No nearby displays found' if available else 'Nearby display discovery unavailable', None))
+    settings = next((row for row in value['rows'] if row['kind'] == 'settings'), None)
+    if settings:
+        rows.append(('Display settings…', ['display-pane', settings] if settings['enabled'] else None))
     return rows

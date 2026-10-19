@@ -1,6 +1,7 @@
 #import "workspace-panels.h"
 #import "control-panel.h"
 #import "panel-style.h"
+#import "panel-request.h"
 #import <ApplicationServices/ApplicationServices.h>
 #import <ScreenCaptureKit/ScreenCaptureKit.h>
 #include <fcntl.h>
@@ -452,5 +453,24 @@ int DFWorkspaceSelfTest(void) {
     }
     if (applicationScore(@"System Settings",@"sys set")<0 || applicationScore(@"Ghostty",@"gh")!=0
         || applicationScore(@"Safari",@"gh")!=-1 || applicationScore(@"Éditeur",@"edit")!=0) return 1;
-    puts("Workspace panels: bounded preview placement, window geometry and application matching passed.");return 0;
+    NSString *directory=[NSTemporaryDirectory() stringByAppendingPathComponent:[@"dotfiles-native-lease-" stringByAppendingString:NSUUID.UUID.UUIDString]];
+    BOOL leasePassed=NO;
+    @try {
+        if (!DFNativeUIBegin(directory,@"first") || ![DFNativeUIActiveToken(directory) isEqual:@"first"] || DFNativeUIBegin(directory,@"second")) return 1;
+        DFNativeUIEnd(directory,@"stale");if (!DFNativeUIBusy(directory)) return 1;
+        NSString *path=[directory stringByAppendingPathComponent:@"bar/native-ui-lease.json"];
+        chmod(path.fileSystemRepresentation,0644);if (DFNativeUIBusy(directory)) return 1;
+        chmod(path.fileSystemRepresentation,0600);if (!DFNativeUIBusy(directory)) return 1;
+        DFNativeUIEnd(directory,@"first");if (DFNativeUIBusy(directory)) return 1;
+        for (NSDictionary *lease in @[@{@"token":@"expired",@"pid":@(getpid()),@"expires":@(NSDate.date.timeIntervalSince1970-1)},
+                                      @{@"token":@"dead",@"pid":@2147483647,@"expires":@(NSDate.date.timeIntervalSince1970+10)},
+                                      @{@"token":@"malformed",@"pid":NSNull.null,@"expires":@(NSDate.date.timeIntervalSince1970+10)}]) {
+            NSData *data=[NSJSONSerialization dataWithJSONObject:lease options:0 error:nil];
+            [data writeToFile:path atomically:YES];chmod(path.fileSystemRepresentation,0600);
+            if (DFNativeUIBusy(directory)) return 1;
+        }
+        leasePassed=YES;
+    } @finally {[NSFileManager.defaultManager removeItemAtPath:directory error:nil];}
+    if (!leasePassed) return 1;
+    puts("Workspace panels: geometry, matching and bounded private native-UI lease passed.");return 0;
 }

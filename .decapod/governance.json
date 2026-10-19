@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "baseline": {
-    "accepted_commit": "395a4503aa0aa68b90e6f7bef1ac52771516775f",
+    "accepted_commit": "829e62f9fe58017c61cc0eb8fd7abf0364630b23",
     "unresolved": {
       "claim:actual-app-menus": {
         "falsifier": "Native action guards permit stale/disabled/submenu leaf execution, or the UI claims menus work without Accessibility.",
@@ -25,110 +25,114 @@
     }
   },
   "change": {
-    "id": "change_01M5AXGZD1VC30TD8SKGM79ZJ7",
-    "base_commit": "395a4503aa0aa68b90e6f7bef1ac52771516775f",
+    "id": "change_01M5B1JGGY8YYEZX0QEK69P3G7",
+    "base_commit": "829e62f9fe58017c61cc0eb8fd7abf0364630b23",
     "target_base": "origin/main"
   },
   "claims": {
-    "display-cold-hover": {
-      "statement": "Cold Display hover presents a live slider before native discovery and late discovery cannot reopen a dismissed pane",
-      "falsifier": "Cold hover waits on native scans, fails to present, or a completed/failed scan revives a dismissed pane",
+    "responsive-display-discovery": {
+      "statement": "Display native discovery renders a live background beneath interactive controls and retains independently discovered screen rows",
+      "falsifier": "Discovery freezes a screenshot over controls, erases successful native screen rows after an unrelated page failure, or allows an expired/dead query to retain watchdog deferral",
       "status": "supported",
       "proof_refs": [
-        "/private/tmp/dotfiles-display-cold-proof.py",
+        "/private/tmp/dotfiles-display-live-cover-proof.py",
+        "scripts/workspace-panels.m",
         "tests/test_display_pane.py"
       ]
     }
   },
   "checkpoints": [
     {
-      "id": "display-hover-source",
-      "summary": "Present cold Display slider before discovery; wait for renderer and reject late updates",
-      "input_digest": "sha256:817c3cb6251ec21c7ea1f7d6d90c4c8cc26c35e4d6a29ca150ab6efe3213ada5",
+      "id": "display-responsive-source",
+      "summary": "Replace frozen display cover, preserve screen discovery and coordinate native menu watchdog",
+      "input_digest": "sha256:b5f2e745b5e71ab8c9fafc170d1ad28143640d62747bf461ad6a7cc68243a0ec",
       "proof_refs": [
+        "scripts/workspace-panels.m",
         "tests/test_display_pane.py"
       ]
     },
     {
-      "id": "display-hover-proof",
-      "summary": "Record passing project prerequisites and content-bound spec reviews",
-      "input_digest": "sha256:3d21adcfd55b825407ba6437d19d4016c5b3eecf312b7156f15357e5091a62a8",
+      "id": "display-responsive-prerequisites",
+      "summary": "Record passing prerequisites and retain the existing required CI workflow",
+      "input_digest": "sha256:73374a1f8e4fa0dd15589f1389e2b3875f9b5d14943c0448042579edb2c6c6df",
       "proof_refs": [
+        "scripts/workspace-panels.m",
         "tests/test_display_pane.py"
       ]
     },
     {
-      "id": "display-hover-review",
-      "summary": "Preserve reviewed proof metadata before supported validation epoch recovery",
-      "input_digest": "sha256:3d21adcfd55b825407ba6437d19d4016c5b3eecf312b7156f15357e5091a62a8",
+      "id": "display-server-recovery",
+      "summary": "Keep replacement pane above an in-flight live cover and reject malformed leases",
+      "input_digest": "sha256:8cd2986836dd1d2797a845f6b28667ca1af892df5baaba7ab610539fce7e9020",
       "proof_refs": [
-        "tests/test_display_pane.py"
+        "scripts/workspace-panels.m"
       ]
     },
     {
-      "id": "display-hover-final-prerequisites",
-      "summary": "Bind passing project prerequisites to recovered trajectory",
-      "input_digest": "sha256:cc900eef7e6302a4c3b700bc8510f6cd889747fb8bdf9bd116e12fe6f749f867",
+      "id": "display-responsive-final-proof",
+      "summary": "Bind final lifecycle and native lease regression proof to current candidate",
+      "input_digest": "sha256:d6a6fcb2415b8e8f85fa86c80c9338f41b985e1610370129bacf05552ad7c78b",
       "proof_refs": [
+        "scripts/workspace-panels.m",
         "tests/test_display_pane.py"
       ]
     }
   ],
   "intents": {
-    "intent:display-hover-final": {
+    "intent:display-responsive-final": {
       "acceptance_criteria": [],
       "assumptions": [],
       "boundaries": [
-        "Display lifecycle only; no permissions or native adapter changes"
+        "No pointer movement, Space switching, Location or consent changes"
       ],
       "constraints": [
-        "controls.py and regression tests"
+        "Display transaction lifecycle and proof"
       ],
       "created_sequence": 1,
-      "id": "intent:display-hover-final",
+      "id": "intent:display-responsive-final",
       "out_of_scope": [],
       "proof_requirements": [],
-      "raw_intent": "Display hover lags and pane does not load",
-      "refined_intent": "Prove prompt cold presentation and safe request-bound async discovery",
+      "raw_intent": "Remove Display lag and restore screen options",
+      "refined_intent": "Finish live discovery and preserve pane visibility across renderer restarts during an active transaction",
       "status": "refined",
       "updated_sequence": 3
     }
   },
   "epochs": {
-    "ve_3514ef836d92fc22": {
+    "ve_da81e27f630637e1": {
       "constitution_hash": "sha256:b063c612f27e8d1fb18a4caabc87a16cc769d408d88d30446455e36014f1843c",
       "constitution_version": "embedded-docs@0.119.1",
-      "epoch_id": "ve_3514ef836d92fc22",
+      "epoch_id": "ve_da81e27f630637e1",
       "evaluator_identity": "decapod-validate@0.119.1",
       "evaluator_set_hash": "sha256:d01110bf6e129b6d67cd8462424f4dd7d11d9655c4bf6a6a13c43dbdeede984e",
-      "generated_specs_fingerprint": "c651940cee68383c9f25d55e5530df3d639c5b9eeeffbcda48ab3da369c9c502",
-      "generated_specs_manifest_hash": "sha256:7309b02cf9ac9dcb7aae8b7c1a7758c7ffe863178ff205fd04227e58a336d9a5",
+      "generated_specs_fingerprint": "6567d5a0e46c74b68701b0163dc4a781a612410a6936f2725b6f7df6cee8ff3e",
+      "generated_specs_manifest_hash": "sha256:6c30d19cf7769c9c9557441ebab11232c9dd71268deeede53a5887c74d729929",
       "material_hashes": {
         "constitution:core/DECAPOD": "sha256:b063c612f27e8d1fb18a4caabc87a16cc769d408d88d30446455e36014f1843c",
-        "generated_spec:.decapod/managed/specs/ARCHITECTURE.md": "sha256:5eca565be56237ccc51180b2f33f73155dccd43ed10f00b824042a35f3dce39e",
-        "generated_spec:.decapod/managed/specs/INTENT.md": "sha256:4fce74735629f9b932a578fa153737dec63852dbc211fbb58421bf57f266ce5c",
-        "generated_spec:.decapod/managed/specs/INTERFACES.md": "sha256:b849900574b8d549d2d71649c6763cc03dc3c3fd4a9d82c019ee5dd122a0b5c5",
-        "generated_spec:.decapod/managed/specs/OPERATIONS.md": "sha256:dcf7d72a00f32b01fd8ae1057929bb3f6d4b9251ff5e11d4884b8e560fa61f2c",
-        "generated_spec:.decapod/managed/specs/README.md": "sha256:07ceee4372f50129eba9c85a81483a0e23aedaa546635400ce05387c84731c10",
-        "generated_spec:.decapod/managed/specs/SECURITY.md": "sha256:b44590ce4fb2bcea9371c86af73dd7f6d7b0191b09d65346bd0b67b82ba4f186",
-        "generated_spec:.decapod/managed/specs/SEMANTICS.md": "sha256:65b95f563f3538f511394ef8d5bf3308d8406d16f0c75e335c15dcd3afa0b071",
-        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:f56582c06a3dc9da1dd3f4085b2feb886807ec3a242ce0498bc69281fdfe8178",
-        "generated_specs_fingerprint": "c651940cee68383c9f25d55e5530df3d639c5b9eeeffbcda48ab3da369c9c502",
-        "generated_specs_manifest": "sha256:7309b02cf9ac9dcb7aae8b7c1a7758c7ffe863178ff205fd04227e58a336d9a5",
-        "governance_context": "sha256:95b7a71e630b8026f3abba9b0b0d955ab21d162d4e7ffb0a5945915a28e85eef",
+        "generated_spec:.decapod/managed/specs/ARCHITECTURE.md": "sha256:fde4ef2089cf69ec5cadb41987c972c5c374c7aa8562ca58f8b5a08943f342eb",
+        "generated_spec:.decapod/managed/specs/INTENT.md": "sha256:d816cb6aeed6a8ed2981c1f950e6b2ee1c512e6cee98535133ccc7cfa5160889",
+        "generated_spec:.decapod/managed/specs/INTERFACES.md": "sha256:8fa984bac1797b1591149650fbfc42b399f9641a6e26b03f661dd25d3eadd5ca",
+        "generated_spec:.decapod/managed/specs/OPERATIONS.md": "sha256:e1af12ec7658bbd1218c38925bcfbcb88b32d5ed11e03f8f324824c7cccee9ef",
+        "generated_spec:.decapod/managed/specs/README.md": "sha256:906b42fd5163b1710c3c9c49520ae1e91ad9d088f161cb6ac77ac110c06cec82",
+        "generated_spec:.decapod/managed/specs/SECURITY.md": "sha256:634ad2a9265769e7b853f57cb3f6eef5f7460365ceb08b7f8dbb7656729270b8",
+        "generated_spec:.decapod/managed/specs/SEMANTICS.md": "sha256:39066e01e7312384a985f51175000ef2d67b1a2dc3a192831861f728ea7b545d",
+        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:3991ce57b97f2b5d44829c0338d2070e5ec59337c2d37af20467813ebfec9b0d",
+        "generated_specs_fingerprint": "6567d5a0e46c74b68701b0163dc4a781a612410a6936f2725b6f7df6cee8ff3e",
+        "generated_specs_manifest": "sha256:6c30d19cf7769c9c9557441ebab11232c9dd71268deeede53a5887c74d729929",
+        "governance_context": "sha256:53e20013f866165f10ab890cd4ffe6bcc6b3fc73c0403370301db8b5373c72e3",
         "governance_material:.decapod/managed/Dockerfile.decapod": "sha256:c9bdb828ff9c9a9e00392d153434ecaaf4d507081ff453c5e838375c55c650e4",
         "governance_material:AGENTS.md": "sha256:4992240c6825701513873da48567d3560685511ff73827527f9152f7a25cd7e7",
         "governance_material:CLAUDE.md": "sha256:add7e4f64ef63dd84c69fd8088da14b0c34afe3bf9144c0f59c304c23e1279d5",
         "governance_material:CODEX.md": "sha256:2ff1b008789940fc7871a84a6a38ac3eec5bef53f1444a4d387f0e4e04d0b975",
         "governance_material:GEMINI.md": "sha256:e2c5b404af6f21562159eb3be9fd955d9d9a52f1b6ac90fb24fcdf2b170f29fb",
-        "governance_section:claims": "sha256:e73e1d50b2adda22497ea8edb4d3f1a7bc7c4d5cecbd453cf38d27b6f8681177",
-        "governance_section:plan": "sha256:2aa4c829107bccba271f61376da3c9dcdb611e584c69a4bf02e91e5ff55c5999",
-        "living_spec_material:.decapod/managed/specs/ARCHITECTURE.md": "sha256:0d5867860c101ed6d9934e49014579236a39a08bfc9877097ef05927b47782fb",
-        "living_spec_material:.decapod/managed/specs/INTENT.md": "sha256:4b0087710ca1e38f563f590b89194e85232667dff7d3d15793e7c709c0014aa2",
-        "living_spec_material:.decapod/managed/specs/INTERFACES.md": "sha256:7219b1cae31b04e336d4f731e379df68918e6617becf5f0771442987bc2900d6",
+        "governance_section:claims": "sha256:0120be906faf792f4a06949eebb6a5b0941ca7ba65094c5311b98612cd02d539",
+        "governance_section:plan": "sha256:159d6342de3a7dc55b23744113cba431519609d9f359a52772f0b001af096ada",
+        "living_spec_material:.decapod/managed/specs/ARCHITECTURE.md": "sha256:66b8519a2245d7d43c90c1d8244492ef137587620dec0a3971c8e5149b318d99",
+        "living_spec_material:.decapod/managed/specs/INTENT.md": "sha256:dc229743236e50f4ad995948bae9778a43a22362d448bd4295d56f25eee1fa76",
+        "living_spec_material:.decapod/managed/specs/INTERFACES.md": "sha256:3ad5e31eee45f1d3a90e83aefcae0628855e7be05347cd89e57423bb03294d74",
         "living_spec_material:.decapod/managed/specs/OPERATIONS.md": "sha256:2d5bf1b27e1946342964bb176f8e21accb3b7d55b66aa5757bbcb7fa266ba376",
         "living_spec_material:.decapod/managed/specs/README.md": "sha256:0988c85d6c05f02d52684c9aafae50e95fd5d5576739d3e9d995af682697fd99",
-        "living_spec_material:.decapod/managed/specs/SECURITY.md": "sha256:ef1dd6a804b0a7b95fe6f122c977a5a8ee6f065d44ae923aef0ce92489e42435",
+        "living_spec_material:.decapod/managed/specs/SECURITY.md": "sha256:a585c8df4fe175ee44a6928cdf86cb035a04b9544c39f65bdd9d65004ec11321",
         "living_spec_material:.decapod/managed/specs/SEMANTICS.md": "sha256:92bbe2607c6f8f94191a95ea977d9785f3472a0fae2835520dd86eae73130d5c",
         "living_spec_material:.decapod/managed/specs/VALIDATION.md": "sha256:2ef491f339ee8607260c7f075ee063b175670773490181d73719759b45026d5e",
         "proof_rubric": "sha256:99e8ef25629da391e9b479db9fff52b82f340224f7a69d8a88d2992ae8e90466",
@@ -149,7 +153,7 @@
       },
       "deferred_questions": [],
       "human_questions": [],
-      "intent": "Fix cold Display hover latency and missing pane",
+      "intent": "Eliminate Display discovery freezes and restore nearby screen options",
       "phases": [],
       "proof_hooks": [
         "decapod validate"
@@ -159,40 +163,40 @@
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/ARCHITECTURE.md",
-          "reason": "Reviewed immediate slider, bounded renderer acknowledgement and guarded updates against current source",
-          "reviewed_code_fingerprint": "c651940cee68383c9f25d55e5530df3d639c5b9eeeffbcda48ab3da369c9c502",
-          "spec_material_hash": "0d5867860c101ed6d9934e49014579236a39a08bfc9877097ef05927b47782fb"
+          "reason": "Reviewed final transaction lifecycle including active-lease recovery before replacement UI first draw",
+          "reviewed_code_fingerprint": "6567d5a0e46c74b68701b0163dc4a781a612410a6936f2725b6f7df6cee8ff3e",
+          "spec_material_hash": "66b8519a2245d7d43c90c1d8244492ef137587620dec0a3971c8e5149b318d99"
         },
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/INTERFACES.md",
-          "reason": "Reviewed cold snapshot/status lifecycle against current source",
-          "reviewed_code_fingerprint": "c651940cee68383c9f25d55e5530df3d639c5b9eeeffbcda48ab3da369c9c502",
-          "spec_material_hash": "7219b1cae31b04e336d4f731e379df68918e6617becf5f0771442987bc2900d6"
+          "reason": "Reviewed active token API, malformed-state rejection, partial native rows and live-control stacking",
+          "reviewed_code_fingerprint": "6567d5a0e46c74b68701b0163dc4a781a612410a6936f2725b6f7df6cee8ff3e",
+          "spec_material_hash": "3ad5e31eee45f1d3a90e83aefcae0628855e7be05347cd89e57423bb03294d74"
         },
         {
-          "disposition": "unchanged_with_reason",
+          "disposition": "updated",
           "path": ".decapod/managed/specs/SECURITY.md",
-          "reason": "No permission, capture, native action validation or consent identity changes",
-          "reviewed_code_fingerprint": "c651940cee68383c9f25d55e5530df3d639c5b9eeeffbcda48ab3da369c9c502",
-          "spec_material_hash": "ef1dd6a804b0a7b95fe6f122c977a5a8ee6f065d44ae923aef0ce92489e42435"
+          "reason": "Reviewed final source: private owned lease, live process, bounded expiry, type validation, stable consent and video-only memory capture",
+          "reviewed_code_fingerprint": "6567d5a0e46c74b68701b0163dc4a781a612410a6936f2725b6f7df6cee8ff3e",
+          "spec_material_hash": "a585c8df4fe175ee44a6928cdf86cb035a04b9544c39f65bdd9d65004ec11321"
         }
       ],
       "state": "APPROVED",
       "stop_conditions": [],
-      "title": "Fix cold Display hover latency and missing pane",
+      "title": "Eliminate Display discovery freezes and restore nearby screen options",
       "todo_ids": [
-        "bugs_01m5axghdpzj1spf"
+        "bugs_01m5b1hrh0sypzc0"
       ],
       "unknowns": [],
       "unresolved_contradictions": [],
-      "updated_at": "1792442129Z"
+      "updated_at": "1792448924Z"
     },
     "trajectory": {
       "active_boundaries": [
-        "Display lifecycle only; no permissions or native adapter changes"
+        "No pointer movement, Space switching, Location or consent changes"
       ],
-      "artifact_hash": "sha256:0c58bde037f0409d05ec1398c5784476a0ca7da26138b5ef787b4d96c77a3e5c",
+      "artifact_hash": "sha256:05256ec5c51f34517915d4e75b57c5b7e868327e850c2e7d6de602bfabfb866f",
       "checks": [
         {
           "name": "decapod validate",
@@ -201,6 +205,10 @@
         {
           "name": "display-regressions",
           "status": "passed"
+        },
+        {
+          "name": "signed-native-discovery",
+          "status": "passed"
         }
       ],
       "current_phase": "validation",
@@ -208,27 +216,27 @@
         "events": [
           {
             "event_id": "event:2",
-            "intent_id": "intent:display-hover-final",
+            "intent_id": "intent:display-responsive-final",
             "kind": "created",
             "sequence": 2
           },
           {
             "event_id": "event:3",
-            "intent_id": "intent:display-hover-final",
+            "intent_id": "intent:display-responsive-final",
             "kind": "refined",
             "sequence": 3
           },
           {
-            "detail": "trajectory:display-hover-final",
+            "detail": "trajectory:display-responsive-final",
             "event_id": "event:4",
-            "intent_id": "intent:display-hover-final",
+            "intent_id": "intent:display-responsive-final",
             "kind": "trajectory_step_recorded",
             "sequence": 4
           },
           {
-            "detail": "trajectory:display-hover-final",
+            "detail": "trajectory:display-responsive-final",
             "event_id": "event:5",
-            "intent_id": "intent:display-hover-final",
+            "intent_id": "intent:display-responsive-final",
             "kind": "trajectory_step_recorded",
             "sequence": 5
           }
@@ -237,29 +245,32 @@
         "next_sequence": 5,
         "schema_version": "1.0.0",
         "trajectories": {
-          "display-hover-final": {
+          "display-responsive-final": {
             "evidence_only": true,
-            "id": "display-hover-final",
-            "intent_id": "intent:display-hover-final",
+            "id": "display-responsive-final",
+            "intent_id": "intent:display-responsive-final",
             "steps": [
               {
                 "action": "verification",
                 "custody_event_id": "event:4",
                 "observations": [
-                  ".config/sketchybar/plugins/controls.py",
-                  ".config/sketchybar/plugins/controls.py",
-                  "tests/test_display_pane.py",
-                  "10 targeted tests pass; cold fullscreen hover 0.543s, discovery 3.855s, bar-hide survival, refresh and pointer-exit passed",
-                  "Prior journal preserved in commits c95b7c5 and 1698196; new trajectory follows STALE_VALIDATION_EVIDENCE recovery"
+                  "scripts/control-panel.m",
+                  "scripts/panel-request.m",
+                  "scripts/workspace-panels.m",
+                  "Prior journal preserved in 58d39b4 and 5925d85; signed response rendered 204 live frames, one nearby screen and three appearance toggles; 12 Python tests passed",
+                  "Final lifecycle repair restores stacking when UI server restarts during a live transaction; malformed lease types fail closed and native self-tests exercise token ownership and expiry"
                 ],
                 "proof_refs": [
+                  "signed-native-discovery",
                   "display-regressions"
                 ],
                 "scope": [
-                  "controls.py and regression tests"
+                  "Display transaction lifecycle and proof"
                 ],
                 "sequence": 4,
-                "validation_findings": []
+                "validation_findings": [
+                  "Uninterrupted hover and hardware pairing not exercised while user uses mouse; no more pointer or Space manipulation"
+                ]
               },
               {
                 "action": "validation",
@@ -268,13 +279,13 @@
                 "observations": [
                   ".decapod/governance.json",
                   ".decapod/governance.json",
-                  "validation epoch ve_3514ef836d92fc22 completed with zero failures"
+                  "validation epoch ve_da81e27f630637e1 completed with zero failures"
                 ],
                 "proof_refs": [
                   "decapod validate"
                 ],
                 "scope": [
-                  "controls.py and regression tests"
+                  "Display transaction lifecycle and proof"
                 ],
                 "sequence": 5,
                 "validation_findings": []
@@ -287,31 +298,32 @@
         "decapod validate"
       ],
       "evidence": [
-        "10 targeted tests pass; cold fullscreen hover 0.543s, discovery 3.855s, bar-hide survival, refresh and pointer-exit passed",
-        "Prior journal preserved in commits c95b7c5 and 1698196; new trajectory follows STALE_VALIDATION_EVIDENCE recovery",
-        "validation epoch ve_3514ef836d92fc22 completed with zero failures"
+        "Final lifecycle repair restores stacking when UI server restarts during a live transaction; malformed lease types fail closed and native self-tests exercise token ownership and expiry",
+        "Prior journal preserved in 58d39b4 and 5925d85; signed response rendered 204 live frames, one nearby screen and three appearance toggles; 12 Python tests passed",
+        "validation epoch ve_da81e27f630637e1 completed with zero failures"
       ],
-      "inspected_files": [
-        ".config/sketchybar/plugins/controls.py"
-      ],
-      "intent_id": "intent:display-hover-final",
+      "inspected_files": [],
+      "intent_id": "intent:display-responsive-final",
       "modified_files": [
-        ".config/sketchybar/plugins/controls.py",
         ".decapod/governance.json",
-        "tests/test_display_pane.py"
+        "scripts/control-panel.m",
+        "scripts/panel-request.m",
+        "scripts/workspace-panels.m"
       ],
       "next_transitions": [
         "publish"
       ],
       "repo_scope": [
-        "controls.py and regression tests"
+        "Display transaction lifecycle and proof"
       ],
-      "run_id": "display-hover-final",
+      "run_id": "display-responsive-final",
       "schema_version": "1.1.0",
       "shortcut_risk_signals": [],
-      "task_id": "bugs_01m5axghdpzj1spf",
+      "task_id": "bugs_01m5b1hrh0sypzc0",
       "tool_calls": [],
-      "unresolved_assumptions": []
+      "unresolved_assumptions": [
+        "Uninterrupted hover and hardware pairing not exercised while user uses mouse; no more pointer or Space manipulation"
+      ]
     },
     "validation": {
       "ci_prediction": {
@@ -324,94 +336,90 @@
       },
       "decapod_release": "0.119.1",
       "drift_findings": [],
-      "elapsed_ms": 6495,
-      "epoch_ref": "ve_3514ef836d92fc22",
+      "elapsed_ms": 6219,
+      "epoch_ref": "ve_da81e27f630637e1",
       "fail_count": 0,
       "failures": [],
       "gate_timings": [
         {
-          "elapsed_ms": 2388,
+          "elapsed_ms": 2161,
           "name": "validate_markdown_primitives_roundtrip_gate"
         },
         {
-          "elapsed_ms": 731,
+          "elapsed_ms": 794,
           "name": "validate_stale_workspaces"
         },
         {
-          "elapsed_ms": 722,
+          "elapsed_ms": 717,
           "name": "validate_obligations"
         },
         {
-          "elapsed_ms": 552,
+          "elapsed_ms": 557,
           "name": "validate_project_specs_docs"
         },
         {
-          "elapsed_ms": 441,
+          "elapsed_ms": 443,
           "name": "validate_legacy_jsonl_retired"
         },
         {
-          "elapsed_ms": 248,
+          "elapsed_ms": 250,
           "name": "validate_archive_integrity"
         },
         {
-          "elapsed_ms": 220,
-          "name": "validate_machine_contract"
-        },
-        {
-          "elapsed_ms": 177,
+          "elapsed_ms": 167,
           "name": "validate_control_plane_contract"
         },
         {
-          "elapsed_ms": 167,
+          "elapsed_ms": 158,
+          "name": "validate_machine_contract"
+        },
+        {
+          "elapsed_ms": 143,
           "name": "validate_git_workspace_context"
         },
         {
-          "elapsed_ms": 92,
+          "elapsed_ms": 94,
           "name": "validate_lineage_hard_gate"
+        },
+        {
+          "elapsed_ms": 39,
+          "name": "validate_lcm_immutability"
         },
         {
           "elapsed_ms": 38,
           "name": "validate_watcher_audit"
         },
         {
-          "elapsed_ms": 37,
-          "name": "validate_lcm_immutability"
-        },
-        {
-          "elapsed_ms": 37,
+          "elapsed_ms": 38,
           "name": "validate_lcm_rebuild_gate"
         },
         {
-          "elapsed_ms": 34,
+          "elapsed_ms": 38,
           "name": "validate_knowledge_promotions_if_present"
-        },
-        {
-          "elapsed_ms": 25,
-          "name": "validate_repomap_determinism"
         },
         {
           "elapsed_ms": 25,
           "name": "validate_federation_gates"
         },
         {
-          "elapsed_ms": 15,
-          "name": "validate_schema_determinism"
+          "elapsed_ms": 21,
+          "name": "validate_repomap_determinism"
         },
         {
-          "elapsed_ms": 15,
-          "name": "validate_git_protected_branch"
+          "elapsed_ms": 16,
+          "name": "validate_schema_determinism"
         },
         {
           "elapsed_ms": 14,
           "name": "validate_git_push_pr_gate"
         },
         {
-          "elapsed_ms": 10,
-          "name": "validate_no_legacy_namespaces"
+          "elapsed_ms": 13,
+          "name": "validate_git_protected_branch"
         },
         {
-          "elapsed_ms": 7,
-          "name": "validate_gatekeeper_gate"
+          "elapsed_ms": 11,
+          "name": "validate_no_legacy_namespaces"
         },
         {
           "elapsed_ms": 7,
@@ -422,11 +430,15 @@
           "name": "validate_plan_governed_execution_gate"
         },
         {
+          "elapsed_ms": 6,
+          "name": "validate_gatekeeper_gate"
+        },
+        {
           "elapsed_ms": 4,
           "name": "validate_database_schema_versions"
         },
         {
-          "elapsed_ms": 3,
+          "elapsed_ms": 4,
           "name": "validate_policy_integrity"
         },
         {
@@ -435,26 +447,18 @@
         },
         {
           "elapsed_ms": 2,
-          "name": "validate_trajectory_artifacts_if_present"
-        },
-        {
-          "elapsed_ms": 2,
           "name": "validate_health_cache_integrity"
-        },
-        {
-          "elapsed_ms": 2,
-          "name": "validate_jev_history_if_present"
         },
         {
           "elapsed_ms": 2,
           "name": "validate_entrypoint_invariants"
         },
         {
-          "elapsed_ms": 1,
-          "name": "validate_validation_receipt_if_present"
+          "elapsed_ms": 2,
+          "name": "validate_trajectory_artifacts_if_present"
         },
         {
-          "elapsed_ms": 1,
+          "elapsed_ms": 2,
           "name": "validate_research_claims_if_present"
         },
         {
@@ -463,7 +467,11 @@
         },
         {
           "elapsed_ms": 1,
-          "name": "validate_recursive_improvement_passes_if_present"
+          "name": "validate_jev_history_if_present"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_validation_receipt_if_present"
         },
         {
           "elapsed_ms": 1,
@@ -471,7 +479,7 @@
         },
         {
           "elapsed_ms": 1,
-          "name": "validate_health_purity"
+          "name": "validate_recursive_improvement_passes_if_present"
         },
         {
           "elapsed_ms": 1,
@@ -479,15 +487,19 @@
         },
         {
           "elapsed_ms": 1,
+          "name": "validate_health_purity"
+        },
+        {
+          "elapsed_ms": 1,
           "name": "validate_override_authority"
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_spec_drift"
+          "name": "validate_project_config_toml"
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_project_config_toml"
+          "name": "validate_spec_drift"
         },
         {
           "elapsed_ms": 0,
@@ -511,19 +523,11 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_internalization_artifacts_if_present"
-        },
-        {
-          "elapsed_ms": 0,
           "name": "validate_repo_map"
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_root_dockerfile_seed_detection"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_context_capsules_if_present"
+          "name": "validate_internalization_artifacts_if_present"
         },
         {
           "elapsed_ms": 0,
@@ -531,7 +535,7 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_state_commit_gate"
+          "name": "validate_interface_contract_bootstrap"
         },
         {
           "elapsed_ms": 0,
@@ -539,11 +543,19 @@
         },
         {
           "elapsed_ms": 0,
+          "name": "validate_context_capsules_if_present"
+        },
+        {
+          "elapsed_ms": 0,
           "name": "validate_risk_map"
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_interface_contract_bootstrap"
+          "name": "validate_state_commit_gate"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_root_dockerfile_seed_detection"
         },
         {
           "elapsed_ms": 0,
@@ -554,24 +566,24 @@
           "name": "validate_tooling_gate"
         }
       ],
-      "git_revision": "1698196e5b9c09c29b397f5d279c1434b7773ce4",
+      "git_revision": "c09a33af0dbb8340687b1af9847c0f6769951328",
       "kind": "validation_receipt",
       "parallelism": 1,
       "pass_count": 188,
       "prediction_uses_warnings": true,
-      "receipt_hash": "sha256:e4ba65c43140a179d3901f6c9ad23e2ade4a116bcbf6c78796dcb4faa9462d76",
-      "repo_signal_fingerprint": "c651940cee68383c9f25d55e5530df3d639c5b9eeeffbcda48ab3da369c9c502",
+      "receipt_hash": "sha256:850a6931d6002676f135cc46015611a5e54c24780d8069ebb8d9b088c8a2631a",
+      "repo_signal_fingerprint": "6567d5a0e46c74b68701b0163dc4a781a612410a6936f2725b6f7df6cee8ff3e",
       "schema_version": "1.0.0",
       "status": "ok",
       "temporary_artifacts_cleaned": 0,
-      "trajectory_artifact_hash": "sha256:0c58bde037f0409d05ec1398c5784476a0ca7da26138b5ef787b4d96c77a3e5c",
-      "trajectory_run_id": "display-hover-final",
+      "trajectory_artifact_hash": "sha256:05256ec5c51f34517915d4e75b57c5b7e868327e850c2e7d6de602bfabfb866f",
+      "trajectory_run_id": "display-responsive-final",
       "warn_count": 4,
       "warnings": [
         "Risk map missing (run `decapod riskmap init`)",
-        "Stale workspaces preserved for explicit review: <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (current_workspace: workspace contains the current process; rerun prune from the host checkout after leaving this workspace so Git can release the branch), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.)",
+        "Stale workspaces preserved for explicit review: <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (current_workspace: workspace contains the current process; rerun prune from the host checkout after leaving this workspace so Git can release the branch)",
         "Watcher audit trail missing (run `decapod govern watcher run`)",
-        "Workspace branch 'agent/unknown/bugs_01m5axghdpzj1spf-display-hover' has unpushed commits or does not exist on origin. Branch pushes and iteration are allowed before preflight; hold PR creation until intent is converged, the branch is mergeable, and full `decapod validate` succeeds against the exact current candidate and accepted target."
+        "Workspace branch 'agent/unknown/bugs_01m5b1hrh0sypzc0-display-responsive' has unpushed commits or does not exist on origin. Branch pushes and iteration are allowed before preflight; hold PR creation until intent is converged, the branch is mergeable, and full `decapod validate` succeeds against the exact current candidate and accepted target."
       ]
     }
   }

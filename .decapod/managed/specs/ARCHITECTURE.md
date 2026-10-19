@@ -443,7 +443,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `c651940cee68383c9f25d55e5530df3d639c5b9eeeffbcda48ab3da369c9c502`
+- Repository signal fingerprint: `6567d5a0e46c74b68701b0163dc4a781a612410a6936f2725b6f7df6cee8ff3e`
 - Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (9 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
@@ -455,7 +455,9 @@ screens, appearance toggles and nearby devices into the shared 14-row renderer.
 `controls.py` uses the internal brightness event name with a monitor icon and a
 Display title. It reads brightness independently of discovery, so keyboard events
 refresh an open slider without reopening native controls. A request-bound watcher
-refreshes discovery while visible; failures remove stale clickable choices.
+refreshes discovery at twenty-second intervals while visible; a fresh successful
+result is eligible for reuse through temporary refresh failures when sampled
+within thirty seconds. Every click revalidates the actual native control.
 Cold presentation uses brightness plus a discovery label, with no saved device
 actions. `display_watch` waits for a fresh, matching renderer status before
 opening Control Center, preventing a renderer launch from dismissing native
@@ -482,3 +484,39 @@ verification; current single-screen discovery and appearance controls are the
 host-testable surface. `ControlSliderCell` overrides only the public track drawing
 hook, filling to the native knob center with DFPanelColor(accent). NSSliderCell
 retains knob drawing, hit testing, keyboard and accessibility behavior.
+
+### Responsive Display discovery
+
+Display transactions use `DisplayCover` in `scripts/wifi-pane.m`: a bounded
+ScreenCaptureKit stream renders through AVSampleBufferDisplayLayer rather than
+a frozen screenshot. It filters out ControlCenter, MenuBarAgent and all Desktop
+Panels windows, including the current process, to prevent visual feedback.
+Only the native menu item's display is covered; ordinary app content continues
+updating. A matching transaction temporarily raises the controls above the live
+cover. Token-matched cleanup restores normal stacking, with a twelve-second
+expiry if the query exits abnormally. The separate Wi-Fi adapter is unchanged.
+
+Screen Mirroring is queried first. Successful native rows and connected metadata
+remain usable when the other page fails; `partial` distinguishes incomplete
+discovery from an empty list of nearby devices. Native actions still re-find
+exact controls at click time. No connection is initiated by discovery.
+
+Display retains a 336-point body during discovery, preserving its hover target
+while pending rows become actionable; placeholder height does not collapse the
+pane underneath a pointer moving into its final content area.
+
+`DFNativeUIBegin/End/Busy` in `panel-request.m` coordinates the Display
+transaction with `desktop-edge.m`'s five-second native-menu watchdog. While a
+private twelve-second lease belongs to a live process, the watchdog continues
+health checks but defers reapplying the native visibility override. This avoids
+resetting Control Center during discovery. Token-matched cleanup, expiry and
+process-liveness checks prevent a crashed adapter retaining the deferral.
+The mirroring page waits for its actionable Settings footer, then settles
+briefly before collecting choices; its early header is not a readiness signal.
+
+A replacement Desktop Panels UI server reads the validated active native-UI
+lease token at startup and restores temporary stacking before its first draw.
+It therefore remains visible if the preceding UI process exited during a
+discovery request. Malformed token, PID or expiry types are ignored. Matching
+end notifications restore ordinary stacking for both original and replacement
+servers; expiry remains the fallback.

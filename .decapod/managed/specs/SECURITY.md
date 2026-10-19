@@ -191,7 +191,7 @@ loads a model. Ollama remains manually started and is not enabled at login.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `c651940cee68383c9f25d55e5530df3d639c5b9eeeffbcda48ab3da369c9c502`
+- Repository signal fingerprint: `6567d5a0e46c74b68701b0163dc4a781a612410a6936f2725b6f7df6cee8ff3e`
 - Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (9 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
@@ -211,3 +211,16 @@ cover, with an eight-screen bound. It does not save screen images. The previous
 single-display support restriction is superseded; multi-screen behavior remains
 unverified until suitable hardware is connected. Literal failure codes contain no
 device names, addresses or native error text. Tests use fictional screen names.
+
+Display concealment uses a bounded, video-only ScreenCaptureKit stream filtered
+to omit native controls and Desktop Panels. Frame buffers stay in memory and
+are never recorded or uploaded; audio and cursor capture are disabled. The
+stream stops during transaction cleanup, with process lifetime bounded by the
+existing twelve-second alarm. Existing Screen Recording and Accessibility
+consent and signing identities are reused; Location is never requested. A
+transaction token and twelve-second expiry bound temporary window elevation.
+
+The menu-watchdog deferral lease uses no credentials or network information.
+Private-file metadata, live-PID checking and a twelve-second maximum expiry
+bound its effect. Cleanup cannot remove a newer token. Native-menu suppression
+is reapplied by the next normal health check after the deferral expires.

@@ -2,6 +2,9 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <signal.h>
+#include <errno.h>
+#include <limits.h>
 
 static NSString *const workspaceNotification=@"local.dotfiles.desktop.workspace";
 static NSDictionary *readPrivate(NSString *path) {
@@ -63,4 +66,33 @@ void DFWorkspaceCancelAll(NSString *directory) {
     if (!directory.length) return;
     writeRequest(directory,@{@"request":NSUUID.UUID.UUIDString,@"kind":@"hide",@"updated":@(NSDate.date.timeIntervalSince1970)});
     [NSDistributedNotificationCenter.defaultCenter postNotificationName:workspaceNotification object:@"hide" userInfo:nil deliverImmediately:YES];
+}
+
+// A private, expiring lease prevents the menu watchdog from resetting native
+// controls in the middle of a managed transaction. A dead helper cannot hold it.
+NSString *DFNativeUIActiveToken(NSString *directory) {
+    NSDictionary *lease=readPrivate([directory stringByAppendingPathComponent:@"bar/native-ui-lease.json"]);
+    NSString *token=lease[@"token"];NSNumber *expires=lease[@"expires"],*pid=lease[@"pid"];
+    if (![token isKindOfClass:NSString.class] || !token.length || token.length>64
+        || ![expires isKindOfClass:NSNumber.class] || ![pid isKindOfClass:NSNumber.class]) return nil;
+    double left=expires.doubleValue-NSDate.date.timeIntervalSince1970;long long owner=pid.longLongValue;
+    return left>0 && left<=12 && owner>0 && owner<=INT_MAX && pid.doubleValue==owner
+        && (kill((pid_t)owner,0)==0 || errno==EPERM) ? token : nil;
+}
+BOOL DFNativeUIBusy(NSString *directory) {return DFNativeUIActiveToken(directory)!=nil;}
+BOOL DFNativeUIBegin(NSString *directory, NSString *token) {
+    if (!token.length || token.length>64 || DFNativeUIBusy(directory)) return NO;
+    NSString *bar=[directory stringByAppendingPathComponent:@"bar"];
+    if (![NSFileManager.defaultManager createDirectoryAtPath:bar withIntermediateDirectories:YES attributes:@{NSFilePosixPermissions:@0700} error:nil]) return NO;
+    NSData *data=[NSJSONSerialization dataWithJSONObject:@{@"token":token,@"pid":@(getpid()),@"expires":@(NSDate.date.timeIntervalSince1970+12)} options:0 error:nil];
+    NSString *temporary=[bar stringByAppendingPathComponent:[@".native-ui-" stringByAppendingString:NSUUID.UUID.UUIDString]];
+    int fd=open(temporary.fileSystemRepresentation,O_CREAT|O_EXCL|O_WRONLY|O_NOFOLLOW,0600);
+    if(fd<0)return NO;
+    BOOL written=write(fd,data.bytes,data.length)==(ssize_t)data.length;close(fd);
+    if(written)written=rename(temporary.fileSystemRepresentation,[[bar stringByAppendingPathComponent:@"native-ui-lease.json"] fileSystemRepresentation])==0;
+    unlink(temporary.fileSystemRepresentation);return written;
+}
+void DFNativeUIEnd(NSString *directory, NSString *token) {
+    NSString *path=[directory stringByAppendingPathComponent:@"bar/native-ui-lease.json"];
+    if ([readPrivate(path)[@"token"] isEqual:token]) unlink(path.fileSystemRepresentation);
 }

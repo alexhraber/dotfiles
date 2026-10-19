@@ -7,6 +7,7 @@ NSColor *DFPanelColor(unsigned fallback);
 void DFControlsNotify(NSString *action);
 void DFControlsNotifyRequest(NSString *action, NSString *request);
 void DFControlsHide(void);
+void DFControlsSpaceChanged(void);
 void DFControlsTick(double now, NSPoint pointer);
 BOOL DFControlsContainsPointer(NSPoint pointer);
 NSDictionary *DFControlsStatus(void);

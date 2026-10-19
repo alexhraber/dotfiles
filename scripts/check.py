@@ -26,7 +26,7 @@ def main():
             subprocess.run(['xcrun', 'clang', '-fobjc-arc', '-Wall', '-Wextra', '-Werror',
                             '-mmacosx-version-min=14.0', '-DDF_CONTROL_NOTIFICATION="local.dotfiles.desktop.panels"',
                             '-framework', 'AppKit', '-framework', 'QuartzCore', '-framework', 'EventKit',
-                            '-framework', 'ApplicationServices', '-framework', 'ScreenCaptureKit', '-framework', 'SystemConfiguration',
+                            '-framework', 'ApplicationServices', '-framework', 'ScreenCaptureKit', '-framework', 'SystemConfiguration', '-framework', 'AVFoundation', '-framework', 'CoreMedia',
                             'scripts/wifi-pane.m', 'scripts/calendar-panel.m', 'scripts/control-panel.m', 'scripts/app-menu.m', 'scripts/panel-style.m', 'scripts/panel-request.m', 'scripts/workspace-panels.m',
                             '-o', str(Path(temp) / 'wifi-pane')], cwd=ROOT, check=True)
             subprocess.run([str(Path(temp) / 'wifi-pane'), '--workspace-self-test'], check=True)

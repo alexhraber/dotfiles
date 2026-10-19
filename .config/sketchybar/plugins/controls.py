@@ -60,7 +60,7 @@ def display_watch(request):
         return
     while visible_control('brightness', token):
         age = time.time() - read('display-snapshot.json', {}).get('sampled', 0)
-        for _ in range(max(1, math.ceil(max(0, 4-age)*10))):
+        for _ in range(max(1, math.ceil(max(0, 20-age)*10))):
             time.sleep(.1)
             if not visible_control('brightness', token):
                 return
@@ -75,8 +75,12 @@ def display_watch(request):
             # Never retain stale nearby choices as clickable actions.
             with interaction():
                 if visible_control('brightness', token):
-                    _render_rows('brightness', [('Display · ' + brightness() + '%', None),
-                                 ('Display discovery paused · hover again to retry', None)])
+                    try:
+                        rows = display_pane.panel_rows(read('display-snapshot.json', {}), brightness())
+                    except ValueError:
+                        rows = [('Display · ' + brightness() + '%', None),
+                                ('Display discovery unavailable · hover again to retry', None)]
+                    _render_rows('brightness', rows)
             return
 
 
@@ -195,7 +199,10 @@ def panel_rows(name):
         try:
             return display_pane.panel_rows(read('display-snapshot.json', {}), value)
         except ValueError:
-            return [('Display · ' + value + '%', None), ('Discovering displays & appearance…', None)]
+            return [('Display · ' + value + '%', None), ('Connected displays', None),
+                    ('Detecting connected displays…', None), ('Appearance controls', None),
+                    ('Loading appearance…', None), ('Mirror or extend to', None),
+                    ('Finding nearby displays…', None)]
     if name == 'volume':
         volume = command('osascript', '-e', 'output volume of (get volume settings)')
         muted = command('osascript', '-e', 'output muted of (get volume settings)') == 'true'
@@ -521,7 +528,7 @@ def _render_rows(name, rows):
         if name == 'brightness':
             snapshot = read('display-snapshot.json', {})
             screen = next((screen for screen in snapshot.get('screens', []) if screen['name'] == label), None)
-            if label in ('Connected displays', 'Mirror or extend to') and not action:
+            if label in ('Connected displays', 'Appearance controls', 'Mirror or extend to') and not action:
                 row['section'] = True
             elif screen and not action:
                 row['detail'] = f"{screen['mode']} · {screen['width']} × {screen['height']}"
