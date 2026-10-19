@@ -1,7 +1,7 @@
 {
   "schema_version": "1.1.0",
   "template_version": "scaffold-v5",
-  "generated_at": "1792448709Z",
+  "generated_at": "1792448792Z",
   "repo_signal_fingerprint": "8838451aa0625316cf53a96f436fbc8e1769588dbc349533b3f65d968fd9fe01",
   "declared_capabilities": [
     "external-integrations",
