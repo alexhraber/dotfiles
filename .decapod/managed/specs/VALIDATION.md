@@ -2,6 +2,24 @@
 
 ## Proof Surfaces
 
+The Display change adds six protocol/integration tests (132 total): stale or
+forged native controls/topology are rejected, only actual discovered devices can
+be actionable, native Settings survives row capacity, response validation remains
+separate from Wi-Fi, native handoff is request-bound, brightness refresh does
+not rescan, and a fresh native snapshot opens without another scan. A private native rendering check counted 0/514/1028 gold pixels at
+empty/half/full levels. Live Sound/Display captures verify gold before any click
+and on hover without changing levels. The signed adapter retained its existing
+AX and Screen Recording approvals and completed three consecutive native scans,
+each with one connected screen, three actual appearance controls and one real
+nearby choice. A fresh-snapshot real fullscreen hover subsequently opened in 0.669 seconds,
+retained actual metadata/choices through refresh and bar concealment, and the
+actual True Tone button toggled and restored the original state. The asynchronous
+callback must finish before a second test click. No nearby device was selected.
+Initial JSON-Boolean, AX traversal,
+module-action and page-transition failures were corrected and retained as private
+failure evidence. Actual pairing/extend-mode changes and multi-screen capture
+remain unverified. Host checks do not replace exact-candidate full validation/CI.
+
 The current refinement passes 126 portable tests, native warnings-as-errors
 compilation and native geometry, overview, menu, calendar, controls and workspace
 self-tests, plus Swift typechecking. All five palette projections preserve
@@ -392,7 +410,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `2eaddf2e356ec39c8e3e614a58c633c545357dcf80067322db990de53762f62e`
-- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (8 files)
+- Repository signal fingerprint: `2ecf78b493a6390b0233c22d537c0f69655d248ed53759d610299422faf02a4c`
+- Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (9 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

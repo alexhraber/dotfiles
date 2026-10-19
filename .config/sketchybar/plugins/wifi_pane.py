@@ -12,12 +12,12 @@ import time
 class NativeError(ValueError):
     def __init__(self, code):
         self.code = code
-        super().__init__('Native Wi-Fi: ' + code)
+        super().__init__('Native controls: ' + code)
 
 
 def diagnostic(state, mode, code, access=None):
     """Keep fixed failure stages locally, never SSIDs, arguments or screen data."""
-    stage = mode if mode in ('status', 'request-access', 'snapshot', 'action') else 'unknown'
+    stage = mode if mode in ('status', 'request-access', 'snapshot', 'action', 'display-snapshot', 'display-action') else 'unknown'
     value = {'time': time.time(), 'stage': stage, 'code': code}
     if access is not None:
         value['access'] = {key: access[key] for key in ('accessibility', 'screen_capture', 'supported')}
@@ -112,7 +112,7 @@ def _query(state, mode, selector):
         if value.get('error'):
             code = value['error']
             known = ('access_unavailable', 'native_panel_busy', 'cover_unavailable', 'native_panel_unavailable',
-                     'option_changed', 'action_failed', 'action_no_change', 'input_unavailable', 'invalid_action', 'invalid_mode')
+                     'native_display_unavailable', 'native_mirroring_unavailable', 'option_changed', 'action_failed', 'action_no_change', 'input_unavailable', 'invalid_action', 'invalid_mode')
             raise NativeError(code if code in known else 'helper_error')
         if process.returncode:
             raise NativeError('helper_exit')
@@ -120,6 +120,9 @@ def _query(state, mode, selector):
             if not all(isinstance(value.get(key), bool) for key in ('accessibility', 'screen_capture', 'supported')):
                 raise ValueError('Invalid Wi-Fi access response')
             return value
+        if mode.startswith('display-'):
+            import display_pane
+            return display_pane.validate(value)
         value = validate(value)
         if token is not None and not value.get('handoff') and view_context(state)[0] == token:
             save_view(state, token, value)

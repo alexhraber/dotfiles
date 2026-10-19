@@ -258,7 +258,26 @@ can leave partial state; the backup manifest remains the recovery input.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `2eaddf2e356ec39c8e3e614a58c633c545357dcf80067322db990de53762f62e`
-- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (8 files)
+- Repository signal fingerprint: `2ecf78b493a6390b0233c22d537c0f69655d248ed53759d610299422faf02a4c`
+- Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (9 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
+
+## Display pane protocol
+
+The public bar item remains `brightness` for existing brightness_change events,
+scroll adjustment and callbacks; its visible identity is Display. The signed
+Desktop Panels executable accepts `--display-snapshot` or `--display-action JSON`.
+Responses have sampled time, at most 32 typed native rows, at most eight connected
+screens, and a Boolean handoff. Rows contain kind (toggle/device/settings), page
+(display/mirroring), role, identifier, text, selected and enabled. The native helper
+revalidates observed controls at action time. Python rejects responses older than
+eight seconds, malformed metadata, duplicate identifiers and unexpected controls.
+Screen records contain name, width/height in pixels, main/extended/mirror mode and
+an optional measured refresh rate; unknown refresh rates are omitted.
+
+Private display-snapshot.json and literal row actions remain under the existing
+0700 state directory with 0600 files. Shared native-query locking serializes Wi-Fi
+and Display popups. Appearance toggles refresh the themed pane; device/settings
+actions hand off to native pairing/content confirmation and close only the matching
+custom request. Discovery never selects a screen or changes the display topology.

@@ -199,6 +199,18 @@ SketchyBar and its edge helper; Ollama remains manual with no model preload.
 ai prepare/status/undo make the pinned MLX environment reproducible without
 loading models, preserving the original environment and guarding later edits.
 
+## Display management
+
+The monitor item replaces the brightness-only sun icon. Brightness is one
+control in a broader Display pane: actual connected-screen dimensions and
+main/extended/mirror state, native Dark Mode/Night Shift/True Tone switches,
+and freshly discovered nearby AirPlay/Sidecar screens. Pairing and content
+confirmation remain under macOS control, initiated only by an explicit click.
+Arrangement, scaling and device-specific refresh settings remain in Display
+Settings. Gold filled Sound/Display tracks match capacity meters through the
+shared accent palette. Native input, keyboard-level refresh, fullscreen Spaces,
+Location-off operation and stable existing consent identities are preserved.
+
 <!-- decapod:declared-capabilities:start -->
 
 ## Declared Capability Surfaces
@@ -214,7 +226,7 @@ These declarations select authoring and proof obligations; they do not attest im
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `2eaddf2e356ec39c8e3e614a58c633c545357dcf80067322db990de53762f62e`
-- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (8 files)
+- Repository signal fingerprint: `2ecf78b493a6390b0233c22d537c0f69655d248ed53759d610299422faf02a4c`
+- Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (9 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

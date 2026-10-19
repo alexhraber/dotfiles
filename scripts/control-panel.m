@@ -53,7 +53,7 @@ static NSString *installedPython(void) {
 static NSString *panelSymbol(NSString *name) {
     return @{@"weather":@"cloud.sun.fill", @"cpu":@"cpu", @"gpu":@"square.3.layers.3d",
              @"memory":@"memorychip", @"battery":@"battery.100percent", @"volume":@"speaker.wave.2.fill",
-             @"brightness":@"sun.max.fill", @"wifi":@"wifi", @"bluetooth":@"antenna.radiowaves.left.and.right",
+             @"brightness":@"display", @"wifi":@"wifi", @"bluetooth":@"antenna.radiowaves.left.and.right",
              @"alerts":@"bell.badge.fill"}[name] ?: @"circle";
 }
 static NSString *weatherSymbol(NSString *condition) {
@@ -255,6 +255,30 @@ static NSDictionary *readDocument(void) {
 }
 @end
 
+// Native inactive-window drawing can desaturate trackFillColor. Paint only the
+// track ourselves; NSSliderCell retains its native knob, input and accessibility.
+@interface ControlSliderCell : NSSliderCell
+@end
+@implementation ControlSliderCell
+- (void)drawBarInside:(NSRect)rect flipped:(BOOL)flipped {
+    NSRect track=NSMakeRect(NSMinX(rect),NSMidY(rect)-2,rect.size.width,4);
+    NSBezierPath *shape=[NSBezierPath bezierPathWithRoundedRect:track xRadius:2 yRadius:2];
+    [DFPanelColor(0x202735) setFill];[shape fill];
+    double range=self.maxValue-self.minValue;
+    double fraction=range>0 ? MAX(0,MIN(1,(self.doubleValue-self.minValue)/range)) : 0;
+    if (fraction<=0) return;
+    NSRect knob=[self knobRectFlipped:flipped];
+    BOOL reversed=self.controlView.userInterfaceLayoutDirection==NSUserInterfaceLayoutDirectionRightToLeft;
+    CGFloat end=fraction>=1 ? (reversed ? NSMinX(track) : NSMaxX(track)) :
+        NSIsEmptyRect(knob) ? NSMinX(track)+track.size.width*(reversed ? 1-fraction : fraction) : NSMidX(knob);
+    end=MAX(NSMinX(track),MIN(NSMaxX(track),end));
+    NSRect fill=track;fill.origin.x=reversed ? end : NSMinX(track);
+    fill.size.width=reversed ? NSMaxX(track)-end : end-NSMinX(track);
+    [NSGraphicsContext saveGraphicsState];[shape addClip];
+    [DFPanelColor(0xb8a6ff) setFill];NSRectFill(fill);[NSGraphicsContext restoreGraphicsState];
+}
+@end
+
 @interface ControlView : ControlSurface
 @property NSString *documentName;
 @property NSString *callbackName;
@@ -275,7 +299,7 @@ static void symbol(NSView *parent, NSString *name, NSRect rect, NSColor *color) 
     image.contentTintColor=color; image.imageScaling=NSImageScaleProportionallyUpOrDown; [parent addSubview:image];
 }
 static CGFloat rowHeight(NSDictionary *row) {
-    return ![row[@"action"] boolValue] && ([[row[@"text"] componentsSeparatedByString:@" · "] count]>2 || [row[@"text"] length]>44) ? 52 : 36;
+    return ![row[@"action"] boolValue] && ([row[@"detail"] length] || [[row[@"text"] componentsSeparatedByString:@" · "] count]>2 || [row[@"text"] length]>44) ? 52 : 36;
 }
 static CGFloat rowsHeight(NSArray *rows) {
     CGFloat height=0; for (NSUInteger i=1;i<rows.count;i++) height+=rowHeight(rows[i]); return height;
@@ -355,8 +379,10 @@ static void runControl(NSString *kind, NSString *argument, NSString *name, NSStr
         meter.value=[controlDocument[@"meter"] doubleValue]; [self addSubview:meter]; y+=14;
     }
     if (controlDocument[@"slider"]) {
-        NSSlider *slider=[NSSlider sliderWithValue:[controlDocument[@"slider"] doubleValue] minValue:0 maxValue:100 target:self action:@selector(slid:)];
-        slider.frame=NSMakeRect(18,y,contentWidth+4,24); slider.continuous=NO; slider.controlSize=NSControlSizeRegular;
+        NSSlider *slider=[[NSSlider alloc] initWithFrame:NSMakeRect(18,y,contentWidth+4,24)];
+        slider.cell=ControlSliderCell.new;slider.minValue=0;slider.maxValue=100;
+        slider.doubleValue=[controlDocument[@"slider"] doubleValue];slider.target=self;slider.action=@selector(slid:);
+        slider.continuous=NO; slider.controlSize=NSControlSizeRegular;
         slider.trackFillColor=DFPanelColor(0xb8a6ff);
         slider.accessibilityLabel=[controlDocument[@"name"] isEqual:@"volume"] ? @"Output volume" : @"Display brightness";
         [self addSubview:slider];
@@ -412,6 +438,9 @@ static void runControl(NSString *kind, NSString *argument, NSString *name, NSStr
             button.target=self; button.action=@selector(clicked:); [document addSubview:button];
         } else if ([row[@"section"] boolValue]) {
             text(document,[row[@"text"] uppercaseString],NSMakeRect(24,rect.origin.y+10,documentWidth-36,16),9,DFPanelColor(0x94a3b8),NSFontWeightSemibold);
+        } else if ([row[@"detail"] length]) {
+            text(document,row[@"text"],NSMakeRect(24,rect.origin.y+6,documentWidth-36,18),12,DFPanelColor(0xe6edf7),NSFontWeightMedium);
+            text(document,row[@"detail"],NSMakeRect(24,rect.origin.y+27,documentWidth-36,16),10,DFPanelColor(0x94a3b8),NSFontWeightRegular);
         } else if (statPanel(controlDocument)) {
             NSUInteger index=i-1;
             NSArray *parts=[row[@"text"] componentsSeparatedByString:@" · "];
@@ -505,7 +534,7 @@ void DFControlsInitialize(NSString *directory) {
         NSString *request=note.userInfo[@"request"];
         if (request && ![request isEqual:controlDocument[@"request"]]) return;
         if ([note.object isEqual:@"show"]) showControls(); else if ([note.object isEqual:@"hide"]) DFControlsHide();
-        else if ([note.object isEqual:@"passthrough"] && [controlDocument[@"name"] isEqual:@"wifi"]) {controlPanel.ignoresMouseEvents=YES;passthroughUntil=NSProcessInfo.processInfo.systemUptime+8;}
+        else if ([note.object isEqual:@"passthrough"] && [@[@"wifi",@"brightness"] containsObject:controlDocument[@"name"]]) {controlPanel.ignoresMouseEvents=YES;passthroughUntil=NSProcessInfo.processInfo.systemUptime+8;}
         else if ([note.object isEqual:@"resume"]) {controlPanel.ignoresMouseEvents=NO;passthroughUntil=0;}
     }];
 }

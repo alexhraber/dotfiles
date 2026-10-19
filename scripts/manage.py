@@ -134,7 +134,7 @@ def plan(groups, args):
             raise ValueError('Two AeroSpace configs exist; reconcile ~/.aerospace.toml and the XDG config before installing desktop')
         target = legacy if legacy.exists() or legacy.is_symlink() else modern
         ops.append(operation(target, '.config/aerospace/aerospace.toml'))
-        for rel in ('sketchybar/sketchybarrc', 'sketchybar/themes.json', 'sketchybar/weather.json', 'sketchybar/plugins/appearance.py', 'sketchybar/plugins/weather.py', 'sketchybar/plugins/status.sh', 'sketchybar/plugins/metrics.py', 'sketchybar/plugins/controls.py', 'sketchybar/plugins/wifi_pane.py', 'borders/bordersrc'):
+        for rel in ('sketchybar/sketchybarrc', 'sketchybar/themes.json', 'sketchybar/weather.json', 'sketchybar/plugins/appearance.py', 'sketchybar/plugins/weather.py', 'sketchybar/plugins/status.sh', 'sketchybar/plugins/metrics.py', 'sketchybar/plugins/controls.py', 'sketchybar/plugins/wifi_pane.py', 'sketchybar/plugins/display_pane.py', 'borders/bordersrc'):
             ops.append(operation(config / rel, '.config/' + rel))
     if 'reverse' in groups:
         ops.append(operation(config / 'zsh/reverse.zsh', '.config/zsh/reverse.zsh', copy=True))

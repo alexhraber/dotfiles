@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "baseline": {
-    "accepted_commit": "cf2b2113564db0b1d6914e0a8e5aa588212e8dbc",
+    "accepted_commit": "d78a59e99664acd51963fe64f1181f716dbaa196",
     "unresolved": {
       "claim:actual-app-menus": {
         "falsifier": "Native action guards permit stale/disabled/submenu leaf execution, or the UI claims menus work without Accessibility.",
@@ -22,135 +22,46 @@
     }
   },
   "change": {
-    "id": "change_01M595797HH1YF4NJ6TYH18P1V",
-    "base_commit": "cf2b2113564db0b1d6914e0a8e5aa588212e8dbc",
+    "id": "change_01M5AHS446SS97TA9VXSF9FBAQ",
+    "base_commit": "d78a59e99664acd51963fe64f1181f716dbaa196",
     "target_base": "origin/main"
-  },
-  "claims": {
-    "native-fullscreen-refinement": {
-      "statement": "The signed staged main app preserves the active helper until its own AX and Calendar approvals are ready, and native overview suppresses custom surfaces without depending on AeroSpace.",
-      "falsifier": "Denied staging changes the active helper or palette, actual Mission Control is not detected, or AeroSpace is required for fullscreen navigation.",
-      "status": "supported",
-      "proof_refs": [
-        "tests/test_desktop.py staging and upgrade guards; private normal-app approval check and real Mission Control proof; AeroSpace disabled and quit"
-      ]
-    },
-    "shared-workstation-appearance": {
-      "statement": "All five desktop palettes project into backed-up Ghostty, Neovim, tmux, Starship and fzf configuration, with a deterministic matching wallpaper and a compact themed app launcher.",
-      "falsifier": "A projection disagrees with semantic palette colors, accepts unsafe color syntax, breaks app parsing or overwrites unrelated configuration during rollback.",
-      "status": "supported",
-      "proof_refs": [
-        "tests/test_workstation_theme.py; installed Ghostty validate/reload, headless Neovim and disposable tmux parser; private launcher and wallpaper visual checks"
-      ]
-    },
-    "window-previews": {
-      "statement": "Dock hover can show real window-only thumbnails in memory and exact card selection raises the retained AX window; live fullscreen Ghostty hover and two-window fixture selection are verified, without claiming every app exposes cold-start AX windows.",
-      "falsifier": "The verified app produces no actual thumbnail, card selection raises the wrong fixture window, captures persist to product storage or stale requests reopen after dismissal.",
-      "status": "supported",
-      "proof_refs": [
-        "private real fullscreen dock hover and inspected thumbnail; two-window exact selection proof; generation/cancellation source review"
-      ]
-    }
   },
   "checkpoints": [
     {
-      "id": "desktop-refinement-implementation",
-      "summary": "Implement transparent dock previews, native fullscreen transition handling, coordinated workstation theme and common pane interactions; stage stable signed migration with explicit approval and private rollback.",
-      "input_digest": "sha256:9dcec5c0f8133a560555dacf1325514d16743ca50dd912ed2c7b2daf980b475e",
+      "id": "display-controls-source",
+      "summary": "Implement real native Display management and persistent accent slider fills; document consent, hardware and proof boundaries.",
+      "input_digest": "sha256:4becad01025cd154a5ec053a96ad479c763be289402f4eea2b2f53d447431474",
       "proof_refs": [
-        "126 host tests, native self-tests/compilation, actual window selection/fullscreen hover, launcher visual/input, Mission Control, Wi-Fi regression and application theme checks; exact-candidate readiness pending"
+        "Native compilation and prior 131-test suite; six targeted Display tests; private idle/hover color and signed discovery/fullscreen evidence."
       ]
     },
     {
-      "id": "desktop-refinement-prerequisite-recovery",
-      "summary": "Preserve initial readiness failure and successful prerequisite bootstrap; retain original required CI contract after incidental scaffold healing.",
-      "input_digest": "sha256:9eb701946c17eb560adaaffc346d0b866ac914f82a4560106da9e66472f3a3e4",
+      "id": "display-controls-reviewed",
+      "summary": "Final reviewed Display controls with real native choices, persistent gold fill, live True Tone restore and Wi-Fi regression evidence.",
+      "input_digest": "sha256:20c70be7da509761d4585085a6a25d0bb0512d93488d63101c6b457e2296eae4",
       "proof_refs": [
-        "container project-check status ok, scope project_prerequisites; full readiness still pending"
-      ]
-    },
-    {
-      "id": "desktop-refinement-final-proof-boundary",
-      "summary": "Begin final verification trajectory after stable source prerequisite bootstrap, preserving earlier failures in committed history.",
-      "input_digest": "sha256:a8f9fcccbab31fef33d70fc190deb2930ecb241425555ca2f3680f42fcb8f39d",
-      "proof_refs": [
-        "full host/live evidence cited in current trajectory; actual container project-check successful; exact-candidate readiness next"
-      ]
-    },
-    {
-      "id": "desktop-refinement-task-branch",
-      "summary": "Bind the owned work branch unambiguously to its actual claimed task after validator reported shorthand-prefix parsing mismatch.",
-      "input_digest": "sha256:08c9eb6c28976734306ccf5de35c9506e764f131eac197943a27315684705692",
-      "proof_refs": [
-        "Actual readiness failure retained in trajectory; current task identity preserved; prerequisite checks rerun before full readiness retry"
+        "Private registered-app UI proof; six Display tests; native compilation; full candidate validation pending."
       ]
     }
   ],
   "intents": {
-    "intent:desktop-refinement-final-20261018": {
+    "intent:change_01M5AHS446SS97TA9VXSF9FBAQ": {
       "acceptance_criteria": [],
       "assumptions": [],
       "boundaries": [
-        "AeroSpace disabled and quit; native fullscreen Spaces, transparent dock and Location off retained; no unrelated repos or credentials"
+        "Current claimed task and isolated work branch"
       ],
       "constraints": [
         "dotfiles-desktop"
       ],
       "created_sequence": 1,
-      "id": "intent:desktop-refinement-final-20261018",
+      "id": "intent:change_01M5AHS446SS97TA9VXSF9FBAQ",
       "out_of_scope": [],
       "proof_requirements": [],
-      "raw_intent": "Complete all four desktop refinements and publish main under standing owner authorization",
-      "refined_intent": "Verify the committed desktop, fullscreen, theme and interaction implementation after prerequisite bootstrap; preserve earlier failed and partial live evidence in committed history",
+      "raw_intent": "Match brightness and sound slider fill to the shared gold accent\n\nOwner requests the filled portions of Brightness and Sound sliders match the gold battery/CPU/GPU/memory meters. Preserve native slider input, keyboard-level updates, current palette selection, fullscreen panels, stable signing and rollback. Verify actual rendering and live controls, then merge and push under standing authorization.",
+      "refined_intent": "Match brightness and sound slider fill to the shared gold accent\n\nOwner requests the filled portions of Brightness and Sound sliders match the gold battery/CPU/GPU/memory meters. Preserve native slider input, keyboard-level updates, current palette selection, fullscreen panels, stable signing and rollback. Verify actual rendering and live controls, then merge and push under standing authorization.",
       "status": "refined",
       "updated_sequence": 3
-    }
-  },
-  "epochs": {
-    "ve_7d27cbfa89cd774a": {
-      "constitution_hash": "sha256:b063c612f27e8d1fb18a4caabc87a16cc769d408d88d30446455e36014f1843c",
-      "constitution_version": "embedded-docs@0.119.1",
-      "epoch_id": "ve_7d27cbfa89cd774a",
-      "evaluator_identity": "decapod-validate@0.119.1",
-      "evaluator_set_hash": "sha256:d01110bf6e129b6d67cd8462424f4dd7d11d9655c4bf6a6a13c43dbdeede984e",
-      "generated_specs_fingerprint": "2eaddf2e356ec39c8e3e614a58c633c545357dcf80067322db990de53762f62e",
-      "generated_specs_manifest_hash": "sha256:50603d30552b703641f5011664e08ecae388ea6b87873f34959a72bd23212dba",
-      "material_hashes": {
-        "constitution:core/DECAPOD": "sha256:b063c612f27e8d1fb18a4caabc87a16cc769d408d88d30446455e36014f1843c",
-        "generated_spec:.decapod/managed/specs/ARCHITECTURE.md": "sha256:c55c7ffe8a2927d06ca3c15f649e70ea77eac233bb0e00a0ded0cc6d617d82d4",
-        "generated_spec:.decapod/managed/specs/INTENT.md": "sha256:31930443ee7e1c0a643210e56667c1df6363e58cf0f2b22d8df2919c2bda76b3",
-        "generated_spec:.decapod/managed/specs/INTERFACES.md": "sha256:ed8c4f0faea6142169f86fa9148074b37f0e79ba202cac37e42b1509c25010cc",
-        "generated_spec:.decapod/managed/specs/OPERATIONS.md": "sha256:71d44455a2bd02f9b68449a267e8a1ef696c791517db9b8326e45df0e6035f70",
-        "generated_spec:.decapod/managed/specs/README.md": "sha256:9fb07dde4ec7c58ee868140213b29b833d29a06a985b77e8f1839e3815a5327d",
-        "generated_spec:.decapod/managed/specs/SECURITY.md": "sha256:fb938097f739409097c26de575c50e86d211e02057b8577aa4d3c78aaf14394f",
-        "generated_spec:.decapod/managed/specs/SEMANTICS.md": "sha256:e9a1070cea4b3c98ad616ba1c2b50eebee3e1878876498d57f9ed8481e590e1b",
-        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:2ff1f5eb6fe371d5f65478acdb0805361fb4f33ac06359c4e17db97dde26da07",
-        "generated_specs_fingerprint": "2eaddf2e356ec39c8e3e614a58c633c545357dcf80067322db990de53762f62e",
-        "generated_specs_manifest": "sha256:50603d30552b703641f5011664e08ecae388ea6b87873f34959a72bd23212dba",
-        "governance_context": "sha256:247bcc70bfb7548d9546ab15b1be9c60ab1b1cf84e18a553bcc697be63690e24",
-        "governance_material:.decapod/managed/Dockerfile.decapod": "sha256:c9bdb828ff9c9a9e00392d153434ecaaf4d507081ff453c5e838375c55c650e4",
-        "governance_material:AGENTS.md": "sha256:4992240c6825701513873da48567d3560685511ff73827527f9152f7a25cd7e7",
-        "governance_material:CLAUDE.md": "sha256:add7e4f64ef63dd84c69fd8088da14b0c34afe3bf9144c0f59c304c23e1279d5",
-        "governance_material:CODEX.md": "sha256:2ff1b008789940fc7871a84a6a38ac3eec5bef53f1444a4d387f0e4e04d0b975",
-        "governance_material:GEMINI.md": "sha256:e2c5b404af6f21562159eb3be9fd955d9d9a52f1b6ac90fb24fcdf2b170f29fb",
-        "governance_section:claims": "sha256:e92a792629a0af3ebd38653ee164452fbb2b3fc5b01a04339e5b51aec640081c",
-        "governance_section:plan": "sha256:37e49a673a0709d32fd7267ee6d9681e98bf71cfe7b9afdb9fffc45f58707e39",
-        "living_spec_material:.decapod/managed/specs/ARCHITECTURE.md": "sha256:f7640f8ace3e069f095052b47dd892fcb9b7ca10956088be493b8158bd40b025",
-        "living_spec_material:.decapod/managed/specs/INTENT.md": "sha256:592fb705c130fff9d23ca9ac1a9432372e3a211a5464f7895282090e221464dc",
-        "living_spec_material:.decapod/managed/specs/INTERFACES.md": "sha256:30149aea798e2897fde2bdc5dd7cda93362b1d16708ae8ad89243ffb29ff7204",
-        "living_spec_material:.decapod/managed/specs/OPERATIONS.md": "sha256:2d5bf1b27e1946342964bb176f8e21accb3b7d55b66aa5757bbcb7fa266ba376",
-        "living_spec_material:.decapod/managed/specs/README.md": "sha256:0988c85d6c05f02d52684c9aafae50e95fd5d5576739d3e9d995af682697fd99",
-        "living_spec_material:.decapod/managed/specs/SECURITY.md": "sha256:d479385590a379ed5d88a7cd297bd5049defa45f2555ee96c682b0abb4b5b107",
-        "living_spec_material:.decapod/managed/specs/SEMANTICS.md": "sha256:92bbe2607c6f8f94191a95ea977d9785f3472a0fae2835520dd86eae73130d5c",
-        "living_spec_material:.decapod/managed/specs/VALIDATION.md": "sha256:7e5c571296379d18e170ecd7222d8806913d636bb4d0097a5bb12efedca01ed4",
-        "proof_rubric": "sha256:99e8ef25629da391e9b479db9fff52b82f340224f7a69d8a88d2992ae8e90466",
-        "validation_profile": "sha256:37a8eec1ce19687d132fe29051dca629d164e2c4958ba141d5f4133a33f0688f"
-      },
-      "proof_rubric": "decapod-validate/current-proof-v1",
-      "proof_rubric_hash": "sha256:99e8ef25629da391e9b479db9fff52b82f340224f7a69d8a88d2992ae8e90466",
-      "schema_version": "1.0.0",
-      "validation_profile": "default",
-      "validation_profile_hash": "sha256:37a8eec1ce19687d132fe29051dca629d164e2c4958ba141d5f4133a33f0688f"
     }
   },
   "sections": {
@@ -159,72 +70,102 @@
         "file_touch_budget": null,
         "forbidden_paths": []
       },
-      "deferred_questions": [],
+      "deferred_questions": [
+        "Actual wireless pairing/mirror/extend changes and multi-screen capture require hardware testing; this pass does not connect an external screen during verification."
+      ],
       "human_questions": [],
-      "intent": "Owner explicitly authorizes all four proposed improvements. Implement hover window thumbnails and exact window selection through the existing signed Desktop Panels app; robust Mission Control/Space/edge/pane transitions in main helper; a shared selected palette projected into Ghostty, Neovim, tmux, a themed application launcher and wallpaper; consistent row hover, typography, spacing, focus and restrained Reduce Motion aware transitions. Preserve icon-only fully transparent dock, native fullscreen workflow, command-number desktop navigation, Location off and no saved screen images. Main helper changes require stable local signing and staged, verified activation with rollback; preserve currently approved helper until replacement is concrete. No new cloud accounts, local models or unrelated repos. Finish native/live tests, rollback checks, exact-candidate validation and hosted CI then authorized main merge.",
+      "intent": "Replace brightness-only bar identity with Display: actual connected-screen dimensions and modes, native appearance toggles, real nearby AirPlay/Sidecar choices and native pairing/content/mirror/extend confirmation. Preserve fullscreen, Location off, stable signed consent and rollback. Sound and Display filled tracks remain gold at rest, hover, press and drag through the shared accent palette. Complete checks and merge/push under standing authorization.",
       "phases": [],
       "proof_hooks": [
-        "Meaningful native self-tests for preview identity/geometry, Mission Control classification, cancellation and style; live multiwindow/fullscreen selection, Space/dismissal and permission retention; palette projection and rollback tests; actual terminal/editor/tmux/wallpaper checks; 120 existing regressions; full exact-candidate Decapod validation and Linux/macOS CI."
+        "Native and portable checks, live idle/hover gold, repeated signed display discovery and fullscreen themed pane, request-safe actions and regression checks. Do not connect hardware merely to test; record external mode and multi-screen limits."
       ],
       "schema_version": "1.1.0",
       "spec_reviews": [
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/ARCHITECTURE.md",
-          "reason": "Reviewed shared palette projection, transient auxiliary workspace mode, bounded AX and window-only capture, generation cancellation, stable signing migration and staged rollback against native/Python sources.",
-          "reviewed_code_fingerprint": "2eaddf2e356ec39c8e3e614a58c633c545357dcf80067322db990de53762f62e",
-          "spec_material_hash": "f7640f8ace3e069f095052b47dd892fcb9b7ca10956088be493b8158bd40b025"
+          "reason": "Reviewed final Display native discovery/actions, gold idle track and hardware verification boundaries.",
+          "reviewed_code_fingerprint": "2ecf78b493a6390b0233c22d537c0f69655d248ed53759d610299422faf02a4c",
+          "spec_material_hash": "00cb7346aa088ac5ae96f72bb78ae07b45554ebce84fc0ec422c85678559268c"
         },
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/INTERFACES.md",
-          "reason": "Reviewed exact-app permission staging, private request/status protocol, click-time window identity checks, launcher controls, unchanged fullscreen navigation and supported lifecycle commands.",
-          "reviewed_code_fingerprint": "2eaddf2e356ec39c8e3e614a58c633c545357dcf80067322db990de53762f62e",
-          "spec_material_hash": "30149aea798e2897fde2bdc5dd7cda93362b1d16708ae8ad89243ffb29ff7204"
+          "reason": "Reviewed final Display native discovery/actions, gold idle track and hardware verification boundaries.",
+          "reviewed_code_fingerprint": "2ecf78b493a6390b0233c22d537c0f69655d248ed53759d610299422faf02a4c",
+          "spec_material_hash": "bc51a818ecfcdb1768ac6880fb2f47eaac958dfee863b7d06d7f87562a35056e"
         },
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/SECURITY.md",
-          "reason": "Reviewed in-memory window/title/pixel ownership, bounded private files, no Location or network/password changes, local signing identities, manual OS consent and authorization for obsolete legacy record removal.",
-          "reviewed_code_fingerprint": "2eaddf2e356ec39c8e3e614a58c633c545357dcf80067322db990de53762f62e",
-          "spec_material_hash": "d479385590a379ed5d88a7cd297bd5049defa45f2555ee96c682b0abb4b5b107"
+          "reason": "Reviewed final Display native discovery/actions, gold idle track and hardware verification boundaries.",
+          "reviewed_code_fingerprint": "2ecf78b493a6390b0233c22d537c0f69655d248ed53759d610299422faf02a4c",
+          "spec_material_hash": "ef1dd6a804b0a7b95fe6f122c977a5a8ee6f065d44ae923aef0ce92489e42435"
         }
       ],
       "state": "APPROVED",
       "stop_conditions": [],
-      "title": "Refine dock previews, fullscreen behavior, unified theme and pane interactions",
+      "title": "Refine display management and native slider accent",
       "todo_ids": [
-        "docs_01m5956rfgdprk10"
+        "code_01m5ahqc38tw4t4t"
       ],
       "unknowns": [],
       "unresolved_contradictions": [],
-      "updated_at": "1792392618Z"
+      "updated_at": "1792435333Z"
     },
     "trajectory": {
       "active_boundaries": [
-        "AeroSpace disabled and quit; native fullscreen Spaces, transparent dock and Location off retained; no unrelated repos or credentials"
+        "Current claimed task and isolated work branch"
       ],
-      "artifact_hash": "sha256:83686a997ae7c63e0f6c68dab496dc2ecc5d7c8f394a099e0383964df9e44dca",
+      "artifact_hash": "sha256:fc9cee4a7f955f16372fb4efdec250800ae1df1107ea46afc9e9fb8c6603d414",
       "checks": [
         {
-          "name": "decapod validate",
-          "status": "passed"
-        },
-        {
-          "name": "host-refinement-tests",
-          "status": "passed"
-        },
-        {
-          "name": "live-fullscreen-controls",
-          "status": "passed"
-        },
-        {
-          "name": "native-builds",
-          "status": "passed"
-        },
-        {
-          "name": "publication-readiness",
+          "name": "discovery_initial_attempts",
           "status": "failed"
+        },
+        {
+          "name": "early_loading_preview",
+          "status": "failed"
+        },
+        {
+          "name": "external_connection",
+          "status": "unavailable"
+        },
+        {
+          "name": "fresh_snapshot_fast_path",
+          "status": "passed"
+        },
+        {
+          "name": "fullscreen_display_hover",
+          "status": "passed"
+        },
+        {
+          "name": "live_final_display",
+          "status": "passed"
+        },
+        {
+          "name": "live_idle_hover_gold",
+          "status": "passed"
+        },
+        {
+          "name": "macos_development_suite",
+          "status": "passed"
+        },
+        {
+          "name": "native_compile",
+          "status": "passed"
+        },
+        {
+          "name": "native_display_transition",
+          "status": "passed"
+        },
+        {
+          "name": "signed_display_discovery",
+          "status": "passed"
+        },
+        {
+          "name": "true_tone_button_restore",
+          "status": "passed"
         }
       ],
       "current_phase": "verification",
@@ -232,398 +173,185 @@
         "events": [
           {
             "event_id": "event:2",
-            "intent_id": "intent:desktop-refinement-final-20261018",
+            "intent_id": "intent:change_01M5AHS446SS97TA9VXSF9FBAQ",
             "kind": "created",
             "sequence": 2
           },
           {
             "event_id": "event:3",
-            "intent_id": "intent:desktop-refinement-final-20261018",
+            "intent_id": "intent:change_01M5AHS446SS97TA9VXSF9FBAQ",
             "kind": "refined",
             "sequence": 3
           },
           {
-            "detail": "trajectory:desktop-refinement-final-20261018",
+            "detail": "trajectory:branch_01M5AHS46TE3EZNSX1WY8MG6Y3",
             "event_id": "event:4",
-            "intent_id": "intent:desktop-refinement-final-20261018",
+            "intent_id": "intent:change_01M5AHS446SS97TA9VXSF9FBAQ",
             "kind": "trajectory_step_recorded",
             "sequence": 4
           },
           {
-            "detail": "trajectory:desktop-refinement-final-20261018",
+            "detail": "trajectory:branch_01M5AHS46TE3EZNSX1WY8MG6Y3",
             "event_id": "event:5",
-            "intent_id": "intent:desktop-refinement-final-20261018",
+            "intent_id": "intent:change_01M5AHS446SS97TA9VXSF9FBAQ",
             "kind": "trajectory_step_recorded",
             "sequence": 5
           },
           {
-            "detail": "trajectory:desktop-refinement-final-20261018",
+            "detail": "trajectory:branch_01M5AHS46TE3EZNSX1WY8MG6Y3",
             "event_id": "event:6",
-            "intent_id": "intent:desktop-refinement-final-20261018",
+            "intent_id": "intent:change_01M5AHS446SS97TA9VXSF9FBAQ",
             "kind": "trajectory_step_recorded",
             "sequence": 6
+          },
+          {
+            "detail": "trajectory:branch_01M5AHS46TE3EZNSX1WY8MG6Y3",
+            "event_id": "event:7",
+            "intent_id": "intent:change_01M5AHS446SS97TA9VXSF9FBAQ",
+            "kind": "trajectory_step_recorded",
+            "sequence": 7
           }
         ],
         "knowledge_candidates": [],
-        "next_sequence": 6,
+        "next_sequence": 7,
         "schema_version": "1.0.0",
         "trajectories": {
-          "desktop-refinement-final-20261018": {
+          "branch_01M5AHS46TE3EZNSX1WY8MG6Y3": {
             "evidence_only": true,
-            "id": "desktop-refinement-final-20261018",
-            "intent_id": "intent:desktop-refinement-final-20261018",
+            "id": "branch_01M5AHS46TE3EZNSX1WY8MG6Y3",
+            "intent_id": "intent:change_01M5AHS446SS97TA9VXSF9FBAQ",
             "steps": [
               {
-                "action": "verification",
+                "action": "implementation",
                 "custody_event_id": "event:4",
                 "observations": [
-                  "scripts/workspace-panels.m",
-                  "scripts/panel-request.m",
-                  "scripts/desktop.py",
-                  "scripts/check.py",
-                  ".github/workflows/check.yml",
-                  "Committed implementation ffc7265 and recovery 80889d8 retain all earlier failed and partial attempts. 126 unit tests, native compilation/self-tests and final auxiliary warnings-as-errors builds passed. Real fullscreen Ghostty dock thumbnail and pointer-exit closure, exact two-window selection, compact launcher keyboard/filter/visual, Mission Control suppression/recovery, Location-off Wi-Fi regression, installed Ghostty/Neovim/tmux palette checks and staged AX/Calendar activation are evidenced by private host results and authored validation spec. No universal cold-start AX support claim. Final full readiness must still pass."
+                  "scripts/control-panel.m",
+                  "scripts/wifi-pane.m",
+                  ".config/sketchybar/plugins/controls.py",
+                  "scripts/control-panel.m",
+                  ".config/sketchybar/sketchybarrc",
+                  "Warnings-as-errors AppKit control renderer compiled successfully at /private/tmp/dotfiles-display-development. Slider drawing uses public NSSliderCell drawBarInside and knobRectFlipped APIs; native input remains inherited."
                 ],
                 "proof_refs": [
-                  "host-refinement-tests",
-                  "live-fullscreen-controls",
-                  "native-builds"
+                  "native_compile"
                 ],
                 "scope": [
                   "dotfiles-desktop"
                 ],
                 "sequence": 4,
-                "validation_findings": []
+                "validation_findings": [
+                  "Actual Screen Mirroring AX controls and nearby device state require live inspection before adapter design."
+                ]
               },
               {
-                "action": "validation",
-                "command": "decapod validate",
+                "action": "implementation",
                 "custody_event_id": "event:5",
                 "observations": [
-                  ".decapod/governance.json",
-                  ".decapod/governance.json",
-                  "validation epoch ve_7d27cbfa89cd774a completed with zero failures"
+                  "scripts/wifi-pane.m",
+                  "scripts/wifi-pane-info.plist",
+                  "scripts/manage.py",
+                  ".config/sketchybar/plugins/display_pane.py",
+                  ".config/sketchybar/plugins/controls.py",
+                  "tests/test_display_pane.py",
+                  "131 portable tests plus native warnings-as-errors compilation, native self-tests and Swift typecheck passed before final cleanup refinement. Real gold tracks verified idle and hovered with no clicks or level changes; private captures /private/tmp/dotfiles-volume-idle.png and /private/tmp/dotfiles-brightness-hover.png. Empty/half/full gold pixels 0/514/1028. Earlier native discovery failed on JSON Boolean encoding and expanded-page closure; private fixed-ID transition now finds and closes both pages."
                 ],
                 "proof_refs": [
-                  "decapod validate"
+                  "macos_development_suite",
+                  "live_idle_hover_gold",
+                  "native_display_transition",
+                  "discovery_initial_attempts"
                 ],
                 "scope": [
                   "dotfiles-desktop"
                 ],
                 "sequence": 5,
-                "validation_findings": []
+                "validation_findings": [
+                  "Actual AirPlay pairing/extend-mode change and multi-screen cover remain untested without connecting hardware."
+                ]
               },
               {
                 "action": "verification",
                 "custody_event_id": "event:6",
                 "observations": [
-                  "Full readiness reported branch-derived task mismatch: the shorthand todo-01m595 prefix was parsed as todo_01m595 instead of the actual claimed docs_01m5956rfgdprk10. Renamed only this owned work branch to agent/unknown/docs_01m5956rfgdprk10-desktop-refinement so it unambiguously names the real task; no task identity or proof was fabricated."
+                  "Three consecutive signed native scans passed with preserved AX/capture consent. Earlier real fullscreen hover passed at 3.907 seconds with actual connected metadata, three toggles, one real nearby choice, periodic refresh, bar-autohide survival and exit. Immediate loading-pane experiment failed dismissal timing and was removed; only already-fresh native snapshots now use a fast path, protected by a regression test. Six Display protocol tests passed. No screen was connected during tests; multi-screen capture and pairing/mode changes are unverified."
                 ],
                 "proof_refs": [
-                  "publication-readiness"
+                  "signed_display_discovery",
+                  "fullscreen_display_hover",
+                  "early_loading_preview",
+                  "fresh_snapshot_fast_path",
+                  "external_connection"
                 ],
                 "scope": [
+                  "Display management plus gold-at-rest Sound/Display sliders",
                   "dotfiles-desktop"
                 ],
                 "sequence": 6,
+                "validation_findings": []
+              },
+              {
+                "action": "verification",
+                "custody_event_id": "event:7",
+                "observations": [
+                  "Final registered-app warm-snapshot fullscreen hover opened in 0.669 seconds with real screen metadata, three toggles and one native nearby choice. Periodic rescan, bar conceal survival, actual True Tone button toggle and restore, and pointer exit passed. Probe allowed asynchronous callback completion between clicks; original True Tone state was verified/restored in cleanup."
+                ],
+                "proof_refs": [
+                  "live_final_display",
+                  "true_tone_button_restore"
+                ],
+                "scope": [
+                  "Display management plus gold-at-rest Sound/Display sliders",
+                  "dotfiles-desktop"
+                ],
+                "sequence": 7,
                 "validation_findings": []
               }
             ]
           }
         }
       },
-      "declared_commands": [
-        "decapod validate"
-      ],
+      "declared_commands": [],
       "destination": "pull request",
       "evidence": [
-        "Committed implementation ffc7265 and recovery 80889d8 retain all earlier failed and partial attempts. 126 unit tests, native compilation/self-tests and final auxiliary warnings-as-errors builds passed. Real fullscreen Ghostty dock thumbnail and pointer-exit closure, exact two-window selection, compact launcher keyboard/filter/visual, Mission Control suppression/recovery, Location-off Wi-Fi regression, installed Ghostty/Neovim/tmux palette checks and staged AX/Calendar activation are evidenced by private host results and authored validation spec. No universal cold-start AX support claim. Final full readiness must still pass.",
-        "Full readiness reported branch-derived task mismatch: the shorthand todo-01m595 prefix was parsed as todo_01m595 instead of the actual claimed docs_01m5956rfgdprk10. Renamed only this owned work branch to agent/unknown/docs_01m5956rfgdprk10-desktop-refinement so it unambiguously names the real task; no task identity or proof was fabricated.",
-        "validation epoch ve_7d27cbfa89cd774a completed with zero failures"
+        "131 portable tests plus native warnings-as-errors compilation, native self-tests and Swift typecheck passed before final cleanup refinement. Real gold tracks verified idle and hovered with no clicks or level changes; private captures /private/tmp/dotfiles-volume-idle.png and /private/tmp/dotfiles-brightness-hover.png. Empty/half/full gold pixels 0/514/1028. Earlier native discovery failed on JSON Boolean encoding and expanded-page closure; private fixed-ID transition now finds and closes both pages.",
+        "Final registered-app warm-snapshot fullscreen hover opened in 0.669 seconds with real screen metadata, three toggles and one native nearby choice. Periodic rescan, bar conceal survival, actual True Tone button toggle and restore, and pointer exit passed. Probe allowed asynchronous callback completion between clicks; original True Tone state was verified/restored in cleanup.",
+        "Three consecutive signed native scans passed with preserved AX/capture consent. Earlier real fullscreen hover passed at 3.907 seconds with actual connected metadata, three toggles, one real nearby choice, periodic refresh, bar-autohide survival and exit. Immediate loading-pane experiment failed dismissal timing and was removed; only already-fresh native snapshots now use a fast path, protected by a regression test. Six Display protocol tests passed. No screen was connected during tests; multi-screen capture and pairing/mode changes are unverified.",
+        "Warnings-as-errors AppKit control renderer compiled successfully at /private/tmp/dotfiles-display-development. Slider drawing uses public NSSliderCell drawBarInside and knobRectFlipped APIs; native input remains inherited."
       ],
       "inspected_files": [
-        ".github/workflows/check.yml",
-        "scripts/check.py",
-        "scripts/desktop.py",
-        "scripts/panel-request.m",
-        "scripts/workspace-panels.m"
+        ".config/sketchybar/plugins/controls.py",
+        "scripts/control-panel.m",
+        "scripts/wifi-pane.m"
       ],
-      "intent_id": "intent:desktop-refinement-final-20261018",
+      "intent_id": "intent:change_01M5AHS446SS97TA9VXSF9FBAQ",
       "modified_files": [
-        ".decapod/governance.json"
+        ".config/sketchybar/plugins/controls.py",
+        ".config/sketchybar/plugins/display_pane.py",
+        ".config/sketchybar/sketchybarrc",
+        "scripts/control-panel.m",
+        "scripts/manage.py",
+        "scripts/wifi-pane-info.plist",
+        "scripts/wifi-pane.m",
+        "tests/test_display_pane.py"
       ],
       "next_transitions": [
-        "publish"
+        "Commit reviewed source/specs, recover missing prior-task verification using supported QA transaction, then exact-candidate full validation and hosted CI.",
+        "Inspect native display controls without connecting devices, then implement real display pane.",
+        "Refine plan and declare falsifiable checks",
+        "Verify corrected signed discovery repeatedly, activate themed Display pane and live state controls, then full publication validation."
       ],
       "repo_scope": [
+        "Display management plus gold-at-rest Sound/Display sliders",
         "dotfiles-desktop"
       ],
-      "run_id": "desktop-refinement-final-20261018",
+      "run_id": "branch_01M5AHS46TE3EZNSX1WY8MG6Y3",
       "schema_version": "1.1.0",
       "shortcut_risk_signals": [],
-      "task_id": "docs_01m5956rfgdprk10",
+      "task_id": "code_01m5ahqc38tw4t4t",
       "tool_calls": [],
-      "unresolved_assumptions": []
-    },
-    "validation": {
-      "ci_prediction": {
-        "confidence": "medium",
-        "recommendations": [
-          "Review the reported validation warnings before relying on the CI result.",
-          "Use `decapod validate -v --format json` to inspect the affected gate output."
-        ],
-        "result": "review"
-      },
-      "decapod_release": "0.119.1",
-      "drift_findings": [],
-      "elapsed_ms": 2932,
-      "epoch_ref": "ve_7d27cbfa89cd774a",
-      "fail_count": 0,
-      "failures": [],
-      "gate_timings": [
-        {
-          "elapsed_ms": 821,
-          "name": "validate_stale_workspaces"
-        },
-        {
-          "elapsed_ms": 594,
-          "name": "validate_project_specs_docs"
-        },
-        {
-          "elapsed_ms": 437,
-          "name": "validate_markdown_primitives_roundtrip_gate"
-        },
-        {
-          "elapsed_ms": 189,
-          "name": "validate_machine_contract"
-        },
-        {
-          "elapsed_ms": 168,
-          "name": "validate_git_workspace_context"
-        },
-        {
-          "elapsed_ms": 118,
-          "name": "validate_obligations"
-        },
-        {
-          "elapsed_ms": 74,
-          "name": "validate_legacy_jsonl_retired"
-        },
-        {
-          "elapsed_ms": 46,
-          "name": "validate_archive_integrity"
-        },
-        {
-          "elapsed_ms": 32,
-          "name": "validate_repomap_determinism"
-        },
-        {
-          "elapsed_ms": 25,
-          "name": "validate_control_plane_contract"
-        },
-        {
-          "elapsed_ms": 19,
-          "name": "validate_schema_determinism"
-        },
-        {
-          "elapsed_ms": 17,
-          "name": "validate_federation_gates"
-        },
-        {
-          "elapsed_ms": 15,
-          "name": "validate_git_push_pr_gate"
-        },
-        {
-          "elapsed_ms": 14,
-          "name": "validate_git_protected_branch"
-        },
-        {
-          "elapsed_ms": 13,
-          "name": "validate_lineage_hard_gate"
-        },
-        {
-          "elapsed_ms": 11,
-          "name": "validate_no_legacy_namespaces"
-        },
-        {
-          "elapsed_ms": 7,
-          "name": "validate_gatekeeper_gate"
-        },
-        {
-          "elapsed_ms": 4,
-          "name": "validate_knowledge_integrity"
-        },
-        {
-          "elapsed_ms": 4,
-          "name": "validate_knowledge_promotions_if_present"
-        },
-        {
-          "elapsed_ms": 4,
-          "name": "validate_generated_artifact_whitelist"
-        },
-        {
-          "elapsed_ms": 4,
-          "name": "validate_watcher_audit"
-        },
-        {
-          "elapsed_ms": 4,
-          "name": "validate_lcm_immutability"
-        },
-        {
-          "elapsed_ms": 3,
-          "name": "validate_lcm_rebuild_gate"
-        },
-        {
-          "elapsed_ms": 3,
-          "name": "validate_plan_governed_execution_gate"
-        },
-        {
-          "elapsed_ms": 2,
-          "name": "validate_trajectory_artifacts_if_present"
-        },
-        {
-          "elapsed_ms": 2,
-          "name": "validate_policy_integrity"
-        },
-        {
-          "elapsed_ms": 2,
-          "name": "validate_canon_mutation"
-        },
-        {
-          "elapsed_ms": 2,
-          "name": "validate_entrypoint_invariants"
-        },
-        {
-          "elapsed_ms": 2,
-          "name": "validate_jev_history_if_present"
-        },
-        {
-          "elapsed_ms": 2,
-          "name": "validate_research_claims_if_present"
-        },
-        {
-          "elapsed_ms": 2,
-          "name": "validate_validation_receipt_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_recursive_improvement_passes_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_watcher_purity"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_database_schema_versions"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_override_authority"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_health_purity"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_risk_map_violations"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_health_cache_integrity"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_spec_drift"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_heartbeat_invocation_gate"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_project_config_toml"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_context_capsule_policy_contract"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_project_scoped_state"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_docs_templates_bucket"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_repo_map"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_workunit_manifests_if_present"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_internalization_artifacts_if_present"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_state_commit_gate"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_interface_contract_bootstrap"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_context_capsules_if_present"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_embedded_self_contained"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_root_dockerfile_seed_detection"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_eval_gate_if_required"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_risk_map"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_coplayer_policy_tightening"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_tooling_gate"
-        }
-      ],
-      "git_revision": "0394cc40deaeecfafc4f695ae4f6452b7a090614",
-      "kind": "validation_receipt",
-      "parallelism": 1,
-      "pass_count": 188,
-      "prediction_uses_warnings": true,
-      "receipt_hash": "sha256:d966f0f3b0c482eb8889d99ef32db495d80630bbfe1022dd92cd144659b3b3d3",
-      "repo_signal_fingerprint": "2eaddf2e356ec39c8e3e614a58c633c545357dcf80067322db990de53762f62e",
-      "schema_version": "1.0.0",
-      "status": "ok",
-      "temporary_artifacts_cleaned": 0,
-      "trajectory_artifact_hash": "sha256:83686a997ae7c63e0f6c68dab496dc2ecc5d7c8f394a099e0383964df9e44dca",
-      "trajectory_run_id": "desktop-refinement-final-20261018",
-      "warn_count": 4,
-      "warnings": [
-        "Risk map missing (run `decapod riskmap init`)",
-        "Stale workspaces preserved for explicit review: <external-path> (current_workspace: workspace contains the current process; rerun prune from the host checkout after leaving this workspace so Git can release the branch), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.)",
-        "Watcher audit trail missing (run `decapod govern watcher run`)",
-        "Workspace branch 'agent/unknown/docs_01m5956rfgdprk10-desktop-refinement' has unpushed commits or does not exist on origin. Branch pushes and iteration are allowed before preflight; hold PR creation until intent is converged, the branch is mergeable, and full `decapod validate` succeeds against the exact current candidate and accepted target."
+      "unresolved_assumptions": [
+        "Actual AirPlay pairing/extend-mode change and multi-screen cover remain untested without connecting hardware.",
+        "Actual Screen Mirroring AX controls and nearby device state require live inspection before adapter design."
       ]
     }
   }

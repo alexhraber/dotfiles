@@ -97,34 +97,41 @@ static id findAction(id root, NSDictionary *selector, NSUInteger depth, NSUInteg
 static void pump(double duration) {
     [NSRunLoop.currentRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:duration]];
 }
-static NSPanel *cover;
+static NSArray<NSPanel *> *covers;
 static BOOL beginCover(void) {
-    if (!CGPreflightScreenCaptureAccess() || NSScreen.screens.count!=1) return NO;
+    if (!CGPreflightScreenCaptureAccess() || !NSScreen.screens.count || NSScreen.screens.count>8) return NO;
     if (@available(macOS 15.2,*)) {
-        __block CGImageRef snapshot=NULL; __block BOOL complete=NO,abandoned=NO;
-        [SCScreenshotManager captureImageInRect:CGDisplayBounds(CGMainDisplayID()) completionHandler:^(CGImageRef image,__unused NSError *error) {
-            CGImageRef retained=image ? CGImageRetain(image) : NULL;
-            dispatch_async(dispatch_get_main_queue(),^{if (abandoned) {if (retained) CGImageRelease(retained);return;} snapshot=retained;complete=YES;});
-        }];
-        CFAbsoluteTime deadline=CFAbsoluteTimeGetCurrent()+2;
-        while (!complete && CFAbsoluteTimeGetCurrent()<deadline) pump(.005);
-        if (!snapshot) {abandoned=YES;return NO;}
-        NSScreen *screen=NSScreen.screens.firstObject;
-        cover=[[NSPanel alloc] initWithContentRect:screen.frame styleMask:NSWindowStyleMaskBorderless|NSWindowStyleMaskNonactivatingPanel backing:NSBackingStoreBuffered defer:NO];
-        cover.level=NSScreenSaverWindowLevel; cover.animationBehavior=NSWindowAnimationBehaviorNone;
-        cover.collectionBehavior=NSWindowCollectionBehaviorCanJoinAllSpaces|NSWindowCollectionBehaviorFullScreenAuxiliary|NSWindowCollectionBehaviorCanJoinAllApplications|NSWindowCollectionBehaviorTransient|NSWindowCollectionBehaviorIgnoresCycle;
-        cover.opaque=YES;cover.backgroundColor=NSColor.blackColor;cover.hasShadow=NO;
-        cover.hidesOnDeactivate=NO;cover.ignoresMouseEvents=YES;
-        NSImageView *view=[[NSImageView alloc] initWithFrame:NSMakeRect(0,0,screen.frame.size.width,screen.frame.size.height)];
-        view.image=[[NSImage alloc] initWithCGImage:snapshot size:screen.frame.size];view.imageScaling=NSImageScaleAxesIndependently;
-        cover.contentView=view;CGImageRelease(snapshot);
-        [cover orderFrontRegardless];[cover display];[CATransaction flush];pump(.04);
-        return cover.visible;
+        // Capture every screen before presenting any cover, so extending a
+        // desktop does not disable the adapter or capture one of our covers.
+        NSMutableArray *prepared=NSMutableArray.new;
+        for (NSScreen *screen in NSScreen.screens) {
+            CGDirectDisplayID display=[screen.deviceDescription[@"NSScreenNumber"] unsignedIntValue];
+            __block CGImageRef snapshot=NULL; __block BOOL complete=NO,abandoned=NO;
+            [SCScreenshotManager captureImageInRect:CGDisplayBounds(display) completionHandler:^(CGImageRef image,__unused NSError *error) {
+                CGImageRef retained=image ? CGImageRetain(image) : NULL;
+                dispatch_async(dispatch_get_main_queue(),^{if (abandoned) {if (retained) CGImageRelease(retained);return;} snapshot=retained;complete=YES;});
+            }];
+            CFAbsoluteTime deadline=CFAbsoluteTimeGetCurrent()+2;
+            while (!complete && CFAbsoluteTimeGetCurrent()<deadline) pump(.005);
+            if (!snapshot) {abandoned=YES;return NO;}
+            NSPanel *cover=[[NSPanel alloc] initWithContentRect:screen.frame styleMask:NSWindowStyleMaskBorderless|NSWindowStyleMaskNonactivatingPanel backing:NSBackingStoreBuffered defer:NO];
+            cover.level=NSScreenSaverWindowLevel;cover.animationBehavior=NSWindowAnimationBehaviorNone;
+            cover.collectionBehavior=NSWindowCollectionBehaviorCanJoinAllSpaces|NSWindowCollectionBehaviorFullScreenAuxiliary|NSWindowCollectionBehaviorCanJoinAllApplications|NSWindowCollectionBehaviorTransient|NSWindowCollectionBehaviorIgnoresCycle;
+            cover.opaque=YES;cover.backgroundColor=NSColor.blackColor;cover.hasShadow=NO;
+            cover.hidesOnDeactivate=NO;cover.ignoresMouseEvents=YES;
+            NSImageView *view=[[NSImageView alloc] initWithFrame:NSMakeRect(0,0,screen.frame.size.width,screen.frame.size.height)];
+            view.image=[[NSImage alloc] initWithCGImage:snapshot size:screen.frame.size];view.imageScaling=NSImageScaleAxesIndependently;
+            cover.contentView=view;CGImageRelease(snapshot);[prepared addObject:cover];
+        }
+        covers=prepared.copy;
+        for (NSPanel *cover in covers) {[cover orderFrontRegardless];[cover display];}
+        [CATransaction flush];pump(.04);return YES;
     }
     return NO;
 }
 static void endCover(void) {
-    [cover orderOut:nil];cover.contentView=nil;cover=nil;
+    for (NSPanel *cover in covers) {[cover orderOut:nil];cover.contentView=nil;}
+    covers=nil;
 }
 static NSString *stateDirectory(void) {
     NSString *root=NSProcessInfo.processInfo.environment[@"XDG_STATE_HOME"];
@@ -201,7 +208,7 @@ static int runPanelUI(BOOL workspaceMode) {
     DFControlsHide();DFWorkspaceHide();close(lock);return 0;
 }
 static NSDictionary *accessStatus(void) {
-    BOOL supported=NO;if (@available(macOS 15.2,*)) supported=NSScreen.screens.count==1;
+    BOOL supported=NO;if (@available(macOS 15.2,*)) supported=NSScreen.screens.count>0 && NSScreen.screens.count<=8;
     return @{@"accessibility":@((BOOL)AXIsProcessTrusted()),@"screen_capture":@((BOOL)CGPreflightScreenCaptureAccess()),@"supported":@(supported)};
 }
 static BOOL nativeVisible(pid_t owner) {
@@ -317,6 +324,155 @@ static NSDictionary *query(NSDictionary *selector, BOOL expanded) {
     if (failure) return @{@"error":failure};
     return @{@"sampled":@(NSDate.date.timeIntervalSince1970),@"rows":rows,@"handoff":@(handoff)};
 }
+// Display discovery uses the same signed, memory-only native UI adapter as
+// Wi-Fi. Only observed native device/toggle rows may become literal actions.
+static NSDictionary *displayDescriptor(id element, NSString *page) {
+    NSString *role=value(element,kAXRoleAttribute),*identifier=value(element,kAXIdentifierAttribute);
+    if (![identifier isKindOfClass:NSString.class]) identifier=@"";
+    NSString *label=nil,*kind=nil;
+    NSDictionary *toggles=@{@"display-setting-dark-mode":@"Dark Mode",@"display-setting-night-shift":@"Night Shift",@"display-setting-true-tone":@"True Tone"};
+    if ([page isEqual:@"display"] && [role isEqual:@"AXCheckBox"] && toggles[identifier]) {kind=@"toggle";label=toggles[identifier];}
+    else if ([page isEqual:@"mirroring"] && [role isEqual:@"AXCheckBox"] && [identifier hasPrefix:@"screen-mirroring-device-"]) {kind=@"device";label=text(element);}
+    else if ([page isEqual:@"mirroring"] && [role isEqual:@"AXButton"] && [identifier isEqual:@"screen-mirroring-preferences"]) {kind=@"settings";label=text(element);}
+    if (!kind || !safeText(label,512)) return nil;
+    return @{@"kind":kind,@"text":label,@"page":page,@"role":role,@"identifier":identifier,
+             @"selected":@((BOOL)([value(element,kAXValueAttribute) integerValue]==1)),@"enabled":@((BOOL)(![value(element,kAXEnabledAttribute) isEqual:@NO]))};
+}
+static void displayCollect(id root,NSString *page,NSMutableArray *rows,NSUInteger depth,NSUInteger *budget) {
+    if (!*budget || depth>8 || rows.count>=32) return;--*budget;
+    NSString *role=value(root,kAXRoleAttribute);
+    if ([@[@"AXTextField",@"AXTextArea",@"AXSecureTextField"] containsObject:role]) return;
+    NSDictionary *row=displayDescriptor(root,page);if(row){[rows addObject:row];return;}
+    for(id child in children(root))displayCollect(child,page,rows,depth+1,budget);
+}
+static id displayFindAction(id root,NSDictionary *selector,NSUInteger depth,NSUInteger *budget) {
+    if(!*budget || depth>8)return nil;--*budget;
+    if([@[@"AXTextField",@"AXTextArea",@"AXSecureTextField"] containsObject:value(root,kAXRoleAttribute)])return nil;
+    NSDictionary *row=displayDescriptor(root,selector[@"page"]);
+    if(row){BOOL same=[row[@"enabled"] boolValue];for(NSString *key in @[@"kind",@"text",@"page",@"role",@"identifier",@"selected"])if(![row[key] isEqual:selector[key]])same=NO;if(same)return root;}
+    for(id child in children(root)){id found=displayFindAction(child,selector,depth+1,budget);if(found)return found;}
+    return nil;
+}
+static id displayWindowItem(id center,NSString *identifier) {
+    // Never spend the bounded traversal budget in Control Center's unrelated
+    // menu-bar proxy before reaching the actual popup window.
+    for(id window in windows(center)){NSUInteger budget=256;id found=find(window,identifier,nil,0,&budget);if(found)return found;}
+    return nil;
+}
+static NSString *displayFailureStage;
+static id displayPage(id center,id item,NSString *page) {
+    displayFailureStage=@"overview_action";
+    if(AXUIElementPerformAction((__bridge AXUIElementRef)item,kAXPressAction)!=kAXErrorSuccess)return nil;
+    pump(.3);displayFailureStage=@"module_lookup";
+    NSString *identifier=[page isEqual:@"display"] ? @"controlcenter-display" : @"controlcenter-screen-mirroring";
+    id module=nil;CFAbsoluteTime deadline=CFAbsoluteTimeGetCurrent()+1.5;
+    do {module=displayWindowItem(center,identifier);if(!module)pump(.01);}while(!module && CFAbsoluteTimeGetCurrent()<deadline);
+    if(!module)return nil;
+    NSString *action=(id)kAXPressAction;
+    {
+        CFArrayRef raw=NULL;
+        if(AXUIElementCopyActionNames((__bridge AXUIElementRef)module,&raw)==kAXErrorSuccess){
+            NSArray *actions=CFBridgingRelease(raw);
+            for(NSString *candidate in actions)if([candidate hasPrefix:@"Name:show details\n"]){action=candidate;break;}
+        }
+    }
+    displayFailureStage=@"module_action";
+    if(AXUIElementPerformAction((__bridge AXUIElementRef)module,(__bridge CFStringRef)action)!=kAXErrorSuccess)return nil;
+    pump(.2);displayFailureStage=@"detail_lookup";
+    NSString *marker=[page isEqual:@"display"] ? @"display-setting-dark-mode" : @"screen-mirroring-header";
+    deadline=CFAbsoluteTimeGetCurrent()+2;
+    do {for(id window in windows(center)){NSUInteger budget=256;if(find(window,marker,nil,0,&budget))return window;}pump(.01);}while(CFAbsoluteTimeGetCurrent()<deadline);
+    return nil;
+}
+static void displayClose(id center,__unused id item) {
+    // Dismiss only known pages opened by this transaction. Escape targets the
+    // ControlCenter process directly, never the foreground application.
+    for(NSUInteger attempt=0;attempt<3 && windows(center).count;attempt++){
+        BOOL owned=NO;
+        for(NSString *marker in @[@"controlcenter-display",@"display-setting-dark-mode",@"screen-mirroring-header"]){
+            if(displayWindowItem(center,marker)){owned=YES;break;}
+        }
+        if(!owned)break;
+        pid_t target=0;AXUIElementGetPid((__bridge AXUIElementRef)center,&target);
+        if(!target)break;
+        CGEventRef down=CGEventCreateKeyboardEvent(NULL,53,true),up=CGEventCreateKeyboardEvent(NULL,53,false);
+        if(down && up){CGEventPostToPid(target,down);CGEventPostToPid(target,up);}
+        if(down)CFRelease(down);if(up)CFRelease(up);
+        pump(.25);
+    }
+    pid_t owner=0;AXUIElementGetPid((__bridge AXUIElementRef)center,&owner);
+    CFAbsoluteTime deadline=CFAbsoluteTimeGetCurrent()+1;
+    while(owner && nativeVisible(owner) && CFAbsoluteTimeGetCurrent()<deadline)pump(.01);
+    pump(.08);
+}
+static NSArray *connectedDisplays(void) {
+    CGDirectDisplayID ids[32];uint32_t count=0;NSMutableArray *result=NSMutableArray.new;
+    if(CGGetOnlineDisplayList(32,ids,&count)!=kCGErrorSuccess)return result;
+    for(uint32_t i=0;i<count && i<32;i++){
+        CGDirectDisplayID display=ids[i];if(!CGDisplayIsActive(display) && !CGDisplayIsInMirrorSet(display))continue;
+        NSString *name=CGDisplayIsBuiltin(display) ? @"Built-in display" : @"External display";
+        for(NSScreen *screen in NSScreen.screens)if([screen.deviceDescription[@"NSScreenNumber"] unsignedIntValue]==display)name=screen.localizedName;
+        CGDisplayModeRef mode=CGDisplayCopyDisplayMode(display);
+        NSString *modeName=CGDisplayMirrorsDisplay(display)!=kCGNullDirectDisplay ? @"Mirroring" : CGDisplayIsInMirrorSet(display) ? @"Mirror source" : CGDisplayIsMain(display) ? @"Main display" : @"Extended display";
+        NSMutableDictionary *row=@{@"name":name,@"mode":modeName,@"width":@(CGDisplayPixelsWide(display)),@"height":@(CGDisplayPixelsHigh(display))}.mutableCopy;
+        if(mode){double refresh=CGDisplayModeGetRefreshRate(mode);if(isfinite(refresh)&&refresh>0)row[@"refresh"]=@(refresh);CGDisplayModeRelease(mode);}
+        [result addObject:row];if(result.count==8)break;
+    }
+    return result;
+}
+static NSDictionary *displayQuery(NSDictionary *selector) {
+    NSDictionary *access=accessStatus();
+    if(![access[@"accessibility"] boolValue]||![access[@"screen_capture"] boolValue]||![access[@"supported"] boolValue])return @{@"error":@"access_unavailable"};
+    id center=application(@"ControlCenter"),menu=application(@"MenuBarAgent");
+    if(!center || windows(center).count)return @{@"error":@"native_panel_busy"};
+    NSUInteger budget=256;id item=find(menu,@"com.apple.menuextra.controlcenter",nil,0,&budget);
+    if(!item){budget=256;item=find(center,@"com.apple.menuextra.controlcenter",nil,0,&budget);}
+    if(!item || !beginCover())return @{@"error":@"cover_unavailable"};
+    NSMutableArray *rows=NSMutableArray.new;NSString *failure=nil,*inputRequest=nil;BOOL handoff=NO;
+    @try {
+        if(selector){
+            NSString *bar=[stateDirectory() stringByAppendingPathComponent:@"bar"];
+            NSDictionary *document=readJSON([bar stringByAppendingPathComponent:@"native-panel.json"]),*status=readJSON([bar stringByAppendingPathComponent:@"panel-ui-status.json"]);
+            if([document[@"name"] isEqual:@"brightness"] && [status[@"visible"] boolValue] && [document[@"request"] isEqual:status[@"request"]] && NSDate.date.timeIntervalSince1970-[status[@"updated"] doubleValue]<1){
+                inputRequest=document[@"request"];DFControlsNotifyRequest(@"passthrough",inputRequest);
+                CFAbsoluteTime deadline=CFAbsoluteTimeGetCurrent()+.6;
+                do{pump(.02);status=readJSON([bar stringByAppendingPathComponent:@"panel-ui-status.json"]);}while(![status[@"input_passthrough"] boolValue] && CFAbsoluteTimeGetCurrent()<deadline);
+                if(![status[@"input_passthrough"] boolValue])failure=@"input_unavailable";
+            }
+            id panel=failure ? nil : displayPage(center,item,selector[@"page"]);
+            if(!panel && !failure)failure=@"native_panel_unavailable";
+            if(panel){budget=256;id target=displayFindAction(panel,selector,0,&budget);
+                if(!target)failure=@"option_changed";
+                else if(AXUIElementPerformAction((__bridge AXUIElementRef)target,kAXPressAction)!=kAXErrorSuccess)failure=@"action_failed";
+                else if([selector[@"kind"] isEqual:@"toggle"]){
+                    CFAbsoluteTime deadline=CFAbsoluteTimeGetCurrent()+1.5;
+                    while(CFAbsoluteTimeGetCurrent()<deadline && [value(target,kAXValueAttribute) boolValue]==[selector[@"selected"] boolValue])pump(.02);
+                    if([value(target,kAXValueAttribute) boolValue]==[selector[@"selected"] boolValue])failure=@"action_no_change";
+                }else{
+                    // macOS owns pairing, permission and content/mirror/extend
+                    // confirmation. Never dismiss or cover a required chooser.
+                    handoff=YES;pump(.3);
+                }
+            }
+            if(!handoff)displayClose(center,item);
+        }
+        if(!failure && !handoff){
+            for(NSString *page in @[@"display",@"mirroring"]){
+                id panel=displayPage(center,item,page);
+                if(!panel){failure=[page isEqual:@"display"] ? @"native_display_unavailable" : @"native_mirroring_unavailable";break;}
+                budget=256;displayCollect(panel,page,rows,0,&budget);
+                displayClose(center,item);
+                if(windows(center).count){failure=@"native_panel_busy";break;}
+            }
+        }
+    }@finally{
+        if(!handoff)displayClose(center,item);
+        DFControlsNotifyRequest(@"resume",inputRequest);pump(.03);endCover();
+    }
+    if(failure)return @{@"error":failure,@"stage":displayFailureStage ?: @"action"};
+    return @{@"sampled":@(NSDate.date.timeIntervalSince1970),@"rows":rows,@"screens":connectedDisplays(),@"handoff":@(handoff)};
+}
+
 int main(int argc,const char **argv) { @autoreleasepool {
     [NSApplication.sharedApplication setActivationPolicy:NSApplicationActivationPolicyAccessory];
     NSString *mode=argc>1 ? [NSString stringWithUTF8String:argv[1]] : @"--status";
@@ -336,7 +492,18 @@ int main(int argc,const char **argv) { @autoreleasepool {
             AXIsProcessTrustedWithOptions((__bridge CFDictionaryRef)@{(__bridge NSString *)kAXTrustedCheckOptionPrompt:@YES});
         else if (!CGPreflightScreenCaptureAccess()) CGRequestScreenCaptureAccess();
         result=accessStatus();
-    } else if ([mode isEqual:@"--snapshot"] && (argc==2 || (argc==3 && expanded))) result=query(nil,expanded);
+    } else if ([mode isEqual:@"--display-snapshot"] && argc==2) result=displayQuery(nil);
+    else if ([mode isEqual:@"--display-action"] && argc==3 && strlen(argv[2])<=4096) {
+        NSData *data=[[NSString stringWithUTF8String:argv[2]] dataUsingEncoding:NSUTF8StringEncoding];
+        id selector=[NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+        BOOL valid=[selector isKindOfClass:NSDictionary.class];
+        if(valid)valid=[@[@"toggle",@"device",@"settings"] containsObject:selector[@"kind"]]
+            && [@[@"display",@"mirroring"] containsObject:selector[@"page"]] && safeText(selector[@"text"],512)
+            && [selector[@"identifier"] isKindOfClass:NSString.class] && [selector[@"role"] isKindOfClass:NSString.class]
+            && [selector[@"selected"] isKindOfClass:NSNumber.class];
+        result=valid ? displayQuery(selector) : @{@"error":@"invalid_action"};
+    }
+    else if ([mode isEqual:@"--snapshot"] && (argc==2 || (argc==3 && expanded))) result=query(nil,expanded);
     else if ([mode isEqual:@"--action"] && (argc==3 || (argc==4 && expanded)) && strlen(argv[2])<=4096) {
         NSData *data=[[NSString stringWithUTF8String:argv[2]] dataUsingEncoding:NSUTF8StringEncoding];
         id selector=[NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
