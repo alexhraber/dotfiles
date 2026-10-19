@@ -9,5 +9,5 @@
   <key>CFBundleVersion</key><string>1</string>
   <key>LSUIElement</key><true/>
   <key>LSMinimumSystemVersion</key><string>15.2</string>
-  <key>NSScreenCaptureUsageDescription</key><string>Show hovered window previews and temporarily conceal native Wi-Fi controls behind the themed pane. Images stay in memory only while needed and are never saved.</string>
+  <key>NSScreenCaptureUsageDescription</key><string>Show hovered window previews and temporarily conceal native Wi-Fi and Display controls behind the themed pane. Images stay in memory only while needed and are never saved.</string>
 </dict></plist>

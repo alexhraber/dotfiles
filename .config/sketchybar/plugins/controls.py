@@ -14,6 +14,7 @@ import time
 import appearance
 import weather
 import wifi_pane
+import display_pane
 
 PANELS = appearance.PANELS
 HERE = Path(__file__).resolve()
@@ -31,7 +32,7 @@ def native_calendar(action):
 def native_controls(action=''):
     helper = STATE.parent / 'wifi-pane'
     name = read('native-panel.json', {}).get('name')
-    if not action and name in ('wifi', 'bluetooth') and helper.is_file():
+    if not action and name in ('wifi', 'bluetooth', 'brightness') and helper.is_file():
         command(str(STATE.parent / 'desktop-edge'), '--controls-hide')
         subprocess.Popen(['/usr/bin/open', '-g', '-n', '-a', str(helper.resolve().parents[2]), '--args', '--ui'],
                          stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -40,6 +41,28 @@ def native_controls(action=''):
         command(str(helper), '--ui-hide')
     result = command(str(STATE.parent / 'desktop-edge'), '--controls' + ('-' + action if action else ''))
     return result
+
+
+def display_watch(request):
+    token = [int(request), 'brightness']
+    while visible_control('brightness', token):
+        age = time.time() - read('display-snapshot.json', {}).get('sampled', 0)
+        for _ in range(max(1, math.ceil(max(0, 4-age)*10))):
+            time.sleep(.1)
+            if not visible_control('brightness', token):
+                return
+        try:
+            snapshot = display_pane.query(STATE)
+            with interaction():
+                if not visible_control('brightness', token):
+                    return
+                store('display-snapshot.json', snapshot)
+            refresh_open('brightness')
+        except (OSError, subprocess.SubprocessError, ValueError):
+            # Never retain stale nearby choices as clickable actions.
+            render_rows('brightness', [('Display · ' + brightness() + '%', None),
+                        ('Display discovery paused · hover again to retry', None)], token)
+            return
 
 
 def start_wifi_watch(request):
@@ -154,7 +177,7 @@ def panel_rows(name):
         return [('Calendar', None), ('Native month grid and synced agenda', None)]
     if name == 'brightness':
         value = brightness()
-        return [('Display · ' + value + '%', None), ('Built-in display brightness', None)]
+        return display_pane.panel_rows(read('display-snapshot.json', {}), value)
     if name == 'volume':
         volume = command('osascript', '-e', 'output volume of (get volume settings)')
         muted = command('osascript', '-e', 'output muted of (get volume settings)') == 'true'
@@ -321,6 +344,33 @@ def show(name, clicked=False):
             themed_wifi = True
         except (OSError, subprocess.SubprocessError, ValueError):
             themed_wifi = False
+    if name == 'brightness':
+        # Reuse only a still-fresh native snapshot; every action revalidates
+        # against Apple's controls. Cold discovery never displays saved devices.
+        try:
+            initial = panel_rows(name)
+        except (OSError, subprocess.SubprocessError, ValueError, KeyError):
+            initial = None
+        if initial is not None:
+            if render_rows(name, initial, token):
+                subprocess.Popen([sys.executable, '-B', str(HERE), 'display-watch', str(token[0])],
+                                 stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            return
+        try:
+            snapshot = display_pane.query(STATE)
+            with interaction():
+                if read('hover.json') != token:
+                    return
+                store('display-snapshot.json', snapshot)
+        except (OSError, subprocess.SubprocessError, ValueError):
+            # Keep brightness usable even if native discovery is temporarily busy.
+            render_rows(name, [('Display · ' + brightness() + '%', None),
+                               ('Display controls are busy · hover again to retry', None)], token)
+            return
+        if render_rows(name, panel_rows(name), token):
+            subprocess.Popen([sys.executable, '-B', str(HERE), 'display-watch', str(token[0])],
+                             stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        return
     with interaction():
         if read('hover.json') != token:
             return
@@ -470,6 +520,25 @@ def _render_rows(name, rows):
     document = {'name': name, 'revision': revision, 'request': request,
                 'rows': [{'text': str(label)[:512], 'action': bool(action)} for label, action in rows]}
     for row, (label, action) in zip(document['rows'], rows):
+        if name == 'brightness':
+            snapshot = read('display-snapshot.json', {})
+            screen = next((screen for screen in snapshot.get('screens', []) if screen['name'] == label), None)
+            if label in ('Connected displays', 'Mirror or extend to') and not action:
+                row['section'] = True
+            elif screen and not action:
+                row['detail'] = f"{screen['mode']} · {screen['width']} × {screen['height']}"
+                if screen.get('refresh'):
+                    row['detail'] += f" · {screen['refresh']:g} Hz"
+            elif action and action[0] == 'display-pane':
+                selector = action[1]
+                if selector['kind'] == 'toggle':
+                    row['selected'] = selector['selected']
+                    row['detail'] = 'On' if selector['selected'] else 'Off'
+                    row['hint'] = 'Turn off' if selector['selected'] else 'Turn on'
+                elif selector['kind'] == 'device':
+                    row['selected'] = selector['selected']
+                    row['detail'] = 'Connected' if selector['selected'] else 'Available nearby'
+                    row['hint'] = 'Manage connection' if selector['selected'] else 'Mirror or extend'
         if name == 'volume' and label == 'Output devices' and not action:
             row['section'] = True
         elif action and action[0] == 'output':
@@ -499,6 +568,8 @@ def _render_rows(name, rows):
     pin = read('pin.json', {})
     document['anchors'] = anchor.get('anchors', []) if anchor.get('request') == request else []
     document['pinned'] = bool(pin.get('pinned')) if pin.get('request') == request else False
+    if name == 'brightness':
+        document['subtitle'] = 'Displays & appearance'
     if name == 'wifi':
         speed = read('wifi-speed.json', {})
         document['subtitle'] = speed.get('label', '↓ —   ↑ —') if speed.get('request') == request else '↓ —   ↑ —'
@@ -530,7 +601,7 @@ def _render_rows(name, rows):
             document['meter'] = max(0, min(1, used / total))
     store('native-panel.json', document)
     native_controls()
-    backend = 'panel-ui' if name in ('wifi', 'bluetooth') and (STATE.parent / 'wifi-pane').is_file() else 'desktop-edge'
+    backend = 'panel-ui' if name in ('wifi', 'bluetooth', 'brightness') and (STATE.parent / 'wifi-pane').is_file() else 'desktop-edge'
     store('active.json', {'name': name, 'time': time.time(), 'request': request, 'pinned': document['pinned'], 'backend': backend})
 
 
@@ -715,6 +786,17 @@ def action(args):
                 close_panels()
                 return True
             store('wifi-snapshot.json', snapshot)
+    elif kind == 'display-pane':
+        token = read('hover.json')
+        snapshot = display_pane.query(STATE, 'action', values[0])
+        with interaction():
+            if read('hover.json') != token:
+                return
+            if snapshot.get('handoff'):
+                store('hover.json', [time.time_ns(), None])
+                close_panels()
+                return True
+            store('display-snapshot.json', snapshot)
     elif kind == 'bluetooth-power':
         command('blueutil', '--power', values[0])
     elif kind == 'bluetooth-device':
@@ -732,6 +814,8 @@ def main():
     kind, name, *extra = sys.argv[1:]
     if kind == 'hover' and name in PANELS:
         show(name)
+    elif kind == 'display-watch':
+        display_watch(name)
     elif kind == 'wifi-watch':
         wifi_watch(name)
     elif kind == 'click' and name in PANELS:

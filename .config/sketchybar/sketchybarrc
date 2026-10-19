@@ -33,7 +33,7 @@ sketchybar --add item battery right --set battery icon='󰁹' label.width=34 lab
   --subscribe battery power_source_change system_woke desktop_revealed
 sketchybar --add item volume right --set volume icon='󰕾' label.drawing=off script="\"$plugin\"" \
   --subscribe volume volume_change desktop_revealed
-sketchybar --add item brightness right --set brightness icon='󰃠' label.drawing=off script="\"$plugin\"" \
+sketchybar --add item brightness right --set brightness icon='󰍹' label.drawing=off script="\"$plugin\"" \
   --subscribe brightness brightness_change
 sketchybar --add item wifi right --set wifi icon='󰖩' label='' script="\"$plugin\"" \
   update_freq=60 --subscribe wifi desktop_revealed system_woke desktop_network_changed

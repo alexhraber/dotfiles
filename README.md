@@ -235,7 +235,7 @@ reveal can return; `desktop undo` stops the helper and removes the filter.
 | Clock | Current macOS time; native month grid, date selection, previous/next month, today and synced calendar agenda |
 | Weather | ZIP 97750 forecast, wind in mph, precipitation chance, upcoming hours and extended outlook |
 | Sound | Volume slider, mute, output selection; scroll the bar item for volume |
-| Display | Built-in brightness slider; scroll the bar item to adjust |
+| Display | Gold brightness slider, connected screen resolution/mode, Dark Mode, Night Shift, True Tone, and real nearby AirPlay/Sidecar choices |
 | Wi-Fi | Themed connected SSID and nearby choices, native connection actions, radio switch and live upload/download rates |
 | Bluetooth | Click the header’s On/Off label to toggle power; connected devices first with Connect/Disconnect hover actions |
 | CPU / GPU | Load graph, real average die temperature in °F, power and fans |
@@ -310,8 +310,8 @@ that expansion survives live refreshes and resets for a new hover session.
 Native network controls remain below the network list. Its
 temporary screen cover exists only in memory; it writes no screen images or
 credentials. Location stays off. Without these approvals, Wi-Fi continues using
-the native picker. The adapter currently supports one display on macOS 15.2 or
-later. The native list supplies choice order, not a separately verified recency rank.
+the native picker. The adapter supports up to eight displays on macOS 15.2 or later; multi-screen
+capture remains unverified without additional hardware. The native list supplies choice order, not a separately verified recency rank.
 Activation checks access inside the snapshot request. An owned native picker is
 closed and retried briefly when it would block the adapter; unrelated native
 panels are left alone. Bar autohide leaves an open Desktop Panels window to its
@@ -446,6 +446,21 @@ the native menu when stopped or when SketchyBar is unavailable, and is restarted
 by a user LaunchAgent. Menu suppression uses the reversible private SkyLight
 calls used by [yabai](https://github.com/asmvik/yabai); SIP remains enabled.
 macOS updates can change private interfaces, so recheck after an OS upgrade.
+The Display item uses a monitor icon. Its themed pane includes connected screens
+with pixel dimensions and main/extended/mirror state, native Dark Mode, Night
+Shift and True Tone switches, and Apple's current nearby display choices.
+Selecting a nearby screen delegates pairing and content/mirror/extend confirmation
+to macOS; it never connects automatically. Display Settings remains available for
+arrangement, scaling, refresh rate and other device-specific options. The pane
+refreshes discovery only while open; keyboard brightness changes update the
+slider without rescanning. Display and Wi-Fi share the signed Desktop Panels
+permissions and serialized native adapter. Screen covers are in memory, support
+up to eight current screens, and are discarded after the native popup closes.
+The connected-screen path is implemented for multiple displays; an actual external
+connection and multi-screen capture still require hardware verification.
+Sound and Display draw the filled slider track with the current palette accent,
+including gold in Graphite, while retaining native slider input and knobs.
+
 Built-in brightness uses DisplayServices get/set, following the Apple Silicon
 implementation in [brightness](https://github.com/nriley/brightness/blob/master/brightness.c).
 It does not change external-display brightness. Mission Control temporarily

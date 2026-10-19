@@ -154,8 +154,7 @@ substitute for nearby availability. Bounded traversal skips text/secure fields.
 Screen snapshots exist only in memory for native-popup concealment; production
 writes no screenshot or video. Fresh control descriptors and throughput samples
 remain in private local state, not Git. Literal descriptors are JSON/argv data,
-never shell commands; selected state is rechecked before an action. The single
-display/macOS version boundary falls back to Apple's picker. Signing identities
+never shell commands; selected state is rechecked before an action. The macOS version/capture boundary falls back to Apple's Wi-Fi picker. Signing identities
 are selected from local Keychain or environment and never written to the repo.
 Normal registered-app Wi-Fi activation, real fullscreen hover, rates and native
 disclosure interaction are verified with both explicit OS approvals. Authentication
@@ -192,7 +191,23 @@ loads a model. Ollama remains manually started and is not enabled at login.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `2eaddf2e356ec39c8e3e614a58c633c545357dcf80067322db990de53762f62e`
-- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (8 files)
+- Repository signal fingerprint: `2ecf78b493a6390b0233c22d537c0f69655d248ed53759d610299422faf02a4c`
+- Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (9 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
+
+## Display controls
+
+Display reuses Desktop Panels' current signed bundle and existing AX/Screen Capture
+consent. Neither hovering nor staging requests another permission. CoreLocation
+and CoreWLAN remain absent. Connected-screen names/dimensions and native nearby
+device identifiers stay in private state, never specs, logs or tracked fixtures.
+Discovery performs no connection action. Action descriptors are data and must match
+fresh bounded AX rows; unrelated controls, credential fields and arbitrary commands
+are excluded. Native pairing/content/mirror/extend confirmation is preserved.
+
+The memory-only cover now captures each current screen before presenting any
+cover, with an eight-screen bound. It does not save screen images. The previous
+single-display support restriction is superseded; multi-screen behavior remains
+unverified until suitable hardware is connected. Literal failure codes contain no
+device names, addresses or native error text. Tests use fictional screen names.

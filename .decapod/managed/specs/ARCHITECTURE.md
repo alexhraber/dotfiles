@@ -241,7 +241,7 @@ signing change is needed after approval.
 ControlRow uses the Apple/app menu's shared palette and quiet hover highlight,
 with optional selected/detail/hint metadata for output and Bluetooth state.
 Desktop Panels (`scripts/wifi-pane.m`) compiles the same renderer with a distinct
-distributed-notification name. Its transient `--ui` server owns Wi-Fi/Bluetooth
+distributed-notification name. Its transient `--ui` server owns Wi-Fi/Bluetooth/Display
 windows and request-bound private status; other panes keep Desktop Controls.
 HeaderPower maps the first On/Off row to index zero, with a power tooltip and AX
 button label. The Bluetooth body has no duplicate power action. `setup_panels`
@@ -249,7 +249,7 @@ builds/signs/registers a complete auxiliary bundle, backs up its prior link and
 publishes it atomically, preserving the Desktop Controls identity and approvals.
 
 The auxiliary Wi-Fi route is gated by its registered app's AX and Screen Capture
-status. It captures one display into memory, covers native popup creation and
+status. It captures current displays into memory, covers native popup creation and
 closing, reads bounded native controls while skipping credential fields, and
 returns fresh typed rows. Actions match a fresh role/identifier/text/selected
 state before AXPress. Python serializes queries, validates results, preserves
@@ -443,7 +443,36 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `2eaddf2e356ec39c8e3e614a58c633c545357dcf80067322db990de53762f62e`
-- Significant implementation surfaces: `.config/` (5 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (8 files)
+- Repository signal fingerprint: `2ecf78b493a6390b0233c22d537c0f69655d248ed53759d610299422faf02a4c`
+- Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (9 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
+
+## Display adapter and slider rendering
+
+`display_pane.py` validates typed native Display responses and projects connected
+screens, appearance toggles and nearby devices into the shared 14-row renderer.
+`controls.py` uses the internal brightness event name with a monitor icon and a
+Display title. It reads brightness independently of discovery, so keyboard events
+refresh an open slider without reopening native controls. A request-bound watcher
+refreshes discovery while visible; failures remove stale clickable choices.
+
+`scripts/wifi-pane.m` also implements `--display-snapshot`/`--display-action`.
+It opens the fixed Control Center module, uses the exposed show-details action
+for each module, reads only the three fixed appearance toggles, and reads actual
+Screen Mirroring device rows. Window-only AX searches avoid spending the bounded budget in menu-bar proxies.
+Native page transitions settle before details are requested; cleanup posts Escape
+only to ControlCenter after recognizing its owned pages and waits for closure. Actions
+re-find exact kind/page/role/identifier/text/selected state before one AXPress.
+Device/settings actions retain the native pairing/content chooser as a handoff;
+no connection is attempted by discovery. Public CoreGraphics display enumeration
+supplies pixel dimensions and main/extended/mirror state without system_profiler.
+
+The shared cover captures all current screens before presenting any overlay,
+then discards every image in cleanup. It permits one through eight screens on
+macOS 15.2+, preserving the adapter after an extended display is connected.
+Multi-screen capture and actual wireless connection-mode changes need hardware
+verification; current single-screen discovery and appearance controls are the
+host-testable surface. `ControlSliderCell` overrides only the public track drawing
+hook, filling to the native knob center with DFPanelColor(accent). NSSliderCell
+retains knob drawing, hit testing, keyboard and accessibility behavior.
