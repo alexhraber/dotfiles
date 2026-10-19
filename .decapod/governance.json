@@ -64,37 +64,45 @@
       "proof_refs": [
         "tests/test_display_pane.py"
       ]
+    },
+    {
+      "id": "display-hover-final-prerequisites",
+      "summary": "Bind passing project prerequisites to recovered trajectory",
+      "input_digest": "sha256:cc900eef7e6302a4c3b700bc8510f6cd889747fb8bdf9bd116e12fe6f749f867",
+      "proof_refs": [
+        "tests/test_display_pane.py"
+      ]
     }
   ],
   "intents": {
-    "intent:change_01M5AXGZD1VC30TD8SKGM79ZJ7": {
+    "intent:display-hover-final": {
       "acceptance_criteria": [],
       "assumptions": [],
       "boundaries": [
-        "Current claimed task and isolated work branch"
+        "Display lifecycle only; no permissions or native adapter changes"
       ],
       "constraints": [
-        "root"
+        "controls.py and regression tests"
       ],
       "created_sequence": 1,
-      "id": "intent:change_01M5AXGZD1VC30TD8SKGM79ZJ7",
+      "id": "intent:display-hover-final",
       "out_of_scope": [],
       "proof_requirements": [],
-      "raw_intent": "Fix cold Display hover latency and missing pane",
-      "refined_intent": "Fix cold Display hover latency and missing pane",
+      "raw_intent": "Display hover lags and pane does not load",
+      "refined_intent": "Prove prompt cold presentation and safe request-bound async discovery",
       "status": "refined",
       "updated_sequence": 3
     }
   },
   "epochs": {
-    "ve_bc84a47064b50af6": {
+    "ve_3514ef836d92fc22": {
       "constitution_hash": "sha256:b063c612f27e8d1fb18a4caabc87a16cc769d408d88d30446455e36014f1843c",
       "constitution_version": "embedded-docs@0.119.1",
-      "epoch_id": "ve_bc84a47064b50af6",
+      "epoch_id": "ve_3514ef836d92fc22",
       "evaluator_identity": "decapod-validate@0.119.1",
       "evaluator_set_hash": "sha256:d01110bf6e129b6d67cd8462424f4dd7d11d9655c4bf6a6a13c43dbdeede984e",
       "generated_specs_fingerprint": "c651940cee68383c9f25d55e5530df3d639c5b9eeeffbcda48ab3da369c9c502",
-      "generated_specs_manifest_hash": "sha256:93f82e40724f5f0ed8ed7c9f658f0217935c56b794e88e8a961389255060c28f",
+      "generated_specs_manifest_hash": "sha256:7309b02cf9ac9dcb7aae8b7c1a7758c7ffe863178ff205fd04227e58a336d9a5",
       "material_hashes": {
         "constitution:core/DECAPOD": "sha256:b063c612f27e8d1fb18a4caabc87a16cc769d408d88d30446455e36014f1843c",
         "generated_spec:.decapod/managed/specs/ARCHITECTURE.md": "sha256:5eca565be56237ccc51180b2f33f73155dccd43ed10f00b824042a35f3dce39e",
@@ -106,7 +114,7 @@
         "generated_spec:.decapod/managed/specs/SEMANTICS.md": "sha256:65b95f563f3538f511394ef8d5bf3308d8406d16f0c75e335c15dcd3afa0b071",
         "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:f56582c06a3dc9da1dd3f4085b2feb886807ec3a242ce0498bc69281fdfe8178",
         "generated_specs_fingerprint": "c651940cee68383c9f25d55e5530df3d639c5b9eeeffbcda48ab3da369c9c502",
-        "generated_specs_manifest": "sha256:93f82e40724f5f0ed8ed7c9f658f0217935c56b794e88e8a961389255060c28f",
+        "generated_specs_manifest": "sha256:7309b02cf9ac9dcb7aae8b7c1a7758c7ffe863178ff205fd04227e58a336d9a5",
         "governance_context": "sha256:95b7a71e630b8026f3abba9b0b0d955ab21d162d4e7ffb0a5945915a28e85eef",
         "governance_material:.decapod/managed/Dockerfile.decapod": "sha256:c9bdb828ff9c9a9e00392d153434ecaaf4d507081ff453c5e838375c55c650e4",
         "governance_material:AGENTS.md": "sha256:4992240c6825701513873da48567d3560685511ff73827527f9152f7a25cd7e7",
@@ -114,7 +122,7 @@
         "governance_material:CODEX.md": "sha256:2ff1b008789940fc7871a84a6a38ac3eec5bef53f1444a4d387f0e4e04d0b975",
         "governance_material:GEMINI.md": "sha256:e2c5b404af6f21562159eb3be9fd955d9d9a52f1b6ac90fb24fcdf2b170f29fb",
         "governance_section:claims": "sha256:e73e1d50b2adda22497ea8edb4d3f1a7bc7c4d5cecbd453cf38d27b6f8681177",
-        "governance_section:plan": "sha256:05a691035eb41f4411ebbd9c1810374f7b97b074a7d5de2e17596acd9ef3b335",
+        "governance_section:plan": "sha256:2aa4c829107bccba271f61376da3c9dcdb611e584c69a4bf02e91e5ff55c5999",
         "living_spec_material:.decapod/managed/specs/ARCHITECTURE.md": "sha256:0d5867860c101ed6d9934e49014579236a39a08bfc9877097ef05927b47782fb",
         "living_spec_material:.decapod/managed/specs/INTENT.md": "sha256:4b0087710ca1e38f563f590b89194e85232667dff7d3d15793e7c709c0014aa2",
         "living_spec_material:.decapod/managed/specs/INTERFACES.md": "sha256:7219b1cae31b04e336d4f731e379df68918e6617becf5f0771442987bc2900d6",
@@ -182,14 +190,10 @@
     },
     "trajectory": {
       "active_boundaries": [
-        "Current claimed task and isolated work branch"
+        "Display lifecycle only; no permissions or native adapter changes"
       ],
-      "artifact_hash": "sha256:2f8b238a4acb18e42b7063a6c23c8968970158d1939d7ad0c7e00aca2e0a4741",
+      "artifact_hash": "sha256:0c58bde037f0409d05ec1398c5784476a0ca7da26138b5ef787b4d96c77a3e5c",
       "checks": [
-        {
-          "name": "cold-hover",
-          "status": "passed"
-        },
         {
           "name": "decapod validate",
           "status": "passed"
@@ -204,101 +208,75 @@
         "events": [
           {
             "event_id": "event:2",
-            "intent_id": "intent:change_01M5AXGZD1VC30TD8SKGM79ZJ7",
+            "intent_id": "intent:display-hover-final",
             "kind": "created",
             "sequence": 2
           },
           {
             "event_id": "event:3",
-            "intent_id": "intent:change_01M5AXGZD1VC30TD8SKGM79ZJ7",
+            "intent_id": "intent:display-hover-final",
             "kind": "refined",
             "sequence": 3
           },
           {
-            "detail": "trajectory:branch_01M5AXGZFT8CYSD3K25N5Y9K3A",
+            "detail": "trajectory:display-hover-final",
             "event_id": "event:4",
-            "intent_id": "intent:change_01M5AXGZD1VC30TD8SKGM79ZJ7",
+            "intent_id": "intent:display-hover-final",
             "kind": "trajectory_step_recorded",
             "sequence": 4
           },
           {
-            "detail": "trajectory:branch_01M5AXGZFT8CYSD3K25N5Y9K3A",
+            "detail": "trajectory:display-hover-final",
             "event_id": "event:5",
-            "intent_id": "intent:change_01M5AXGZD1VC30TD8SKGM79ZJ7",
+            "intent_id": "intent:display-hover-final",
             "kind": "trajectory_step_recorded",
             "sequence": 5
-          },
-          {
-            "detail": "trajectory:branch_01M5AXGZFT8CYSD3K25N5Y9K3A",
-            "event_id": "event:6",
-            "intent_id": "intent:change_01M5AXGZD1VC30TD8SKGM79ZJ7",
-            "kind": "trajectory_step_recorded",
-            "sequence": 6
           }
         ],
         "knowledge_candidates": [],
-        "next_sequence": 6,
+        "next_sequence": 5,
         "schema_version": "1.0.0",
         "trajectories": {
-          "branch_01M5AXGZFT8CYSD3K25N5Y9K3A": {
+          "display-hover-final": {
             "evidence_only": true,
-            "id": "branch_01M5AXGZFT8CYSD3K25N5Y9K3A",
-            "intent_id": "intent:change_01M5AXGZD1VC30TD8SKGM79ZJ7",
+            "id": "display-hover-final",
+            "intent_id": "intent:display-hover-final",
             "steps": [
               {
-                "action": "trajectory.record",
+                "action": "verification",
                 "custody_event_id": "event:4",
                 "observations": [
                   ".config/sketchybar/plugins/controls.py",
-                  "scripts/wifi-pane.m",
-                  "scripts/control-panel.m"
+                  ".config/sketchybar/plugins/controls.py",
+                  "tests/test_display_pane.py",
+                  "10 targeted tests pass; cold fullscreen hover 0.543s, discovery 3.855s, bar-hide survival, refresh and pointer-exit passed",
+                  "Prior journal preserved in commits c95b7c5 and 1698196; new trajectory follows STALE_VALIDATION_EVIDENCE recovery"
                 ],
                 "proof_refs": [
-                  "cold-hover"
+                  "display-regressions"
                 ],
                 "scope": [
-                  "root"
+                  "controls.py and regression tests"
                 ],
                 "sequence": 4,
                 "validation_findings": []
               },
               {
-                "action": "verification",
-                "custody_event_id": "event:5",
-                "observations": [
-                  ".config/sketchybar/plugins/controls.py",
-                  "tests/test_display_pane.py",
-                  "10 targeted tests passed; actual fullscreen cold hover first visible 0.543s, options 3.855s, bar hide/watch/exit passed",
-                  "Later interactive retries observed pointer leaving the pane and correctly dismissing; no late reopening"
-                ],
-                "proof_refs": [
-                  "display-regressions",
-                  "cold-hover"
-                ],
-                "scope": [
-                  "root"
-                ],
-                "sequence": 5,
-                "validation_findings": [
-                  "External pairing and multi-screen behavior unchanged and not exercised"
-                ]
-              },
-              {
                 "action": "validation",
                 "command": "decapod validate",
-                "custody_event_id": "event:6",
+                "custody_event_id": "event:5",
                 "observations": [
                   ".decapod/governance.json",
                   ".decapod/governance.json",
-                  "validation epoch ve_bc84a47064b50af6 completed with zero failures"
+                  "validation epoch ve_3514ef836d92fc22 completed with zero failures"
                 ],
                 "proof_refs": [
                   "decapod validate"
                 ],
                 "scope": [
-                  "root"
+                  "controls.py and regression tests"
                 ],
-                "sequence": 6,
+                "sequence": 5,
                 "validation_findings": []
               }
             ]
@@ -308,38 +286,32 @@
       "declared_commands": [
         "decapod validate"
       ],
-      "destination": "pull request",
       "evidence": [
-        "10 targeted tests passed; actual fullscreen cold hover first visible 0.543s, options 3.855s, bar hide/watch/exit passed",
-        "Later interactive retries observed pointer leaving the pane and correctly dismissing; no late reopening",
-        "validation epoch ve_bc84a47064b50af6 completed with zero failures"
+        "10 targeted tests pass; cold fullscreen hover 0.543s, discovery 3.855s, bar-hide survival, refresh and pointer-exit passed",
+        "Prior journal preserved in commits c95b7c5 and 1698196; new trajectory follows STALE_VALIDATION_EVIDENCE recovery",
+        "validation epoch ve_3514ef836d92fc22 completed with zero failures"
       ],
       "inspected_files": [
-        ".config/sketchybar/plugins/controls.py",
-        "scripts/control-panel.m",
-        "scripts/wifi-pane.m"
+        ".config/sketchybar/plugins/controls.py"
       ],
-      "intent_id": "intent:change_01M5AXGZD1VC30TD8SKGM79ZJ7",
+      "intent_id": "intent:display-hover-final",
       "modified_files": [
         ".config/sketchybar/plugins/controls.py",
         ".decapod/governance.json",
         "tests/test_display_pane.py"
       ],
       "next_transitions": [
-        "Refine plan and declare falsifiable checks",
         "publish"
       ],
       "repo_scope": [
-        "root"
+        "controls.py and regression tests"
       ],
-      "run_id": "branch_01M5AXGZFT8CYSD3K25N5Y9K3A",
+      "run_id": "display-hover-final",
       "schema_version": "1.1.0",
       "shortcut_risk_signals": [],
       "task_id": "bugs_01m5axghdpzj1spf",
       "tool_calls": [],
-      "unresolved_assumptions": [
-        "External pairing and multi-screen behavior unchanged and not exercised"
-      ]
+      "unresolved_assumptions": []
     },
     "validation": {
       "ci_prediction": {
@@ -352,101 +324,101 @@
       },
       "decapod_release": "0.119.1",
       "drift_findings": [],
-      "elapsed_ms": 5920,
-      "epoch_ref": "ve_bc84a47064b50af6",
+      "elapsed_ms": 6495,
+      "epoch_ref": "ve_3514ef836d92fc22",
       "fail_count": 0,
       "failures": [],
       "gate_timings": [
         {
-          "elapsed_ms": 2088,
+          "elapsed_ms": 2388,
           "name": "validate_markdown_primitives_roundtrip_gate"
         },
         {
-          "elapsed_ms": 681,
+          "elapsed_ms": 731,
           "name": "validate_stale_workspaces"
         },
         {
-          "elapsed_ms": 659,
+          "elapsed_ms": 722,
           "name": "validate_obligations"
         },
         {
-          "elapsed_ms": 509,
+          "elapsed_ms": 552,
           "name": "validate_project_specs_docs"
         },
         {
-          "elapsed_ms": 411,
+          "elapsed_ms": 441,
           "name": "validate_legacy_jsonl_retired"
         },
         {
-          "elapsed_ms": 251,
-          "name": "validate_machine_contract"
-        },
-        {
-          "elapsed_ms": 249,
+          "elapsed_ms": 248,
           "name": "validate_archive_integrity"
         },
         {
-          "elapsed_ms": 170,
+          "elapsed_ms": 220,
+          "name": "validate_machine_contract"
+        },
+        {
+          "elapsed_ms": 177,
           "name": "validate_control_plane_contract"
         },
         {
-          "elapsed_ms": 141,
+          "elapsed_ms": 167,
           "name": "validate_git_workspace_context"
         },
         {
-          "elapsed_ms": 87,
+          "elapsed_ms": 92,
           "name": "validate_lineage_hard_gate"
+        },
+        {
+          "elapsed_ms": 38,
+          "name": "validate_watcher_audit"
+        },
+        {
+          "elapsed_ms": 37,
+          "name": "validate_lcm_immutability"
+        },
+        {
+          "elapsed_ms": 37,
+          "name": "validate_lcm_rebuild_gate"
         },
         {
           "elapsed_ms": 34,
           "name": "validate_knowledge_promotions_if_present"
         },
         {
-          "elapsed_ms": 33,
-          "name": "validate_lcm_rebuild_gate"
-        },
-        {
-          "elapsed_ms": 33,
-          "name": "validate_watcher_audit"
-        },
-        {
-          "elapsed_ms": 30,
-          "name": "validate_lcm_immutability"
+          "elapsed_ms": 25,
+          "name": "validate_repomap_determinism"
         },
         {
           "elapsed_ms": 25,
           "name": "validate_federation_gates"
         },
         {
-          "elapsed_ms": 17,
+          "elapsed_ms": 15,
           "name": "validate_schema_determinism"
         },
         {
-          "elapsed_ms": 16,
-          "name": "validate_repomap_determinism"
+          "elapsed_ms": 15,
+          "name": "validate_git_protected_branch"
         },
         {
-          "elapsed_ms": 12,
-          "name": "validate_git_protected_branch"
+          "elapsed_ms": 14,
+          "name": "validate_git_push_pr_gate"
         },
         {
           "elapsed_ms": 10,
           "name": "validate_no_legacy_namespaces"
         },
         {
-          "elapsed_ms": 10,
-          "name": "validate_git_push_pr_gate"
+          "elapsed_ms": 7,
+          "name": "validate_gatekeeper_gate"
         },
         {
-          "elapsed_ms": 8,
+          "elapsed_ms": 7,
           "name": "validate_knowledge_integrity"
         },
         {
           "elapsed_ms": 6,
-          "name": "validate_gatekeeper_gate"
-        },
-        {
-          "elapsed_ms": 5,
           "name": "validate_plan_governed_execution_gate"
         },
         {
@@ -463,7 +435,27 @@
         },
         {
           "elapsed_ms": 2,
+          "name": "validate_trajectory_artifacts_if_present"
+        },
+        {
+          "elapsed_ms": 2,
           "name": "validate_health_cache_integrity"
+        },
+        {
+          "elapsed_ms": 2,
+          "name": "validate_jev_history_if_present"
+        },
+        {
+          "elapsed_ms": 2,
+          "name": "validate_entrypoint_invariants"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_validation_receipt_if_present"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_research_claims_if_present"
         },
         {
           "elapsed_ms": 1,
@@ -471,11 +463,15 @@
         },
         {
           "elapsed_ms": 1,
-          "name": "validate_entrypoint_invariants"
+          "name": "validate_recursive_improvement_passes_if_present"
         },
         {
           "elapsed_ms": 1,
           "name": "validate_watcher_purity"
+        },
+        {
+          "elapsed_ms": 1,
+          "name": "validate_health_purity"
         },
         {
           "elapsed_ms": 1,
@@ -484,30 +480,6 @@
         {
           "elapsed_ms": 1,
           "name": "validate_override_authority"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_trajectory_artifacts_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_health_purity"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_jev_history_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_research_claims_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_validation_receipt_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_recursive_improvement_passes_if_present"
         },
         {
           "elapsed_ms": 0,
@@ -519,7 +491,7 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_heartbeat_invocation_gate"
+          "name": "validate_context_capsule_policy_contract"
         },
         {
           "elapsed_ms": 0,
@@ -527,11 +499,15 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_context_capsule_policy_contract"
+          "name": "validate_heartbeat_invocation_gate"
         },
         {
           "elapsed_ms": 0,
           "name": "validate_docs_templates_bucket"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_workunit_manifests_if_present"
         },
         {
           "elapsed_ms": 0,
@@ -543,7 +519,11 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_workunit_manifests_if_present"
+          "name": "validate_root_dockerfile_seed_detection"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_context_capsules_if_present"
         },
         {
           "elapsed_ms": 0,
@@ -551,7 +531,7 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_risk_map"
+          "name": "validate_state_commit_gate"
         },
         {
           "elapsed_ms": 0,
@@ -559,15 +539,7 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_state_commit_gate"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_root_dockerfile_seed_detection"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_context_capsules_if_present"
+          "name": "validate_risk_map"
         },
         {
           "elapsed_ms": 0,
@@ -582,18 +554,18 @@
           "name": "validate_tooling_gate"
         }
       ],
-      "git_revision": "c95b7c59fc3b222db00bd4a8f96da8f390c1e16c",
+      "git_revision": "1698196e5b9c09c29b397f5d279c1434b7773ce4",
       "kind": "validation_receipt",
       "parallelism": 1,
-      "pass_count": 187,
+      "pass_count": 188,
       "prediction_uses_warnings": true,
-      "receipt_hash": "sha256:4a108c82e9bf349e259f209ddc32153d2d77150e5a2ce614937766d6a67e5ed9",
+      "receipt_hash": "sha256:e4ba65c43140a179d3901f6c9ad23e2ade4a116bcbf6c78796dcb4faa9462d76",
       "repo_signal_fingerprint": "c651940cee68383c9f25d55e5530df3d639c5b9eeeffbcda48ab3da369c9c502",
       "schema_version": "1.0.0",
       "status": "ok",
       "temporary_artifacts_cleaned": 0,
-      "trajectory_artifact_hash": "sha256:2f8b238a4acb18e42b7063a6c23c8968970158d1939d7ad0c7e00aca2e0a4741",
-      "trajectory_run_id": "branch_01M5AXGZFT8CYSD3K25N5Y9K3A",
+      "trajectory_artifact_hash": "sha256:0c58bde037f0409d05ec1398c5784476a0ca7da26138b5ef787b4d96c77a3e5c",
+      "trajectory_run_id": "display-hover-final",
       "warn_count": 4,
       "warnings": [
         "Risk map missing (run `decapod riskmap init`)",
