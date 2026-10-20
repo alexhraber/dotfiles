@@ -73,8 +73,11 @@ The owner requested all four refinements: transparent dock window previews,
 reliable native fullscreen transitions, coordinated application/wallpaper styling,
 and consistent native pane interactions. AeroSpace stays disabled and quit;
 no tiling manager or alternate Space shortcut is introduced. Window cards use
-actual AX windows and on-demand in-memory captures, with exact selection and
-minimized-window restoration. The themed application search opens installed
+actual AX windows plus an all-Space capture inventory and on-demand in-memory
+captures. Other apps' fullscreen windows must remain discoverable while the owner
+works in a different Space. AX-backed cards retain exact selection and minimized
+window restoration; capture-only cards use revalidated native app activation
+when that window is not yet accessible. The themed application search opens installed
 bundles from the Apple pane or explicit CLI, without a global shortcut or daemon.
 The six-hour/six-day weather layout and Location-off Wi-Fi behavior are retained.
 Signed main-app migration has a distinct bundle identity and stages permissions
@@ -229,7 +232,7 @@ These declarations select authoring and proof obligations; they do not attest im
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `6567d5a0e46c74b68701b0163dc4a781a612410a6936f2725b6f7df6cee8ff3e`
+- Repository signal fingerprint: `3b6044e4a1455683da0d2691737a683757e83ca84f41599e27e6297ca9bd0c79`
 - Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (9 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

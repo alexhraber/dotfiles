@@ -93,9 +93,18 @@ dock autohide preserves an explicit launcher, while Space/overview/undo cancels
 all pending modes. workspace-status.json reports only counts, visibility, geometry,
 request freshness and fixed error codes, never app/window titles or image pixels.
 
-Dock hover cards select retained AX windows after revalidating process and window
-membership; minimized windows are restored. Snapshots use a unique window match
-and existing Screen Recording approval, with no display recording stream. The
+Dock hover cards include titled windows on inactive fullscreen Spaces, merged
+with the accessible AX list by capture ID and unambiguous geometry/visibility.
+AX cards revalidate process and window membership; minimized windows are restored.
+Capture-only cards revalidate their live capture identity on click, activate the
+app through native Spaces, and retry exact AX resolution for at most 800ms. When
+unresolved, activation follows the app's native last-window behavior. Snapshots
+use window-only filters and existing Screen Recording approval, with no display
+recording stream. `wifi-pane --workspace-diagnostics [--capture]` reads the same
+cross-Space inventory and optionally captures one transient image per app,
+returning only bundle identifiers, counts, permission booleans and numeric error
+codes. It never opens a pane, activates an app, or serializes titles/images/IDs.
+`workspace-status.json.scan.shareable` counts usable shareable candidates. The
 application picker uses case/diacritic-insensitive local matching, arrows, Return,
 Escape and click, opening existing instances. AppKit pane animation is anchored
 and respects Reduce Motion. No Space creation/deletion or navigation remapping occurs.
@@ -258,7 +267,7 @@ can leave partial state; the backup manifest remains the recovery input.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `6567d5a0e46c74b68701b0163dc4a781a612410a6936f2725b6f7df6cee8ff3e`
+- Repository signal fingerprint: `3b6044e4a1455683da0d2691737a683757e83ca84f41599e27e6297ca9bd0c79`
 - Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (9 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

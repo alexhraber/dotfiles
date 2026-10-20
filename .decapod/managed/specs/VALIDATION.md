@@ -410,7 +410,20 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `6567d5a0e46c74b68701b0163dc4a781a612410a6936f2725b6f7df6cee8ff3e`
+- Repository signal fingerprint: `3b6044e4a1455683da0d2691737a683757e83ca84f41599e27e6297ca9bd0c79`
 - Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (9 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
+
+## Dock previews across native fullscreen Spaces
+
+The native `--workspace-self-test` covers an empty AX list supplemented by
+shareable windows, duplicate capture IDs, merging an accessible and an inactive
+window, ambiguous equal rectangles/titles, unavailable capture inventory,
+different titles between APIs, visibility-based disambiguation, invalid geometry
+and the 32-card bound. These execute in the existing macOS `scripts/check.py`
+job alongside native warnings-as-errors compilation and portable tests.
+`--workspace-diagnostics --capture` independently exercises real all-Space
+discovery and transient window-only capture without moving the pointer, showing
+a panel or activating another application. Live counts prove discovery/capture;
+they do not prove physical hover or exact multi-fullscreen-window selection.
