@@ -142,24 +142,29 @@
       "proof_refs": [
         "target/decapod-readiness-PSzax1/native-0.stderr"
       ]
+    },
+    {
+      "id": "restored-test-validation-run",
+      "summary": "Start supported fresh validation epoch after fixing the restore test OS boundary",
+      "input_digest": "sha256:62513e7276bbb9b20bff5d111f0635e2ed13592f6280b59f26b3924e09820fa6"
     }
   ],
   "intents": {
-    "intent:desktop-publication-final": {
+    "intent:desktop-restore-test-final": {
       "acceptance_criteria": [],
       "assumptions": [],
       "boundaries": [
-        "User explicitly authorizes commit, merge and push after full validation; prior trajectory and failed readiness attempts remain in committed history"
+        "Keep personal state and authentication out of Git; preserve native horizontal Space gestures and explicit pairing/permission handoffs."
       ],
       "constraints": [
-        "Existing desktop implementation and exact-candidate publication"
+        "Custom desktop controls, reversible preference lifecycle, gesture overview, display discovery, portable/native verification and authorized publication."
       ],
       "created_sequence": 1,
-      "id": "intent:desktop-publication-final",
+      "id": "intent:desktop-restore-test-final",
       "out_of_scope": [],
       "proof_requirements": [],
-      "raw_intent": "Replace obstructing native desktop UI with the existing-helper monitor Workspaces map and publish when done",
-      "refined_intent": "Validate and publish the completed, host-tested custom overview, gestures, monitor transfer controls, persistent native UI suppression and AirPlay cleanup",
+      "raw_intent": "Replace intrusive native desktop UI using existing custom helpers; commit, merge and push when done.",
+      "refined_intent": "Validate and publish the implemented monitor Workspaces, native UI suppression and isolated restore test boundary.",
       "status": "refined",
       "updated_sequence": 3
     }
@@ -260,128 +265,44 @@
     },
     "trajectory": {
       "active_boundaries": [
-        "User explicitly authorizes commit, merge and push after full validation; prior trajectory and failed readiness attempts remain in committed history"
+        "Keep personal state and authentication out of Git; preserve native horizontal Space gestures and explicit pairing/permission handoffs."
       ],
-      "artifact_hash": "sha256:8c70119414bc06ce7343d1f177c186ae02343a4769d2723a165e23323bf36451",
-      "checks": [
-        {
-          "name": "decapod validate",
-          "status": "passed"
-        },
-        {
-          "name": "isolated-portable-suite",
-          "status": "failed"
-        }
-      ],
-      "current_phase": "validation",
+      "artifact_hash": "sha256:0bacc5d402b0101d71c03f44ca8d2ed2af453f5e5d2a3aac89c3f8f6c925d292",
+      "checks": [],
       "custody": {
         "events": [
           {
             "event_id": "event:2",
-            "intent_id": "intent:desktop-publication-final",
+            "intent_id": "intent:desktop-restore-test-final",
             "kind": "created",
             "sequence": 2
           },
           {
             "event_id": "event:3",
-            "intent_id": "intent:desktop-publication-final",
+            "intent_id": "intent:desktop-restore-test-final",
             "kind": "refined",
             "sequence": 3
-          },
-          {
-            "detail": "trajectory:desktop-publication-final",
-            "event_id": "event:4",
-            "intent_id": "intent:desktop-publication-final",
-            "kind": "trajectory_step_recorded",
-            "sequence": 4
-          },
-          {
-            "detail": "trajectory:desktop-publication-final",
-            "event_id": "event:5",
-            "intent_id": "intent:desktop-publication-final",
-            "kind": "trajectory_step_recorded",
-            "sequence": 5
           }
         ],
         "knowledge_candidates": [],
-        "next_sequence": 5,
+        "next_sequence": 3,
         "schema_version": "1.0.0",
-        "trajectories": {
-          "desktop-publication-final": {
-            "evidence_only": true,
-            "id": "desktop-publication-final",
-            "intent_id": "intent:desktop-publication-final",
-            "steps": [
-              {
-                "action": "validation",
-                "command": "decapod validate",
-                "custody_event_id": "event:4",
-                "observations": [
-                  ".decapod/governance.json",
-                  ".decapod/governance.json",
-                  "validation epoch ve_3cfe964179a69939 completed with zero failures"
-                ],
-                "proof_refs": [
-                  "decapod validate"
-                ],
-                "scope": [
-                  "Existing desktop implementation and exact-candidate publication"
-                ],
-                "sequence": 4,
-                "validation_findings": []
-              },
-              {
-                "action": "trajectory.record",
-                "custody_event_id": "event:5",
-                "observations": [
-                  "tests/test_desktop.py",
-                  "tests/test_desktop.py",
-                  "target/decapod-readiness-PSzax1/native-0.stderr"
-                ],
-                "proof_refs": [
-                  "isolated-portable-suite"
-                ],
-                "scope": [
-                  "Existing desktop implementation and exact-candidate publication"
-                ],
-                "sequence": 5,
-                "validation_findings": [
-                  "Isolated Linux validation exposed an unmocked WindowManager restart in the restore test; mock and assert that OS boundary before rerunning all checks."
-                ]
-              }
-            ]
-          }
-        }
+        "trajectories": {}
       },
-      "declared_commands": [
-        "decapod validate"
-      ],
-      "evidence": [
-        "target/decapod-readiness-PSzax1/native-0.stderr",
-        "validation epoch ve_3cfe964179a69939 completed with zero failures"
-      ],
-      "inspected_files": [
-        "tests/test_desktop.py"
-      ],
-      "intent_id": "intent:desktop-publication-final",
-      "modified_files": [
-        ".decapod/governance.json",
-        "tests/test_desktop.py"
-      ],
-      "next_transitions": [
-        "publish"
-      ],
+      "declared_commands": [],
+      "evidence": [],
+      "inspected_files": [],
+      "intent_id": "intent:desktop-restore-test-final",
+      "modified_files": [],
       "repo_scope": [
-        "Existing desktop implementation and exact-candidate publication"
+        "Custom desktop controls, reversible preference lifecycle, gesture overview, display discovery, portable/native verification and authorized publication."
       ],
-      "run_id": "desktop-publication-final",
+      "run_id": "desktop-restore-test-final",
       "schema_version": "1.1.0",
       "shortcut_risk_signals": [],
       "task_id": "bugs_01m5zzd94pydp909",
       "tool_calls": [],
-      "unresolved_assumptions": [
-        "Isolated Linux validation exposed an unmocked WindowManager restart in the restore test; mock and assert that OS boundary before rerunning all checks."
-      ]
+      "unresolved_assumptions": []
     },
     "validation": {
       "ci_prediction": {
