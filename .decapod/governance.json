@@ -157,24 +157,29 @@
       "id": "reconciled-final-publication-specs",
       "summary": "Reconcile stale display architecture prose and rereview required specs against the repaired test and current implementation",
       "input_digest": "sha256:5ea1f531ce6fb0eb15ed81dcd78e1bc33aa2e7ca85cab462be59238170fe4740"
+    },
+    {
+      "id": "reviewed-publication-run",
+      "summary": "Initialize the supported validation run after committing full specification review evidence",
+      "input_digest": "sha256:5fc947d53cedf189f5a582f14572ef248d81837ca5e2c55f9d465399e74a87ea"
     }
   ],
   "intents": {
-    "intent:desktop-restore-test-final": {
+    "intent:desktop-publication-reviewed": {
       "acceptance_criteria": [],
       "assumptions": [],
       "boundaries": [
-        "Keep personal state and authentication out of Git; preserve native horizontal Space gestures and explicit pairing/permission handoffs."
+        "Preserve backups and personal state; no unverified hardware claims; preserve explicit pairing handoffs and native horizontal Space gestures."
       ],
       "constraints": [
-        "Custom desktop controls, reversible preference lifecycle, gesture overview, display discovery, portable/native verification and authorized publication."
+        "Desktop overview, native UI suppression, display discovery, automated verification and authorized publication."
       ],
       "created_sequence": 1,
-      "id": "intent:desktop-restore-test-final",
+      "id": "intent:desktop-publication-reviewed",
       "out_of_scope": [],
       "proof_requirements": [],
-      "raw_intent": "Replace intrusive native desktop UI using existing custom helpers; commit, merge and push when done.",
-      "refined_intent": "Validate and publish the implemented monitor Workspaces, native UI suppression and isolated restore test boundary.",
+      "raw_intent": "Replace obstructive native desktop UI using custom helpers; commit, merge and push when done.",
+      "refined_intent": "Publish the host-tested Workspaces implementation with isolated restore tests and reconciled current-content-bound specifications.",
       "status": "refined",
       "updated_sequence": 3
     }
@@ -275,87 +280,39 @@
     },
     "trajectory": {
       "active_boundaries": [
-        "Keep personal state and authentication out of Git; preserve native horizontal Space gestures and explicit pairing/permission handoffs."
+        "Preserve backups and personal state; no unverified hardware claims; preserve explicit pairing handoffs and native horizontal Space gestures."
       ],
-      "artifact_hash": "sha256:49674b50d9bb2bdf636222b3eb772ea52f5b77a61a604a486532e834a8987cfa",
-      "checks": [
-        {
-          "name": "decapod validate",
-          "status": "passed"
-        }
-      ],
-      "current_phase": "validation",
+      "artifact_hash": "sha256:eac4547712ec7106df0cb9a42ac7164db6ec4b49477ab846ce5cdf971b335377",
+      "checks": [],
       "custody": {
         "events": [
           {
             "event_id": "event:2",
-            "intent_id": "intent:desktop-restore-test-final",
+            "intent_id": "intent:desktop-publication-reviewed",
             "kind": "created",
             "sequence": 2
           },
           {
             "event_id": "event:3",
-            "intent_id": "intent:desktop-restore-test-final",
+            "intent_id": "intent:desktop-publication-reviewed",
             "kind": "refined",
             "sequence": 3
-          },
-          {
-            "detail": "trajectory:desktop-restore-test-final",
-            "event_id": "event:4",
-            "intent_id": "intent:desktop-restore-test-final",
-            "kind": "trajectory_step_recorded",
-            "sequence": 4
           }
         ],
         "knowledge_candidates": [],
-        "next_sequence": 4,
+        "next_sequence": 3,
         "schema_version": "1.0.0",
-        "trajectories": {
-          "desktop-restore-test-final": {
-            "evidence_only": true,
-            "id": "desktop-restore-test-final",
-            "intent_id": "intent:desktop-restore-test-final",
-            "steps": [
-              {
-                "action": "validation",
-                "command": "decapod validate",
-                "custody_event_id": "event:4",
-                "observations": [
-                  ".decapod/governance.json",
-                  ".decapod/governance.json",
-                  "validation epoch ve_03861c8b478c0dc1 completed with zero failures"
-                ],
-                "proof_refs": [
-                  "decapod validate"
-                ],
-                "scope": [
-                  "Custom desktop controls, reversible preference lifecycle, gesture overview, display discovery, portable/native verification and authorized publication."
-                ],
-                "sequence": 4,
-                "validation_findings": []
-              }
-            ]
-          }
-        }
+        "trajectories": {}
       },
-      "declared_commands": [
-        "decapod validate"
-      ],
-      "evidence": [
-        "validation epoch ve_03861c8b478c0dc1 completed with zero failures"
-      ],
+      "declared_commands": [],
+      "evidence": [],
       "inspected_files": [],
-      "intent_id": "intent:desktop-restore-test-final",
-      "modified_files": [
-        ".decapod/governance.json"
-      ],
-      "next_transitions": [
-        "publish"
-      ],
+      "intent_id": "intent:desktop-publication-reviewed",
+      "modified_files": [],
       "repo_scope": [
-        "Custom desktop controls, reversible preference lifecycle, gesture overview, display discovery, portable/native verification and authorized publication."
+        "Desktop overview, native UI suppression, display discovery, automated verification and authorized publication."
       ],
-      "run_id": "desktop-restore-test-final",
+      "run_id": "desktop-publication-reviewed",
       "schema_version": "1.1.0",
       "shortcut_risk_signals": [],
       "task_id": "bugs_01m5zzd94pydp909",
