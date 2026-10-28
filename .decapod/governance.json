@@ -121,24 +121,29 @@
       "id": "reviewed-final-specifications",
       "summary": "Complete content-bound architecture/interface/security review and reconcile stale legacy fallback descriptions with the working custom desktop",
       "input_digest": "sha256:bb9a3f74a28241d22a9dbb044aaa94a48dddb2eb35fe543b08496ff45d6397de"
+    },
+    {
+      "id": "fresh-publication-validation-epoch",
+      "summary": "Follow STALE_VALIDATION_EVIDENCE recovery by opening a fresh publication run; retain all prior trajectory and failed proof in Git history",
+      "input_digest": "sha256:95f97fb4a64e332b1437fa71292027eba71a17ac80081ba75f511d95f1abfa2c"
     }
   ],
   "intents": {
-    "intent:change_01M5ZZESNE657J3WAS43NM2M42": {
+    "intent:desktop-publication-final": {
       "acceptance_criteria": [],
       "assumptions": [],
       "boundaries": [
-        "Current claimed task and isolated work branch"
+        "User explicitly authorizes commit, merge and push after full validation; prior trajectory and failed readiness attempts remain in committed history"
       ],
       "constraints": [
-        "root"
+        "Existing desktop implementation and exact-candidate publication"
       ],
       "created_sequence": 1,
-      "id": "intent:change_01M5ZZESNE657J3WAS43NM2M42",
+      "id": "intent:desktop-publication-final",
       "out_of_scope": [],
       "proof_requirements": [],
-      "raw_intent": "Diagnose broken macOS desktop overview and replace the failing desktop interface with a reversible solution",
-      "refined_intent": "Diagnose broken macOS desktop overview and replace the failing desktop interface with a reversible solution",
+      "raw_intent": "Replace obstructing native desktop UI with the existing-helper monitor Workspaces map and publish when done",
+      "refined_intent": "Validate and publish the completed, host-tested custom overview, gestures, monitor transfer controls, persistent native UI suppression and AirPlay cleanup",
       "status": "refined",
       "updated_sequence": 3
     }
@@ -239,235 +244,45 @@
     },
     "trajectory": {
       "active_boundaries": [
-        "Current claimed task and isolated work branch",
-        "Local only; no publish; user explicitly chose own overview and disabled native triggers",
-        "User explicitly authorizes commit, merge and push after validation; this supersedes earlier local-only publication boundary"
+        "User explicitly authorizes commit, merge and push after full validation; prior trajectory and failed readiness attempts remain in committed history"
       ],
-      "artifact_hash": "sha256:f0621c0e07f5457dcf9b3717d331b965966a705566cb33f32c607e78b0ed52c1",
-      "checks": [
-        {
-          "name": "airplay-discovery",
-          "status": "passed"
-        },
-        {
-          "name": "decapod validate",
-          "status": "passed"
-        },
-        {
-          "name": "host-suite",
-          "status": "passed"
-        },
-        {
-          "name": "isolated-validation",
-          "status": "failed"
-        },
-        {
-          "name": "live-overview",
-          "status": "passed"
-        },
-        {
-          "name": "live-switch-and-return",
-          "status": "passed"
-        },
-        {
-          "name": "overlay-recovery",
-          "status": "passed"
-        },
-        {
-          "name": "physical-gesture",
-          "status": "passed"
-        }
-      ],
+      "artifact_hash": "sha256:ba264f8433cb91accccfbab8c39393e13eae4bfb090476978a9cc50c5ef14767",
+      "checks": [],
       "current_phase": "validation",
       "custody": {
         "events": [
           {
             "event_id": "event:2",
-            "intent_id": "intent:change_01M5ZZESNE657J3WAS43NM2M42",
+            "intent_id": "intent:desktop-publication-final",
             "kind": "created",
             "sequence": 2
           },
           {
             "event_id": "event:3",
-            "intent_id": "intent:change_01M5ZZESNE657J3WAS43NM2M42",
+            "intent_id": "intent:desktop-publication-final",
             "kind": "refined",
             "sequence": 3
-          },
-          {
-            "detail": "trajectory:branch_01M5ZZESWC3YQ3WSD0BY705Z89",
-            "event_id": "event:4",
-            "intent_id": "intent:change_01M5ZZESNE657J3WAS43NM2M42",
-            "kind": "trajectory_step_recorded",
-            "sequence": 4
-          },
-          {
-            "detail": "trajectory:branch_01M5ZZESWC3YQ3WSD0BY705Z89",
-            "event_id": "event:5",
-            "intent_id": "intent:change_01M5ZZESNE657J3WAS43NM2M42",
-            "kind": "trajectory_step_recorded",
-            "sequence": 5
-          },
-          {
-            "detail": "trajectory:branch_01M5ZZESWC3YQ3WSD0BY705Z89",
-            "event_id": "event:6",
-            "intent_id": "intent:change_01M5ZZESNE657J3WAS43NM2M42",
-            "kind": "trajectory_step_recorded",
-            "sequence": 6
-          },
-          {
-            "detail": "trajectory:branch_01M5ZZESWC3YQ3WSD0BY705Z89",
-            "event_id": "event:7",
-            "intent_id": "intent:change_01M5ZZESNE657J3WAS43NM2M42",
-            "kind": "trajectory_step_recorded",
-            "sequence": 7
-          },
-          {
-            "detail": "trajectory:branch_01M5ZZESWC3YQ3WSD0BY705Z89",
-            "event_id": "event:8",
-            "intent_id": "intent:change_01M5ZZESNE657J3WAS43NM2M42",
-            "kind": "trajectory_step_recorded",
-            "sequence": 8
           }
         ],
         "knowledge_candidates": [],
-        "next_sequence": 8,
+        "next_sequence": 3,
         "schema_version": "1.0.0",
-        "trajectories": {
-          "branch_01M5ZZESWC3YQ3WSD0BY705Z89": {
-            "evidence_only": true,
-            "id": "branch_01M5ZZESWC3YQ3WSD0BY705Z89",
-            "intent_id": "intent:change_01M5ZZESNE657J3WAS43NM2M42",
-            "steps": [
-              {
-                "action": "trajectory.record",
-                "custody_event_id": "event:4",
-                "observations": [
-                  "Restarted WindowManager; screenshot and WindowServer inventory confirm strip removed; Dock restart did not clear it"
-                ],
-                "proof_refs": [
-                  "overlay-recovery"
-                ],
-                "scope": [
-                  "root"
-                ],
-                "sequence": 4,
-                "validation_findings": [
-                  "Private native-Space metadata must be verified on current macOS before relying on it"
-                ]
-              },
-              {
-                "action": "validation",
-                "custody_event_id": "event:5",
-                "observations": [
-                  "141 portable tests and native self-tests passed; live current-workspace Return and Escape passed; user confirms physical three-finger gesture; gesture recognition count 9"
-                ],
-                "proof_refs": [
-                  "host-suite",
-                  "live-overview",
-                  "physical-gesture"
-                ],
-                "scope": [
-                  "Desktop overview and AirPlay discovery concealment",
-                  "root"
-                ],
-                "sequence": 5,
-                "validation_findings": [
-                  "Second display not connected; actual monitor transfer and wireless pairing remain unverified"
-                ]
-              },
-              {
-                "action": "validation",
-                "custody_event_id": "event:6",
-                "observations": [
-                  "Final live check: different_workspace_selected=true, original_workspace_restored=true; Return and Escape pass. Covered AirPlay snapshot partial=false, one screen, five options, no native popup afterward."
-                ],
-                "proof_refs": [
-                  "live-switch-and-return",
-                  "airplay-discovery"
-                ],
-                "scope": [
-                  "Desktop overview and AirPlay discovery concealment",
-                  "Monitor workspace overview, gesture, window movement and native discovery suppression",
-                  "root"
-                ],
-                "sequence": 6,
-                "validation_findings": []
-              },
-              {
-                "action": "validation",
-                "custody_event_id": "event:7",
-                "observations": [
-                  "Isolated validation reached readiness but parsed generated todo-01m5zz branch prefix as task todo_01m5zz. Renamed only this unpublished work branch to contain the exact claimed task ID first; no proof gate changed."
-                ],
-                "proof_refs": [
-                  "isolated-validation"
-                ],
-                "scope": [
-                  "Desktop overview and AirPlay discovery concealment",
-                  "Monitor workspace overview, gesture, window movement and native discovery suppression",
-                  "root"
-                ],
-                "sequence": 7,
-                "validation_findings": []
-              },
-              {
-                "action": "validation",
-                "command": "decapod validate",
-                "custody_event_id": "event:8",
-                "observations": [
-                  ".decapod/governance.json",
-                  ".decapod/governance.json",
-                  "validation epoch ve_87b2479f30cfe035 completed with zero failures"
-                ],
-                "proof_refs": [
-                  "decapod validate"
-                ],
-                "scope": [
-                  "Desktop overview and AirPlay discovery concealment",
-                  "Monitor workspace overview, gesture, window movement and native discovery suppression",
-                  "root"
-                ],
-                "sequence": 8,
-                "validation_findings": []
-              }
-            ]
-          }
-        }
+        "trajectories": {}
       },
-      "declared_commands": [
-        "decapod validate"
-      ],
-      "destination": "pull request",
-      "evidence": [
-        "141 portable tests and native self-tests passed; live current-workspace Return and Escape passed; user confirms physical three-finger gesture; gesture recognition count 9",
-        "Final live check: different_workspace_selected=true, original_workspace_restored=true; Return and Escape pass. Covered AirPlay snapshot partial=false, one screen, five options, no native popup afterward.",
-        "Isolated validation reached readiness but parsed generated todo-01m5zz branch prefix as task todo_01m5zz. Renamed only this unpublished work branch to contain the exact claimed task ID first; no proof gate changed.",
-        "Restarted WindowManager; screenshot and WindowServer inventory confirm strip removed; Dock restart did not clear it",
-        "validation epoch ve_87b2479f30cfe035 completed with zero failures"
-      ],
+      "declared_commands": [],
+      "evidence": [],
       "inspected_files": [],
-      "intent_id": "intent:change_01M5ZZESNE657J3WAS43NM2M42",
-      "modified_files": [
-        ".decapod/governance.json"
-      ],
-      "next_transitions": [
-        "Refine plan and declare falsifiable checks",
-        "publish"
-      ],
+      "intent_id": "intent:desktop-publication-final",
+      "modified_files": [],
       "repo_scope": [
-        "Desktop overview and AirPlay discovery concealment",
-        "Monitor workspace overview, gesture, window movement and native discovery suppression",
-        "root"
+        "Existing desktop implementation and exact-candidate publication"
       ],
-      "run_id": "branch_01M5ZZESWC3YQ3WSD0BY705Z89",
+      "run_id": "desktop-publication-final",
       "schema_version": "1.1.0",
       "shortcut_risk_signals": [],
       "task_id": "bugs_01m5zzd94pydp909",
       "tool_calls": [],
-      "unresolved_assumptions": [
-        "Private native-Space metadata must be verified on current macOS before relying on it",
-        "Second display not connected; actual monitor transfer and wireless pairing remain unverified"
-      ]
+      "unresolved_assumptions": []
     },
     "validation": {
       "ci_prediction": {
