@@ -215,6 +215,42 @@ scripts/dotfiles desktop theme --theme nocturne --layout islands
 scripts/dotfiles desktop undo
 ```
 
+The desktop profile uses our own **Workspaces** overview. **Swipe up with three
+fingers**, press **Control–Up**, or click the monitor icon beside the application
+name in the custom bar. It groups windows and fullscreen apps by connected
+monitor, in display order. Empty ordinary Desktops are omitted without deleting
+macOS's underlying Spaces. Click a card, press 1–9, or use arrows and Return to
+switch. Three-finger down, Escape, Close or an outside click dismisses the view.
+The gesture reader leaves horizontal Space swipes intact and suppresses ordinary
+scrolling while exactly three fingers are down. Its device subscriptions restart
+after wake, and run inside the existing login helper.
+
+Drag a card onto another display header, or right-click and use **Move to…**.
+The move revalidates the exact window identity and destination display. A
+fullscreen app temporarily leaves fullscreen, moves through Accessibility, then
+reenters fullscreen on the destination; other windows keep their size when it
+fits. Failed moves attempt to restore the previous position/size and fullscreen
+state and report the failure in the custom view. Display controls opens our
+existing pane to connect a shared display. Cross-display selection uses exact
+window focus; when macOS cannot expose that window, activate its display first.
+Actual multi-display/fullscreen transfers require a connected second display to
+verify; current built-in-display checks do not establish that hardware result.
+
+Previews are on demand, window-only and retained in memory. Space switching
+follows the existing horizontal shortcuts with bounded readback and stops if no
+progress is observed. The view closes after two minutes as a fallback.
+
+Native Mission Control/App Exposé/Show Desktop shortcuts and gestures, relevant
+hot corners, Stage Manager and drag-to-top overview activation are disabled by
+`desktop apply`, including when upgrading an active profile. Horizontal fullscreen
+swipes remain available. The native menu and Dock presentation stay suppressed
+while the healthy custom replacements run; the user LaunchAgent starts the helper
+at each graphical login. These are reversible per-key preferences with local
+backups, including individual symbolic-hotkey enabled fields. `desktop undo`
+restores them while preserving unrelated hotkeys. macOS services continue to
+provide Spaces, fullscreen windows and explicit device pairing/consent dialogs.
+`scripts/dotfiles desktop overview` opens the same custom view.
+
 The native fullscreen workflow remains intact. Reveal the status bar at the
 top three pixels and the dock in the bottom-center 44-point icon footprint.
 The dock icons sit at the screen's bottom edge. Clicking an icon sends the
@@ -263,7 +299,7 @@ bundles only, adds no service or global shortcut, and opens existing instances.
 
 Native panes share a short anchored fade and row hover treatment, with no slide
 on refresh. Reduce Motion removes these transitions. Mission Control detection
-handles the observed Dock overlay levels and top Spaces strip, suppressing custom
+handles both Dock overlays and the macOS 27 WindowManager Spaces strip, suppressing custom
 surfaces until the overview closes. The required spare native Desktop remains.
 
 Desktop Controls now uses the available local development identity for stable
@@ -284,13 +320,10 @@ Desktop Controls app and restarts its owned helper after approval, refreshing
 fullscreen panes without rebuilding or signing it again. Bluetooth may request
 macOS Bluetooth permission. Approval is a local
 OS action and is not captured or bypassed by dotfiles. Network names can be
-redacted without Location permission. Without the optional Desktop Panels approvals, hovering Wi-Fi opens
-Apple's real picker directly after the normal dwell; there is no custom setup
-wall or second handoff click. It owns the connected SSID, nearby choices and
-connection progress. Repeated hover keeps it open, bar autohide does not dismiss
-it, and opening another themed pane closes it. Outside click and Escape follow
-Apple's picker behavior. Its theme, grouping and list size remain Apple's:
-the themed adapter below provides the custom layout after its own approvals.
+redacted without Location permission. Without the optional Desktop Panels approvals, Wi-Fi stays in our custom pane
+with a concise unavailable status. Discovery failures do not open Apple's picker.
+The signed adapter below provides live SSIDs and connection actions after its own
+approvals, concealing native discovery behind a short in-memory cover.
 macOS 27's MenuBarAgent hosting views and the older ControlCenter menu-bar layout
 are supported. Dotfiles does not request Location or read Wi-Fi passwords.
 
@@ -722,3 +755,10 @@ typed preference backup/restore and failure rollback, and container arguments
 with a fake engine that proves no automatic VM startup occurs.
 GitHub Actions runs the same suite on Linux and macOS. Config and package checks
 on the actual Mac are separate from the portable test suite.
+
+AirPlay discovery uses a bounded snapshot cover on every attached screen before
+opening Apple controls. The custom Display pane stays above that cover. Covers
+are discarded after native discovery closes, including failure paths; selecting
+a device deliberately hands pairing and mirror/extend confirmation to macOS.
+Discovery briefly freezes the covered desktop, instead of replaying a live screen
+stream that can expose new system surfaces. No screenshots are written to disk.

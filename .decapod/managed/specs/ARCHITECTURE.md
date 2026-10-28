@@ -212,24 +212,15 @@ createsNewApplicationInstance disabled, preserving normal reopen semantics.
 desktop.py registers the complete signed bundle through public LSRegisterURL
 before activation, including cached builds launched directly by launchd.
 controls.py reads Wi-Fi power through networksetup for the bar icon only.
-When auxiliary access is unavailable, show('wifi') uses the ordinary dwell/request
-cancellation, hides custom windows, then opens Apple's real Wi-Fi picker
-directly using native_item(ensure='open').
-A fixed wifi-header AX lookup makes opening idempotent and closing conditional:
-a different system panel is never toggled by Wi-Fi cleanup. No SSID is extracted,
-no saved-profile choices are synthesized and this fallback requests no scan.
-active.json marks native_wifi so level/network refresh cannot replace the picker.
-Bar conceal retains it while the pointer enters; another themed pane or explicit
-cancel closes only a visible Wi-Fi picker. Native outside-click/Escape behavior
-owns dismissal. The bounded status-item lookup supports MenuBarAgent hosting
-views on macOS 27 and the older ControlCenter menu bar.
-
-desktop-edge.m still emits the fixed desktop_network_changed event without
-reading or forwarding network values. Wi-Fi updates its radio icon only; Apple
-owns the visible native list. The desired themed top-three recency list remains
-unimplemented with Location off. Offscreen AX mirroring was rejected because
-compositor probes found visible frames. No change to the approved native binary
-or OS privacy settings is needed for this functional fallback.
+When auxiliary access is unavailable, show('wifi') uses ordinary dwell/request
+cancellation and renders a discovery-unavailable status in the custom pane.
+It never opens Apple's picker automatically.
+A fixed wifi-header AX lookup supports conditional cleanup of a legacy owned
+native picker; unrelated system panes are preserved. Current hover failures
+stay in the custom pane. The auxiliary adapter below provides actual native
+choices through covered bounded reads, with Location still off.
+desktop-edge.m emits the fixed desktop_network_changed event without forwarding
+network values. Refreshes preserve current request/visibility ownership.
 
 desktop.py's permissions route requests access from the installed native helper.
 It accepts approval only from healthy, fresh status bound to the current
@@ -456,8 +447,8 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `3b6044e4a1455683da0d2691737a683757e83ca84f41599e27e6297ca9bd0c79`
-- Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (9 files)
+- Repository signal fingerprint: `139e78b550e2954228e7c43d3d0054e78e07e8b757868d53918a4bf8def6cb83`
+- Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (16 files), `tests/` (9 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
 
@@ -482,8 +473,8 @@ failed discovery cannot revive a pane after pointer exit.
 It opens the fixed Control Center module, uses the exposed show-details action
 for each module, reads only the three fixed appearance toggles, and reads actual
 Screen Mirroring device rows. Window-only AX searches avoid spending the bounded budget in menu-bar proxies.
-Native page transitions settle before details are requested; cleanup posts Escape
-only to ControlCenter after recognizing its owned pages and waits for closure. Actions
+Native page transitions settle before details are requested; cleanup toggles the
+original menu extra after recognizing its owned pages and waits for closure. Actions
 re-find exact kind/page/role/identifier/text/selected state before one AXPress.
 Device/settings actions retain the native pairing/content chooser as a handoff;
 no connection is attempted by discovery. Public CoreGraphics display enumeration
@@ -500,13 +491,11 @@ retains knob drawing, hit testing, keyboard and accessibility behavior.
 
 ### Responsive Display discovery
 
-Display transactions use `DisplayCover` in `scripts/wifi-pane.m`: a bounded
-ScreenCaptureKit stream renders through AVSampleBufferDisplayLayer rather than
-a frozen screenshot. It filters out ControlCenter, MenuBarAgent and all Desktop
-Panels windows, including the current process, to prevent visual feedback.
-Only the native menu item's display is covered; ordinary app content continues
-updating. A matching transaction temporarily raises the controls above the live
-cover. Token-matched cleanup restores normal stacking, with a twelve-second
+Display transactions use `DisplayCover` in `scripts/wifi-pane.m`: bounded
+ScreenCaptureKit snapshots of all attached screens conceal native discovery.
+Images are captured before native controls open, remain in memory, and are
+discarded during cleanup. A matching transaction temporarily raises the custom
+controls above the snapshot covers. Token-matched cleanup restores normal stacking, with a twelve-second
 expiry if the query exits abnormally. The separate Wi-Fi adapter is unchanged.
 
 Screen Mirroring is queried first. Successful native rows and connected metadata
@@ -533,3 +522,36 @@ It therefore remains visible if the preceding UI process exited during a
 discovery request. Malformed token, PID or expiry types are ignored. Matching
 end notifications restore ordinary stacking for both original and replacement
 servers; expiry remains the fallback.
+
+The native overview replacement in `scripts/overview-panel.m` reads native Space
+identity metadata, filters empty ordinary desktops using actual window membership,
+and renders dismissible AppKit cards in the existing signed panels helper. Capture
+is window-only, bounded and memory-only. Selection revalidates target identity and
+follows existing horizontal Space shortcuts, checking progress after each step.
+A health-reported event tap handles Control-Up and request-bound navigation while the overview is visible. Native overview activation is
+disabled through typed reversible settings from `.config/macos/overview.json`;
+active-profile upgrades extend their baseline rather than replacing it. Native
+WindowManager and Dock remain system plumbing. AirPlay discovery uses all-screen
+snapshot covers, with custom controls above them, instead of live replay.
+
+`overview-gesture.m` reads three-contact centroids through dynamically loaded
+MultitouchSupport, recognizes dominant vertical movement once per touch sequence,
+and restarts subscriptions after wake. A session event tap owns Control-Up and
+suppresses three-contact scrolling without consuming normal two-finger scrolls.
+`overview-panel.m` groups WindowServer membership by monitor and native Space,
+uses in-process drag tokens for transfers, and resolves AX windows by exact CG
+window ID. Transfers validate a live target screen, temporarily exit fullscreen
+when necessary, move/clamp via AX, and restore fullscreen. Identity failures
+produce explicit custom-view status; no unrelated window is substituted.
+
+Display discovery traverses bounded AX roots for both ControlCenter and macOS
+27 MenuBarAgent. Closing toggles the original menu extra rather than sending
+Escape to a hosting proxy. If a popup opened by this transaction refuses normal
+dismissal, only its owning ControlCenter process is retired under the cover;
+this recovery is excluded from explicit pairing handoffs.
+
+Overview navigation keys are routed by the already-approved main helper only
+while a fresh visible overview status exists. Notifications carry the current
+request ID; the panels helper ignores stale-view navigation. This keeps Return,
+arrows and number selection usable over fullscreen apps without relying on
+AppKit successfully stealing key focus from the fullscreen application.

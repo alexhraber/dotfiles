@@ -3,6 +3,7 @@
 void DFWorkspaceInitialize(NSString *directory);
 void DFWorkspaceShow(void);
 void DFWorkspaceHide(void);
+void DFWorkspaceSpaceChanged(void);
 void DFWorkspaceTick(double now, NSPoint pointer);
 void DFWorkspaceRefreshAppearance(void);
 NSDictionary *DFWorkspaceStatus(void);

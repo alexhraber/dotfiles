@@ -362,7 +362,7 @@ def main():
         import local_ai
         return local_ai.main(args.manifest, args.dry_run)
     if args.command == 'desktop':
-        if args.manifest not in ('apply', 'undo', 'status', 'permissions', 'theme', 'panels-setup', 'panels-permissions', 'controls-setup', 'controls-permissions', 'launcher'):
+        if args.manifest not in ('apply', 'undo', 'status', 'permissions', 'theme', 'panels-setup', 'panels-permissions', 'controls-setup', 'controls-permissions', 'launcher', 'overview'):
             parser.error('desktop requires apply, undo, status, permissions, theme, panels-setup, panels-permissions, controls-setup, controls-permissions, or launcher')
         if args.dry_run:
             parser.error('Use install --groups desktop --dry-run to preview configuration')

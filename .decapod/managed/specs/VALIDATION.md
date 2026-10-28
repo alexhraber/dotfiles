@@ -410,8 +410,8 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `3b6044e4a1455683da0d2691737a683757e83ca84f41599e27e6297ca9bd0c79`
-- Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (9 files)
+- Repository signal fingerprint: `139e78b550e2954228e7c43d3d0054e78e07e8b757868d53918a4bf8def6cb83`
+- Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (16 files), `tests/` (9 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
 
@@ -427,3 +427,33 @@ job alongside native warnings-as-errors compilation and portable tests.
 discovery and transient window-only capture without moving the pointer, showing
 a panel or activating another application. Live counts prove discovery/capture;
 they do not prove physical hover or exact multi-fullscreen-window selection.
+
+Native overview changes are checked by `scripts/check.py`: main/auxiliary native
+compilation with warnings as errors, overview identity/filter/layout self-tests,
+WindowManager overlay recognition, and portable nested-preference ownership
+checks. Current host run passes 141 tests.
+The portable restore test mocks and asserts the WindowManager restart boundary,
+so it runs without macOS tools and never restarts a host process during checks.
+Live verification confirms custom overview presentation and empty-Desktop filtering with existing permissions;
+physical swipe, current/different-workspace selection and Escape are verified.
+Full Decapod readiness runs in the required isolated container; host checks
+remain separate evidence and do not establish publication readiness.
+
+Final local overview evidence: 141 tests pass with warnings-as-errors native
+compilation and the gesture/filter/grid/move-geometry self-tests. A signed live
+run reports one connected display, six cards, successful Return on the current
+workspace and Escape dismissal, and healthy keyboard/trackpad listeners. The
+user explicitly confirmed three-finger upward swipe opens the custom view; the
+helper observed nine recognized gestures. These do not establish real second-
+monitor/fullscreen transfer or AirPlay pairing success.
+
+The final AirPlay adapter pass returned a complete (partial=false) snapshot:
+one connected screen and five actual controls/choices, without a pairing handoff.
+WindowServer inspection after discovery found no remaining Control Center popup.
+The adapter resolves macOS 27 MenuBarAgent-hosted AX trees and dismisses the
+ControlCenter-owned popup through its original menu extra before removing covers.
+
+A final live interaction check selected a different native Space through the
+custom overview and returned to the original Space (both comparisons passed),
+with successful Return-on-current and Escape dismissal. Physical three-finger
+swipe was independently confirmed by the user before this keyboard-only repair.

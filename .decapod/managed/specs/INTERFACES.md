@@ -161,20 +161,18 @@ Keyboard and other system level changes update the slider and numeric reading
 without pointer reentry; closed panes add no device polling.
 
 Clicking a running app uses the macOS reopen request without requesting a new
-instance. Wi-Fi hover/click opens the native picker directly, without custom
-loading, permission rows or a second handoff action. An open request is
-idempotent; closing checks the fixed wifi-header before pressing the item.
-Bar conceal retains a native Wi-Fi pane; explicit cancel and opening another
-themed pane close it. Apple owns its normal dismissal, actual network names,
-list order and connection state. No Location request, scan daemon, network-name
-cache, password read or credential write is part of this route. A custom themed
-top-three list is still an unfulfilled request, not a guarantee of this interface.
-Sound/Bluetooth rows retain bounded detail/hint/selected metadata and their
-literal device argv actions. Network change events carry no network values and
-never replace a native Wi-Fi picker with a custom pane.
+instance. Wi-Fi hover/click uses the custom pane. Discovery failures render a
+concise unavailable status instead of opening the native picker. Legacy owned
+pickers are closed conditionally through the fixed wifi-header on pane switches.
+Bar conceal retains an explicit custom request; cancellation and pane switches
+close it. Native network names and order come from the covered adapter and stay
+in private runtime snapshots. No Location request, password read or credential
+write is added. Sound/Bluetooth rows retain bounded detail/hint/selected metadata
+and literal device argv actions; network change events carry no network values.
 
-The optional Desktop Panels route supersedes that fallback only when its own
-registered-app status reports supported, Accessibility and Screen Capture.
+The Desktop Panels adapter reads actual choices when its registered-app status
+reports supported, Accessibility and Screen Capture. Missing access produces the
+custom unavailable status without opening another system pane.
 `desktop panels-setup` installs it; `desktop panels-permissions` requests the two
 OS approvals without requesting Location.
 Permission requests are staged: Accessibility first, Screen Recording on a
@@ -267,8 +265,8 @@ can leave partial state; the backup manifest remains the recovery input.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `3b6044e4a1455683da0d2691737a683757e83ca84f41599e27e6297ca9bd0c79`
-- Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (9 files)
+- Repository signal fingerprint: `139e78b550e2954228e7c43d3d0054e78e07e8b757868d53918a4bf8def6cb83`
+- Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (16 files), `tests/` (9 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
 
@@ -307,7 +305,7 @@ clear a newer transaction. Visible refresh is twenty seconds, not four.
 `bar/native-ui-lease.json` is a 0600, request-token-owned record of PID and
 expiry. The native-menu watchdog accepts only an owned private regular file,
 a live PID, and expiry within twelve seconds. Display writes it atomically
-after its live cover is ready and clears only its own token during cleanup.
+after its screen covers are ready and clears only its own token during cleanup.
 Native workspace self-tests cover active ownership, stale end notifications,
 unsafe file mode, expiration, and a missing process.
 
@@ -317,3 +315,19 @@ It therefore remains visible if the preceding UI process exited during a
 discovery request. Malformed token, PID or expiry types are ignored. Matching
 end notifications restore ordinary stacking for both original and replacement
 servers; expiry remains the fallback.
+
+`desktop overview` / `desktop-edge --overview`, Control-Up, and the custom bar
+monitor item open the replacement overview. Requests use kind `overview` in the
+existing private workspace protocol. Status exposes counts, switching state and
+fixed error codes, never Space IDs, window titles or pixels. Escape, Close, outside
+click, native Space changes and the two-minute fallback dismiss the panel. A
+switch in progress survives its own Space-change notifications, and stops on
+explicit dismissal. Preference manifests may include a `path` of dictionary keys;
+guarded restoration owns only that scalar leaf and preserves sibling bindings.
+
+Three-finger up/down also open/dismiss the Workspaces view. The main status
+includes gesture device/recognition counts, with no touch coordinates or history.
+Card drag/drop and Move to actions target connected monitor headers; Display
+controls opens the existing custom sharing pane. Exact AX identity and live
+screen presence are required for a move. Screen/Space changes dismiss ordinary
+overviews; in-progress owned switch/move transactions retain their bounded state.

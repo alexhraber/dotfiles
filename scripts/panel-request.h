@@ -3,6 +3,7 @@
 BOOL DFWorkspaceRequest(NSString *directory, NSString *kind, pid_t pid, NSRect anchor);
 void DFWorkspaceCancel(NSString *directory);
 void DFWorkspaceCancelAll(NSString *directory);
+void DFWorkspaceNotifySpaceChanged(void);
 NSDictionary *DFWorkspaceReadStatus(NSString *directory);
 
 NSString *DFNativeUIActiveToken(NSString *directory);

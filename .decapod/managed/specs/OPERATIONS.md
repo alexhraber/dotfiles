@@ -51,8 +51,8 @@ Wi-Fi uses the themed Desktop Panels adapter when its own Accessibility and
 Screen Recording approvals are present; Location stays off. Install it with
 desktop panels-setup. desktop panels-permissions requests one pending approval
 per call and returns success only after actual readiness. Those approvals are
-now verified for the installed signed app. Unsupported/unapproved systems open
-the real system picker directly on hover.
+now verified for the installed signed app. Unsupported/unapproved systems keep an unavailable status inside the custom
+pane; no automatic native picker is opened.
 No Wi-Fi Access setup command or consent helper is part of the profile.
 The themed list keeps native choice order, connected first and up to three
 alternatives; explicit Other Networks expansion adds further real choices.
@@ -121,7 +121,17 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `3b6044e4a1455683da0d2691737a683757e83ca84f41599e27e6297ca9bd0c79`
-- Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (9 files)
+- Repository signal fingerprint: `139e78b550e2954228e7c43d3d0054e78e07e8b757868d53918a4bf8def6cb83`
+- Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (16 files), `tests/` (9 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
+
+Workspaces opens with three-finger up, Control-Up, the bar monitor item, or
+`desktop overview`; three-finger down/Escape/outside click closes it. The existing
+login LaunchAgent owns the main helper and trackpad subscription, which restarts
+after wake. `desktop apply` extends an active profile's original per-key backup
+with native overview/Show Desktop/Stage Manager suppression, including symbolic
+hotkey leaves without replacing unrelated bindings. `desktop undo` restores the
+backed-up settings. A newly staged auxiliary build is used after an existing
+pane is dismissed and its short-lived server exits. Window transfers and AirPlay
+pairing require a real connected target for hardware verification.

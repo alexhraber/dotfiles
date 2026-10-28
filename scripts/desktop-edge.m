@@ -7,6 +7,7 @@
 #import "control-panel.h"
 #import "app-menu.h"
 #import "panel-request.h"
+#import "overview-gesture.h"
 #include <dlfcn.h>
 #include <signal.h>
 #include <sys/file.h>
@@ -27,13 +28,16 @@ static volatile sig_atomic_t stopping = 0;
 static dispatch_queue_t barQueue;
 static BOOL healthPending = NO, dockPresented = NO, dockMenuOpen = NO;
 static NSUInteger barRevision = 0, dockRevision = 0;
-static BOOL missionControl = NO;
+static BOOL missionControl = NO, overviewPresented=NO, overviewSwitching=NO;
+static NSString *overviewRequestID;
 static CFMachPortRef nativeDockTap;
 static CFRunLoopSourceRef nativeDockSource;
 static pid_t nativeDockPID;
 static CGRect dockDisplays[16];
 static uint32_t dockDisplayCount;
 static NSUInteger nativeDockBlocked;
+static CFMachPortRef overviewTap;
+static CFRunLoopSourceRef overviewSource;
 static SCDynamicStoreRef networkStore;
 static CFRunLoopSourceRef networkSource;
 static double missionControlSince = 0, nextMissionCheck = 0;
@@ -221,7 +225,9 @@ static int layoutSelfTest(void) {
 // Require Dock ownership and display-sized geometry, not a single magic level.
 static BOOL overviewWindow(NSDictionary *window,NSArray<NSValue *> *screens) {
     NSInteger level=[window[(id)kCGWindowLayer] integerValue];CGRect bounds;
-    if (![window[(id)kCGWindowOwnerName] isEqual:@"Dock"] || level<18 || level>24
+    BOOL dock=[window[(id)kCGWindowOwnerName] isEqual:@"Dock"] && level>=18 && level<=24;
+    BOOL manager=[window[(id)kCGWindowOwnerName] isEqual:@"WindowManager"] && level==14;
+    if ((!dock && !manager)
         || (window[(id)kCGWindowAlpha] && [window[(id)kCGWindowAlpha] doubleValue]<=.01)
         || !CGRectMakeWithDictionaryRepresentation((__bridge CFDictionaryRef)window[(id)kCGWindowBounds],&bounds)) return NO;
     for (NSValue *value in screens) {
@@ -247,6 +253,10 @@ static int overviewSelfTest(void) {
     window[(id)kCGWindowBounds]=CFBridgingRelease(CGRectCreateDictionaryRepresentation(CGRectMake(0,0,1440,900)));
     window[(id)kCGWindowOwnerName]=@"Other App";if (overviewWindow(window,screens)) return 1;
     window[(id)kCGWindowOwnerName]=@"Dock";window[(id)kCGWindowAlpha]=@0;if (overviewWindow(window,screens)) return 1;
+    window[(id)kCGWindowAlpha]=@1;window[(id)kCGWindowOwnerName]=@"WindowManager";window[(id)kCGWindowLayer]=@14;
+    window[(id)kCGWindowBounds]=CFBridgingRelease(CGRectCreateDictionaryRepresentation(CGRectMake(0,0,1440,250)));
+    if(!overviewWindow(window,screens))return 1;
+    window[(id)kCGWindowLayer]=@15;if(overviewWindow(window,screens))return 1;
     puts("Overview detection: modern/legacy Dock overlays and Space strips; native dock/other apps/transparent windows excluded.");return 0;
 }
 
@@ -362,8 +372,9 @@ static BOOL missionControlWindow(void) {
         [screens addObject:[NSValue valueWithRect:NSRectFromCGRect(CGDisplayBounds(display))]];
     }
     pid_t dock=[[NSRunningApplication runningApplicationsWithBundleIdentifier:@"com.apple.dock"].firstObject processIdentifier];
+    pid_t manager=[[NSRunningApplication runningApplicationsWithBundleIdentifier:@"com.apple.WindowManager"].firstObject processIdentifier];
     for (NSDictionary *window in windows)
-        if ([window[(id)kCGWindowOwnerPID] intValue]==dock && overviewWindow(window,screens))
+        if (([window[(id)kCGWindowOwnerPID] intValue]==dock || [window[(id)kCGWindowOwnerPID] intValue]==manager) && overviewWindow(window,screens))
             return YES;
     return NO;
 }
@@ -515,7 +526,11 @@ static void releaseNetworkObserver(void) {
     if (networkSource) { CFRunLoopRemoveSource(CFRunLoopGetMain(),networkSource,kCFRunLoopCommonModes); CFRelease(networkSource); networkSource=NULL; }
     if (networkStore) { CFRelease(networkStore); networkStore=NULL; }
 }
-static void restore(void) { releaseNetworkObserver(); releaseNativeDockGuard(); if (setAlpha) nativeMenu(NO); }
+static void restore(void) {
+    DFOverviewGestureStop();
+    if(overviewSource){CFRunLoopRemoveSource(CFRunLoopGetMain(),overviewSource,kCFRunLoopCommonModes);CFRelease(overviewSource);overviewSource=NULL;}
+    if(overviewTap){CFMachPortInvalidate(overviewTap);CFRelease(overviewTap);overviewTap=NULL;}
+    releaseNetworkObserver(); releaseNativeDockGuard(); if (setAlpha) nativeMenu(NO); }
 
 // Only called on transitions and for a five-second health check.
 static NSDictionary *bar(NSArray<NSString *> *args) {
@@ -615,6 +630,12 @@ static void tick(void) {
     DFCalendarTick(now,pointer);
     DFControlsTick(now,pointer);
     DFMenusTick(now,pointer,visible);
+    NSDictionary *overviewState=DFWorkspaceReadStatus(desktopDirectory);
+    overviewPresented=[overviewState[@"kind"] isEqual:@"overview"] && [overviewState[@"visible"] boolValue];
+    overviewSwitching=[overviewState[@"switching"] boolValue];overviewRequestID=overviewState[@"request"];
+    if(overviewPresented) {
+        if(visible)setVisible(NO);dockPresented=NO;[dockPanel orderOut:nil];return;
+    }
     if (missionControl) {
         if (now-missionControlSince>0.5 && now>=nextMissionCheck) {
             nextMissionCheck=now+0.15;
@@ -648,6 +669,33 @@ static void tick(void) {
     }
 }
 
+static void startOverviewGesture(void) {
+    DFOverviewGestureStart(^(BOOL open){
+        if(!healthy || missionControl)return;
+        if(!open){DFWorkspaceCancelAll(desktopDirectory);return;}
+        if([DFWorkspaceReadStatus(desktopDirectory)[@"kind"] isEqual:@"overview"] && [DFWorkspaceReadStatus(desktopDirectory)[@"visible"] boolValue])return;
+        DFCalendarHide();DFControlsHide();DFMenusHide();NSPoint p=NSEvent.mouseLocation;
+        DFWorkspaceRequest(desktopDirectory,@"overview",0,NSMakeRect(p.x,p.y,1,1));
+    });
+}
+static CGEventRef overviewKeyEvent(__unused CGEventTapProxy proxy,CGEventType type,CGEventRef event,__unused void *context) {
+    if(type==kCGEventTapDisabledByTimeout || type==kCGEventTapDisabledByUserInput){if(overviewTap)CGEventTapEnable(overviewTap,true);return event;}
+    CGEventFlags modifiers=CGEventGetFlags(event)&(kCGEventFlagMaskControl|kCGEventFlagMaskCommand|kCGEventFlagMaskAlternate|kCGEventFlagMaskShift);
+    if(type==kCGEventScrollWheel)return DFOverviewGestureSuppressScroll(event) ? NULL : event;
+    unsigned short code=(unsigned short)CGEventGetIntegerValueField(event,kCGKeyboardEventKeycode);
+    BOOL navigation=code==53 || (!overviewSwitching && (code==36 || code==76 || (code>=123 && code<=126) || code==18 || code==19 || code==20 || code==21 || code==23 || code==22 || code==26 || code==28 || code==25));
+    if(overviewPresented && modifiers==0 && navigation){
+        if(type==kCGEventKeyDown){NSString *request=overviewRequestID;
+            dispatch_async(dispatch_get_main_queue(),^{if(request)[NSDistributedNotificationCenter.defaultCenter postNotificationName:@"local.dotfiles.desktop.workspace" object:@"key" userInfo:@{@"request":request,@"code":@(code)} deliverImmediately:YES];});
+        }return NULL;
+    }
+    if(CGEventGetIntegerValueField(event,kCGKeyboardEventKeycode)!=126 || modifiers!=kCGEventFlagMaskControl)return event;
+    if(type==kCGEventKeyDown && !CGEventGetIntegerValueField(event,kCGKeyboardEventAutorepeat))dispatch_async(dispatch_get_main_queue(),^{
+        DFCalendarHide();DFControlsHide();DFMenusHide();NSPoint p=NSEvent.mouseLocation;
+        DFWorkspaceRequest(desktopDirectory,@"overview",0,NSMakeRect(p.x,p.y,1,1));
+    });
+    return NULL;
+}
 int main(int argc, const char **argv) { @autoreleasepool {
     if (argc==2 && strcmp(argv[1],"--overview-status")==0) {
         [NSApplication sharedApplication];printf("{\"overview\":%s}\n",missionControlWindow() ? "true" : "false");return 0;
@@ -669,11 +717,11 @@ int main(int argc, const char **argv) { @autoreleasepool {
         NSDictionary *status=controlsAccessStatus();
         NSData *json=[NSJSONSerialization dataWithJSONObject:status options:0 error:nil];fwrite(json.bytes,1,json.length,stdout);fputc('\n',stdout);return 0;
     }
-    if (argc==2 && strcmp(argv[1],"--self-test")==0) return layoutSelfTest() || dockOpenSelfTest() || overviewSelfTest() || accessStatusSelfTest() || DFCalendarSelfTest() || DFControlsSelfTest() || DFMenusSelfTest();
-    if (argc==2 && strcmp(argv[1],"--launcher")==0) {
+    if (argc==2 && strcmp(argv[1],"--self-test")==0) return DFOverviewGestureSelfTest() || layoutSelfTest() || dockOpenSelfTest() || overviewSelfTest() || accessStatusSelfTest() || DFCalendarSelfTest() || DFControlsSelfTest() || DFMenusSelfTest();
+    if (argc==2 && (strcmp(argv[1],"--launcher")==0 || strcmp(argv[1],"--overview")==0)) {
         NSString *state=NSProcessInfo.processInfo.environment[@"XDG_STATE_HOME"] ?: [NSHomeDirectory() stringByAppendingPathComponent:@".local/state"];
         NSPoint pointer=NSEvent.mouseLocation;
-        return DFWorkspaceRequest([state stringByAppendingPathComponent:@"dotfiles/desktop"],@"launcher",0,NSMakeRect(pointer.x,pointer.y,1,1)) ? 0 : 1;
+        return DFWorkspaceRequest([state stringByAppendingPathComponent:@"dotfiles/desktop"],strcmp(argv[1],"--overview")==0 ? @"overview" : @"launcher",0,NSMakeRect(pointer.x,pointer.y,1,1)) ? 0 : 1;
     }
     if (argc==3 && strcmp(argv[1],"--app-menu")==0) { DFMenusNotify([NSString stringWithUTF8String:argv[2]]); return 0; }
     if (argc==2 && (strcmp(argv[1],"--controls")==0 || strcmp(argv[1],"--controls-hide")==0)) {
@@ -752,19 +800,25 @@ int main(int argc, const char **argv) { @autoreleasepool {
     if (observe) observe(mainConnection(),connectionEvent,1204,NULL);
     signal(SIGTERM, stop); signal(SIGINT, stop); signal(SIGHUP, stop);
     signal(SIGUSR1, appearanceSignal);
+    startOverviewGesture();
+    overviewTap=CGEventTapCreate(kCGSessionEventTap,kCGHeadInsertEventTap,kCGEventTapOptionDefault,
+        CGEventMaskBit(kCGEventKeyDown)|CGEventMaskBit(kCGEventKeyUp)|CGEventMaskBit(kCGEventScrollWheel),overviewKeyEvent,NULL);
+    if(overviewTap){overviewSource=CFMachPortCreateRunLoopSource(NULL,overviewTap,0);CFRunLoopAddSource(CFRunLoopGetMain(),overviewSource,kCFRunLoopCommonModes);}
     NSNotificationCenter *center = NSWorkspace.sharedWorkspace.notificationCenter;
     for (NSString *name in @[NSWorkspaceDidLaunchApplicationNotification,NSWorkspaceDidTerminateApplicationNotification,
                              NSWorkspaceDidHideApplicationNotification,NSWorkspaceDidUnhideApplicationNotification])
         [center addObserverForName:name object:nil queue:NSOperationQueue.mainQueue
             usingBlock:^(__unused NSNotification *note) { nextApps=0; }];
     for (NSString *name in @[NSWorkspaceActiveSpaceDidChangeNotification,
-                             NSWorkspaceDidWakeNotification,
+                             NSWorkspaceDidWakeNotification, NSWorkspaceWillSleepNotification,
                              NSWorkspaceDidActivateApplicationNotification]) {
         [center addObserverForName:name object:nil queue:NSOperationQueue.mainQueue
             usingBlock:^(NSNotification *note) {
                 nextHealth=0;DFCalendarHide();DFControlsHide();DFMenusHide();
+                if([note.name isEqual:NSWorkspaceDidWakeNotification])startOverviewGesture();
+                if([note.name isEqual:NSWorkspaceWillSleepNotification])DFOverviewGestureStop();
                 if ([note.name isEqual:NSWorkspaceActiveSpaceDidChangeNotification] || [note.name isEqual:NSWorkspaceDidWakeNotification]) {
-                    DFWorkspaceCancelAll(desktopDirectory);dockRevision++;dockPresented=NO;dockAway=0;dockEdgeSince=0;
+                    if([note.name isEqual:NSWorkspaceActiveSpaceDidChangeNotification])DFWorkspaceNotifySpaceChanged();else DFWorkspaceCancelAll(desktopDirectory);dockRevision++;dockPresented=NO;dockAway=0;dockEdgeSince=0;
                     previewCandidate=0;previewRequested=0;previewSince=0;
                     [dockPanel orderOut:nil];[dockAnimationTimer invalidate];dockAnimationTimer=nil;
                     setVisible(NO);
@@ -784,7 +838,7 @@ int main(int argc, const char **argv) { @autoreleasepool {
                     @"native_dock_guard": @(nativeDockTap && CGEventTapIsEnabled(nativeDockTap)),
                     @"native_dock_blocked": @(nativeDockBlocked),
                     @"network_events": @(networkSource!=NULL),
-                    @"mission_control": @(missionControl),
+                    @"mission_control": @(missionControl),@"overview_hotkey":@(overviewTap && CGEventTapIsEnabled(overviewTap)),@"overview_gesture":DFOverviewGestureStatus(),
                     @"calendar": DFCalendarStatus(),
                     @"controls": DFControlsStatus(),
                     @"app_menus": DFMenusStatus(),

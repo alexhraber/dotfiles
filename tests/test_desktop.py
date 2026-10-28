@@ -127,20 +127,18 @@ class DesktopTests(unittest.TestCase):
                 unittest.mock.call('open','x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility')])
             healthy.assert_not_called()
 
-    def test_wifi_hover_and_click_open_real_controls_without_a_setup_pane(self):
+    def test_wifi_failure_stays_in_custom_controls_without_native_popup(self):
         for clicked in (False, True):
             with self.subTest(clicked=clicked), tempfile.TemporaryDirectory() as temp, \
-                 patch.object(controls,'STATE',Path(temp)), patch.object(controls,'native_controls') as native, \
+                 patch.object(controls,'STATE',Path(temp)), patch.object(controls,'native_controls'), \
                  patch.object(controls,'native_calendar'), patch.object(controls,'native_item') as item, \
-                 patch.object(controls,'fresh_rows') as rows, patch.object(controls,'render_rows') as render, \
+                 patch.object(controls,'wifi_snapshot',side_effect=ValueError('unavailable')), \
                  patch.object(controls.time,'sleep'):
-                controls.store('wifi.cache.json',{'rows':[['Stale saved profile',None]]})
                 controls.show('wifi',clicked=clicked)
-                item.assert_called_once_with('Wi-Fi',ensure='open')
-                native.assert_called_once_with('hide')
-                rows.assert_not_called()
-                render.assert_not_called()
-                self.assertTrue(controls.read('active.json')['native_wifi'])
+                item.assert_not_called()
+                self.assertEqual(controls.read('native-panel.json')['name'], 'wifi')
+                self.assertIn('unavailable', controls.read('native-panel.json')['rows'][1]['text'])
+                self.assertFalse(controls.read('active.json').get('native_wifi', False))
 
     def test_leaving_before_wifi_dwell_cancels_the_open(self):
         with tempfile.TemporaryDirectory() as temp, patch.object(controls,'STATE',Path(temp)), \
@@ -691,11 +689,13 @@ class DesktopTests(unittest.TestCase):
                         'services': {'sketchybar': False, 'borders': True},
                         'preferences': [dict(desktop.PREFERENCES[0], original=None)]}
             with patch.object(desktop, 'unload') as unload, patch.object(desktop, 'run') as run, \
+                 patch.object(desktop.subprocess, 'run') as subprocess_run, \
                  patch.object(desktop, 'agent_path', return_value=agent), \
                  patch.object(desktop.macos_preferences, 'current', return_value=desktop.PREFERENCES[0]['installed']), \
                  patch.object(desktop.macos_preferences, 'write') as write:
                 desktop.restore_runtime(root, document)
             unload.assert_called_once()
+            subprocess_run.assert_called_once_with(['killall', 'WindowManager'], check=False)
             self.assertEqual(run.call_args_list[0].args, ('edge', '--restore'))
             write.assert_called_once_with(document['preferences'][0], None)
             stops = [call.args for call in run.call_args_list if call.args[:3] == ('brew', 'services', 'stop')]

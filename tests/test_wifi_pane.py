@@ -166,7 +166,7 @@ class WifiPaneTests(unittest.TestCase):
             self.assertEqual(controls.wifi_snapshot([101,'wifi']), {'snapshot':True})
             self.assertEqual(query.call_count, 3)
 
-    def test_missing_access_does_not_close_the_working_native_fallback(self):
+    def test_snapshot_permission_failure_never_closes_an_existing_native_picker(self):
         with tempfile.TemporaryDirectory() as temp, patch.object(controls, 'STATE', Path(temp)), \
              patch.object(controls, 'native_item') as item, \
              patch.object(wifi_pane, 'query', side_effect=wifi_pane.NativeError('access_unavailable')):

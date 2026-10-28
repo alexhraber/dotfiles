@@ -504,7 +504,7 @@ static void showControls(void) {
         controlPanel.opaque=NO; controlPanel.backgroundColor=NSColor.clearColor; controlPanel.hasShadow=YES; controlPanel.hidesOnDeactivate=NO;
         controlView=[[ControlView alloc] initWithFrame:NSMakeRect(0,0,width,200)]; controlPanel.contentView=controlView;
     }
-    controlPanel.level=displayCoverToken ? CGWindowLevelForKey(kCGPopUpMenuWindowLevelKey)+2 : CGWindowLevelForKey(kCGStatusWindowLevelKey)+2;
+    controlPanel.level=displayCoverToken ? NSScreenSaverWindowLevel+1 : CGWindowLevelForKey(kCGStatusWindowLevelKey)+2;
     NSPoint pointer=NSEvent.mouseLocation; NSScreen *screen=same ? controlPanel.screen : NSScreen.mainScreen;
     if (!screen) screen=NSScreen.mainScreen;
     if (!same) for (NSScreen *candidate in NSScreen.screens) if (NSPointInRect(pointer,candidate.frame)) screen=candidate;
@@ -550,7 +550,7 @@ void DFControlsInitialize(NSString *directory) {
                 if (![note.userInfo[@"request"] isEqual:controlDocument[@"request"]]) return;
                 displayCoverToken=cover;displayCoverUntil=NSProcessInfo.processInfo.systemUptime+12;
             } else if ([cover isEqual:displayCoverToken]) {displayCoverToken=nil;displayCoverUntil=0;}
-            controlPanel.level=displayCoverToken ? CGWindowLevelForKey(kCGPopUpMenuWindowLevelKey)+2 : CGWindowLevelForKey(kCGStatusWindowLevelKey)+2;
+            controlPanel.level=displayCoverToken ? NSScreenSaverWindowLevel+1 : CGWindowLevelForKey(kCGStatusWindowLevelKey)+2;
             return;
         }
         NSString *request=note.userInfo[@"request"];

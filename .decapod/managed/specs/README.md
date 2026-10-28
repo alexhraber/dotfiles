@@ -1,7 +1,7 @@
 # Project specifications
 
 These documents describe alexhraber/dotfiles, a personal macOS terminal,
-editor, Git, and Codex setup. The user-facing interface is documented in the
+editor, Git, Codex, and optional signed native desktop setup. The user-facing interface is documented in the
 root README.md; the implementation lives in scripts/manage.py and the tracked
 configuration files.
 
@@ -20,7 +20,7 @@ they are not evidence of runtime guarantees.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `3b6044e4a1455683da0d2691737a683757e83ca84f41599e27e6297ca9bd0c79`
-- Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (9 files)
+- Repository signal fingerprint: `139e78b550e2954228e7c43d3d0054e78e07e8b757868d53918a4bf8def6cb83`
+- Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (16 files), `tests/` (9 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->

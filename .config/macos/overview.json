@@ -1,0 +1,78 @@
+{
+  "com.apple.dock": {
+    "showMissionControlGestureEnabled": false,
+    "showAppExposeGestureEnabled": false,
+    "showDesktopGestureEnabled": false,
+    "enterMissionControlByTopWindowDrag": false
+  },
+  "com.apple.WindowManager": {
+    "GloballyEnabled": false,
+    "EnableStandardClickToShowDesktop": false
+  },
+  "com.apple.AppleMultitouchTrackpad": {
+    "TrackpadThreeFingerVertSwipeGesture": 0,
+    "TrackpadFourFingerVertSwipeGesture": 0
+  },
+  "com.apple.driver.AppleBluetoothMultitouch.trackpad": {
+    "TrackpadThreeFingerVertSwipeGesture": 0,
+    "TrackpadFourFingerVertSwipeGesture": 0
+  },
+  "com.apple.AppleMultitouchMouse": {
+    "MouseTwoFingerDoubleTapGesture": 0
+  },
+  "com.apple.driver.AppleBluetoothMultitouch.mouse": {
+    "MouseTwoFingerDoubleTapGesture": 0
+  },
+  "com.apple.symbolichotkeys": {
+    "AppleSymbolicHotKeys": {
+      "32": {
+        "enabled": false
+      },
+      "33": {
+        "enabled": false
+      },
+      "34": {
+        "enabled": false
+      },
+      "35": {
+        "enabled": false
+      },
+      "36": {
+        "enabled": false
+      },
+      "37": {
+        "enabled": false
+      },
+      "108": {
+        "enabled": false
+      },
+      "109": {
+        "enabled": false
+      },
+      "110": {
+        "enabled": false
+      },
+      "111": {
+        "enabled": false
+      },
+      "112": {
+        "enabled": false
+      },
+      "113": {
+        "enabled": false
+      },
+      "114": {
+        "enabled": false
+      },
+      "115": {
+        "enabled": false
+      },
+      "116": {
+        "enabled": false
+      },
+      "117": {
+        "enabled": false
+      }
+    }
+  }
+}

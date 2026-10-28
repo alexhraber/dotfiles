@@ -43,7 +43,7 @@ they do not grant access to host credentials or start machines at login.
 
 ## Desktop and inference boundaries
 
-Workspace previews keep actual AX references, window titles and low-resolution
+Dock previews keep actual AX references, window titles and low-resolution
 window snapshots only in RAM. Only visible cards are captured, one at a time;
 offscreen images are discarded, and dismissal generations reject late results.
 Window-only ScreenCaptureKit filters avoid unrelated screen content. Clicks
@@ -56,7 +56,7 @@ APIs or new permission requests. Read-only diagnostics emit counts and bundle
 identifiers, with optional transient captures; they omit private window titles,
 IDs, geometry and pixels. Hover never executes an app action. Launcher searches installed .app
 bundles only, bounded and deduplicated by bundle identity, with argv-free
-NSWorkspace launches. No document index, cloud lookup or global shortcut is added.
+NSWorkspace launches. The application launcher adds no document index, cloud lookup or global shortcut. Workspaces navigation is handled separately below.
 Private IPC stores only requests/counts/geometry and fixed error codes, using
 owner/mode/symlink/type/age checks. Screen capture and Accessibility remain OS
 permissions; no Location framework or authorization request is added. Generated
@@ -122,8 +122,7 @@ Item anchors are capped at eight finite bounded rectangles; hidden/offscreen
 sentinels and invalid sizes are rejected. Pinning accepts only a boolean and
 native dismissal writes a request-only 0600 file with exclusive no-follow
 creation and atomic replacement. A stale acknowledgement cannot dismiss a
-new request. Escape/outside-click handling is local to the panel loop, without
-a global event tap. This native build changes the ad-hoc identity, so prior
+new request. Control-pane Escape/outside-click handling is local to the panel loop. Workspaces navigation uses the scoped event tap described below. This native build changes the ad-hoc identity, so prior
 Calendar or Accessibility consent does not prove access for the new build.
 
 Desktop activation is explicit. The helper uses private SkyLight menu calls,
@@ -140,8 +139,7 @@ menu; SIGKILL cannot run cleanup, and the owned LaunchAgent restarts the helper.
 Undo recovers the menu before checking guarded preference restoration.
 
 The native-picker fallback does not link CoreLocation/CoreWLAN, request additional
-consent or contain a Location purpose string. The native picker displays its own
-real network names directly on hover; that fallback does not read or retain them. Saved
+consent or contain a Location purpose string. Wi-Fi discovery failures remain in the custom pane with an unavailable status; they do not open the native picker on hover. Saved
 profiles never stand in for availability. Bounded AX traversal uses only fixed
 status-item and wifi-header identifiers to open idempotently and close only the
 Wi-Fi panel. Passwords are neither read nor passed. SystemConfiguration emits a
@@ -160,7 +158,7 @@ substitute for nearby availability. Bounded traversal skips text/secure fields.
 Screen snapshots exist only in memory for native-popup concealment; production
 writes no screenshot or video. Fresh control descriptors and throughput samples
 remain in private local state, not Git. Literal descriptors are JSON/argv data,
-never shell commands; selected state is rechecked before an action. The macOS version/capture boundary falls back to Apple's Wi-Fi picker. Signing identities
+never shell commands; selected state is rechecked before an action. The macOS version/capture boundary reports unavailability inside the custom pane. Signing identities
 are selected from local Keychain or environment and never written to the repo.
 Normal registered-app Wi-Fi activation, real fullscreen hover, rates and native
 disclosure interaction are verified with both explicit OS approvals. Authentication
@@ -197,8 +195,8 @@ loads a model. Ollama remains manually started and is not enabled at login.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `3b6044e4a1455683da0d2691737a683757e83ca84f41599e27e6297ca9bd0c79`
-- Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (9 files)
+- Repository signal fingerprint: `139e78b550e2954228e7c43d3d0054e78e07e8b757868d53918a4bf8def6cb83`
+- Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (16 files), `tests/` (9 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
 
@@ -218,15 +216,27 @@ single-display support restriction is superseded; multi-screen behavior remains
 unverified until suitable hardware is connected. Literal failure codes contain no
 device names, addresses or native error text. Tests use fictional screen names.
 
-Display concealment uses a bounded, video-only ScreenCaptureKit stream filtered
-to omit native controls and Desktop Panels. Frame buffers stay in memory and
-are never recorded or uploaded; audio and cursor capture are disabled. The
-stream stops during transaction cleanup, with process lifetime bounded by the
-existing twelve-second alarm. Existing Screen Recording and Accessibility
-consent and signing identities are reused; Location is never requested. A
-transaction token and twelve-second expiry bound temporary window elevation.
+Display concealment captures bounded snapshots of all attached screens before
+opening native discovery. The custom controls remain above those covers. Image
+buffers stay in memory and are never recorded or uploaded; no live screen stream
+or audio capture is used. Covers are removed only after the owned native popup
+closes or an explicit pairing handoff begins. Existing Screen Recording and
+Accessibility consent and signing identities are reused; Location is never
+requested. A transaction token and twelve-second expiry bound temporary window
+elevation, and the short-lived adapter retains its existing timeout.
 
 The menu-watchdog deferral lease uses no credentials or network information.
 Private-file metadata, live-PID checking and a twelve-second maximum expiry
 bound its effect. Cleanup cannot remove a newer token. Native-menu suppression
 is reapplied by the next normal health check after the deferral expires.
+
+The Workspaces map reads native Space membership through dynamically resolved
+SkyLight functions, retaining identifiers and window titles only in memory.
+Overview images are bounded low-resolution window-only captures, one at a time,
+and released on dismissal. MultitouchSupport supplies exactly-three-contact
+centroids to the gesture recognizer; no touch coordinates, history or keyboard
+text is logged or persisted. The main event tap handles Control-Up, vertical
+three-finger scroll suppression, and navigation keys only for a fresh visible
+overview request. Key notifications must match that request ID. Transfer actions
+resolve an exact AX/CG window identity and validate the destination screen; no
+SIP change, root operation, cursor warp or process injection is used.
