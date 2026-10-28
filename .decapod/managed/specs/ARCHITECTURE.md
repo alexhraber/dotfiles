@@ -473,8 +473,8 @@ failed discovery cannot revive a pane after pointer exit.
 It opens the fixed Control Center module, uses the exposed show-details action
 for each module, reads only the three fixed appearance toggles, and reads actual
 Screen Mirroring device rows. Window-only AX searches avoid spending the bounded budget in menu-bar proxies.
-Native page transitions settle before details are requested; cleanup posts Escape
-only to ControlCenter after recognizing its owned pages and waits for closure. Actions
+Native page transitions settle before details are requested; cleanup toggles the
+original menu extra after recognizing its owned pages and waits for closure. Actions
 re-find exact kind/page/role/identifier/text/selected state before one AXPress.
 Device/settings actions retain the native pairing/content chooser as a handoff;
 no connection is attempted by discovery. Public CoreGraphics display enumeration
@@ -491,13 +491,11 @@ retains knob drawing, hit testing, keyboard and accessibility behavior.
 
 ### Responsive Display discovery
 
-Display transactions use `DisplayCover` in `scripts/wifi-pane.m`: a bounded
-ScreenCaptureKit stream renders through AVSampleBufferDisplayLayer rather than
-a frozen screenshot. It filters out ControlCenter, MenuBarAgent and all Desktop
-Panels windows, including the current process, to prevent visual feedback.
-Only the native menu item's display is covered; ordinary app content continues
-updating. A matching transaction temporarily raises the controls above the live
-cover. Token-matched cleanup restores normal stacking, with a twelve-second
+Display transactions use `DisplayCover` in `scripts/wifi-pane.m`: bounded
+ScreenCaptureKit snapshots of all attached screens conceal native discovery.
+Images are captured before native controls open, remain in memory, and are
+discarded during cleanup. A matching transaction temporarily raises the custom
+controls above the snapshot covers. Token-matched cleanup restores normal stacking, with a twelve-second
 expiry if the query exits abnormally. The separate Wi-Fi adapter is unchanged.
 
 Screen Mirroring is queried first. Successful native rows and connected metadata

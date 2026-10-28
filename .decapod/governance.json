@@ -152,6 +152,11 @@
       "id": "isolated-prerequisites-after-test-repair",
       "summary": "Record real isolated prerequisites after restoring test process isolation",
       "input_digest": "sha256:99dd19a7f026d7d1bf53c792817a08543ce9509b94f84925a51f1a4ffa71e452"
+    },
+    {
+      "id": "reconciled-final-publication-specs",
+      "summary": "Reconcile stale display architecture prose and rereview required specs against the repaired test and current implementation",
+      "input_digest": "sha256:5ea1f531ce6fb0eb15ed81dcd78e1bc33aa2e7ca85cab462be59238170fe4740"
     }
   ],
   "intents": {
@@ -239,22 +244,22 @@
         {
           "disposition": "updated",
           "path": ".decapod/managed/specs/ARCHITECTURE.md",
-          "reason": "Reconciled the final monitor map, request-bound fullscreen navigation, gesture subscription, scalar preference migration, covered macOS 27 discovery and custom Wi-Fi unavailable path; removed obsolete automatic-picker descriptions.",
-          "reviewed_code_fingerprint": "039e60107ac51996af39cc32e9a92e43e12cdd7c4787cdea4e3e61e368eca7b8",
-          "spec_material_hash": "0500341f5ee2c43296578110b4789c6874eb4954db9772d375290ab7c28e93bf"
+          "reason": "Reconciled the older responsive-display section with current DisplayCover snapshots and original-menu-extra cleanup. Reviewed exact window identity, connected-screen transfer guards, three-contact recognizer and isolated restore-test boundary against current implementation.",
+          "reviewed_code_fingerprint": "139e78b550e2954228e7c43d3d0054e78e07e8b757868d53918a4bf8def6cb83",
+          "spec_material_hash": "becdfad34a69924430d3729c1d9727c51d80d2eddad43989535e6580c371cbb6"
         },
         {
-          "disposition": "updated",
+          "disposition": "unchanged_with_reason",
           "path": ".decapod/managed/specs/INTERFACES.md",
-          "reason": "Verified final overview CLI, three-finger and keyboard inputs, request/status protocol, monitor transfer controls, per-leaf restoration, custom Wi-Fi failure behavior and explicit pairing handoff; removed obsolete fallback contract.",
-          "reviewed_code_fingerprint": "039e60107ac51996af39cc32e9a92e43e12cdd7c4787cdea4e3e61e368eca7b8",
+          "reason": "Re-reviewed against current code including the restore-test fix: overview requests and request-bound key navigation, nested preference leaves, display descriptors, bounded native discovery and explicit pairing handoff remain accurate; no public interface changed in the test repair.",
+          "reviewed_code_fingerprint": "139e78b550e2954228e7c43d3d0054e78e07e8b757868d53918a4bf8def6cb83",
           "spec_material_hash": "37ae515318901774d8d03e50c4d543007ac50135f9e54adc78d316afc6412225"
         },
         {
-          "disposition": "updated",
+          "disposition": "unchanged_with_reason",
           "path": ".decapod/managed/specs/SECURITY.md",
-          "reason": "Updated and checked private Space metadata, bounded in-memory previews, three-contact gesture data, scoped modal navigation keys, exact-window transfer guards, snapshot concealment and removal of automatic native Wi-Fi fallback; no credential or TCC changes.",
-          "reviewed_code_fingerprint": "039e60107ac51996af39cc32e9a92e43e12cdd7c4787cdea4e3e61e368eca7b8",
+          "reason": "Re-reviewed current test and implementation bytes: restore test now mocks the OS restart; overview titles/touch centroids and bounded window captures stay in memory; display covers use no persistent recording; private device state, local permissions and explicit pairing handoffs remain outside Git and no new consent path is introduced.",
+          "reviewed_code_fingerprint": "139e78b550e2954228e7c43d3d0054e78e07e8b757868d53918a4bf8def6cb83",
           "spec_material_hash": "163d2847a7febb165f4813834625a10a02044f43553ca37c91a49721bb02be88"
         }
       ],
@@ -266,7 +271,7 @@
       ],
       "unknowns": [],
       "unresolved_contradictions": [],
-      "updated_at": "1793169703Z"
+      "updated_at": "1793170860Z"
     },
     "trajectory": {
       "active_boundaries": [
