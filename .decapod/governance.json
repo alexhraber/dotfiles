@@ -134,6 +134,14 @@
       "proof_refs": [
         "/private/tmp/dotfiles-overview-container-validation.json"
       ]
+    },
+    {
+      "id": "isolate-restore-os-boundary",
+      "summary": "Mock and assert the WindowManager restart in the portable restore test; preserve the native and Linux check contract",
+      "input_digest": "sha256:6e720951c751a1f4cb2b18a4660cf46973f7cf716a2ea7a93158f71a4a4aa81d",
+      "proof_refs": [
+        "target/decapod-readiness-PSzax1/native-0.stderr"
+      ]
     }
   ],
   "intents": {
@@ -254,11 +262,15 @@
       "active_boundaries": [
         "User explicitly authorizes commit, merge and push after full validation; prior trajectory and failed readiness attempts remain in committed history"
       ],
-      "artifact_hash": "sha256:198f6412fbc593cbb4ceea1b33ac7dc93552b2d9fb232962afbfd3058a5cc8c6",
+      "artifact_hash": "sha256:8c70119414bc06ce7343d1f177c186ae02343a4769d2723a165e23323bf36451",
       "checks": [
         {
           "name": "decapod validate",
           "status": "passed"
+        },
+        {
+          "name": "isolated-portable-suite",
+          "status": "failed"
         }
       ],
       "current_phase": "validation",
@@ -282,10 +294,17 @@
             "intent_id": "intent:desktop-publication-final",
             "kind": "trajectory_step_recorded",
             "sequence": 4
+          },
+          {
+            "detail": "trajectory:desktop-publication-final",
+            "event_id": "event:5",
+            "intent_id": "intent:desktop-publication-final",
+            "kind": "trajectory_step_recorded",
+            "sequence": 5
           }
         ],
         "knowledge_candidates": [],
-        "next_sequence": 4,
+        "next_sequence": 5,
         "schema_version": "1.0.0",
         "trajectories": {
           "desktop-publication-final": {
@@ -310,6 +329,25 @@
                 ],
                 "sequence": 4,
                 "validation_findings": []
+              },
+              {
+                "action": "trajectory.record",
+                "custody_event_id": "event:5",
+                "observations": [
+                  "tests/test_desktop.py",
+                  "tests/test_desktop.py",
+                  "target/decapod-readiness-PSzax1/native-0.stderr"
+                ],
+                "proof_refs": [
+                  "isolated-portable-suite"
+                ],
+                "scope": [
+                  "Existing desktop implementation and exact-candidate publication"
+                ],
+                "sequence": 5,
+                "validation_findings": [
+                  "Isolated Linux validation exposed an unmocked WindowManager restart in the restore test; mock and assert that OS boundary before rerunning all checks."
+                ]
               }
             ]
           }
@@ -319,12 +357,16 @@
         "decapod validate"
       ],
       "evidence": [
+        "target/decapod-readiness-PSzax1/native-0.stderr",
         "validation epoch ve_3cfe964179a69939 completed with zero failures"
       ],
-      "inspected_files": [],
+      "inspected_files": [
+        "tests/test_desktop.py"
+      ],
       "intent_id": "intent:desktop-publication-final",
       "modified_files": [
-        ".decapod/governance.json"
+        ".decapod/governance.json",
+        "tests/test_desktop.py"
       ],
       "next_transitions": [
         "publish"
@@ -337,7 +379,9 @@
       "shortcut_risk_signals": [],
       "task_id": "bugs_01m5zzd94pydp909",
       "tool_calls": [],
-      "unresolved_assumptions": []
+      "unresolved_assumptions": [
+        "Isolated Linux validation exposed an unmocked WindowManager restart in the restore test; mock and assert that OS boundary before rerunning all checks."
+      ]
     },
     "validation": {
       "ci_prediction": {

@@ -689,11 +689,13 @@ class DesktopTests(unittest.TestCase):
                         'services': {'sketchybar': False, 'borders': True},
                         'preferences': [dict(desktop.PREFERENCES[0], original=None)]}
             with patch.object(desktop, 'unload') as unload, patch.object(desktop, 'run') as run, \
+                 patch.object(desktop.subprocess, 'run') as subprocess_run, \
                  patch.object(desktop, 'agent_path', return_value=agent), \
                  patch.object(desktop.macos_preferences, 'current', return_value=desktop.PREFERENCES[0]['installed']), \
                  patch.object(desktop.macos_preferences, 'write') as write:
                 desktop.restore_runtime(root, document)
             unload.assert_called_once()
+            subprocess_run.assert_called_once_with(['killall', 'WindowManager'], check=False)
             self.assertEqual(run.call_args_list[0].args, ('edge', '--restore'))
             write.assert_called_once_with(document['preferences'][0], None)
             stops = [call.args for call in run.call_args_list if call.args[:3] == ('brew', 'services', 'stop')]

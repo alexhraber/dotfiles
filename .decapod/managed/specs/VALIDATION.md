@@ -410,7 +410,7 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `039e60107ac51996af39cc32e9a92e43e12cdd7c4787cdea4e3e61e368eca7b8`
+- Repository signal fingerprint: `139e78b550e2954228e7c43d3d0054e78e07e8b757868d53918a4bf8def6cb83`
 - Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (16 files), `tests/` (9 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
@@ -431,8 +431,10 @@ they do not prove physical hover or exact multi-fullscreen-window selection.
 Native overview changes are checked by `scripts/check.py`: main/auxiliary native
 compilation with warnings as errors, overview identity/filter/layout self-tests,
 WindowManager overlay recognition, and portable nested-preference ownership
-checks. Current host run passes 141 tests. Live verification confirms custom
-overview presentation and empty-Desktop filtering with existing permissions;
+checks. Current host run passes 141 tests.
+The portable restore test mocks and asserts the WindowManager restart boundary,
+so it runs without macOS tools and never restarts a host process during checks.
+Live verification confirms custom overview presentation and empty-Desktop filtering with existing permissions;
 physical swipe, current/different-workspace selection and Escape are verified.
 Full Decapod readiness runs in the required isolated container; host checks
 remain separate evidence and do not establish publication readiness.
