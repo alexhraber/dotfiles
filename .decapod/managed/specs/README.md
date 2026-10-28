@@ -1,7 +1,7 @@
 # Project specifications
 
 These documents describe alexhraber/dotfiles, a personal macOS terminal,
-editor, Git, and Codex setup. The user-facing interface is documented in the
+editor, Git, Codex, and optional signed native desktop setup. The user-facing interface is documented in the
 root README.md; the implementation lives in scripts/manage.py and the tracked
 configuration files.
 

@@ -161,20 +161,18 @@ Keyboard and other system level changes update the slider and numeric reading
 without pointer reentry; closed panes add no device polling.
 
 Clicking a running app uses the macOS reopen request without requesting a new
-instance. Wi-Fi hover/click opens the native picker directly, without custom
-loading, permission rows or a second handoff action. An open request is
-idempotent; closing checks the fixed wifi-header before pressing the item.
-Bar conceal retains a native Wi-Fi pane; explicit cancel and opening another
-themed pane close it. Apple owns its normal dismissal, actual network names,
-list order and connection state. No Location request, scan daemon, network-name
-cache, password read or credential write is part of this route. A custom themed
-top-three list is still an unfulfilled request, not a guarantee of this interface.
-Sound/Bluetooth rows retain bounded detail/hint/selected metadata and their
-literal device argv actions. Network change events carry no network values and
-never replace a native Wi-Fi picker with a custom pane.
+instance. Wi-Fi hover/click uses the custom pane. Discovery failures render a
+concise unavailable status instead of opening the native picker. Legacy owned
+pickers are closed conditionally through the fixed wifi-header on pane switches.
+Bar conceal retains an explicit custom request; cancellation and pane switches
+close it. Native network names and order come from the covered adapter and stay
+in private runtime snapshots. No Location request, password read or credential
+write is added. Sound/Bluetooth rows retain bounded detail/hint/selected metadata
+and literal device argv actions; network change events carry no network values.
 
-The optional Desktop Panels route supersedes that fallback only when its own
-registered-app status reports supported, Accessibility and Screen Capture.
+The Desktop Panels adapter reads actual choices when its registered-app status
+reports supported, Accessibility and Screen Capture. Missing access produces the
+custom unavailable status without opening another system pane.
 `desktop panels-setup` installs it; `desktop panels-permissions` requests the two
 OS approvals without requesting Location.
 Permission requests are staged: Accessibility first, Screen Recording on a
@@ -307,7 +305,7 @@ clear a newer transaction. Visible refresh is twenty seconds, not four.
 `bar/native-ui-lease.json` is a 0600, request-token-owned record of PID and
 expiry. The native-menu watchdog accepts only an owned private regular file,
 a live PID, and expiry within twelve seconds. Display writes it atomically
-after its live cover is ready and clears only its own token during cleanup.
+after its screen covers are ready and clears only its own token during cleanup.
 Native workspace self-tests cover active ownership, stale end notifications,
 unsafe file mode, expiration, and a missing process.
 

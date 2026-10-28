@@ -212,24 +212,15 @@ createsNewApplicationInstance disabled, preserving normal reopen semantics.
 desktop.py registers the complete signed bundle through public LSRegisterURL
 before activation, including cached builds launched directly by launchd.
 controls.py reads Wi-Fi power through networksetup for the bar icon only.
-When auxiliary access is unavailable, show('wifi') uses the ordinary dwell/request
-cancellation, hides custom windows, then opens Apple's real Wi-Fi picker
-directly using native_item(ensure='open').
-A fixed wifi-header AX lookup makes opening idempotent and closing conditional:
-a different system panel is never toggled by Wi-Fi cleanup. No SSID is extracted,
-no saved-profile choices are synthesized and this fallback requests no scan.
-active.json marks native_wifi so level/network refresh cannot replace the picker.
-Bar conceal retains it while the pointer enters; another themed pane or explicit
-cancel closes only a visible Wi-Fi picker. Native outside-click/Escape behavior
-owns dismissal. The bounded status-item lookup supports MenuBarAgent hosting
-views on macOS 27 and the older ControlCenter menu bar.
-
-desktop-edge.m still emits the fixed desktop_network_changed event without
-reading or forwarding network values. Wi-Fi updates its radio icon only; Apple
-owns the visible native list. The desired themed top-three recency list remains
-unimplemented with Location off. Offscreen AX mirroring was rejected because
-compositor probes found visible frames. No change to the approved native binary
-or OS privacy settings is needed for this functional fallback.
+When auxiliary access is unavailable, show('wifi') uses ordinary dwell/request
+cancellation and renders a discovery-unavailable status in the custom pane.
+It never opens Apple's picker automatically.
+A fixed wifi-header AX lookup supports conditional cleanup of a legacy owned
+native picker; unrelated system panes are preserved. Current hover failures
+stay in the custom pane. The auxiliary adapter below provides actual native
+choices through covered bounded reads, with Location still off.
+desktop-edge.m emits the fixed desktop_network_changed event without forwarding
+network values. Refreshes preserve current request/visibility ownership.
 
 desktop.py's permissions route requests access from the installed native helper.
 It accepts approval only from healthy, fresh status bound to the current

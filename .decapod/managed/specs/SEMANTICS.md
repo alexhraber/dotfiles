@@ -61,3 +61,12 @@ Generated capability obligations: `persistent-state` is declared for this projec
 - Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (16 files), `tests/` (9 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
+
+The Workspaces view progresses from hidden to visible to an owned switch/move
+transaction, then hidden or a reported failure. Late capture/key responses are
+rejected after dismissal or request replacement. Empty ordinary Desktop cards
+are filtered without destroying native Spaces. Native settings are backed up
+per scalar leaf, including nested hotkey enabled flags; restoration preserves
+unrelated bindings and refuses a later edit to a managed leaf. Monitor moves
+revalidate window identity and screen presence; successful fullscreen moves
+reenter fullscreen, and failures remain explicit rather than claimed successful.

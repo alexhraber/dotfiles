@@ -106,6 +106,21 @@
       "id": "consolidated-prerequisite-receipt",
       "summary": "Checkpoint the genuine successful prerequisite receipt against the consolidated candidate; retain full isolated readiness as a separate required check",
       "input_digest": "sha256:eb466e4bba9eae383f50f16ec8f89eca2f7520ebbdba26542f29406387e60f8e"
+    },
+    {
+      "id": "current-spec-reviews",
+      "summary": "Reconcile current security, operations and semantics with the implemented overview and record all required content-bound specification reviews",
+      "input_digest": "sha256:d646b3dfe50573c559617fe58952f57a6e07948d292e144d56e995305907217c"
+    },
+    {
+      "id": "publication-spec-review",
+      "summary": "Reconcile interface, architecture, security, operations and semantics with implemented behavior and record the three required publication reviews",
+      "input_digest": "sha256:5eaef8a43126310cf570cf12ec25f57d5d6df8388af9601488abacea8a6d1cfd"
+    },
+    {
+      "id": "reviewed-final-specifications",
+      "summary": "Complete content-bound architecture/interface/security review and reconcile stale legacy fallback descriptions with the working custom desktop",
+      "input_digest": "sha256:bb9a3f74a28241d22a9dbb044aaa94a48dddb2eb35fe543b08496ff45d6397de"
     }
   ],
   "intents": {
@@ -189,6 +204,29 @@
         "decapod validate"
       ],
       "schema_version": "1.1.0",
+      "spec_reviews": [
+        {
+          "disposition": "updated",
+          "path": ".decapod/managed/specs/ARCHITECTURE.md",
+          "reason": "Reconciled the final monitor map, request-bound fullscreen navigation, gesture subscription, scalar preference migration, covered macOS 27 discovery and custom Wi-Fi unavailable path; removed obsolete automatic-picker descriptions.",
+          "reviewed_code_fingerprint": "039e60107ac51996af39cc32e9a92e43e12cdd7c4787cdea4e3e61e368eca7b8",
+          "spec_material_hash": "0500341f5ee2c43296578110b4789c6874eb4954db9772d375290ab7c28e93bf"
+        },
+        {
+          "disposition": "updated",
+          "path": ".decapod/managed/specs/INTERFACES.md",
+          "reason": "Verified final overview CLI, three-finger and keyboard inputs, request/status protocol, monitor transfer controls, per-leaf restoration, custom Wi-Fi failure behavior and explicit pairing handoff; removed obsolete fallback contract.",
+          "reviewed_code_fingerprint": "039e60107ac51996af39cc32e9a92e43e12cdd7c4787cdea4e3e61e368eca7b8",
+          "spec_material_hash": "37ae515318901774d8d03e50c4d543007ac50135f9e54adc78d316afc6412225"
+        },
+        {
+          "disposition": "updated",
+          "path": ".decapod/managed/specs/SECURITY.md",
+          "reason": "Updated and checked private Space metadata, bounded in-memory previews, three-contact gesture data, scoped modal navigation keys, exact-window transfer guards, snapshot concealment and removal of automatic native Wi-Fi fallback; no credential or TCC changes.",
+          "reviewed_code_fingerprint": "039e60107ac51996af39cc32e9a92e43e12cdd7c4787cdea4e3e61e368eca7b8",
+          "spec_material_hash": "163d2847a7febb165f4813834625a10a02044f43553ca37c91a49721bb02be88"
+        }
+      ],
       "state": "APPROVED",
       "stop_conditions": [],
       "title": "Custom monitor workspaces and native UI suppression",
@@ -197,7 +235,7 @@
       ],
       "unknowns": [],
       "unresolved_contradictions": [],
-      "updated_at": "1793150368Z"
+      "updated_at": "1793169703Z"
     },
     "trajectory": {
       "active_boundaries": [
