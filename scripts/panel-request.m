@@ -35,7 +35,7 @@ static BOOL writeRequest(NSString *directory,NSDictionary *request) {
     unlink(temporary.fileSystemRepresentation);return written;
 }
 BOOL DFWorkspaceRequest(NSString *directory, NSString *kind, pid_t pid, NSRect anchor) {
-    if (![@[@"dock",@"launcher"] containsObject:kind]) return NO;
+    if (![@[@"dock",@"launcher",@"overview"] containsObject:kind]) return NO;
     NSString *helper=[directory stringByAppendingPathComponent:@"wifi-pane"];
     if (![NSFileManager.defaultManager isExecutableFileAtPath:helper]) return NO;
     NSDictionary *request=@{@"request":NSUUID.UUID.UUIDString,@"kind":kind,@"pid":@(pid),
@@ -59,8 +59,11 @@ BOOL DFWorkspaceRequest(NSString *directory, NSString *kind, pid_t pid, NSRect a
 }
 void DFWorkspaceCancel(NSString *directory) {
     // A fresh launcher is explicit user intent and survives dock/bar autohide.
-    if ([readPrivate([directory stringByAppendingPathComponent:@"bar/workspace-request.json"])[@"kind"] isEqual:@"launcher"]) return;
+    if ([@[@"launcher",@"overview"] containsObject:readPrivate([directory stringByAppendingPathComponent:@"bar/workspace-request.json"])[@"kind"]]) return;
     DFWorkspaceCancelAll(directory);
+}
+void DFWorkspaceNotifySpaceChanged(void) {
+    [NSDistributedNotificationCenter.defaultCenter postNotificationName:workspaceNotification object:@"space-changed" userInfo:nil deliverImmediately:YES];
 }
 void DFWorkspaceCancelAll(NSString *directory) {
     if (!directory.length) return;

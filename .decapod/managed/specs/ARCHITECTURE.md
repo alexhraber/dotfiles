@@ -456,8 +456,8 @@ Generated capability obligations: `persistent-state` is declared for this projec
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `3b6044e4a1455683da0d2691737a683757e83ca84f41599e27e6297ca9bd0c79`
-- Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (9 files)
+- Repository signal fingerprint: `039e60107ac51996af39cc32e9a92e43e12cdd7c4787cdea4e3e61e368eca7b8`
+- Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (16 files), `tests/` (9 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
 
@@ -533,3 +533,36 @@ It therefore remains visible if the preceding UI process exited during a
 discovery request. Malformed token, PID or expiry types are ignored. Matching
 end notifications restore ordinary stacking for both original and replacement
 servers; expiry remains the fallback.
+
+The native overview replacement in `scripts/overview-panel.m` reads native Space
+identity metadata, filters empty ordinary desktops using actual window membership,
+and renders dismissible AppKit cards in the existing signed panels helper. Capture
+is window-only, bounded and memory-only. Selection revalidates target identity and
+follows existing horizontal Space shortcuts, checking progress after each step.
+A health-reported event tap handles Control-Up and request-bound navigation while the overview is visible. Native overview activation is
+disabled through typed reversible settings from `.config/macos/overview.json`;
+active-profile upgrades extend their baseline rather than replacing it. Native
+WindowManager and Dock remain system plumbing. AirPlay discovery uses all-screen
+snapshot covers, with custom controls above them, instead of live replay.
+
+`overview-gesture.m` reads three-contact centroids through dynamically loaded
+MultitouchSupport, recognizes dominant vertical movement once per touch sequence,
+and restarts subscriptions after wake. A session event tap owns Control-Up and
+suppresses three-contact scrolling without consuming normal two-finger scrolls.
+`overview-panel.m` groups WindowServer membership by monitor and native Space,
+uses in-process drag tokens for transfers, and resolves AX windows by exact CG
+window ID. Transfers validate a live target screen, temporarily exit fullscreen
+when necessary, move/clamp via AX, and restore fullscreen. Identity failures
+produce explicit custom-view status; no unrelated window is substituted.
+
+Display discovery traverses bounded AX roots for both ControlCenter and macOS
+27 MenuBarAgent. Closing toggles the original menu extra rather than sending
+Escape to a hosting proxy. If a popup opened by this transaction refuses normal
+dismissal, only its owning ControlCenter process is retired under the cover;
+this recovery is excluded from explicit pairing handoffs.
+
+Overview navigation keys are routed by the already-approved main helper only
+while a fresh visible overview status exists. Notifications carry the current
+request ID; the panels helper ignores stale-view navigation. This keeps Return,
+arrows and number selection usable over fullscreen apps without relying on
+AppKit successfully stealing key focus from the fullscreen application.

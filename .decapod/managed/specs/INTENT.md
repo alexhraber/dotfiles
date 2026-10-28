@@ -232,8 +232,8 @@ These declarations select authoring and proof obligations; they do not attest im
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `3b6044e4a1455683da0d2691737a683757e83ca84f41599e27e6297ca9bd0c79`
-- Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (9 files)
+- Repository signal fingerprint: `039e60107ac51996af39cc32e9a92e43e12cdd7c4787cdea4e3e61e368eca7b8`
+- Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (16 files), `tests/` (9 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
 
@@ -241,3 +241,16 @@ Display discovery must keep the rendered pane and desktop responsive, including
 while nearby screens load. A successful Screen Mirroring page must survive an
 independent appearance lookup failure. A failed scan must not claim there are
 no nearby screens.
+
+The enabled desktop profile replaces the native overview as well as menu and
+Dock presentation, starting the custom helper at graphical login. Native overview
+activation, Stage Manager and show-desktop interruptions are disabled reversibly,
+including this login session. Our overview omits empty Desktop cards while keeping
+the underlying native Spaces and fullscreen workflow. System pairing/consent
+remains an explicit native handoff. AirPlay discovery must not expose native UI.
+
+The overview is a monitor-oriented workspace map rather than an application
+switcher: it groups real windows/fullscreen apps by connected display, hides
+empty desktops, and offers explicit window transfers to a shared display. A
+three-finger upward swipe opens it; downward swipe dismisses. Horizontal native
+Space switching remains available. This extends the existing signed helpers.

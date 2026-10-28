@@ -267,8 +267,8 @@ can leave partial state; the backup manifest remains the recovery input.
 
 ## Codebase Attestation
 
-- Repository signal fingerprint: `3b6044e4a1455683da0d2691737a683757e83ca84f41599e27e6297ca9bd0c79`
-- Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (14 files), `tests/` (9 files)
+- Repository signal fingerprint: `039e60107ac51996af39cc32e9a92e43e12cdd7c4787cdea4e3e61e368eca7b8`
+- Significant implementation surfaces: `.config/` (6 files), `.github/` (1 files), `README.md/` (1 files), `scripts/` (16 files), `tests/` (9 files)
 - Refreshed from the current codebase by `decapod rpc --op specs.refresh`
 <!-- decapod:codebase-attestation:end -->
 
@@ -317,3 +317,19 @@ It therefore remains visible if the preceding UI process exited during a
 discovery request. Malformed token, PID or expiry types are ignored. Matching
 end notifications restore ordinary stacking for both original and replacement
 servers; expiry remains the fallback.
+
+`desktop overview` / `desktop-edge --overview`, Control-Up, and the custom bar
+monitor item open the replacement overview. Requests use kind `overview` in the
+existing private workspace protocol. Status exposes counts, switching state and
+fixed error codes, never Space IDs, window titles or pixels. Escape, Close, outside
+click, native Space changes and the two-minute fallback dismiss the panel. A
+switch in progress survives its own Space-change notifications, and stops on
+explicit dismissal. Preference manifests may include a `path` of dictionary keys;
+guarded restoration owns only that scalar leaf and preserves sibling bindings.
+
+Three-finger up/down also open/dismiss the Workspaces view. The main status
+includes gesture device/recognition counts, with no touch coordinates or history.
+Card drag/drop and Move to actions target connected monitor headers; Display
+controls opens the existing custom sharing pane. Exact AX identity and live
+screen presence are required for a move. Screen/Space changes dismiss ordinary
+overviews; in-progress owned switch/move transactions retain their bounded state.

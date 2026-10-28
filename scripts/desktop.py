@@ -26,6 +26,7 @@ PREFERENCES = [
     {'domain': 'NSGlobalDomain', 'key': '_HIHideMenuBar', 'installed': {'type': 'bool', 'value': True}},
     {'domain': 'com.apple.dock', 'key': 'autohide', 'installed': {'type': 'bool', 'value': True}},
     {'domain': 'com.apple.dock', 'key': 'autohide-delay', 'installed': {'type': 'float', 'value': 86400.0}},
+    *macos_preferences.desired(ROOT/'.config/macos/overview.json'),
 ]
 
 
@@ -88,7 +89,7 @@ def setup_panels(directory):
     identity = signing_identity(required=True)
     sources = ('wifi-pane.m', 'wifi-pane-info.plist', 'control-panel.m', 'control-panel.h',
                'calendar-panel.m', 'calendar-panel.h', 'app-menu.m', 'app-menu.h', 'panel-style.m', 'panel-style.h',
-               'workspace-panels.m', 'workspace-panels.h', 'panel-request.m', 'panel-request.h')
+               'workspace-panels.m', 'workspace-panels.h', 'overview-panel.m', 'overview-panel.h', 'panel-request.m', 'panel-request.h')
     digest = hashlib.sha256(identity.encode() + b''.join((ROOT/'scripts'/name).read_bytes() for name in sources)).hexdigest()[:16]
     bundle = directory / ('DesktopPanels-' + digest + '.app')
     target = bundle / 'Contents/MacOS/wifi-pane'
@@ -101,7 +102,7 @@ def setup_panels(directory):
                        '-mmacosx-version-min=14.0', '-DDF_CONTROL_NOTIFICATION="local.dotfiles.desktop.panels"']
             for framework in ('AppKit', 'QuartzCore', 'EventKit', 'ApplicationServices', 'ScreenCaptureKit', 'SystemConfiguration', 'AVFoundation', 'CoreMedia'):
                 command += ['-framework', framework]
-            run(*command, *(ROOT/'scripts'/name for name in ('wifi-pane.m', 'control-panel.m', 'calendar-panel.m', 'app-menu.m', 'panel-style.m', 'workspace-panels.m', 'panel-request.m')), '-o', executable)
+            run(*command, *(ROOT/'scripts'/name for name in ('wifi-pane.m', 'control-panel.m', 'calendar-panel.m', 'app-menu.m', 'panel-style.m', 'workspace-panels.m', 'overview-panel.m', 'panel-request.m')), '-o', executable)
             executable.chmod(0o700)
             shutil.copyfile(ROOT/'scripts/wifi-pane-info.plist', staged/'Contents/Info.plist')
             run('codesign', '--force', '--sign', identity, '--identifier', 'local.dotfiles.wifi-pane', staged)
@@ -137,7 +138,7 @@ def compile_tools(directory, names=None):
             identity = signing_identity()
             material += identity.encode()
             material += b''.join((ROOT / 'scripts' / extra).read_bytes()
-                                 for extra in ('calendar-panel.m', 'calendar-panel.h', 'control-panel.m', 'control-panel.h', 'app-menu.m', 'app-menu.h', 'panel-style.m', 'panel-style.h', 'panel-request.m', 'panel-request.h', 'desktop-edge-info.plist'))
+                                 for extra in ('calendar-panel.m', 'calendar-panel.h', 'control-panel.m', 'control-panel.h', 'app-menu.m', 'app-menu.h', 'panel-style.m', 'panel-style.h', 'panel-request.m', 'panel-request.h', 'desktop-edge-info.plist', 'overview-gesture.m', 'overview-gesture.h'))
         digest = hashlib.sha256(material).hexdigest()[:16]
         bundle = directory / ('DesktopControls-' + digest + '.app')
         target = bundle / 'Contents/MacOS/desktop-edge' if name == 'desktop-edge' else directory / (name + '-' + digest)
@@ -149,7 +150,7 @@ def compile_tools(directory, names=None):
                     staged = Path(temp) / 'Desktop Controls.app'
                     executable = staged / 'Contents/MacOS/desktop-edge'
                     executable.parent.mkdir(parents=True)
-                    run(*command, path, ROOT / 'scripts/calendar-panel.m', ROOT / 'scripts/control-panel.m', ROOT / 'scripts/app-menu.m', ROOT/'scripts/panel-style.m', ROOT/'scripts/panel-request.m', '-o', executable)
+                    run(*command, path, ROOT / 'scripts/calendar-panel.m', ROOT / 'scripts/control-panel.m', ROOT / 'scripts/app-menu.m', ROOT/'scripts/panel-style.m', ROOT/'scripts/panel-request.m', ROOT/'scripts/overview-gesture.m', '-o', executable)
                     executable.chmod(0o700)
                     shutil.copyfile(ROOT / 'scripts/desktop-edge-info.plist', staged / 'Contents/Info.plist')
                     run('codesign', '--force', '--sign', identity, '--identifier', BUNDLE_ID, staged)
@@ -293,6 +294,26 @@ def control_access_ready(directory):
         return False
 
 
+def extend_preferences(document):
+    existing = {(item['domain'], item['key'], tuple(item.get('path', []))) for item in document['preferences']}
+    additions = list(PREFERENCES)
+    for corner in ('tl', 'tr', 'bl', 'br'):
+        item = {'domain': 'com.apple.dock', 'key': 'wvous-' + corner + '-corner'}
+        if macos_preferences.current(item) in ({'type': 'int', 'value': n} for n in (2, 3, 4)):
+            additions.append(dict(item, installed={'type': 'int', 'value': 1}))
+    for item in additions:
+        identity = (item['domain'], item['key'], tuple(item.get('path', [])))
+        if identity not in existing:
+            document['preferences'].append(dict(item, original=macos_preferences.current(item)))
+            existing.add(identity)
+
+
+def reload_overview_preferences():
+    run('/System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings', '-u')
+    run('killall', 'Dock')
+    subprocess.run(['killall', 'WindowManager'], check=False)
+
+
 def validate_preferences(document):
     for item in document['preferences']:
         if macos_preferences.current(item) not in (item['installed'], item['original']):
@@ -310,10 +331,10 @@ def restore_runtime(directory, document):
     validate_preferences(document)
     changed = False
     for item in reversed(document['preferences']):
-        changed |= item['domain'] == 'com.apple.dock' and macos_preferences.current(item) != item['original']
+        changed |= macos_preferences.current(item) != item['original']
         macos_preferences.write(item, item['original'])
     if changed:
-        run('killall', 'Dock')
+        reload_overview_preferences()
     run(document['tools']['wallpaper'], 'restore', directory / 'wallpaper-original.archive')
     for service in reversed(SERVICES):
         if not document['services'][service.rsplit('/', 1)[1]]:
@@ -345,8 +366,8 @@ def main(action, theme=None, layout=None):
                 print(json.dumps(access))
                 return 0 if all(access.values()) else 1
             return 0
-        if action == 'launcher':
-            run(directory/'desktop-edge', '--launcher')
+        if action in ('launcher', 'overview'):
+            run(directory/'desktop-edge', '--' + action)
             return 0
         if action in ('panels-setup', 'panels-permissions'):
             target = setup_panels(directory)
@@ -461,20 +482,24 @@ def main(action, theme=None, layout=None):
         else:
             document['tools'] = tools
             save(manifest, document)
+        extend_preferences(document)
+        save(manifest, document)
         try:
             for service in SERVICES:
                 run('brew', 'services', 'start', service)
             run('sketchybar', '--reload')
             changed = False
             for item in document['preferences']:
-                changed |= item['domain'] == 'com.apple.dock' and macos_preferences.current(item) != item['installed']
+                changed |= macos_preferences.current(item) != item['installed']
                 macos_preferences.write(item, item['installed'])
             wallpaper, image = themed_wallpaper(directory, palette)
             run(wallpaper, 'set', image)
             write_agent(directory, tools)
             wait_healthy(directory)
             if changed:
-                run('killall', 'Dock')
+                reload_overview_preferences()
+                run('launchctl', 'kickstart', '-k', f'gui/{os.getuid()}/{LABEL}')
+                wait_healthy(directory)
         except Exception:
             restore_runtime(directory, document)
             raise

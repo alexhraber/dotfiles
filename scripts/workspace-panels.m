@@ -1,4 +1,5 @@
 #import "workspace-panels.h"
+#import "overview-panel.h"
 #import "control-panel.h"
 #import "panel-style.h"
 #import "panel-request.h"
@@ -451,7 +452,7 @@ static NSDictionary *readRequest(void) {
     NSData *data=safe ? [[[NSFileHandle alloc] initWithFileDescriptor:fd closeOnDealloc:YES] readDataToEndOfFile] : nil;if (!safe) close(fd);
     id request=data ? [NSJSONSerialization JSONObjectWithData:data options:0 error:nil] : nil;
     if (![request isKindOfClass:NSDictionary.class] || ![request[@"request"] isKindOfClass:NSString.class]
-        || ![request[@"request"] length] || [request[@"request"] length]>64 || ![@[@"dock",@"launcher"] containsObject:request[@"kind"]]
+        || ![request[@"request"] length] || [request[@"request"] length]>64 || ![@[@"dock",@"launcher",@"overview"] containsObject:request[@"kind"]]
         || ![request[@"updated"] isKindOfClass:NSNumber.class] || ![request[@"pid"] isKindOfClass:NSNumber.class]
         || ([request[@"kind"] isEqual:@"dock"] && ([request[@"pid"] longLongValue]<=0 || [request[@"pid"] longLongValue]>INT_MAX))
         || ![request[@"anchor"] isKindOfClass:NSArray.class] || [request[@"anchor"] count]!=4) return nil;
@@ -462,12 +463,14 @@ static NSDictionary *readRequest(void) {
 }
 void DFWorkspaceShow(void) {
     NSDictionary *request=readRequest();if (!request || [request[@"request"] isEqual:workspaceRequest]) return;
+    BOOL toggle=[request[@"kind"] isEqual:@"overview"] && [DFOverviewStatus()[@"visible"] boolValue];
     DFWorkspaceHide();DFControlsHide();workspaceRequest=request[@"request"];workspaceKind=request[@"kind"];
+    if(toggle)return;
     NSArray *a=request[@"anchor"];workspaceAnchor=NSMakeRect([a[0] doubleValue],[a[1] doubleValue],[a[2] doubleValue],[a[3] doubleValue]);
-    if ([workspaceKind isEqual:@"dock"]) showDock(request);else showLauncher();
+    if ([workspaceKind isEqual:@"dock"]) showDock(request);else if([workspaceKind isEqual:@"overview"]) DFOverviewShow();else showLauncher();
 }
 void DFWorkspaceHide(void) {
-    generation++;[workspacePanel orderOut:nil];windowEntries=nil;windowButtons=nil;windowScroll=nil;
+    DFOverviewHide();generation++;[workspacePanel orderOut:nil];windowEntries=nil;windowButtons=nil;windowScroll=nil;
     filteredApplications=nil;searchField=nil;capturePending=NO;awaySince=0;workspaceError=nil;
     scannedWindows=0;scannedRoles=0;scannedFrames=0;scannedShareable=0;scanError=kAXErrorSuccess;
     clearSurface();
@@ -477,13 +480,19 @@ void DFWorkspaceInitialize(NSString *directory) {
     windowQueue=dispatch_queue_create("local.dotfiles.desktop.window-list",DISPATCH_QUEUE_SERIAL);
     [NSDistributedNotificationCenter.defaultCenter addObserverForName:@"local.dotfiles.desktop.workspace" object:nil queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification *note) {
         if ([note.object isEqual:@"show"]) DFWorkspaceShow();else if ([note.object isEqual:@"hide"]) DFWorkspaceHide();
+        else if([note.object isEqual:@"space-changed"]) DFWorkspaceSpaceChanged();
+        else if([note.object isEqual:@"key"] && [note.userInfo[@"request"] isEqual:workspaceRequest] && [workspaceKind isEqual:@"overview"] && [note.userInfo[@"code"] isKindOfClass:NSNumber.class])DFOverviewKeyCode([note.userInfo[@"code"] unsignedShortValue]);
     }];
     mouseMonitor=[NSEvent addGlobalMonitorForEventsMatchingMask:NSEventMaskLeftMouseDown|NSEventMaskRightMouseDown handler:^(__unused NSEvent *event) {
         if (workspacePanel.visible && !NSPointInRect(NSEvent.mouseLocation,workspacePanel.frame) && !NSPointInRect(NSEvent.mouseLocation,workspaceAnchor)) DFWorkspaceHide();
     }];
     keyMonitor=[NSEvent addGlobalMonitorForEventsMatchingMask:NSEventMaskKeyDown handler:^(NSEvent *event) {if (event.keyCode==53) DFWorkspaceHide();}];
 }
+void DFWorkspaceSpaceChanged(void) {
+    if(![DFOverviewStatus()[@"switching"] boolValue])DFWorkspaceHide();
+}
 void DFWorkspaceTick(double now,NSPoint pointer) {
+    DFOverviewTick();
     if (!workspacePanel.visible) return;
     if ([workspaceKind isEqual:@"dock"]) {
         NSRect bridge=NSUnionRect(workspaceAnchor,NSMakeRect(workspaceAnchor.origin.x,NSMinY(workspacePanel.frame)-12,workspaceAnchor.size.width,24));
@@ -524,6 +533,7 @@ void DFWorkspaceRefreshAppearance(void) {
     if (searchField) searchField.placeholderAttributedString=[[NSAttributedString alloc] initWithString:@"Search applications" attributes:@{NSForegroundColorAttributeName:DFPanelColor(0x94a3b8)}];
 }
 NSDictionary *DFWorkspaceStatus(void) {
+    if([workspaceKind isEqual:@"overview"]){NSMutableDictionary *status=DFOverviewStatus().mutableCopy;status[@"kind"]=@"overview";status[@"request"]=workspaceRequest ?: @"";return status;}
     NSUInteger thumbnails=0;for (NSDictionary *entry in windowEntries) if (entry[@"image"]) thumbnails++;
     NSRect f=workspacePanel.frame;
     return @{@"visible":@(workspacePanel.visible),@"kind":workspaceKind ?: @"",@"request":workspaceRequest ?: @"",
@@ -582,6 +592,7 @@ NSDictionary *DFWorkspaceDiagnostics(BOOL capture) {
     return @{@"accessibility":@(AXIsProcessTrusted()),@"screen_capture":@(CGPreflightScreenCaptureAccess()),@"shareable_ready":@(content!=nil),@"apps":apps};
 }
 int DFWorkspaceSelfTest(void) {
+    if(DFOverviewSelfTest())return 1;
     if (!sameRect(CGRectMake(0,0,300,200),CGRectMake(1,2,301,201)) || sameRect(CGRectMake(0,0,300,200),CGRectMake(10,0,300,200))) return 1;
     for (int x=-1200;x<=1200;x+=1200) {
         NSRect screen=NSMakeRect(x,0,1440,900),anchor=NSMakeRect(x+40,0,60,80);

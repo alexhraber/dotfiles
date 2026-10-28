@@ -135,96 +135,18 @@ static void endCover(void) {
     for (NSPanel *cover in covers) {[cover orderOut:nil];cover.contentView=nil;}
     covers=nil;
 }
-// Display discovery conceals only Apple's UI with a live, filtered stream.
-// Our controls are excluded from capture and remain above it, fully interactive.
-@interface DisplayCover : NSObject <SCStreamOutput>
-@property SCStream *stream;
-@property NSPanel *panel;
-@property AVSampleBufferDisplayLayer *video;
-@property BOOL active;
-@property NSUInteger frames;
-@end
-@implementation DisplayCover
-- (void)stream:(__unused SCStream *)stream didOutputSampleBuffer:(CMSampleBufferRef)sample ofType:(SCStreamOutputType)type {
-    if (type!=SCStreamOutputTypeScreen || !CMSampleBufferIsValid(sample)) return;
-    CFArrayRef attachments=CMSampleBufferGetSampleAttachmentsArray(sample,false);
-    if (!attachments || !CFArrayGetCount(attachments)) return;
-    NSDictionary *info=(__bridge NSDictionary *)CFArrayGetValueAtIndex(attachments,0);
-    if ([info[SCStreamFrameInfoStatus] integerValue]!=SCFrameStatusComplete) return;
-    // The renderer is thread-safe; no per-frame main-queue backlog or image copy.
-    @synchronized(self) {
-        if (!self.active || !self.video.sampleBufferRenderer.readyForMoreMediaData) return;
-        CFDictionarySetValue((CFMutableDictionaryRef)CFArrayGetValueAtIndex(attachments,0),kCMSampleAttachmentKey_DisplayImmediately,kCFBooleanTrue);
-        [self.video.sampleBufferRenderer enqueueSampleBuffer:sample];self.frames++;
-    }
-}
-@end
-static DisplayCover *displayCover;
-static NSUInteger lastDisplayFrames;
+// Cover every screen before native discovery. Live replay can leak newly
+// spawned system surfaces; a short, bounded snapshot transaction cannot.
 static NSString *displayCoverID;
 static void displayCoverNotify(NSString *action,NSString *request) {
-    if (!displayCoverID) return;
-    NSMutableDictionary *info=@{@"cover":displayCoverID}.mutableCopy;
-    if (request) info[@"request"]=request;
+    if(!displayCoverID)return;
+    NSMutableDictionary *info=[@{@"cover":displayCoverID} mutableCopy];if(request)info[@"request"]=request;
     [NSDistributedNotificationCenter.defaultCenter postNotificationName:@"local.dotfiles.desktop.panels" object:action userInfo:info deliverImmediately:YES];
 }
-static void endDisplayCover(void) {
-    DisplayCover *output=displayCover;
-    @synchronized(output) {output.active=NO;lastDisplayFrames=output.frames;}
-    [output.panel orderOut:nil];
-    [output.stream stopCaptureWithCompletionHandler:^(__unused NSError *error) {}];
-    [output.stream removeStreamOutput:output type:SCStreamOutputTypeScreen error:nil];
-    displayCoverNotify(@"display-cover-end",nil);
-    displayCover=nil;displayCoverID=nil;
-}
-static BOOL beginDisplayCover(id item,NSString *request) {
-    if (@available(macOS 14.4,*)) {
-    if (!CGPreflightScreenCaptureAccess()) return NO;
-    __block SCShareableContent *content=nil;__block BOOL finished=NO;
-    [SCShareableContent getShareableContentExcludingDesktopWindows:NO onScreenWindowsOnly:YES completionHandler:^(SCShareableContent *value,__unused NSError *error) {
-        dispatch_async(dispatch_get_main_queue(),^{content=value;finished=YES;});
-    }];
-    CFAbsoluteTime deadline=CFAbsoluteTimeGetCurrent()+2;
-    while(!finished && CFAbsoluteTimeGetCurrent()<deadline)pump(.005);
-    if(!content)return NO;
-    CGPoint position=CGPointZero;id raw=value(item,kAXPositionAttribute);
-    if(raw && CFGetTypeID((__bridge CFTypeRef)raw)==AXValueGetTypeID())AXValueGetValue((__bridge AXValueRef)raw,kAXValueCGPointType,&position);
-    SCDisplay *display=nil;
-    for(SCDisplay *candidate in content.displays)if(CGRectContainsPoint(candidate.frame,position)){display=candidate;break;}
-    if(!display)for(SCDisplay *candidate in content.displays)if(candidate.displayID==CGMainDisplayID()){display=candidate;break;}
-    NSScreen *screen=nil;for(NSScreen *candidate in NSScreen.screens)if([candidate.deviceDescription[@"NSScreenNumber"] unsignedIntValue]==display.displayID){screen=candidate;break;}
-    if(!screen || !display)return NO;
-    NSMutableArray *excluded=NSMutableArray.new;
-    pid_t nativePID=0,menuPID=0;
-    id native=application(@"ControlCenter"),menu=application(@"MenuBarAgent");
-    if(native)AXUIElementGetPid((__bridge AXUIElementRef)native,&nativePID);
-    if(menu)AXUIElementGetPid((__bridge AXUIElementRef)menu,&menuPID);
-    for(SCRunningApplication *app in content.applications)
-        if(app.processID==getpid() || app.processID==nativePID || app.processID==menuPID || [app.bundleIdentifier isEqual:@"local.dotfiles.wifi-pane"])[excluded addObject:app];
-    SCContentFilter *filter=[[SCContentFilter alloc] initWithDisplay:display excludingApplications:excluded exceptingWindows:@[]];
-    SCStreamConfiguration *config=SCStreamConfiguration.new;
-    config.width=screen.frame.size.width*screen.backingScaleFactor;config.height=screen.frame.size.height*screen.backingScaleFactor;
-    config.minimumFrameInterval=CMTimeMake(1,60);config.queueDepth=3;config.showsCursor=NO;config.capturesAudio=NO;
-    DisplayCover *output=DisplayCover.new;output.active=YES;
-    output.panel=[[NSPanel alloc] initWithContentRect:screen.frame styleMask:NSWindowStyleMaskBorderless|NSWindowStyleMaskNonactivatingPanel backing:NSBackingStoreBuffered defer:NO];
-    output.panel.level=CGWindowLevelForKey(kCGPopUpMenuWindowLevelKey)+1;
-    DFPanelPrepare(output.panel);
-    output.panel.collectionBehavior=NSWindowCollectionBehaviorCanJoinAllSpaces|NSWindowCollectionBehaviorFullScreenAuxiliary|NSWindowCollectionBehaviorCanJoinAllApplications|NSWindowCollectionBehaviorTransient|NSWindowCollectionBehaviorIgnoresCycle;
-    output.panel.ignoresMouseEvents=YES;output.panel.hasShadow=NO;output.panel.opaque=YES;
-    output.video=AVSampleBufferDisplayLayer.new;output.video.frame=NSMakeRect(0,0,screen.frame.size.width,screen.frame.size.height);output.video.videoGravity=AVLayerVideoGravityResize;
-    NSView *view=[[NSView alloc] initWithFrame:output.video.frame];view.wantsLayer=YES;view.layer=output.video;output.panel.contentView=view;
-    output.stream=[[SCStream alloc] initWithFilter:filter configuration:config delegate:nil];
-    if(![output.stream addStreamOutput:output type:SCStreamOutputTypeScreen sampleHandlerQueue:dispatch_queue_create("local.dotfiles.display.frames",DISPATCH_QUEUE_SERIAL) error:nil])return NO;
-    displayCover=output;displayCoverID=NSUUID.UUID.UUIDString;
-    __block BOOL started=NO;__block BOOL failed=NO;
-    [output.stream startCaptureWithCompletionHandler:^(NSError *error){dispatch_async(dispatch_get_main_queue(),^{started=YES;failed=error!=nil;});}];
-    deadline=CFAbsoluteTimeGetCurrent()+2;
-    while((!started || !output.video.readyForDisplay) && !failed && CFAbsoluteTimeGetCurrent()<deadline)pump(.005);
-    if(!started || failed || !output.video.readyForDisplay){endDisplayCover();return NO;}
-    displayCoverNotify(@"display-cover-begin",request);pump(.04);
-    [output.panel orderFrontRegardless];[CATransaction flush];return YES;
-    }
-    return NO;
+static void endDisplayCover(void) {endCover();displayCoverNotify(@"display-cover-end",nil);displayCoverID=nil;}
+static BOOL beginDisplayCover(__unused id item,NSString *request) {
+    if(!beginCover())return NO;
+    displayCoverID=NSUUID.UUID.UUIDString;displayCoverNotify(@"display-cover-begin",request);pump(.05);return YES;
 }
 static NSString *stateDirectory(void) {
     NSString *root=NSProcessInfo.processInfo.environment[@"XDG_STATE_HOME"];
@@ -264,7 +186,7 @@ static int runPanelUI(BOOL workspaceMode) {
     __block double nextAppearance=0;
     __block NSData *lastAppearance=nil;
     __block BOOL lastControlVisible=NO,lastWorkspaceVisible=NO;
-    id observer=[NSWorkspace.sharedWorkspace.notificationCenter addObserverForName:NSWorkspaceActiveSpaceDidChangeNotification object:nil queue:NSOperationQueue.mainQueue usingBlock:^(__unused NSNotification *note){DFControlsSpaceChanged();DFWorkspaceHide();}];
+    id observer=[NSWorkspace.sharedWorkspace.notificationCenter addObserverForName:NSWorkspaceActiveSpaceDidChangeNotification object:nil queue:NSOperationQueue.mainQueue usingBlock:^(__unused NSNotification *note){DFControlsSpaceChanged();DFWorkspaceSpaceChanged();}];
     NSTimer *timer=[NSTimer scheduledTimerWithTimeInterval:.033 repeats:YES block:^(__unused NSTimer *timer) {
         double now=NSProcessInfo.processInfo.systemUptime;
         if (now>=nextAppearance) {
@@ -446,11 +368,22 @@ static id displayFindAction(id root,NSDictionary *selector,NSUInteger depth,NSUI
     for(id child in children(root)){id found=displayFindAction(child,selector,depth+1,budget);if(found)return found;}
     return nil;
 }
+static id displayFind(id root,NSString *identifier,NSUInteger depth,NSUInteger *budget) {
+    if(!*budget || depth>16)return nil;--*budget;
+    if([value(root,kAXIdentifierAttribute) isEqual:identifier])return root;
+    for(id child in children(root)){id found=displayFind(child,identifier,depth+1,budget);if(found)return found;}return nil;
+}
+static NSArray *displayRoots(id center) {
+    NSMutableArray *roots=NSMutableArray.new;
+    for(id host in @[center ?: NSNull.null,application(@"MenuBarAgent") ?: NSNull.null]){
+        if(host==NSNull.null)continue;
+        [roots addObjectsFromArray:windows(host)];[roots addObject:host];
+    }
+    return roots;
+}
 static id displayWindowItem(id center,NSString *identifier) {
-    // Never spend the bounded traversal budget in Control Center's unrelated
-    // menu-bar proxy before reaching the actual popup window.
-    for(id window in windows(center)){NSUInteger budget=256;id found=find(window,identifier,nil,0,&budget);if(found)return found;}
-    return nil;
+    // macOS 27 can host popup content in MenuBarAgent rather than ControlCenter.
+    for(id root in displayRoots(center)){NSUInteger budget=512;id found=displayFind(root,identifier,0,&budget);if(found)return found;}return nil;
 }
 static NSString *displayFailureStage;
 static id displayPage(id center,id item,NSString *page) {
@@ -474,29 +407,29 @@ static id displayPage(id center,id item,NSString *page) {
     pump(.2);displayFailureStage=@"detail_lookup";
     NSString *marker=[page isEqual:@"display"] ? @"display-setting-dark-mode" : @"screen-mirroring-preferences";
     deadline=CFAbsoluteTimeGetCurrent()+2;
-    do {for(id window in windows(center)){NSUInteger budget=256;if(find(window,marker,nil,0,&budget))return window;}pump(.01);}while(CFAbsoluteTimeGetCurrent()<deadline);
+    do {for(id window in displayRoots(center)){NSUInteger budget=512;if(displayFind(window,marker,0,&budget))return window;}pump(.01);}while(CFAbsoluteTimeGetCurrent()<deadline);
     return nil;
 }
-static void displayClose(id center,__unused id item) {
-    // Dismiss only known pages opened by this transaction. Escape targets the
-    // ControlCenter process directly, never the foreground application.
-    for(NSUInteger attempt=0;attempt<3 && windows(center).count;attempt++){
-        BOOL owned=NO;
-        for(NSString *marker in @[@"controlcenter-display",@"display-setting-dark-mode",@"screen-mirroring-header"]){
-            if(displayWindowItem(center,marker)){owned=YES;break;}
-        }
-        if(!owned)break;
-        pid_t target=0;AXUIElementGetPid((__bridge AXUIElementRef)center,&target);
-        if(!target)break;
-        CGEventRef down=CGEventCreateKeyboardEvent(NULL,53,true),up=CGEventCreateKeyboardEvent(NULL,53,false);
-        if(down && up){CGEventPostToPid(target,down);CGEventPostToPid(target,up);}
-        if(down)CFRelease(down);if(up)CFRelease(up);
-        pump(.25);
-    }
+static void displayClose(id center,id item) {
     pid_t owner=0;AXUIElementGetPid((__bridge AXUIElementRef)center,&owner);
+    if(!owner || !nativeVisible(owner))return;
+    // AX content can live in MenuBarAgent while ControlCenter owns the popup.
+    // Toggle its original menu extra; sending Escape to the AX proxy misses it.
+    AXUIElementPerformAction((__bridge AXUIElementRef)item,kAXPressAction);
     CFAbsoluteTime deadline=CFAbsoluteTimeGetCurrent()+1;
-    while(owner && nativeVisible(owner) && CFAbsoluteTimeGetCurrent()<deadline)pump(.01);
-    pump(.08);
+    while(nativeVisible(owner) && CFAbsoluteTimeGetCurrent()<deadline)pump(.02);
+    if(nativeVisible(owner)){
+        CGEventRef down=CGEventCreateKeyboardEvent(NULL,53,true),up=CGEventCreateKeyboardEvent(NULL,53,false);
+        if(down && up){CGEventPostToPid(owner,down);CGEventPostToPid(owner,up);}if(down)CFRelease(down);if(up)CFRelease(up);
+        deadline=CFAbsoluteTimeGetCurrent()+.4;while(nativeVisible(owner) && CFAbsoluteTimeGetCurrent()<deadline)pump(.02);
+    }
+    // This transaction refused a pre-existing popup and never takes this path
+    // during a pairing handoff. Retire only a popup we opened if dismissal fails.
+    if(nativeVisible(owner)){
+        NSRunningApplication *app=[NSRunningApplication runningApplicationWithProcessIdentifier:owner];[app terminate];
+        deadline=CFAbsoluteTimeGetCurrent()+.3;while(nativeVisible(owner) && CFAbsoluteTimeGetCurrent()<deadline)pump(.01);
+        if(nativeVisible(owner))[app forceTerminate];pump(.05);
+    }
 }
 static NSArray *connectedDisplays(void) {
     CGDirectDisplayID ids[32];uint32_t count=0;NSMutableArray *result=NSMutableArray.new;
@@ -517,7 +450,8 @@ static NSDictionary *displayQuery(NSDictionary *selector) {
     NSDictionary *access=accessStatus();
     if(![access[@"accessibility"] boolValue]||![access[@"screen_capture"] boolValue]||![access[@"supported"] boolValue])return @{@"error":@"access_unavailable"};
     id center=application(@"ControlCenter"),menu=application(@"MenuBarAgent");
-    if(!center || windows(center).count)return @{@"error":@"native_panel_busy"};
+    pid_t centerPID=0;if(center)AXUIElementGetPid((__bridge AXUIElementRef)center,&centerPID);
+    if(!center || nativeVisible(centerPID))return @{@"error":@"native_panel_busy"};
     NSUInteger budget=256;id item=find(menu,@"com.apple.menuextra.controlcenter",nil,0,&budget);
     if(!item){budget=256;item=find(center,@"com.apple.menuextra.controlcenter",nil,0,&budget);}
     NSString *bar=[stateDirectory() stringByAppendingPathComponent:@"bar"];
@@ -572,7 +506,7 @@ static NSDictionary *displayQuery(NSDictionary *selector) {
         DFControlsNotifyRequest(@"resume",inputRequest);pump(.03);DFNativeUIEnd(stateDirectory(),displayCoverID);endDisplayCover();
     }
     if(failure && !rows.count)return @{@"error":failure,@"stage":displayFailureStage ?: @"action"};
-    return @{@"sampled":@(NSDate.date.timeIntervalSince1970),@"rows":rows,@"screens":connectedDisplays(),@"handoff":@(handoff),@"partial":@((BOOL)(failure!=nil)),@"presentation_frames":@(lastDisplayFrames)};
+    return @{@"sampled":@(NSDate.date.timeIntervalSince1970),@"rows":rows,@"screens":connectedDisplays(),@"handoff":@(handoff),@"partial":@((BOOL)(failure!=nil)),@"presentation_frames":@0};
 }
 
 int main(int argc,const char **argv) { @autoreleasepool {

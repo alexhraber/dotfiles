@@ -14,6 +14,10 @@ esac
 if [[ ${SENDER:-} == mouse.entered || ${SENDER:-} == mouse.clicked ]]; then
   menu_index=''
   case "${NAME:-}" in
+    desktops)
+      [[ ${SENDER:-} == mouse.entered ]] && exit 0
+      exec "${XDG_STATE_HOME:-$HOME/.local/state}/dotfiles/desktop/desktop-edge" --overview
+      ;;
     apple)
       [[ ${SENDER:-} == mouse.entered ]] && exit 0
       menu_index=0

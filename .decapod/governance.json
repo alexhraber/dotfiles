@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "baseline": {
-    "accepted_commit": "9dd54edf89b38800c22fe818a4fba01a8767ceb0",
+    "accepted_commit": "22923d99d8bf38aef960a5a6d255785e89e7d2d0",
     "unresolved": {
       "claim:actual-app-menus": {
         "falsifier": "Native action guards permit stale/disabled/submenu leaf execution, or the UI claims menus work without Accessibility.",
@@ -19,47 +19,92 @@
       "trajectory:3582c4c8e25b539d": "Actual Screen Mirroring AX controls and nearby device state require live inspection before adapter design.",
       "trajectory:3ad8d199dbb39b49": "Accessibility approval for the exact current app remains unavailable; no menu click parity claim.",
       "trajectory:410a4e6f97d21362": "Location remains off by explicit final user instruction. Custom SSID enumeration is redacted by macOS; Apple native picker shows actual names and owns joining. No native UI names are scraped. Prior failed branch-binding readiness remains preserved in committed journal.",
+      "trajectory:6291aadc4db98d89": "Public all-Space capture lookup currently runs only after at least one AX card exists; diagnostic counts will establish actual off-Space omission.",
       "trajectory:69fd57cf486c104c": "Existing Reduce Motion show/hide support is retained; dock polish targets stationary redraw suppression and precise settlement rather than adding visual chrome.",
+      "trajectory:9924c63a7c5f5fbf": "Public capture can refuse dormant windows; no thumbnail or exact selection across multiple inaccessible fullscreen windows is promised when the OS omits it.",
       "trajectory:ad62d461499896f7": "The prior calendar build returned seven synced calendars and eight events after OS consent; current ad-hoc build requires fresh permission. Provider identity has not been asserted from counts. Accessibility remains pending, so actual app-menu execution is not yet proven.",
       "trajectory:b82ef2dafb2d2320": "Existing Mission Control detector expects Dock layer 18; this OS uses layer 20. Normal native entry/exit works, but helper flag/bar suppression there remains a documented compatibility gap outside this privacy/menu/dock-reopen correction.",
       "trajectory:b9df8a236176c502": "Final helper is healthy with Calendar access3. App pane consent fallback and click-only/toggle/persistence verified; actual AX submenu contents and commands remain unverified until user grants Accessibility to the exact current app. No sleep/power/lock/logout/force-quit action executed."
     }
   },
   "change": {
-    "id": "change_01M5B7AJD3J1P1XSTGN2ZS0HVR",
-    "base_commit": "9dd54edf89b38800c22fe818a4fba01a8767ceb0",
+    "id": "change_01M5ZZESNE657J3WAS43NM2M42",
+    "base_commit": "22923d99d8bf38aef960a5a6d255785e89e7d2d0",
     "target_base": "origin/main"
   },
   "claims": {
-    "cross-space-cards": {
-      "statement": "Dock enumeration retains inactive fullscreen apps even when their AX list is empty.",
-      "falsifier": "A real titled normal-layer shareable window is omitted solely because AX lists no windows.",
+    "airplay-concealment": {
+      "statement": "AirPlay discovery conceals native UI on attached screens and closes its owned native popup before removing covers; explicit pairing remains a handoff",
+      "falsifier": "A discovery pass leaves its Control Center popup visible or opens native UI without a prepared cover",
       "status": "supported",
       "proof_refs": [
-        "scripts/workspace-panels.m:mergeWindows; native self-tests; private dock-previews-native.json"
+        "Live complete snapshot: one screen, five controls/choices, partial=false; post-query WindowServer inventory has no Control Center popup"
       ]
+    },
+    "custom-overview": {
+      "statement": "The replacement lists existing native Spaces, dismisses on Escape/outside click, and switches only after revalidating the selected Space; native activation is disabled with typed backups",
+      "falsifier": "Native overview opens from disabled shortcuts, Space selection targets a stale index, or a dismissed scan reopens the UI",
+      "status": "open"
     }
   },
   "checkpoints": [
     {
-      "id": "dock-preview-implementation",
-      "summary": "Merge the all-Space capture inventory with AX cards; preserve native selection, private diagnostics and truthful unavailable thumbnails.",
-      "input_digest": "sha256:a13de366668c935e10ce7fbaa6a7384d32c08915861be975adaa0cbfff8d77b9",
+      "id": "monitor-map-and-gesture",
+      "summary": "Extend existing overview to monitor sections and exact-window move actions; add three-finger gesture with physical user confirmation and live Return/Escape proof",
+      "input_digest": "sha256:3dcf3bb03c6ae37f4ab8b9861e05ec38b2de3af85700c44fa1f60cd05496d68d",
       "proof_refs": [
-        "Native signed helper self-tests and private dock-previews-native.json; 59-source reconciliation review"
+        "/private/tmp/dotfiles-overview-host-check.log",
+        "/private/tmp/dotfiles-overview-live-check.swift"
       ]
     },
     {
-      "id": "dock-preview-prerequisites",
-      "summary": "Preserve successful project prerequisite receipt and remove only the incidental CI scaffold; required source workflow is unchanged.",
-      "input_digest": "sha256:dd4558a04e153bf1505cd83f1812653fce0d1b456ed9d1094e543120726c7bb6",
+      "id": "final-desktop-proof-candidate",
+      "summary": "Finalize macOS 27 AirPlay host lookup and owned-popup cleanup, keyboard focus, complete native/portable host checks, and reviewed full proof inventory",
+      "input_digest": "sha256:b704f14ef836af3108cd299af85c0a75a8bfac47266af14a12efe68550e0d99e",
       "proof_refs": [
-        "project-check scope=project_prerequisites status=ok; private dock-project-check.json"
+        "/private/tmp/dotfiles-overview-host-check.log"
+      ]
+    },
+    {
+      "id": "final-validated-source",
+      "summary": "Final source: complete AirPlay discovery and owned-popup cleanup, explicit keyboard focus, all native and 141 portable host checks; retain second-monitor hardware limitation",
+      "input_digest": "sha256:0bc7e68eb777f011724a327f848307e2e6e97ae9e5ae32d3f27b2d6d70ef2637",
+      "proof_refs": [
+        "/private/tmp/dotfiles-overview-host-check.log"
+      ]
+    },
+    {
+      "id": "final-keyboard-routing",
+      "summary": "Finalize request-bound fullscreen overview navigation; full host suite passes and native AirPlay discovery closes its popup cleanly",
+      "input_digest": "sha256:50f0bc8cdc113b1a218c11d03b7ea57d9e5131f2f6ad9d8cecc4c606a77fb608",
+      "proof_refs": [
+        "/private/tmp/dotfiles-overview-host-check.log"
+      ]
+    },
+    {
+      "id": "final-publication-candidate",
+      "summary": "Complete custom monitor workspace map with physical gesture confirmation, live round-trip Space selection, full AirPlay discovery cleanup and passing native/141-test host suite",
+      "input_digest": "sha256:b24b5e7bb7cccd2c888c47fc4e413f522e42b41546100d55b9c55ddf81625241",
+      "proof_refs": [
+        "/private/tmp/dotfiles-overview-host-check.log"
+      ]
+    },
+    {
+      "id": "task-bound-branch",
+      "summary": "Repair the generated branch task binding using the exact claimed task ID; preserve the isolated readiness failure and complete proof requirements",
+      "input_digest": "sha256:f94c809b8b233894facdb86a39b92226283ea3bb96efecc94ea462ae17d9ee19"
+    },
+    {
+      "id": "consolidated-desktop-candidate",
+      "summary": "Consolidate all tested desktop changes into one publication commit after the earlier missed checkpoint; preserve prior commits on archive/desktop-overview-c65c0ff and retain genuine prerequisite validation receipt",
+      "input_digest": "sha256:eb466e4bba9eae383f50f16ec8f89eca2f7520ebbdba26542f29406387e60f8e",
+      "proof_refs": [
+        "/private/tmp/dotfiles-overview-host-check.log"
       ]
     }
   ],
   "intents": {
-    "intent:change_01M5B7AJD3J1P1XSTGN2ZS0HVR": {
+    "intent:change_01M5ZZESNE657J3WAS43NM2M42": {
       "acceptance_criteria": [],
       "assumptions": [],
       "boundaries": [
@@ -69,52 +114,52 @@
         "root"
       ],
       "created_sequence": 1,
-      "id": "intent:change_01M5B7AJD3J1P1XSTGN2ZS0HVR",
+      "id": "intent:change_01M5ZZESNE657J3WAS43NM2M42",
       "out_of_scope": [],
       "proof_requirements": [],
-      "raw_intent": "Restore dock previews for windows on other fullscreen Spaces",
-      "refined_intent": "Restore dock previews for windows on other fullscreen Spaces",
+      "raw_intent": "Diagnose broken macOS desktop overview and replace the failing desktop interface with a reversible solution",
+      "refined_intent": "Diagnose broken macOS desktop overview and replace the failing desktop interface with a reversible solution",
       "status": "refined",
       "updated_sequence": 3
     }
   },
   "epochs": {
-    "ve_846e8413490fab27": {
-      "constitution_hash": "sha256:b063c612f27e8d1fb18a4caabc87a16cc769d408d88d30446455e36014f1843c",
-      "constitution_version": "embedded-docs@0.119.1",
-      "epoch_id": "ve_846e8413490fab27",
-      "evaluator_identity": "decapod-validate@0.119.1",
-      "evaluator_set_hash": "sha256:d01110bf6e129b6d67cd8462424f4dd7d11d9655c4bf6a6a13c43dbdeede984e",
-      "generated_specs_fingerprint": "837093469c85ccdba333944902c6aa8e681d40ae59f20463b61c2330162bbc84",
-      "generated_specs_manifest_hash": "sha256:75fa613427b45824becf126982c9a821aa83442a4b85acd65a50bc000c1d4db8",
+    "ve_87b2479f30cfe035": {
+      "constitution_hash": "sha256:d0d35311c770034b4c489ff4bf61aa0a6babe53de67c0964b7225ddb7a5e86cf",
+      "constitution_version": "embedded-docs@0.121.1",
+      "epoch_id": "ve_87b2479f30cfe035",
+      "evaluator_identity": "decapod-validate@0.121.1",
+      "evaluator_set_hash": "sha256:19d875a8e3263f58cae1df07f9a44331409226a08d418dd2db9222a85cf2a656",
+      "generated_specs_fingerprint": "039e60107ac51996af39cc32e9a92e43e12cdd7c4787cdea4e3e61e368eca7b8",
+      "generated_specs_manifest_hash": "sha256:73c3a46c1e3aa1be5d97b2de324268f85a62e787ddf1e0d1534975ade6464356",
       "material_hashes": {
-        "constitution:core/DECAPOD": "sha256:b063c612f27e8d1fb18a4caabc87a16cc769d408d88d30446455e36014f1843c",
-        "generated_spec:.decapod/managed/specs/ARCHITECTURE.md": "sha256:59d1e223c265275c9eb63dd79e0388035f90cc4f71b24af6c5fc44912fc7de1e",
-        "generated_spec:.decapod/managed/specs/INTENT.md": "sha256:72b6c15b465a80b3ffa5c97af611a105f5c5a33104132f4a98944f2bcf366e09",
-        "generated_spec:.decapod/managed/specs/INTERFACES.md": "sha256:a58861d2d57d70a1bb8f670c48e6d312ad062dccc6802c21e04ae53b57ecd560",
-        "generated_spec:.decapod/managed/specs/OPERATIONS.md": "sha256:a5266cf9d3fa930709766c3728b40009a2615d33543f8ba1b6566c6bbf9721ad",
-        "generated_spec:.decapod/managed/specs/README.md": "sha256:953d1308afe4552812ded61b6dd856df23cdbb36e40e156ababa666a8d771ab0",
-        "generated_spec:.decapod/managed/specs/SECURITY.md": "sha256:0e6e1ec6707a3a74fd450dfc8dea1a84ddf2f61cbb53661f0382b139cfec95a7",
-        "generated_spec:.decapod/managed/specs/SEMANTICS.md": "sha256:13accba09cf287c1a5a69e62db182c95c71dc650128b868fa65d78edb5f6b1bb",
-        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:d07355f96eaf4f983f3809b6ead7aeb9b5883c411d5a674d360f049524483723",
-        "generated_specs_fingerprint": "837093469c85ccdba333944902c6aa8e681d40ae59f20463b61c2330162bbc84",
-        "generated_specs_manifest": "sha256:75fa613427b45824becf126982c9a821aa83442a4b85acd65a50bc000c1d4db8",
-        "governance_context": "sha256:bcf9c8f0793c9c9ff9b1f5f0f4aa5cde426222a60fe18da91f1ed8e373e5eb56",
-        "governance_material:.decapod/managed/Dockerfile.decapod": "sha256:c9bdb828ff9c9a9e00392d153434ecaaf4d507081ff453c5e838375c55c650e4",
-        "governance_material:AGENTS.md": "sha256:4992240c6825701513873da48567d3560685511ff73827527f9152f7a25cd7e7",
-        "governance_material:CLAUDE.md": "sha256:add7e4f64ef63dd84c69fd8088da14b0c34afe3bf9144c0f59c304c23e1279d5",
-        "governance_material:CODEX.md": "sha256:2ff1b008789940fc7871a84a6a38ac3eec5bef53f1444a4d387f0e4e04d0b975",
-        "governance_material:GEMINI.md": "sha256:e2c5b404af6f21562159eb3be9fd955d9d9a52f1b6ac90fb24fcdf2b170f29fb",
-        "governance_section:claims": "sha256:ef0585b24ca7347623064636530c5d71ce341fdb7ee8c17d48ce3442456557c1",
-        "governance_section:plan": "sha256:e8ee377c251615b9482a4706eaaedb351615f2a828034774167255155a7a2ccc",
-        "living_spec_material:.decapod/managed/specs/ARCHITECTURE.md": "sha256:66370172a35aa6d4f75d5b6d156cd03f7624d86893a0b353758facb181ee78a7",
-        "living_spec_material:.decapod/managed/specs/INTENT.md": "sha256:1e38aeabb726165eb221f6123ed11cc0723940d69d2ac90bc65d279677a4a0a0",
-        "living_spec_material:.decapod/managed/specs/INTERFACES.md": "sha256:86c245f069573065bb7d4761cba67454d86f08892e78fd29d05b5390aead3e61",
+        "constitution:core/DECAPOD": "sha256:d0d35311c770034b4c489ff4bf61aa0a6babe53de67c0964b7225ddb7a5e86cf",
+        "generated_spec:.decapod/managed/specs/ARCHITECTURE.md": "sha256:cb84d0b4310cd255ff014c65fab580ca65833a2b076f4dd09b2d7a9c02b10a4b",
+        "generated_spec:.decapod/managed/specs/INTENT.md": "sha256:8f474b4a0ae8cd021a2425a5ce405936a2b25a405cae4ae6d37b16f3b43795ab",
+        "generated_spec:.decapod/managed/specs/INTERFACES.md": "sha256:50e26b3ded10d085d3a39464e2ba2506a5a05fde8757c01bd0825961e749961a",
+        "generated_spec:.decapod/managed/specs/OPERATIONS.md": "sha256:ef16f68379a15c775472e3feef9282b4f8a564ec38b36a3e4a8cb945b1a1e5ef",
+        "generated_spec:.decapod/managed/specs/README.md": "sha256:3c1b4b85833222cd8f4c87b7c6c13c4a16c9e3250bf29181f2b95b6131765ed0",
+        "generated_spec:.decapod/managed/specs/SECURITY.md": "sha256:07fcf64584b696f109c5a2d6228242c24f4b7751cfe79eca09bad32689cd68d0",
+        "generated_spec:.decapod/managed/specs/SEMANTICS.md": "sha256:a1d9017573ef7dc17e279fc7087db90919f905515be4d7c2127c3bfe5ceb46d4",
+        "generated_spec:.decapod/managed/specs/VALIDATION.md": "sha256:a65f601c5882bfeaa33bce3d46c4b4fe3f2376c53c593749803609e1bdb630c6",
+        "generated_specs_fingerprint": "039e60107ac51996af39cc32e9a92e43e12cdd7c4787cdea4e3e61e368eca7b8",
+        "generated_specs_manifest": "sha256:73c3a46c1e3aa1be5d97b2de324268f85a62e787ddf1e0d1534975ade6464356",
+        "governance_context": "sha256:4e7c962c6b97b344faa171d7043fbb5bbf9a14a49e9a2277038399c92410d44c",
+        "governance_material:.decapod/managed/Dockerfile.decapod": "sha256:a315941419d0a2a28bae50d716e1c2f9ea95f10826ceb0c53c5f1be3e34040a2",
+        "governance_material:AGENTS.md": "sha256:a827284dd27ce5e6613bbe6153280892679874cc5288a3eb34faccdb9506bfdf",
+        "governance_material:CLAUDE.md": "sha256:84418d5796cf9e7f60b53b2b86b6bdb63764b6506542b2d998430dfc9b6dd28a",
+        "governance_material:CODEX.md": "sha256:7619fb705a3ec74a4f6db854194a3883e9d8694582f33e93de1d9e75ff687d61",
+        "governance_material:GEMINI.md": "sha256:4ebada4c9637493a11e93ddf260550d68ec96a29afae675ad0ffcd86453086a6",
+        "governance_section:claims": "sha256:cd2661f51ee5146335025786eab6acc951d243158b6cd5dddb5e0ceda9a4c2ca",
+        "governance_section:plan": "sha256:9ddfc11628629d4d1303a968d87bb59f85e5052c73b655d676f2857418b947d8",
+        "living_spec_material:.decapod/managed/specs/ARCHITECTURE.md": "sha256:b937d9d5f498267a33703e7da402e865f4710eb69b48b446a5fefc7d2c319d1b",
+        "living_spec_material:.decapod/managed/specs/INTENT.md": "sha256:a8530e4700ea2886e0f9cd605c0b60376c928bcb8ecfdf2b690763a2f1fa121b",
+        "living_spec_material:.decapod/managed/specs/INTERFACES.md": "sha256:bea098905e33cf2bc2538dc511125ee030ed35e889cfbc4ce4e8a2441ebeff2e",
         "living_spec_material:.decapod/managed/specs/OPERATIONS.md": "sha256:2d5bf1b27e1946342964bb176f8e21accb3b7d55b66aa5757bbcb7fa266ba376",
         "living_spec_material:.decapod/managed/specs/README.md": "sha256:0988c85d6c05f02d52684c9aafae50e95fd5d5576739d3e9d995af682697fd99",
         "living_spec_material:.decapod/managed/specs/SECURITY.md": "sha256:28e8e59d47a57f752b925f34e88fc12904fe162f60f9c3dee6e8e2d5f10dcdc1",
         "living_spec_material:.decapod/managed/specs/SEMANTICS.md": "sha256:92bbe2607c6f8f94191a95ea977d9785f3472a0fae2835520dd86eae73130d5c",
-        "living_spec_material:.decapod/managed/specs/VALIDATION.md": "sha256:99d788f94d3a37a2863956a4d19a8f53ca28a0b94bfafe8ae54f722d8669d264",
+        "living_spec_material:.decapod/managed/specs/VALIDATION.md": "sha256:4f222937adebbd7a074d4ae64c562608b4ef93d8d34ecb9e864b6603ed835783",
         "proof_rubric": "sha256:99e8ef25629da391e9b479db9fff52b82f340224f7a69d8a88d2992ae8e90466",
         "validation_profile": "sha256:37a8eec1ce19687d132fe29051dca629d164e2c4958ba141d5f4133a33f0688f"
       },
@@ -133,55 +178,32 @@
       },
       "deferred_questions": [],
       "human_questions": [],
-      "intent": "Restore dock window discovery and thumbnails across native fullscreen Spaces. Hover must enumerate other apps without activating them or moving the pointer/Space; keep titles and pixels in memory and preserve stable permissions.",
+      "intent": "Deliver and publish the existing-helper Workspaces map, three-finger up/down gestures, hidden empty Desktops, monitor window transfers, and concealed AirPlay discovery. Native replacement UI disabled at login and in this session. User authorizes commit, merge and push after validation.",
       "phases": [],
       "proof_hooks": [
-        "Native read-only off-Space window enumeration and identity matching",
-        "Native workspace regression self-tests and repository validation"
+        "decapod validate"
       ],
       "schema_version": "1.1.0",
-      "spec_reviews": [
-        {
-          "disposition": "updated",
-          "path": ".decapod/managed/specs/ARCHITECTURE.md",
-          "reason": "Updated the public all-Space inventory union, visibility-based matching, bounded capture-only click fallback and honest capture failure behavior; implementation reviewed in workspace-panels.m.",
-          "reviewed_code_fingerprint": "3b6044e4a1455683da0d2691737a683757e83ca84f41599e27e6297ca9bd0c79",
-          "spec_material_hash": "66370172a35aa6d4f75d5b6d156cd03f7624d86893a0b353758facb181ee78a7"
-        },
-        {
-          "disposition": "updated",
-          "path": ".decapod/managed/specs/INTERFACES.md",
-          "reason": "Updated inactive-Space cards, counts-only diagnostic mode and capture-ID revalidation. Existing private IPC and stable permission contracts retained.",
-          "reviewed_code_fingerprint": "3b6044e4a1455683da0d2691737a683757e83ca84f41599e27e6297ca9bd0c79",
-          "spec_material_hash": "86c245f069573065bb7d4761cba67454d86f08892e78fd29d05b5390aead3e61"
-        },
-        {
-          "disposition": "updated",
-          "path": ".decapod/managed/specs/SECURITY.md",
-          "reason": "Reviewed all-Space window metadata/pixels as session memory only. Existing Screen Recording and AX consent reused; no new private APIs, Location, on-hover activation or persisted titles/IDs/images.",
-          "reviewed_code_fingerprint": "3b6044e4a1455683da0d2691737a683757e83ca84f41599e27e6297ca9bd0c79",
-          "spec_material_hash": "28e8e59d47a57f752b925f34e88fc12904fe162f60f9c3dee6e8e2d5f10dcdc1"
-        }
-      ],
       "state": "APPROVED",
       "stop_conditions": [],
-      "title": "Restore dock previews for windows on other fullscreen Spaces",
+      "title": "Custom monitor workspaces and native UI suppression",
       "todo_ids": [
-        "bugs_01m5b7724gyaxha1"
+        "bugs_01m5zzd94pydp909"
       ],
       "unknowns": [],
       "unresolved_contradictions": [],
-      "updated_at": "1792453916Z"
+      "updated_at": "1793150368Z"
     },
     "trajectory": {
       "active_boundaries": [
         "Current claimed task and isolated work branch",
-        "No synthetic pointer movement, app activation or Space switching in live verification; existing permissions retained."
+        "Local only; no publish; user explicitly chose own overview and disabled native triggers",
+        "User explicitly authorizes commit, merge and push after validation; this supersedes earlier local-only publication boundary"
       ],
-      "artifact_hash": "sha256:96dac8fc95c13a8a46d1063a14fdfb93ff555509a0b316b38cea18cd0f9fe0bf",
+      "artifact_hash": "sha256:f0621c0e07f5457dcf9b3717d331b965966a705566cb33f32c607e78b0ed52c1",
       "checks": [
         {
-          "name": "AX-only-card-enumeration",
+          "name": "airplay-discovery",
           "status": "passed"
         },
         {
@@ -189,20 +211,28 @@
           "status": "passed"
         },
         {
-          "name": "live-other-Space-discovery",
+          "name": "host-suite",
           "status": "passed"
         },
         {
-          "name": "live-other-Space-thumbnail-capture",
-          "status": "partial"
+          "name": "isolated-validation",
+          "status": "failed"
         },
         {
-          "name": "native-cross-Space-regressions",
+          "name": "live-overview",
           "status": "passed"
         },
         {
-          "name": "physical-hover",
-          "status": "unavailable"
+          "name": "live-switch-and-return",
+          "status": "passed"
+        },
+        {
+          "name": "overlay-recovery",
+          "status": "passed"
+        },
+        {
+          "name": "physical-gesture",
+          "status": "passed"
         }
       ],
       "current_phase": "validation",
@@ -210,106 +240,151 @@
         "events": [
           {
             "event_id": "event:2",
-            "intent_id": "intent:change_01M5B7AJD3J1P1XSTGN2ZS0HVR",
+            "intent_id": "intent:change_01M5ZZESNE657J3WAS43NM2M42",
             "kind": "created",
             "sequence": 2
           },
           {
             "event_id": "event:3",
-            "intent_id": "intent:change_01M5B7AJD3J1P1XSTGN2ZS0HVR",
+            "intent_id": "intent:change_01M5ZZESNE657J3WAS43NM2M42",
             "kind": "refined",
             "sequence": 3
           },
           {
-            "detail": "trajectory:branch_01M5B7AJFPFGX8XVCBP7BGH1MH",
+            "detail": "trajectory:branch_01M5ZZESWC3YQ3WSD0BY705Z89",
             "event_id": "event:4",
-            "intent_id": "intent:change_01M5B7AJD3J1P1XSTGN2ZS0HVR",
+            "intent_id": "intent:change_01M5ZZESNE657J3WAS43NM2M42",
             "kind": "trajectory_step_recorded",
             "sequence": 4
           },
           {
-            "detail": "trajectory:branch_01M5B7AJFPFGX8XVCBP7BGH1MH",
+            "detail": "trajectory:branch_01M5ZZESWC3YQ3WSD0BY705Z89",
             "event_id": "event:5",
-            "intent_id": "intent:change_01M5B7AJD3J1P1XSTGN2ZS0HVR",
+            "intent_id": "intent:change_01M5ZZESNE657J3WAS43NM2M42",
             "kind": "trajectory_step_recorded",
             "sequence": 5
           },
           {
-            "detail": "trajectory:branch_01M5B7AJFPFGX8XVCBP7BGH1MH",
+            "detail": "trajectory:branch_01M5ZZESWC3YQ3WSD0BY705Z89",
             "event_id": "event:6",
-            "intent_id": "intent:change_01M5B7AJD3J1P1XSTGN2ZS0HVR",
+            "intent_id": "intent:change_01M5ZZESNE657J3WAS43NM2M42",
             "kind": "trajectory_step_recorded",
             "sequence": 6
+          },
+          {
+            "detail": "trajectory:branch_01M5ZZESWC3YQ3WSD0BY705Z89",
+            "event_id": "event:7",
+            "intent_id": "intent:change_01M5ZZESNE657J3WAS43NM2M42",
+            "kind": "trajectory_step_recorded",
+            "sequence": 7
+          },
+          {
+            "detail": "trajectory:branch_01M5ZZESWC3YQ3WSD0BY705Z89",
+            "event_id": "event:8",
+            "intent_id": "intent:change_01M5ZZESNE657J3WAS43NM2M42",
+            "kind": "trajectory_step_recorded",
+            "sequence": 8
           }
         ],
         "knowledge_candidates": [],
-        "next_sequence": 6,
+        "next_sequence": 8,
         "schema_version": "1.0.0",
         "trajectories": {
-          "branch_01M5B7AJFPFGX8XVCBP7BGH1MH": {
+          "branch_01M5ZZESWC3YQ3WSD0BY705Z89": {
             "evidence_only": true,
-            "id": "branch_01M5B7AJFPFGX8XVCBP7BGH1MH",
-            "intent_id": "intent:change_01M5B7AJD3J1P1XSTGN2ZS0HVR",
+            "id": "branch_01M5ZZESWC3YQ3WSD0BY705Z89",
+            "intent_id": "intent:change_01M5ZZESNE657J3WAS43NM2M42",
             "steps": [
               {
                 "action": "trajectory.record",
                 "custody_event_id": "event:4",
                 "observations": [
-                  "scripts/workspace-panels.m",
-                  "scripts/desktop-edge.m",
-                  "scripts/wifi-pane.m"
+                  "Restarted WindowManager; screenshot and WindowServer inventory confirm strip removed; Dock restart did not clear it"
                 ],
                 "proof_refs": [
-                  "AX-only-card-enumeration"
+                  "overlay-recovery"
                 ],
                 "scope": [
                   "root"
                 ],
                 "sequence": 4,
                 "validation_findings": [
-                  "Public all-Space capture lookup currently runs only after at least one AX card exists; diagnostic counts will establish actual off-Space omission."
-                ]
-              },
-              {
-                "action": "verification",
-                "custody_event_id": "event:5",
-                "observations": [
-                  "scripts/workspace-panels.m",
-                  "scripts/workspace-panels.h",
-                  "scripts/wifi-pane.m",
-                  "Signed installed helper discovers inactive Chrome and Notes with AX=0 and cards=1; Notes and inactive Ghostty snapshot successfully. Chrome sometimes fails capture with SCStreamErrorInternalError -3811 and retains its card. Private native report outside Git.",
-                  "All 59 reconciled source hashes match current files; accepted workflow and command digest unchanged; no temporary probes or private state tracked."
-                ],
-                "proof_refs": [
-                  "native-cross-Space-regressions",
-                  "live-other-Space-discovery",
-                  "live-other-Space-thumbnail-capture",
-                  "physical-hover"
-                ],
-                "scope": [
-                  "root"
-                ],
-                "sequence": 5,
-                "validation_findings": [
-                  "Public capture can refuse dormant windows; no thumbnail or exact selection across multiple inaccessible fullscreen windows is promised when the OS omits it."
+                  "Private native-Space metadata must be verified on current macOS before relying on it"
                 ]
               },
               {
                 "action": "validation",
-                "command": "decapod validate",
+                "custody_event_id": "event:5",
+                "observations": [
+                  "141 portable tests and native self-tests passed; live current-workspace Return and Escape passed; user confirms physical three-finger gesture; gesture recognition count 9"
+                ],
+                "proof_refs": [
+                  "host-suite",
+                  "live-overview",
+                  "physical-gesture"
+                ],
+                "scope": [
+                  "Desktop overview and AirPlay discovery concealment",
+                  "root"
+                ],
+                "sequence": 5,
+                "validation_findings": [
+                  "Second display not connected; actual monitor transfer and wireless pairing remain unverified"
+                ]
+              },
+              {
+                "action": "validation",
                 "custody_event_id": "event:6",
+                "observations": [
+                  "Final live check: different_workspace_selected=true, original_workspace_restored=true; Return and Escape pass. Covered AirPlay snapshot partial=false, one screen, five options, no native popup afterward."
+                ],
+                "proof_refs": [
+                  "live-switch-and-return",
+                  "airplay-discovery"
+                ],
+                "scope": [
+                  "Desktop overview and AirPlay discovery concealment",
+                  "Monitor workspace overview, gesture, window movement and native discovery suppression",
+                  "root"
+                ],
+                "sequence": 6,
+                "validation_findings": []
+              },
+              {
+                "action": "validation",
+                "custody_event_id": "event:7",
+                "observations": [
+                  "Isolated validation reached readiness but parsed generated todo-01m5zz branch prefix as task todo_01m5zz. Renamed only this unpublished work branch to contain the exact claimed task ID first; no proof gate changed."
+                ],
+                "proof_refs": [
+                  "isolated-validation"
+                ],
+                "scope": [
+                  "Desktop overview and AirPlay discovery concealment",
+                  "Monitor workspace overview, gesture, window movement and native discovery suppression",
+                  "root"
+                ],
+                "sequence": 7,
+                "validation_findings": []
+              },
+              {
+                "action": "validation",
+                "command": "decapod validate",
+                "custody_event_id": "event:8",
                 "observations": [
                   ".decapod/governance.json",
                   ".decapod/governance.json",
-                  "validation epoch ve_846e8413490fab27 completed with zero failures"
+                  "validation epoch ve_87b2479f30cfe035 completed with zero failures"
                 ],
                 "proof_refs": [
                   "decapod validate"
                 ],
                 "scope": [
+                  "Desktop overview and AirPlay discovery concealment",
+                  "Monitor workspace overview, gesture, window movement and native discovery suppression",
                   "root"
                 ],
-                "sequence": 6,
+                "sequence": 8,
                 "validation_findings": []
               }
             ]
@@ -321,37 +396,34 @@
       ],
       "destination": "pull request",
       "evidence": [
-        "All 59 reconciled source hashes match current files; accepted workflow and command digest unchanged; no temporary probes or private state tracked.",
-        "Signed installed helper discovers inactive Chrome and Notes with AX=0 and cards=1; Notes and inactive Ghostty snapshot successfully. Chrome sometimes fails capture with SCStreamErrorInternalError -3811 and retains its card. Private native report outside Git.",
-        "validation epoch ve_846e8413490fab27 completed with zero failures"
+        "141 portable tests and native self-tests passed; live current-workspace Return and Escape passed; user confirms physical three-finger gesture; gesture recognition count 9",
+        "Final live check: different_workspace_selected=true, original_workspace_restored=true; Return and Escape pass. Covered AirPlay snapshot partial=false, one screen, five options, no native popup afterward.",
+        "Isolated validation reached readiness but parsed generated todo-01m5zz branch prefix as task todo_01m5zz. Renamed only this unpublished work branch to contain the exact claimed task ID first; no proof gate changed.",
+        "Restarted WindowManager; screenshot and WindowServer inventory confirm strip removed; Dock restart did not clear it",
+        "validation epoch ve_87b2479f30cfe035 completed with zero failures"
       ],
-      "inspected_files": [
-        "scripts/desktop-edge.m",
-        "scripts/wifi-pane.m",
-        "scripts/workspace-panels.m"
-      ],
-      "intent_id": "intent:change_01M5B7AJD3J1P1XSTGN2ZS0HVR",
+      "inspected_files": [],
+      "intent_id": "intent:change_01M5ZZESNE657J3WAS43NM2M42",
       "modified_files": [
-        ".decapod/governance.json",
-        "scripts/wifi-pane.m",
-        "scripts/workspace-panels.h",
-        "scripts/workspace-panels.m"
+        ".decapod/governance.json"
       ],
       "next_transitions": [
         "Refine plan and declare falsifiable checks",
         "publish"
       ],
       "repo_scope": [
+        "Desktop overview and AirPlay discovery concealment",
+        "Monitor workspace overview, gesture, window movement and native discovery suppression",
         "root"
       ],
-      "run_id": "branch_01M5B7AJFPFGX8XVCBP7BGH1MH",
+      "run_id": "branch_01M5ZZESWC3YQ3WSD0BY705Z89",
       "schema_version": "1.1.0",
       "shortcut_risk_signals": [],
-      "task_id": "bugs_01m5b7724gyaxha1",
+      "task_id": "bugs_01m5zzd94pydp909",
       "tool_calls": [],
       "unresolved_assumptions": [
-        "Public all-Space capture lookup currently runs only after at least one AX card exists; diagnostic counts will establish actual off-Space omission.",
-        "Public capture can refuse dormant windows; no thumbnail or exact selection across multiple inaccessible fullscreen windows is promised when the OS omits it."
+        "Private native-Space metadata must be verified on current macOS before relying on it",
+        "Second display not connected; actual monitor transfer and wireless pairing remain unverified"
       ]
     },
     "validation": {
@@ -363,124 +435,124 @@
         ],
         "result": "review"
       },
-      "decapod_release": "0.119.1",
+      "decapod_release": "0.121.1",
       "drift_findings": [],
-      "elapsed_ms": 7732,
-      "epoch_ref": "ve_846e8413490fab27",
+      "elapsed_ms": 2644,
+      "epoch_ref": "ve_87b2479f30cfe035",
       "fail_count": 0,
       "failures": [],
       "gate_timings": [
         {
-          "elapsed_ms": 2502,
-          "name": "validate_markdown_primitives_roundtrip_gate"
-        },
-        {
-          "elapsed_ms": 1275,
-          "name": "validate_stale_workspaces"
-        },
-        {
-          "elapsed_ms": 821,
+          "elapsed_ms": 764,
           "name": "validate_project_specs_docs"
         },
         {
-          "elapsed_ms": 765,
-          "name": "validate_obligations"
+          "elapsed_ms": 468,
+          "name": "validate_stale_workspaces"
         },
         {
-          "elapsed_ms": 488,
-          "name": "validate_legacy_jsonl_retired"
+          "elapsed_ms": 312,
+          "name": "validate_markdown_primitives_roundtrip_gate"
         },
         {
-          "elapsed_ms": 289,
+          "elapsed_ms": 277,
           "name": "validate_machine_contract"
         },
         {
-          "elapsed_ms": 264,
-          "name": "validate_archive_integrity"
-        },
-        {
-          "elapsed_ms": 186,
-          "name": "validate_control_plane_contract"
-        },
-        {
-          "elapsed_ms": 170,
+          "elapsed_ms": 140,
           "name": "validate_git_workspace_context"
         },
         {
-          "elapsed_ms": 105,
-          "name": "validate_lineage_hard_gate"
+          "elapsed_ms": 97,
+          "name": "validate_obligations"
         },
         {
-          "elapsed_ms": 42,
-          "name": "validate_lcm_immutability"
+          "elapsed_ms": 74,
+          "name": "validate_legacy_jsonl_retired"
         },
         {
-          "elapsed_ms": 41,
-          "name": "validate_watcher_audit"
+          "elapsed_ms": 33,
+          "name": "validate_archive_integrity"
         },
         {
-          "elapsed_ms": 40,
-          "name": "validate_lcm_rebuild_gate"
-        },
-        {
-          "elapsed_ms": 40,
-          "name": "validate_knowledge_promotions_if_present"
-        },
-        {
-          "elapsed_ms": 31,
+          "elapsed_ms": 20,
           "name": "validate_federation_gates"
         },
         {
-          "elapsed_ms": 22,
+          "elapsed_ms": 19,
           "name": "validate_repomap_determinism"
         },
         {
-          "elapsed_ms": 17,
+          "elapsed_ms": 15,
           "name": "validate_schema_determinism"
         },
         {
           "elapsed_ms": 14,
-          "name": "validate_git_push_pr_gate"
-        },
-        {
-          "elapsed_ms": 14,
-          "name": "validate_git_protected_branch"
+          "name": "validate_control_plane_contract"
         },
         {
           "elapsed_ms": 12,
+          "name": "validate_lineage_hard_gate"
+        },
+        {
+          "elapsed_ms": 10,
+          "name": "validate_git_push_pr_gate"
+        },
+        {
+          "elapsed_ms": 10,
+          "name": "validate_git_protected_branch"
+        },
+        {
+          "elapsed_ms": 10,
           "name": "validate_no_legacy_namespaces"
         },
         {
-          "elapsed_ms": 8,
-          "name": "validate_knowledge_integrity"
-        },
-        {
-          "elapsed_ms": 7,
+          "elapsed_ms": 6,
           "name": "validate_gatekeeper_gate"
         },
         {
-          "elapsed_ms": 7,
-          "name": "validate_plan_governed_execution_gate"
+          "elapsed_ms": 3,
+          "name": "validate_knowledge_integrity"
         },
         {
-          "elapsed_ms": 5,
+          "elapsed_ms": 3,
+          "name": "validate_trajectory_artifacts_if_present"
+        },
+        {
+          "elapsed_ms": 3,
+          "name": "validate_watcher_audit"
+        },
+        {
+          "elapsed_ms": 3,
+          "name": "validate_knowledge_promotions_if_present"
+        },
+        {
+          "elapsed_ms": 3,
           "name": "validate_generated_artifact_whitelist"
         },
         {
-          "elapsed_ms": 4,
-          "name": "validate_database_schema_versions"
+          "elapsed_ms": 3,
+          "name": "validate_lcm_immutability"
         },
         {
-          "elapsed_ms": 4,
+          "elapsed_ms": 2,
+          "name": "validate_plan_governed_execution_gate"
+        },
+        {
+          "elapsed_ms": 2,
+          "name": "validate_lcm_rebuild_gate"
+        },
+        {
+          "elapsed_ms": 2,
           "name": "validate_policy_integrity"
         },
         {
-          "elapsed_ms": 3,
-          "name": "validate_health_cache_integrity"
+          "elapsed_ms": 2,
+          "name": "validate_research_claims_if_present"
         },
         {
-          "elapsed_ms": 3,
-          "name": "validate_entrypoint_invariants"
+          "elapsed_ms": 2,
+          "name": "validate_recursive_improvement_passes_if_present"
         },
         {
           "elapsed_ms": 2,
@@ -488,15 +560,15 @@
         },
         {
           "elapsed_ms": 2,
-          "name": "validate_trajectory_artifacts_if_present"
+          "name": "validate_entrypoint_invariants"
         },
         {
-          "elapsed_ms": 1,
+          "elapsed_ms": 2,
+          "name": "validate_validation_receipt_if_present"
+        },
+        {
+          "elapsed_ms": 2,
           "name": "validate_watcher_purity"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_health_purity"
         },
         {
           "elapsed_ms": 1,
@@ -504,39 +576,31 @@
         },
         {
           "elapsed_ms": 1,
+          "name": "validate_health_purity"
+        },
+        {
+          "elapsed_ms": 1,
           "name": "validate_override_authority"
         },
         {
           "elapsed_ms": 1,
-          "name": "validate_recursive_improvement_passes_if_present"
+          "name": "validate_database_schema_versions"
         },
         {
           "elapsed_ms": 1,
-          "name": "validate_validation_receipt_if_present"
+          "name": "validate_health_cache_integrity"
         },
         {
-          "elapsed_ms": 1,
-          "name": "validate_jev_history_if_present"
-        },
-        {
-          "elapsed_ms": 1,
-          "name": "validate_research_claims_if_present"
-        },
-        {
-          "elapsed_ms": 1,
+          "elapsed_ms": 0,
           "name": "validate_spec_drift"
         },
         {
-          "elapsed_ms": 1,
+          "elapsed_ms": 0,
           "name": "validate_project_config_toml"
         },
         {
           "elapsed_ms": 0,
           "name": "validate_context_capsule_policy_contract"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_heartbeat_invocation_gate"
         },
         {
           "elapsed_ms": 0,
@@ -548,6 +612,10 @@
         },
         {
           "elapsed_ms": 0,
+          "name": "validate_heartbeat_invocation_gate"
+        },
+        {
+          "elapsed_ms": 0,
           "name": "validate_docs_templates_bucket"
         },
         {
@@ -556,23 +624,7 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_risk_map"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_state_commit_gate"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_interface_contract_bootstrap"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_embedded_self_contained"
-        },
-        {
-          "elapsed_ms": 0,
-          "name": "validate_internalization_artifacts_if_present"
+          "name": "validate_root_dockerfile_seed_detection"
         },
         {
           "elapsed_ms": 0,
@@ -580,11 +632,19 @@
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_eval_gate_if_required"
+          "name": "validate_internalization_artifacts_if_present"
         },
         {
           "elapsed_ms": 0,
-          "name": "validate_root_dockerfile_seed_detection"
+          "name": "validate_state_commit_gate"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_embedded_self_contained"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_interface_contract_bootstrap"
         },
         {
           "elapsed_ms": 0,
@@ -592,27 +652,35 @@
         },
         {
           "elapsed_ms": 0,
+          "name": "validate_eval_gate_if_required"
+        },
+        {
+          "elapsed_ms": 0,
+          "name": "validate_risk_map"
+        },
+        {
+          "elapsed_ms": 0,
           "name": "validate_tooling_gate"
         }
       ],
-      "git_revision": "abb71719ebabcb23fee2984bf529e563e74c8fc1",
+      "git_revision": "c65c0ffdf312d696fec2c2570e2a3ebb3b3cfa18",
       "kind": "validation_receipt",
       "parallelism": 1,
       "pass_count": 187,
       "prediction_uses_warnings": true,
-      "receipt_hash": "sha256:085e2dc4b33545ac5791bb5bfecefc3bf283b7896cffd8e6171a7a66b2fd1c88",
-      "repo_signal_fingerprint": "837093469c85ccdba333944902c6aa8e681d40ae59f20463b61c2330162bbc84",
+      "receipt_hash": "sha256:ccee3a19aa41eeeb25cae66403dd2adfb439c3f8a890ef82549720aa2244de80",
+      "repo_signal_fingerprint": "039e60107ac51996af39cc32e9a92e43e12cdd7c4787cdea4e3e61e368eca7b8",
       "schema_version": "1.0.0",
       "status": "ok",
       "temporary_artifacts_cleaned": 0,
-      "trajectory_artifact_hash": "sha256:96dac8fc95c13a8a46d1063a14fdfb93ff555509a0b316b38cea18cd0f9fe0bf",
-      "trajectory_run_id": "branch_01M5B7AJFPFGX8XVCBP7BGH1MH",
+      "trajectory_artifact_hash": "sha256:f0621c0e07f5457dcf9b3717d331b965966a705566cb33f32c607e78b0ed52c1",
+      "trajectory_run_id": "branch_01M5ZZESWC3YQ3WSD0BY705Z89",
       "warn_count": 4,
       "warnings": [
         "Risk map missing (run `decapod riskmap init`)",
-        "Stale workspaces preserved for explicit review: <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (current_workspace: workspace contains the current process; rerun prune from the host checkout after leaving this workspace so Git can release the branch), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.)",
+        "Stale workspaces preserved for explicit review: <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (unregistered_workspace: workspace ownership is unverified; --force does not authorize deleting unrelated directories. Inspect and preserve or remove this directory explicitly), <external-path> (current_workspace: workspace contains the current process; rerun prune from the host checkout after leaving this workspace so Git can release the branch), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.), <external-path> (container_cleanup_failed: workspace preserved because container cleanup could not be verified: Validation error: Container runtime provenance is unknown; preserve the workspace and recover its owning engine explicitly.)",
         "Watcher audit trail missing (run `decapod govern watcher run`)",
-        "Workspace branch 'agent/unknown/bugs_01m5b7724gyaxha1-dock-previews' has unpushed commits or does not exist on origin. Branch pushes and iteration are allowed before preflight; hold PR creation until intent is converged, the branch is mergeable, and full `decapod validate` succeeds against the exact current candidate and accepted target."
+        "Workspace branch 'agent/unknown/bugs_01m5zzd94pydp909-monitor-overview' has unpushed commits or does not exist on origin. Branch pushes and iteration are allowed before preflight; hold PR creation until intent is converged, the branch is mergeable, and full `decapod validate` succeeds against the exact current candidate and accepted target."
       ]
     }
   }

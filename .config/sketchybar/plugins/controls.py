@@ -114,9 +114,7 @@ def wifi_watch(request):
             with interaction():
                 if read('hover.json') != token:
                     return
-                close_panels()
-                native_item('Wi-Fi', ensure='open')
-                store('active.json', {'name': 'wifi', 'request': str(token[0]), 'time': time.time(), 'native_wifi': True})
+                _render_rows('wifi', [('Wi-Fi', None), ('Wi-Fi discovery unavailable · hover again to retry', None)])
             return
         for _ in range(10):
             time.sleep(.1)
@@ -388,13 +386,7 @@ def show(name, clicked=False):
                 _render_rows('wifi', panel_rows('wifi'))
                 start_wifi_watch(token[0])
                 return
-            # Apple can display real SSIDs with Location off. Open that picker
-            # directly, without flashing a custom loading/permission pane first.
-            native_calendar('hide')
-            native_controls('hide')
-            native_item('Wi-Fi', ensure='open')
-            store('active.json', {'name': name, 'time': time.time(),
-                                  'request': str(token[0]), 'native_wifi': True})
+            _render_rows('wifi', [('Wi-Fi', None), ('Wi-Fi discovery unavailable · hover again to retry', None)])
             return
         if name == 'clock':
             if not already_open:

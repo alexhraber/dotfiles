@@ -1,6 +1,8 @@
 """Per-key macOS preferences, with typed backups and guarded restoration."""
 from datetime import datetime
 import json
+import copy
+import ctypes
 import os
 from pathlib import Path
 import plistlib
@@ -23,27 +25,99 @@ def read_domain(domain):
 
 def current(item):
     values = read_domain(item['domain'])
-    return typed(values[item['key']]) if item['key'] in values else None
+    value = values.get(item['key'])
+    if value is None:
+        return None
+    for key in item.get('path', []):
+        if not isinstance(value, dict):
+            raise ValueError('Unsupported nested preference container')
+        value = value.get(key)
+        if value is None:
+            return None
+    return typed(value) if value is not None else None
+
+
+def desired(source):
+    items = []
+    def visit(domain, key, value, path):
+        if isinstance(value, dict):
+            for child, setting in value.items():
+                visit(domain, key, setting, path + [child])
+        else:
+            if isinstance(value, str) and value.startswith('~/'):
+                value = str(Path(value).expanduser())
+            item = {'domain': domain, 'key': key, 'installed': typed(value)}
+            if path:
+                item['path'] = path
+            items.append(item)
+    for domain, settings in json.loads(Path(source).read_text()).items():
+        for key, value in settings.items():
+            visit(domain, key, value, [])
+    return items
 
 
 def plan(source):
-    desired = json.loads(Path(source).read_text())
     changes = []
-    for domain, settings in desired.items():
-        existing = read_domain(domain)
-        for key, value in settings.items():
-            if isinstance(value, str) and value.startswith('~/'):
-                value = str(Path(value).expanduser())
-            item = {'domain': domain, 'key': key, 'installed': typed(value),
-                    'original': typed(existing[key]) if key in existing else None}
-            if item['original'] != item['installed']:
-                changes.append(item)
+    for item in desired(source):
+        item['original'] = current(item)
+        if item['original'] != item['installed']:
+            changes.append(item)
     return changes
+
+
+def write_nested(item, value):
+    # CFPreferences updates one root key, preserving every unrelated binding.
+    # The manifest guards/restores just the scalar leaf we own.
+    root = copy.deepcopy(read_domain(item['domain']).get(item['key'], {}))
+    branch = root
+    for key in item['path'][:-1]:
+        branch = branch.setdefault(key, {})
+    leaf = item['path'][-1]
+    if value is None:
+        branch.pop(leaf, None)
+        parents = [root]
+        cursor = root
+        for name in item['path'][:-1]:
+            cursor = cursor[name]
+            parents.append(cursor)
+        for parent, name in reversed(list(zip(parents, item['path'][:-1]))):
+            if not parent[name]:
+                del parent[name]
+    else:
+        branch[leaf] = value['value']
+    cf = ctypes.CDLL('/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation')
+    cf.CFDataCreate.argtypes = [ctypes.c_void_p, ctypes.c_char_p, ctypes.c_long]
+    cf.CFDataCreate.restype = ctypes.c_void_p
+    cf.CFPropertyListCreateWithData.argtypes = [ctypes.c_void_p, ctypes.c_void_p, ctypes.c_ulong, ctypes.c_void_p, ctypes.c_void_p]
+    cf.CFPropertyListCreateWithData.restype = ctypes.c_void_p
+    cf.CFStringCreateWithCString.argtypes = [ctypes.c_void_p, ctypes.c_char_p, ctypes.c_uint32]
+    cf.CFStringCreateWithCString.restype = ctypes.c_void_p
+    cf.CFPreferencesSetAppValue.argtypes = [ctypes.c_void_p, ctypes.c_void_p, ctypes.c_void_p]
+    cf.CFPreferencesAppSynchronize.argtypes = [ctypes.c_void_p]
+    cf.CFPreferencesAppSynchronize.restype = ctypes.c_bool
+    cf.CFRelease.argtypes = [ctypes.c_void_p]
+    raw = plistlib.dumps(root)
+    data = cf.CFDataCreate(None, raw, len(raw))
+    obj = cf.CFPropertyListCreateWithData(None, data, 0, None, None)
+    key = cf.CFStringCreateWithCString(None, item['key'].encode(), 0x08000100)
+    domain = cf.CFStringCreateWithCString(None, item['domain'].encode(), 0x08000100)
+    try:
+        if not all((data, obj, key, domain)):
+            raise ValueError('Cannot encode nested preference')
+        cf.CFPreferencesSetAppValue(key, obj if root else None, domain)
+        if not cf.CFPreferencesAppSynchronize(domain):
+            raise ValueError('Cannot synchronize nested preference')
+    finally:
+        for pointer in (data, obj, key, domain):
+            if pointer:
+                cf.CFRelease(pointer)
 
 
 def write(item, value):
     prefix = ['defaults']
-    if value is None:
+    if item.get('path'):
+        write_nested(item, value)
+    elif value is None:
         if current(item) is not None:
             subprocess.run(prefix + ['delete', item['domain'], item['key']], check=True)
     else:

@@ -109,3 +109,39 @@ class MacOSPreferencesTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'Unsupported preference type'):
                 macos.plan(self.settings)
             write.assert_not_called()
+
+
+class NestedPreferencesTests(unittest.TestCase):
+    def test_hotkey_leaf_plan_preserves_parameters_and_unrelated_bindings(self):
+        with tempfile.TemporaryDirectory() as temp:
+            source = Path(temp) / 'settings.json'
+            source.write_text(json.dumps({'com.apple.symbolichotkeys': {'AppleSymbolicHotKeys': {'32': {'enabled': False}}}}))
+            values = {'AppleSymbolicHotKeys': {'32': {'enabled': True, 'value': {'parameters': [65535, 126, 262144]}}, '79': {'enabled': True}}}
+            original = copy.deepcopy(values)
+            with patch.object(macos, 'read_domain', return_value=values):
+                changes = macos.plan(source)
+                self.assertEqual(len(changes), 1)
+                self.assertEqual(changes[0]['path'], ['32', 'enabled'])
+                self.assertEqual(changes[0]['original'], {'type': 'bool', 'value': True})
+            self.assertEqual(values, original)
+
+    def test_absent_nested_container_is_snapshotted_as_absent(self):
+        item = {'domain': 'test', 'key': 'hotkeys', 'path': ['32', 'enabled']}
+        for values in ({}, {'hotkeys': {}}, {'hotkeys': {'32': {}}}):
+            with patch.object(macos, 'read_domain', return_value=values):
+                self.assertIsNone(macos.current(item))
+        with patch.object(macos, 'read_domain', return_value={'hotkeys': 'unexpected'}):
+            with self.assertRaisesRegex(ValueError, 'nested preference container'):
+                macos.current(item)
+
+    def test_restore_guards_managed_leaf_without_rejecting_unrelated_key_edits(self):
+        values = {'hotkeys': {'32': {'enabled': False}, '79': {'enabled': True}}}
+        item = {'domain': 'test', 'key': 'hotkeys', 'path': ['32', 'enabled'], 'original': None, 'installed': {'type': 'bool', 'value': False}}
+        with patch.object(macos, 'read_domain', return_value=values), patch.object(macos, 'write') as write:
+            macos.restore({'version': 1, 'kind': 'macos-preferences', 'changes': [item]})
+            write.assert_called_once_with(item, None)
+        values['hotkeys']['32']['enabled'] = True
+        with patch.object(macos, 'read_domain', return_value=values), patch.object(macos, 'write') as write:
+            with self.assertRaisesRegex(ValueError, 'later preference edit'):
+                macos.restore({'version': 1, 'kind': 'macos-preferences', 'changes': [item]})
+            write.assert_not_called()

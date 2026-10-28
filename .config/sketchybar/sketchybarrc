@@ -24,6 +24,8 @@ sketchybar --add item apple left --set apple icon='' icon.font='SF Pro:Medium
 sketchybar --add item front_app left --set front_app icon='' icon.width=22 \
   icon.background.image.scale=0.3 label='Workstation' label.max_chars=18 label.font='SF Pro:Semibold:12.0' script="\"$plugin\"" \
   --subscribe front_app front_app_switched mouse.entered mouse.exited mouse.clicked
+sketchybar --add item desktops left --set desktops icon='󰍹' label.drawing=off script="\"$plugin\"" \
+  --subscribe desktops mouse.clicked
 sketchybar --add item clock right --set clock icon.drawing=off label.width=74 label.align=center update_freq=1 updates=on \
   label.color="$UI_SECONDARY" script="\"$plugin\"" --subscribe clock desktop_revealed system_woke
 sketchybar --add item weather right --set weather icon='󰖙' label='—' label.width=43 label.align=right script="\"$plugin\"" \
@@ -70,7 +72,7 @@ sketchybar --add item hover_guard left --set hover_guard drawing=off script="\"$
 sketchybar --add item access_check left --set access_check drawing=off \
   script="python3 -B \"$config_dir/plugins/controls.py\" access probe" \
   --subscribe access_check desktop_access_check
-sketchybar --add bracket context apple front_app
+sketchybar --add bracket context apple front_app desktops
 sketchybar --add bracket chronicle clock weather
 sketchybar --add bracket ribbon cpu gpu memory bluetooth wifi brightness volume battery weather clock alerts \
   --add bracket hardware cpu gpu memory \
